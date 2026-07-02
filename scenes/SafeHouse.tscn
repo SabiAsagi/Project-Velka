@@ -1,0 +1,39 @@
+[gd_scene load_steps=3 format=3 uid="uid://safe_house"]
+
+[ext_resource type="Script" path="res://scripts/SafeHouseManager.gd" id="1_safe"]
+[ext_resource type="Script" path="res://scripts/RuleBookSystem.gd" id="2_rules"]
+
+[node name="SafeHouse" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_safe")
+start_button_path = NodePath("MarginContainer/VBoxContainer/StartButton")
+target_scene = "res://scenes/AnomalyField.tscn"
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 32.0
+offset_top = 32.0
+offset_right = -32.0
+offset_bottom = -32.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Safe House"
+
+[node name="StartButton" type="Button" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "괴이 현장 진입"
+
+[node name="RuleBook" type="VBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+script = ExtResource("2_rules")
+list_container_path = NodePath(".")

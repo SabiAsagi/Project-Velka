@@ -1,0 +1,90 @@
+[gd_scene load_steps=9 format=3 uid="uid://anomaly_field"]
+
+[ext_resource type="Script" path="res://scripts/AnomalyFieldManager.gd" id="1_field"]
+[ext_resource type="Script" path="res://scripts/PlayerController.gd" id="2_player"]
+[ext_resource type="Script" path="res://scripts/CharacterSwitchSystem.gd" id="3_switch"]
+[ext_resource type="Script" path="res://scripts/ClueSystem.gd" id="4_clue"]
+[ext_resource type="Script" path="res://scripts/AnomalyAI.gd" id="5_ai"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_player"]
+size = Vector2(42, 42)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_clue"]
+radius = 16.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_door"]
+size = Vector2(74, 130)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_exit"]
+size = Vector2(120, 180)
+
+[node name="AnomalyField" type="Node2D"]
+script = ExtResource("1_field")
+door_path = NodePath("Door")
+exit_area_path = NodePath("ExitArea")
+status_label_path = NodePath("CanvasLayer/StatusLabel")
+
+[node name="Player" type="CharacterBody2D" parent="."]
+position = Vector2(130, 360)
+script = ExtResource("2_player")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
+shape = SubResource("RectangleShape2D_player")
+
+[node name="CharacterSwitchSystem" type="Node" parent="."]
+script = ExtResource("3_switch")
+player_path = NodePath("../Player")
+
+[node name="Anomaly" type="Node2D" parent="."]
+position = Vector2(640, 180)
+script = ExtResource("5_ai")
+target_path = NodePath("../Player")
+
+[node name="Clue1" type="Area2D" parent="." groups=["clues"]]
+position = Vector2(320, 250)
+script = ExtResource("4_clue")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Clue1"]
+shape = SubResource("CircleShape2D_clue")
+
+[node name="Clue2" type="Area2D" parent="." groups=["clues"]]
+position = Vector2(610, 480)
+script = ExtResource("4_clue")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Clue2"]
+shape = SubResource("CircleShape2D_clue")
+
+[node name="Clue3" type="Area2D" parent="." groups=["clues"]]
+position = Vector2(880, 260)
+script = ExtResource("4_clue")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Clue3"]
+shape = SubResource("CircleShape2D_clue")
+
+[node name="Door" type="StaticBody2D" parent="."]
+position = Vector2(1080, 360)
+
+[node name="DoorVisual" type="ColorRect" parent="Door"]
+offset_left = -37.0
+offset_top = -65.0
+offset_right = 37.0
+offset_bottom = 65.0
+color = Color(0.45, 0.23, 0.08, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Door"]
+shape = SubResource("RectangleShape2D_door")
+
+[node name="ExitArea" type="Area2D" parent="."]
+position = Vector2(1170, 360)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ExitArea"]
+shape = SubResource("RectangleShape2D_exit")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="StatusLabel" type="Label" parent="CanvasLayer"]
+offset_left = 24.0
+offset_top = 24.0
+offset_right = 520.0
+offset_bottom = 64.0
+text = "단서 0/3 - 문 잠김"
