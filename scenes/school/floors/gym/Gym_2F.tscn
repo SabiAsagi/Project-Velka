@@ -20,7 +20,7 @@ render_priority = 10
 
 [sub_resource type="PlaneMesh" id="OverlayPlane"]
 material = SubResource("OverlayMat")
-size = Vector2(53.33, 37.82)
+size = Vector2(53.3333, 33.0909)
 
 [node name="Gym_2F" type="Node3D"]
 metadata/floor_id = "gym_f2"
@@ -53,13 +53,13 @@ position = Vector3(16, -0.1, 0)
 material = ExtResource("1_floor")
 
 [node name="NorthWing" type="CSGBox3D" parent="UShapeFloor"]
-size = Vector3(24, 0.2, 7)
-position = Vector3(0, -0.1, 9.5)
+size = Vector3(24, 0.2, 7.8)
+position = Vector3(0, -0.1, 9.1)
 material = ExtResource("1_floor")
 
 [node name="SouthUpperFloor" type="CSGBox3D" parent="UShapeFloor"]
-size = Vector3(24, 0.2, 6.2)
-position = Vector3(0, -0.1, -9.9)
+size = Vector3(24, 0.2, 6.145)
+position = Vector3(0, -0.1, -9.9275)
 material = ExtResource("1_floor")
 
 [node name="Ceiling" type="CSGBox3D" parent="UShapeFloor"]
@@ -95,57 +95,57 @@ metadata/is_open_to_gym_1f = true
 metadata/count = 1
 
 [node name="중앙 개방부" type="Marker3D" parent="CentralVoid"]
-position = Vector3(0, 0, -0.5)
+position = Vector3(0, 0, -0.8275)
 metadata/structural_void = true
-metadata/size_m = Vector2(24, 13)
+metadata/size_m = Vector2(24, 12.055)
 
 [node name="SouthUpperRooms" type="Node3D" parent="."]
 
 [node name="소품실 상부" type="CSGBox3D" parent="SouthUpperRooms"]
-size = Vector3(4.7, 0.12, 6.1)
-position = Vector3(-17.65, 0.06, -9.8)
+size = Vector3(4.667, 0.12, 6.145)
+position = Vector3(-17.667, 0.06, -9.9275)
 material = ExtResource("3_room")
 metadata/order_index = 0
 
 [node name="무대 상부" type="CSGBox3D" parent="SouthUpperRooms"]
-size = Vector3(30.4, 0.12, 6.1)
-position = Vector3(0, 0.06, -9.8)
+size = Vector3(30.667, 0.12, 6.145)
+position = Vector3(0, 0.06, -9.9275)
 material = ExtResource("3_room")
 metadata/order_index = 1
 
 [node name="장치실 상부" type="CSGBox3D" parent="SouthUpperRooms"]
-size = Vector3(4.7, 0.12, 6.1)
-position = Vector3(17.65, 0.06, -9.8)
+size = Vector3(4.667, 0.12, 6.145)
+position = Vector3(17.667, 0.06, -9.9275)
 material = ExtResource("3_room")
 metadata/order_index = 2
 
 [node name="SouthWestPartition" type="CSGBox3D" parent="SouthUpperRooms"]
-size = Vector3(0.15, 3.4, 6.1)
-position = Vector3(-15.25, 1.7, -9.8)
+size = Vector3(0.15, 3.4, 6.145)
+position = Vector3(-15.333, 1.7, -9.9275)
 material = ExtResource("2_wall")
 
 [node name="SouthEastPartition" type="CSGBox3D" parent="SouthUpperRooms"]
-size = Vector3(0.15, 3.4, 6.1)
-position = Vector3(15.25, 1.7, -9.8)
+size = Vector3(0.15, 3.4, 6.145)
+position = Vector3(15.333, 1.7, -9.9275)
 material = ExtResource("2_wall")
 
 [node name="Seating" type="Node3D" parent="."]
 
 [node name="서측 관람석" type="CSGBox3D" parent="Seating"]
-size = Vector3(8, 0.35, 19.5)
-position = Vector3(-16, 0.175, 3.15)
+size = Vector3(8, 0.35, 19.855)
+position = Vector3(-16, 0.175, 3.0725)
 material = ExtResource("4_seating")
 metadata/order_index = 0
 
 [node name="북측 관람석" type="CSGBox3D" parent="Seating"]
-size = Vector3(24, 0.35, 7)
-position = Vector3(0, 0.175, 9.5)
+size = Vector3(24, 0.35, 7.8)
+position = Vector3(0, 0.175, 9.1)
 material = ExtResource("4_seating")
 metadata/order_index = 1
 
 [node name="동측 관람석" type="CSGBox3D" parent="Seating"]
-size = Vector3(8, 0.35, 19.5)
-position = Vector3(16, 0.175, 3.15)
+size = Vector3(8, 0.35, 19.855)
+position = Vector3(16, 0.175, 3.0725)
 material = ExtResource("4_seating")
 metadata/order_index = 2
 
@@ -227,16 +227,16 @@ position = Vector3(4.8, 0.45, 9.85)
 
 [node name="ReferenceOverlay" type="MeshInstance3D" parent="Debug"]
 visible = false
-position = Vector3(0, 20, 3.43)
+position = Vector3(0, 20, 1.0636)
 mesh = SubResource("OverlayPlane")
 cast_shadow = 0
 metadata/_edit_lock_ = true
 
 [node name="DebugTopCamera" type="Camera3D" parent="Debug"]
-position = Vector3(0, 45, 3.43)
+position = Vector3(0, 45, 0)
 rotation_degrees = Vector3(-90, 0, 0)
 projection = 1
-size = 42
+size = 28
 near = 0.1
 far = 100
 current = true

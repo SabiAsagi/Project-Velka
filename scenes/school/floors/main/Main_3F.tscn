@@ -19,7 +19,7 @@ render_priority = 10
 
 [sub_resource type="PlaneMesh" id="OverlayPlane"]
 material = SubResource("OverlayMat")
-size = Vector2(74.27, 25.1)
+size = Vector2(70.4348, 23.8402)
 
 [node name="Main_3F" type="Node3D"]
 metadata/floor_id = "main_f3"
@@ -29,7 +29,7 @@ metadata/north_order_csv = "좌측 계단|여자 탈의실|여자 화장실|청�
 metadata/south_order_csv = "2-1 교실|2-2 교실|2-3 교실|자습실|2-4 교실|2-5 교실|2-6 교실"
 metadata/stair_count = 3
 metadata/elevator_count = 1
-metadata/door_count = 16
+metadata/door_count = 22
 metadata/floor_y_m = 11.4
 metadata/east_normal_state = "sealed_wall"
 metadata/nonexistent_classroom_phase = 7
@@ -41,104 +41,122 @@ metadata/nonexistent_classroom_phase = 7
 [node name="SouthZones" type="Node3D" parent="."]
 
 [node name="2-1 교실" type="CSGBox3D" parent="SouthZones"]
-size = Vector3(7.95, 0.12, 7.5)
-position = Vector3(-25.95, 0.06, 5.375)
+size = Vector3(8.136, 0.12, 10.49)
+position = Vector3(-25.916, 0.06, 4.005)
 material = ExtResource("3_south")
 metadata/order_index = 0
 
 [node name="2-2 교실" type="CSGBox3D" parent="SouthZones"]
-size = Vector3(7.95, 0.12, 7.5)
-position = Vector3(-17.85, 0.06, 5.375)
+size = Vector3(8.185, 0.12, 10.49)
+position = Vector3(-17.756, 0.06, 4.005)
 material = ExtResource("3_south")
 metadata/order_index = 1
 
 [node name="2-3 교실" type="CSGBox3D" parent="SouthZones"]
-size = Vector3(7.95, 0.12, 7.5)
-position = Vector3(-9.75, 0.06, 5.375)
+size = Vector3(8.152, 0.12, 10.49)
+position = Vector3(-9.587, 0.06, 4.005)
 material = ExtResource("3_south")
 metadata/order_index = 2
 
 [node name="자습실" type="CSGBox3D" parent="SouthZones"]
-size = Vector3(11.25, 0.12, 7.5)
-position = Vector3(0, 0.06, 5.375)
+size = Vector3(11.022, 0.12, 10.49)
+position = Vector3(0, 0.06, 4.005)
 material = ExtResource("3_south")
 metadata/order_index = 3
 
 [node name="2-4 교실" type="CSGBox3D" parent="SouthZones"]
-size = Vector3(7.95, 0.12, 7.5)
-position = Vector3(9.75, 0.06, 5.375)
+size = Vector3(8.152, 0.12, 10.49)
+position = Vector3(9.587, 0.06, 4.005)
 material = ExtResource("3_south")
 metadata/order_index = 4
 
 [node name="2-5 교실" type="CSGBox3D" parent="SouthZones"]
-size = Vector3(7.95, 0.12, 7.5)
-position = Vector3(17.85, 0.06, 5.375)
+size = Vector3(8.185, 0.12, 10.49)
+position = Vector3(17.756, 0.06, 4.005)
 material = ExtResource("3_south")
 metadata/order_index = 5
 
 [node name="2-6 교실" type="CSGBox3D" parent="SouthZones"]
-size = Vector3(7.95, 0.12, 7.5)
-position = Vector3(25.95, 0.06, 5.375)
+size = Vector3(8.136, 0.12, 10.49)
+position = Vector3(25.916, 0.06, 4.005)
 material = ExtResource("3_south")
 metadata/order_index = 6
 
 [node name="SouthPartitions" type="Node3D" parent="."]
 
 [node name="P1" type="CSGBox3D" parent="SouthPartitions"]
-size = Vector3(0.15, 3.4, 7.5)
-position = Vector3(-21.9, 1.7, 5.375)
+size = Vector3(0.15, 3.4, 10.49)
+position = Vector3(-21.848, 1.7, 4.005)
 material = ExtResource("4_wall")
 
 [node name="P2" type="CSGBox3D" parent="SouthPartitions"]
-size = Vector3(0.15, 3.4, 7.5)
-position = Vector3(-13.8, 1.7, 5.375)
+size = Vector3(0.15, 3.4, 10.49)
+position = Vector3(-13.663, 1.7, 4.005)
 material = ExtResource("4_wall")
 
 [node name="P3" type="CSGBox3D" parent="SouthPartitions"]
-size = Vector3(0.15, 3.4, 7.5)
-position = Vector3(-5.7, 1.7, 5.375)
+size = Vector3(0.15, 3.4, 10.49)
+position = Vector3(-5.511, 1.7, 4.005)
 material = ExtResource("4_wall")
 
 [node name="P4" type="CSGBox3D" parent="SouthPartitions"]
-size = Vector3(0.15, 3.4, 7.5)
-position = Vector3(5.7, 1.7, 5.375)
+size = Vector3(0.15, 3.4, 10.49)
+position = Vector3(5.511, 1.7, 4.005)
 material = ExtResource("4_wall")
 
 [node name="P5" type="CSGBox3D" parent="SouthPartitions"]
-size = Vector3(0.15, 3.4, 7.5)
-position = Vector3(13.8, 1.7, 5.375)
+size = Vector3(0.15, 3.4, 10.49)
+position = Vector3(13.663, 1.7, 4.005)
 material = ExtResource("4_wall")
 
 [node name="P6" type="CSGBox3D" parent="SouthPartitions"]
-size = Vector3(0.15, 3.4, 7.5)
-position = Vector3(21.9, 1.7, 5.375)
+size = Vector3(0.15, 3.4, 10.49)
+position = Vector3(21.848, 1.7, 4.005)
 material = ExtResource("4_wall")
 
 [node name="Doors" type="Node3D" parent="."]
 
 [node name="SouthRoomDoors" type="Node3D" parent="Doors"]
-metadata/marker_count = 7
+metadata/marker_count = 13
 
 [node name="2-1 교실" parent="Doors/SouthRoomDoors" instance=ExtResource("7_marker")]
-position = Vector3(-25.95, 0.14, 1.55)
+position = Vector3(-28.777, 0.14, -1.24)
+
+[node name="2-1 교실 동측문" parent="Doors/SouthRoomDoors" instance=ExtResource("7_marker")]
+position = Vector3(-23.054, 0.14, -1.24)
 
 [node name="2-2 교실" parent="Doors/SouthRoomDoors" instance=ExtResource("7_marker")]
-position = Vector3(-17.85, 0.14, 1.55)
+position = Vector3(-20.625, 0.14, -1.24)
+
+[node name="2-2 교실 동측문" parent="Doors/SouthRoomDoors" instance=ExtResource("7_marker")]
+position = Vector3(-14.886, 0.14, -1.24)
 
 [node name="2-3 교실" parent="Doors/SouthRoomDoors" instance=ExtResource("7_marker")]
-position = Vector3(-9.75, 0.14, 1.55)
+position = Vector3(-12.44, 0.14, -1.24)
+
+[node name="2-3 교실 동측문" parent="Doors/SouthRoomDoors" instance=ExtResource("7_marker")]
+position = Vector3(-6.734, 0.14, -1.24)
 
 [node name="자습실" parent="Doors/SouthRoomDoors" instance=ExtResource("7_marker")]
-position = Vector3(0, 0.14, 1.55)
+position = Vector3(3.832, 0.14, -1.24)
 
 [node name="2-4 교실" parent="Doors/SouthRoomDoors" instance=ExtResource("7_marker")]
-position = Vector3(9.75, 0.14, 1.55)
+position = Vector3(6.734, 0.14, -1.24)
+
+[node name="2-4 교실 동측문" parent="Doors/SouthRoomDoors" instance=ExtResource("7_marker")]
+position = Vector3(12.44, 0.14, -1.24)
 
 [node name="2-5 교실" parent="Doors/SouthRoomDoors" instance=ExtResource("7_marker")]
-position = Vector3(17.85, 0.14, 1.55)
+position = Vector3(14.886, 0.14, -1.24)
+
+[node name="2-5 교실 동측문" parent="Doors/SouthRoomDoors" instance=ExtResource("7_marker")]
+position = Vector3(20.625, 0.14, -1.24)
 
 [node name="2-6 교실" parent="Doors/SouthRoomDoors" instance=ExtResource("7_marker")]
-position = Vector3(25.95, 0.14, 1.55)
+position = Vector3(23.054, 0.14, -1.24)
+
+[node name="2-6 교실 동측문" parent="Doors/SouthRoomDoors" instance=ExtResource("7_marker")]
+position = Vector3(28.777, 0.14, -1.24)
 
 [node name="EastSealedWall" type="CSGBox3D" parent="."]
 size = Vector3(0.4, 3.4, 3)
@@ -151,7 +169,7 @@ metadata/direct_connection_to_2_6 = false
 
 [node name="ReferenceOverlay" type="MeshInstance3D" parent="Debug"]
 visible = false
-position = Vector3(4.56, 20, 0.84)
+position = Vector3(2.6087, 20, 0.1907)
 mesh = SubResource("OverlayPlane")
 cast_shadow = 0
 metadata/_edit_lock_ = true
@@ -160,7 +178,7 @@ metadata/_edit_lock_ = true
 position = Vector3(0, 40, 0)
 rotation_degrees = Vector3(-90, 0, 0)
 projection = 1
-size = 27.78
+size = 28.5
 near = 0.1
 far = 100
 current = true

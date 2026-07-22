@@ -481,5 +481,13 @@
     "No paths are added to the main building east or west sides.",
     "World origin is the athletic-field center."
   ],
-  "todo_confirm": []
+  "todo_confirm": [
+    {
+      "id": "SITE_PNG_GLOBAL_SCALE_CONFLICT",
+      "status": "open",
+      "scope": "00_전체_배치.png",
+      "detail": "The 190x140m site boundary and 70x45m athletic field cannot both be obtained from one global pixel-to-meter scale in the final schematic PNG.",
+      "implemented_policy": "Keep confirmed metric dimensions; take facility centers, topology, direction, and ordering from the PNG."
+    }
+  ]
 }

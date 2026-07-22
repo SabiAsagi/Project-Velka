@@ -22,19 +22,19 @@ material = SubResource("AnnexGray")
 [node name="NorthEastEntranceCut" type="CSGBox3D" parent="Mass"]
 operation = 2
 size = Vector3(1.2, 2.8, 3)
-position = Vector3(8.75, 1.4, -20)
+position = Vector3(8.75, 1.4, -24.87)
 
 [node name="SouthEastEntranceCut" type="CSGBox3D" parent="Mass"]
 operation = 2
 size = Vector3(1.2, 2.8, 3)
-position = Vector3(8.75, 1.4, 20)
+position = Vector3(8.75, 1.4, 24.87)
 
 [node name="NorthEastEntrance" type="CSGBox3D" parent="."]
 size = Vector3(0.18, 2.5, 2.6)
-position = Vector3(8.67, 1.25, -20)
+position = Vector3(8.67, 1.25, -24.87)
 material = SubResource("DoorGray")
 
 [node name="SouthEastEntrance" type="CSGBox3D" parent="."]
 size = Vector3(0.18, 2.5, 2.6)
-position = Vector3(8.67, 1.25, 20)
+position = Vector3(8.67, 1.25, 24.87)
 material = SubResource("DoorGray")

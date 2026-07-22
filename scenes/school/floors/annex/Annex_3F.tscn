@@ -20,7 +20,7 @@ render_priority = 10
 
 [sub_resource type="PlaneMesh" id="OverlayPlane"]
 material = SubResource("OverlayMat")
-size = Vector2(56.52, 22.52)
+size = Vector2(56.5217, 22.5515)
 
 [node name="Annex_3F" type="Node3D"]
 metadata/floor_id = "annex_f3"
@@ -32,7 +32,7 @@ metadata/large_order_csv = "도서관|그룹학습실"
 metadata/stair_count = 2
 metadata/center_stair_count = 0
 metadata/elevator_count = 1
-metadata/door_count = 13
+metadata/door_count = 16
 metadata/floor_y_m = 7.6
 metadata/skybridge_target = "main_f2"
 metadata/skybridge_floor_y_m = 7.6
@@ -40,6 +40,8 @@ metadata/skybridge_floor_y_m = 7.6
 [node name="Shell" parent="." instance=ExtResource("1_shell")]
 
 [node name="SupportZones" type="Node3D" parent="."]
+position = Vector3(0, 0, -2.6385)
+scale = Vector3(1, 1, 0.708714)
 
 [node name="좌측 계단" type="CSGBox3D" parent="SupportZones"]
 size = Vector3(4.85, 0.12, 7)
@@ -108,6 +110,8 @@ material = ExtResource("4_core")
 metadata/order_index = 10
 
 [node name="LargeZones" type="Node3D" parent="."]
+position = Vector3(0, 0, -3.4755)
+scale = Vector3(1, 1, 1.417571)
 
 [node name="도서관" type="CSGBox3D" parent="LargeZones"]
 size = Vector3(42, 0.12, 7)
@@ -122,6 +126,8 @@ material = ExtResource("3_large")
 metadata/order_index = 1
 
 [node name="SupportPartitions" type="Node3D" parent="."]
+position = Vector3(0, 0, -2.6385)
+scale = Vector3(1, 1, 0.708714)
 
 [node name="P1" type="CSGBox3D" parent="SupportPartitions"]
 size = Vector3(0.15, 3.4, 7)
@@ -174,6 +180,8 @@ position = Vector3(20.9, 1.7, -5.125)
 material = ExtResource("5_wall")
 
 [node name="LargePartitions" type="Node3D" parent="."]
+position = Vector3(0, 0, -3.4755)
+scale = Vector3(1, 1, 1.417571)
 
 [node name="LibraryGroupStudy" type="CSGBox3D" parent="LargePartitions"]
 size = Vector3(0.15, 3.4, 7)
@@ -183,36 +191,47 @@ material = ExtResource("5_wall")
 [node name="Doors" type="Node3D" parent="."]
 
 [node name="SupportDoors" type="Node3D" parent="Doors"]
+position = Vector3(0, 0, -2.239)
 metadata/marker_count = 10
 
 [node name="좌측 계단" parent="Doors/SupportDoors" instance=ExtResource("8_marker")]
 position = Vector3(-23.5, 0.14, -1.55)
 [node name="사서실" parent="Doors/SupportDoors" instance=ExtResource("8_marker")]
-position = Vector3(-18.6, 0.14, -1.55)
+position = Vector3(-18.285, 0.14, -1.55)
 [node name="도서 정리실" parent="Doors/SupportDoors" instance=ExtResource("8_marker")]
-position = Vector3(-13.8, 0.14, -1.55)
+position = Vector3(-13.424, 0.14, -1.55)
 [node name="사물함·반납 공간" parent="Doors/SupportDoors" instance=ExtResource("8_marker")]
 position = Vector3(-9.7, 0.14, -1.55)
 [node name="여자 화장실" parent="Doors/SupportDoors" instance=ExtResource("8_marker")]
-position = Vector3(-4.6, 0.14, -1.55)
+position = Vector3(-4.211, 0.14, -1.55)
 [node name="청소도구함" parent="Doors/SupportDoors" instance=ExtResource("8_marker")]
-position = Vector3(0, 0.14, -1.55)
+position = Vector3(0.311, 0.14, -1.55)
 [node name="남자 화장실" parent="Doors/SupportDoors" instance=ExtResource("8_marker")]
-position = Vector3(4.6, 0.14, -1.55)
+position = Vector3(4.833, 0.14, -1.55)
 [node name="엘리베이터" parent="Doors/SupportDoors" instance=ExtResource("8_marker")]
 position = Vector3(9.7, 0.14, -1.55)
 [node name="보존서고" parent="Doors/SupportDoors" instance=ExtResource("8_marker")]
-position = Vector3(14.4, 0.14, -1.55)
+position = Vector3(14.554, 0.14, -1.55)
 [node name="복사·정보검색실" parent="Doors/SupportDoors" instance=ExtResource("8_marker")]
-position = Vector3(19.15, 0.14, -1.55)
+position = Vector3(19.415, 0.14, -1.55)
 
 [node name="LargeRoomDoors" type="Node3D" parent="Doors"]
-metadata/marker_count = 2
+position = Vector3(0, 0, -2.723)
+metadata/marker_count = 5
 
 [node name="도서관" parent="Doors/LargeRoomDoors" instance=ExtResource("8_marker")]
-position = Vector3(-5, 0.14, 1.55)
+position = Vector3(-24.884, 0.14, 1.55)
+
+[node name="도서관 출입문 2" parent="Doors/LargeRoomDoors" instance=ExtResource("8_marker")]
+position = Vector3(-18.271, 0.14, 1.55)
+
+[node name="도서관 출입문 3" parent="Doors/LargeRoomDoors" instance=ExtResource("8_marker")]
+position = Vector3(-13.41, 0.14, 1.55)
+
+[node name="도서관 출입문 4" parent="Doors/LargeRoomDoors" instance=ExtResource("8_marker")]
+position = Vector3(14.088, 0.14, 1.55)
 [node name="그룹학습실" parent="Doors/LargeRoomDoors" instance=ExtResource("8_marker")]
-position = Vector3(21, 0.14, 1.55)
+position = Vector3(18.779, 0.14, 1.55)
 
 [node name="SkybridgeDoor" type="CSGBox3D" parent="Doors"]
 size = Vector3(0.5, 0.08, 3)
@@ -224,7 +243,7 @@ metadata/connects_to = "main_f2"
 
 [node name="ReferenceOverlay" type="MeshInstance3D" parent="Debug"]
 visible = false
-position = Vector3(0, 20, 0.19)
+position = Vector3(0, 20, 0.1804)
 mesh = SubResource("OverlayPlane")
 cast_shadow = 0
 metadata/_edit_lock_ = true
@@ -233,7 +252,7 @@ metadata/_edit_lock_ = true
 position = Vector3(0, 40, 0)
 rotation_degrees = Vector3(-90, 0, 0)
 projection = 1
-size = 26
+size = 27
 near = 0.1
 far = 100
 current = true

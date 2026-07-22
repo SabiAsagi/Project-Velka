@@ -19,7 +19,7 @@
     "skybridge_floor": 7.6
   },
   "site": {
-    "center": [0.0, -0.25, 0.0],
+    "center": [-12.0, -0.25, -9.0],
     "size": [190.0, 0.5, 140.0]
   },
   "primary_masses": {
@@ -28,18 +28,18 @@
       "size": [70.0, 0.08, 45.0]
     },
     "main_building": {
-      "center": [0.0, 11.4, -44.5],
+      "center": [0.0, 11.4, -54.0],
       "size": [60.0, 15.2, 18.5],
       "floor_y": 3.8
     },
     "annex": {
-      "center": [-51.25, 5.7, 0.0],
+      "center": [-69.1, 5.7, -1.3],
       "size": [17.5, 11.4, 52.0],
       "floor_y": 0.0,
       "long_axis": "north_south"
     },
     "gym": {
-      "center": [0.0, 4.25, 39.0],
+      "center": [0.0, 4.25, 45.0],
       "size": [40.0, 8.5, 26.0],
       "floor_y": 0.0,
       "stage_side": "south",
@@ -47,43 +47,44 @@
     }
   },
   "exterior_facilities": {
-    "main_plateau": { "center": [0.0, 1.9, -50.5], "size": [80.0, 3.8, 39.0] },
-    "rear_parking": { "center": [0.0, 3.86, -64.0], "size": [50.0, 0.12, 8.0] },
-    "rear_gate_road": { "center": [0.0, 3.87, -67.0], "size": [7.0, 0.14, 6.0] },
-    "bike_racks": { "center": [34.0, 4.15, -63.0], "size": [10.0, 0.6, 4.0] },
-    "main_front_student_path": { "center": [0.0, 3.88, -32.75], "size": [60.0, 0.16, 3.0] },
-    "grandstand": { "center": [0.0, 0.0, -27.0], "size": [60.0, 8.0] },
-    "grandstand_west_stair": { "center": [-32.0, 0.0, -27.0], "size": [4.0, 8.0] },
-    "grandstand_east_stair": { "center": [32.0, 0.0, -27.0], "size": [4.0, 8.0] },
-    "assembly_podium": { "center": [0.0, 1.1, -23.0], "size": [6.0, 2.2, 2.0] },
-    "under_stand_storage_door": { "center": [0.0, 1.0, -22.92], "faces": "south_field" },
-    "east_ramp": { "center": [38.0, 1.9, -27.0], "size": [3.0, 3.8, 12.0] },
-    "west_basketball_court": { "center": [-37.5, 0.04, 39.0], "size": [28.0, 0.08, 15.0] },
-    "east_basketball_court": { "center": [37.5, 0.04, 39.0], "size": [28.0, 0.08, 15.0] },
-    "west_fitness_area": { "center": [-55.0, 0.04, 48.0], "size": [12.0, 0.08, 16.0] },
-    "east_fitness_area": { "center": [55.0, 0.04, 48.0], "size": [12.0, 0.08, 16.0] },
-    "main_gate": { "center": [60.0, 1.5, -7.0], "axis": "east_west" },
-    "guardhouse": { "center": [48.0, 1.5, -16.0], "size": [6.0, 3.0, 6.0] },
-    "entry_plaza": { "center": [50.0, 0.04, -7.0], "size": [18.0, 0.08, 10.0] },
-    "garden": { "center": [48.0, 0.04, -26.0], "size": [18.0, 0.08, 10.0] },
-    "horticulture_plots": { "center": [48.0, 0.04, 14.0], "size": [18.0, 0.08, 18.0] },
-    "east_student_path": { "center": [37.5, 0.07, 0.0], "size": [3.0, 0.14, 45.0] }
+    "main_plateau": { "center": [-1.5, 1.9, -53.5], "size": [110.0, 3.8, 41.0] },
+    "rear_parking": { "center": [-1.5, 3.86, -70.5], "size": [72.0, 0.12, 10.0] },
+    "rear_gate_road": { "center": [0.0, 3.87, -72.5], "size": [9.0, 0.14, 13.0] },
+    "bike_racks": { "center": [44.5, 4.15, -70.5], "size": [12.0, 0.6, 8.0] },
+    "main_front_student_path": { "center": [0.0, 3.88, -41.75], "size": [60.0, 0.16, 3.0] },
+    "grandstand": { "center": [0.0, 0.0, -32.0], "size": [60.0, 8.0] },
+    "grandstand_west_stair": { "center": [-32.0, 0.0, -32.0], "size": [4.0, 8.0] },
+    "grandstand_east_stair": { "center": [32.0, 0.0, -32.0], "size": [4.0, 8.0] },
+    "assembly_podium": { "center": [0.0, 1.1, -28.0], "size": [6.0, 2.2, 2.0] },
+    "under_stand_storage_door": { "center": [0.0, 1.0, -27.92], "faces": "south_field" },
+    "east_ramp": { "center": [50.0, 1.9, -32.0], "size": [3.0, 3.8, 12.0] },
+    "west_basketball_court": { "center": [-43.5, 0.04, 45.0], "size": [28.0, 0.08, 15.0] },
+    "east_basketball_court": { "center": [43.5, 0.04, 45.0], "size": [28.0, 0.08, 15.0] },
+    "west_fitness_area": { "center": [-69.0, 0.04, 45.0], "size": [12.0, 0.08, 16.0] },
+    "east_fitness_area": { "center": [69.0, 0.04, 45.0], "size": [12.0, 0.08, 16.0] },
+    "main_gate": { "center": [76.0, 1.5, -10.0], "axis": "east_west" },
+    "guardhouse": { "center": [57.5, 1.5, -17.0], "size": [6.0, 3.0, 6.0] },
+    "entry_plaza": { "center": [65.0, 0.04, -10.0], "size": [18.0, 0.08, 10.0] },
+    "garden": { "center": [59.0, 0.04, -28.0], "size": [18.0, 0.08, 10.0] },
+    "horticulture_plots": { "center": [59.0, 0.04, 15.0], "size": [18.0, 0.08, 18.0] },
+    "east_student_path": { "center": [50.5, 0.07, 0.0], "size": [3.0, 0.14, 45.0] },
+    "field_floodlights": { "count": 4, "positions": [[-36.5,6.0,-24.0],[36.5,6.0,-24.0],[-36.5,6.0,24.0],[36.5,6.0,24.0]] }
   },
   "entrances": {
     "main": [
-      { "id": "west_front", "position": [-24.0, 5.1, -35.25], "faces": "south" },
-      { "id": "center_front", "position": [0.0, 5.1, -35.25], "faces": "south" },
-      { "id": "east_front", "position": [24.0, 5.1, -35.25], "faces": "south" },
-      { "id": "rear", "position": [0.0, 5.1, -53.75], "faces": "north" }
+      { "id": "west_front", "position": [-28.043, 5.1, -44.75], "faces": "south" },
+      { "id": "center_front", "position": [0.0, 5.1, -44.75], "faces": "south" },
+      { "id": "east_front", "position": [28.043, 5.1, -44.75], "faces": "south" },
+      { "id": "rear", "position": [0.0, 5.1, -63.25], "faces": "north" }
     ],
     "annex": [
-      { "id": "north_east", "position": [-42.5, 1.3, -20.0], "faces": "east" },
-      { "id": "south_east", "position": [-42.5, 1.3, 20.0], "faces": "east" }
+      { "id": "north_east", "position": [-60.35, 1.3, -26.17], "faces": "east" },
+      { "id": "south_east", "position": [-60.35, 1.3, 23.57], "faces": "east" }
     ],
     "gym": [
-      { "id": "north_main", "position": [0.0, 1.5, 26.0], "faces": "north" },
-      { "id": "west", "position": [-20.0, 1.5, 39.0], "faces": "west" },
-      { "id": "east", "position": [20.0, 1.5, 39.0], "faces": "east" }
+      { "id": "north_main", "position": [0.0, 1.5, 32.0], "faces": "north" },
+      { "id": "west", "position": [-20.0, 1.5, 43.936], "faces": "west" },
+      { "id": "east", "position": [20.0, 1.5, 43.936], "faces": "east" }
     ]
   },
   "connections": {
@@ -91,9 +92,9 @@
       "floor_y": 7.6,
       "width": 3.0,
       "route": [
-        [-30.0, 7.6, -44.5],
-        [-42.5, 7.6, -44.5],
-        [-42.5, 7.6, -26.0]
+        [-30.0, 7.6, -54.0],
+        [-60.35, 7.6, -54.0],
+        [-60.35, 7.6, -27.3]
       ],
       "turn_rule": "from_main_west_then_south_to_annex_north_end"
     }
@@ -102,15 +103,29 @@
     "file": "docs/맵 레퍼런스/학교/00_전체_배치.png",
     "sha256": "39a33a062579ff9978de0dcbf7ab0a42a207daf0bfbaaf9d48620606f2a49523",
     "pixel_size": [1472, 1320],
-    "world_center": [-4.97, 25.0, 1.28],
-    "world_size": [159.01, 141.09],
+    "world_center": [-6.6654, 25.0, 1.3011],
+    "world_size": [215.6361, 171.7472],
     "default_visible": false,
     "comparison_alpha": 0.5,
-    "mapping_anchor": "athletic_field_bounds"
+    "mapping_anchor": "site_boundary_with_field_center_world_origin"
+  },
+  "reference_registration": {
+    "site_boundary_px": [51.0, 43.0, 1348.0, 1119.0],
+    "field_center_px": [781.5, 650.0],
+    "world_m_per_px": [0.1464919044, 0.1301115242],
+    "rule": "positions use PNG centers; dimensions use confirmed metric values"
   },
   "tolerances_m": {
     "building_outline_target": 0.25,
     "building_outline_max": 0.5,
     "exterior_facility_max": 0.5
-  }
+  },
+  "todo_confirm": [
+    {
+      "id": "SITE_PNG_GLOBAL_SCALE_CONFLICT",
+      "status": "open",
+      "detail": "The final site PNG is schematic: registering its site boundary to 190x140m makes the drawn athletic-field outline approximately 94.5x53.9m, while registering the field to 70x45m makes the site boundary approximately 140.9x116.6m.",
+      "current_implementation": "Retain every confirmed metric dimension and use PNG facility centers, ordering, orientation, and topology."
+    }
+  ]
 }

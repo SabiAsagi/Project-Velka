@@ -13,7 +13,7 @@ render_priority = 10
 
 [sub_resource type="PlaneMesh" id="ReferencePlane"]
 material = SubResource("OverlayMat")
-size = Vector2(159.01, 141.09)
+size = Vector2(215.6361, 171.7472)
 
 [sub_resource type="StandardMaterial3D" id="BoundMat"]
 shading_mode = 0
@@ -33,34 +33,34 @@ render_priority = 12
 visible = false
 metadata/_edit_lock_ = true
 metadata/reference_sha256 = "39a33a062579ff9978de0dcbf7ab0a42a207daf0bfbaaf9d48620606f2a49523"
-metadata/mapping_anchor = "athletic_field_bounds"
+metadata/mapping_anchor = "site_boundary_with_field_center_world_origin"
 metadata/comparison_alpha = 0.5
 
 [node name="ReferencePlane" type="MeshInstance3D" parent="ReferenceOverlay"]
-position = Vector3(-4.97, 25, 1.28)
+position = Vector3(-6.6654, 25, 1.3011)
 mesh = SubResource("ReferencePlane")
 cast_shadow = 0
 
 [node name="ReferenceBounds" type="Node3D" parent="ReferenceOverlay"]
 
 [node name="North" type="CSGBox3D" parent="ReferenceOverlay/ReferenceBounds"]
-size = Vector3(159.01, 0.05, 0.18)
-position = Vector3(-4.97, 25.03, -69.265)
+size = Vector3(190, 0.05, 0.18)
+position = Vector3(-12.0123, 25.03, -78.9777)
 material = SubResource("BoundMat")
 
 [node name="South" type="CSGBox3D" parent="ReferenceOverlay/ReferenceBounds"]
-size = Vector3(159.01, 0.05, 0.18)
-position = Vector3(-4.97, 25.03, 71.825)
+size = Vector3(190, 0.05, 0.18)
+position = Vector3(-12.0123, 25.03, 61.0223)
 material = SubResource("BoundMat")
 
 [node name="West" type="CSGBox3D" parent="ReferenceOverlay/ReferenceBounds"]
-size = Vector3(0.18, 0.05, 141.09)
-position = Vector3(-84.475, 25.03, 1.28)
+size = Vector3(0.18, 0.05, 140)
+position = Vector3(-107.0123, 25.03, -8.9777)
 material = SubResource("BoundMat")
 
 [node name="East" type="CSGBox3D" parent="ReferenceOverlay/ReferenceBounds"]
-size = Vector3(0.18, 0.05, 141.09)
-position = Vector3(74.535, 25.03, 1.28)
+size = Vector3(0.18, 0.05, 140)
+position = Vector3(82.9877, 25.03, -8.9777)
 material = SubResource("BoundMat")
 
 [node name="Anchors" type="Node3D" parent="ReferenceOverlay"]
@@ -78,7 +78,7 @@ radius = 0.8
 height = 1.6
 radial_segments = 24
 rings = 12
-position = Vector3(0, 25.1, -44.5)
+position = Vector3(0, 25.1, -54)
 material = SubResource("AnchorMat")
 
 [node name="AnnexCenter" type="CSGSphere3D" parent="ReferenceOverlay/Anchors"]
@@ -86,7 +86,7 @@ radius = 0.8
 height = 1.6
 radial_segments = 24
 rings = 12
-position = Vector3(-51.25, 25.1, 0)
+position = Vector3(-69.1, 25.1, -1.3)
 material = SubResource("AnchorMat")
 
 [node name="GymCenter" type="CSGSphere3D" parent="ReferenceOverlay/Anchors"]
@@ -94,7 +94,7 @@ radius = 0.8
 height = 1.6
 radial_segments = 24
 rings = 12
-position = Vector3(0, 25.1, 39)
+position = Vector3(0, 25.1, 45)
 material = SubResource("AnchorMat")
 
 [node name="MainGate" type="CSGSphere3D" parent="ReferenceOverlay/Anchors"]
@@ -102,14 +102,14 @@ radius = 0.8
 height = 1.6
 radial_segments = 24
 rings = 12
-position = Vector3(60, 25.1, -7)
+position = Vector3(76, 25.1, -10)
 material = SubResource("AnchorMat")
 
 [node name="DebugTopCamera" type="Camera3D" parent="."]
 position = Vector3(0, 160, 0)
 rotation_degrees = Vector3(-90, 0, 0)
 projection = 1
-size = 145.0
+size = 180.0
 near = 0.1
 far = 300.0
 current = true

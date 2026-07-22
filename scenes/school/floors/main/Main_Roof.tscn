@@ -18,7 +18,7 @@ render_priority = 10
 
 [sub_resource type="PlaneMesh" id="OverlayPlane"]
 material = SubResource("OverlayMat")
-size = Vector2(74.27, 25.1)
+size = Vector2(70.4348, 23.8402)
 
 [node name="Main_Roof" type="Node3D"]
 metadata/floor_id = "main_roof"
@@ -62,57 +62,62 @@ material = ExtResource("2_wall")
 [node name="NorthZones" type="Node3D" parent="."]
 
 [node name="실외기·환기 설비구역" type="CSGBox3D" parent="NorthZones"]
-size = Vector3(18, 0.12, 7)
-position = Vector3(-20, 0.06, -5.2)
+size = Vector3(14.935, 0.12, 5.721)
+position = Vector3(-20.098, 0.06, -5.351)
 material = ExtResource("3_core")
 metadata/order_index = 0
 
 [node name="옥상 출입실" type="CSGBox3D" parent="NorthZones"]
-size = Vector3(10, 3.2, 6)
-position = Vector3(0, 1.6, -5.2)
+size = Vector3(10.011, 3.2, 5.078)
+position = Vector3(0.163, 1.6, -5.672)
 material = ExtResource("3_core")
 metadata/order_index = 1
 metadata/connection = "main_center_stair"
 
 [node name="저상 물탱크·배관·안테나 설비구역" type="CSGBox3D" parent="NorthZones"]
-size = Vector3(18, 0.12, 7)
-position = Vector3(20, 0.06, -5.2)
+size = Vector3(11.185, 0.12, 5.721)
+position = Vector3(18.587, 0.06, -5.351)
 material = ExtResource("3_core")
 metadata/order_index = 2
 
 [node name="SouthZones" type="Node3D" parent="."]
 
 [node name="좌측 옥상정원" type="CSGBox3D" parent="SouthZones"]
-size = Vector3(16, 0.12, 8)
-position = Vector3(-20, 0.06, 4)
+size = Vector3(15.522, 0.12, 6.34)
+position = Vector3(-19.728, 0.06, 3.209)
 material = ExtResource("5_roof")
 metadata/order_index = 0
 
 [node name="중앙 옥상정원" type="CSGBox3D" parent="SouthZones"]
-size = Vector3(20, 0.12, 8)
-position = Vector3(0, 0.06, 4)
+size = Vector3(19.207, 0.12, 5.435)
+position = Vector3(0.196, 0.06, 3.662)
 material = ExtResource("5_roof")
 metadata/order_index = 1
 
 [node name="우측 옥상정원" type="CSGBox3D" parent="SouthZones"]
-size = Vector3(16, 0.12, 8)
-position = Vector3(20, 0.06, 4)
+size = Vector3(11.772, 0.12, 6.34)
+position = Vector3(18.293, 0.06, 3.209)
 material = ExtResource("5_roof")
 metadata/order_index = 2
 
 [node name="CentralPath" type="CSGBox3D" parent="."]
-size = Vector3(3, 0.1, 13)
-position = Vector3(0, 0.11, 1.2)
+size = Vector3(0.6, 0.1, 12.25)
+position = Vector3(0.163, 0.11, 0.955)
+material = ExtResource("2_wall")
+
+[node name="HorizontalPath" type="CSGBox3D" parent="."]
+size = Vector3(40.076, 0.1, 0.6)
+position = Vector3(-1.63, 0.11, -0.966)
 material = ExtResource("2_wall")
 
 [node name="LockedRoofDoor" type="CSGBox3D" parent="."]
-size = Vector3(3, 0.08, 0.5)
-position = Vector3(0, 0.14, -2.15)
+size = Vector3(2.35, 0.08, 0.5)
+position = Vector3(0.163, 0.14, -2.384)
 material = ExtResource("4_door")
 metadata/normally_locked = true
 
 [node name="CentralStairOnly" type="Marker3D" parent="."]
-position = Vector3(0, 0, -5.2)
+position = Vector3(0.163, 0, -5.672)
 metadata/connects_from = "main_f4"
 metadata/elevator_connected = false
 
@@ -120,7 +125,7 @@ metadata/elevator_connected = false
 
 [node name="ReferenceOverlay" type="MeshInstance3D" parent="Debug"]
 visible = false
-position = Vector3(4.56, 20, 0.84)
+position = Vector3(2.6087, 20, 0.1907)
 mesh = SubResource("OverlayPlane")
 cast_shadow = 0
 metadata/_edit_lock_ = true
@@ -129,7 +134,7 @@ metadata/_edit_lock_ = true
 position = Vector3(0, 40, 0)
 rotation_degrees = Vector3(-90, 0, 0)
 projection = 1
-size = 27.78
+size = 28.5
 near = 0.1
 far = 100
 current = true

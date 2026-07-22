@@ -22,7 +22,7 @@ material = SubResource("MainGray")
 [node name="WestFrontEntranceCut" type="CSGBox3D" parent="Mass"]
 operation = 2
 size = Vector3(3, 2.8, 1.2)
-position = Vector3(-24, 1.4, 9.25)
+position = Vector3(-28.043, 1.4, 9.25)
 
 [node name="CenterFrontEntranceCut" type="CSGBox3D" parent="Mass"]
 operation = 2
@@ -32,7 +32,7 @@ position = Vector3(0, 1.5, 9.25)
 [node name="EastFrontEntranceCut" type="CSGBox3D" parent="Mass"]
 operation = 2
 size = Vector3(3, 2.8, 1.2)
-position = Vector3(24, 1.4, 9.25)
+position = Vector3(28.043, 1.4, 9.25)
 
 [node name="RearEntranceCut" type="CSGBox3D" parent="Mass"]
 operation = 2
@@ -41,7 +41,7 @@ position = Vector3(0, 1.4, -9.25)
 
 [node name="WestFrontEntrance" type="CSGBox3D" parent="."]
 size = Vector3(2.6, 2.5, 0.18)
-position = Vector3(-24, 1.25, 9.17)
+position = Vector3(-28.043, 1.25, 9.17)
 material = SubResource("DoorGray")
 
 [node name="CenterFrontEntrance" type="CSGBox3D" parent="."]
@@ -51,7 +51,7 @@ material = SubResource("DoorGray")
 
 [node name="EastFrontEntrance" type="CSGBox3D" parent="."]
 size = Vector3(2.6, 2.5, 0.18)
-position = Vector3(24, 1.25, 9.17)
+position = Vector3(28.043, 1.25, 9.17)
 material = SubResource("DoorGray")
 
 [node name="RearEntrance" type="CSGBox3D" parent="."]

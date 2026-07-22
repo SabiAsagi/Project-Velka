@@ -43,23 +43,23 @@ metadata/_edit_lock_ = true
 
 [node name="SiteFloor" type="CSGBox3D" parent="Site"]
 size = Vector3(190, 0.5, 140)
-position = Vector3(0, -0.25, 0)
+position = Vector3(-12.0, -0.25, -9.0)
 material = SubResource("SiteMat")
 use_collision = true
 
 [node name="NorthForestSlopeMass" type="CSGBox3D" parent="Site"]
 size = Vector3(190, 0.12, 6)
-position = Vector3(0, 0.06, -67)
+position = Vector3(-12, 0.06, -76)
 material = SubResource("TerrainMat")
 
 [node name="WestForestSlopeMass" type="CSGBox3D" parent="Site"]
 size = Vector3(14, 0.12, 128)
-position = Vector3(-88, 0.06, 3)
+position = Vector3(-100, 0.06, -9)
 material = SubResource("TerrainMat")
 
 [node name="MainPlateau" type="CSGBox3D" parent="Site"]
-size = Vector3(80, 3.8, 39)
-position = Vector3(0, 1.9, -50.5)
+size = Vector3(110, 3.8, 41)
+position = Vector3(-1.5, 1.9, -53.5)
 material = SubResource("TerrainMat")
 use_collision = true
 
@@ -84,114 +84,114 @@ material = SubResource("MarkerMat")
 [node name="RearFacilities" type="Node3D" parent="."]
 
 [node name="RearParking" type="CSGBox3D" parent="RearFacilities"]
-size = Vector3(50, 0.12, 8)
-position = Vector3(0, 3.86, -64)
+size = Vector3(72, 0.12, 10)
+position = Vector3(-1.5, 3.86, -70.5)
 material = SubResource("AsphaltMat")
 use_collision = true
 
 [node name="RearGateRoad" type="CSGBox3D" parent="RearFacilities"]
-size = Vector3(7, 0.14, 6)
-position = Vector3(0, 3.87, -67)
+size = Vector3(9, 0.14, 13)
+position = Vector3(0, 3.87, -72.5)
 material = SubResource("AsphaltMat")
 use_collision = true
 
 [node name="RearGateWestPost" type="CSGBox3D" parent="RearFacilities"]
 size = Vector3(0.6, 2.6, 0.6)
-position = Vector3(-3.8, 5.1, -69.4)
+position = Vector3(-4.8, 5.1, -78.4)
 material = SubResource("StructureMat")
 
 [node name="RearGateEastPost" type="CSGBox3D" parent="RearFacilities"]
 size = Vector3(0.6, 2.6, 0.6)
-position = Vector3(3.8, 5.1, -69.4)
+position = Vector3(4.8, 5.1, -78.4)
 material = SubResource("StructureMat")
 
 [node name="BicycleRacks" type="CSGBox3D" parent="RearFacilities"]
-size = Vector3(10, 0.6, 4)
-position = Vector3(34, 4.15, -63)
+size = Vector3(12, 0.6, 8)
+position = Vector3(44.5, 4.15, -70.5)
 material = SubResource("StructureMat")
 
 [node name="MainFrontSequence" type="Node3D" parent="."]
 
 [node name="NorthGardenBand" type="CSGBox3D" parent="MainFrontSequence"]
 size = Vector3(60, 0.18, 1)
-position = Vector3(0, 3.89, -34.75)
+position = Vector3(0, 3.89, -43.75)
 material = SubResource("GardenMat")
 
 [node name="StudentPath3m" type="CSGBox3D" parent="MainFrontSequence"]
 size = Vector3(60, 0.16, 3)
-position = Vector3(0, 3.88, -32.75)
+position = Vector3(0, 3.88, -41.75)
 material = SubResource("PathMat")
 use_collision = true
 
 [node name="SouthGardenBand" type="CSGBox3D" parent="MainFrontSequence"]
 size = Vector3(60, 0.18, 0.5)
-position = Vector3(0, 3.89, -31)
+position = Vector3(0, 3.89, -40)
 material = SubResource("GardenMat")
 
 [node name="Grandstand" type="Node3D" parent="."]
 
 [node name="TierNorth" type="CSGBox3D" parent="Grandstand"]
 size = Vector3(60, 3.3, 2)
-position = Vector3(0, 1.65, -30)
+position = Vector3(0, 1.65, -35)
 material = SubResource("StructureMat")
 use_collision = true
 
 [node name="TierUpperMiddle" type="CSGBox3D" parent="Grandstand"]
 size = Vector3(60, 2.5, 1.6)
-position = Vector3(0, 1.25, -28.2)
+position = Vector3(0, 1.25, -33.2)
 material = SubResource("StructureMat")
 use_collision = true
 
 [node name="TierLowerMiddle" type="CSGBox3D" parent="Grandstand"]
 size = Vector3(60, 1.7, 1.6)
-position = Vector3(0, 0.85, -26.6)
+position = Vector3(0, 0.85, -31.6)
 material = SubResource("StructureMat")
 use_collision = true
 
 [node name="TierSouth" type="CSGBox3D" parent="Grandstand"]
 size = Vector3(60, 0.9, 2.4)
-position = Vector3(0, 0.45, -24.2)
+position = Vector3(0, 0.45, -29.2)
 material = SubResource("StructureMat")
 use_collision = true
 
 [node name="WestEndStair" type="CSGBox3D" parent="Grandstand"]
 size = Vector3(4, 0.5, 8)
-position = Vector3(-32, 0.25, -27)
+position = Vector3(-32, 0.25, -32)
 material = SubResource("PathMat")
 use_collision = true
 
 [node name="EastEndStair" type="CSGBox3D" parent="Grandstand"]
 size = Vector3(4, 0.5, 8)
-position = Vector3(32, 0.25, -27)
+position = Vector3(32, 0.25, -32)
 material = SubResource("PathMat")
 use_collision = true
 
 [node name="AssemblyPodium" type="CSGBox3D" parent="Grandstand"]
 size = Vector3(6, 2.2, 2)
-position = Vector3(0, 1.1, -23)
+position = Vector3(0, 1.1, -28)
 material = SubResource("MarkerMat")
 use_collision = true
 
 [node name="UnderStandStorage" type="CSGBox3D" parent="Grandstand"]
 size = Vector3(8, 2.4, 2.4)
-position = Vector3(0, 1.2, -24.2)
+position = Vector3(0, 1.2, -29.2)
 material = SubResource("StructureMat")
 
 [node name="UnderStandStorageFieldDoor" type="CSGBox3D" parent="Grandstand"]
 size = Vector3(2.4, 2, 0.16)
-position = Vector3(0, 1, -22.92)
+position = Vector3(0, 1, -27.92)
 material = SubResource("AsphaltMat")
 
 [node name="EastRamp" type="CSGBox3D" parent="Grandstand"]
 size = Vector3(3, 0.3, 12)
-position = Vector3(38, 1.9, -27)
+position = Vector3(50, 1.9, -32)
 rotation_degrees = Vector3(17.57, 0, 0)
 material = SubResource("PathMat")
 use_collision = true
 
 [node name="EastStudentPath3m" type="CSGBox3D" parent="."]
 size = Vector3(3, 0.14, 45)
-position = Vector3(37.5, 0.07, 0)
+position = Vector3(50.5, 0.07, 0)
 material = SubResource("PathMat")
 use_collision = true
 
@@ -199,92 +199,92 @@ use_collision = true
 
 [node name="WestBasketballCourt" type="CSGBox3D" parent="SouthFacilities"]
 size = Vector3(28, 0.08, 15)
-position = Vector3(-37.5, 0.04, 39)
+position = Vector3(-43.5, 0.04, 45)
 material = SubResource("CourtMat")
 use_collision = true
 
 [node name="EastBasketballCourt" type="CSGBox3D" parent="SouthFacilities"]
 size = Vector3(28, 0.08, 15)
-position = Vector3(37.5, 0.04, 39)
+position = Vector3(43.5, 0.04, 45)
 material = SubResource("CourtMat")
 use_collision = true
 
 [node name="WestCourtStand" type="CSGBox3D" parent="SouthFacilities"]
 size = Vector3(28, 1.4, 3)
-position = Vector3(-37.5, 0.7, 48.2)
+position = Vector3(-43.5, 0.7, 54.2)
 material = SubResource("StructureMat")
 
 [node name="EastCourtStand" type="CSGBox3D" parent="SouthFacilities"]
 size = Vector3(28, 1.4, 3)
-position = Vector3(37.5, 0.7, 48.2)
+position = Vector3(43.5, 0.7, 54.2)
 material = SubResource("StructureMat")
 
 [node name="WestCourtFlowerTreeMass" type="CSGBox3D" parent="SouthFacilities"]
 size = Vector3(28, 0.16, 4)
-position = Vector3(-37.5, 0.08, 52)
+position = Vector3(-43.5, 0.08, 58)
 material = SubResource("GardenMat")
 
 [node name="EastCourtFlowerTreeMass" type="CSGBox3D" parent="SouthFacilities"]
 size = Vector3(28, 0.16, 4)
-position = Vector3(37.5, 0.08, 52)
+position = Vector3(43.5, 0.08, 58)
 material = SubResource("GardenMat")
 
 [node name="WestFitnessArea" type="CSGBox3D" parent="SouthFacilities"]
 size = Vector3(12, 0.08, 16)
-position = Vector3(-55, 0.04, 48)
+position = Vector3(-69, 0.04, 45)
 material = SubResource("StructureMat")
 
 [node name="EastFitnessArea" type="CSGBox3D" parent="SouthFacilities"]
 size = Vector3(12, 0.08, 16)
-position = Vector3(55, 0.04, 48)
+position = Vector3(69, 0.04, 45)
 material = SubResource("StructureMat")
 
 [node name="GymNorthPath" type="CSGBox3D" parent="SouthFacilities"]
 size = Vector3(40, 0.12, 3)
-position = Vector3(0, 0.06, 24.2)
+position = Vector3(0, 0.06, 30.2)
 material = SubResource("PathMat")
 
 [node name="SouthFacilityPath" type="CSGBox3D" parent="SouthFacilities"]
 size = Vector3(142, 0.12, 3)
-position = Vector3(0, 0.06, 57)
+position = Vector3(0, 0.06, 60)
 material = SubResource("PathMat")
 
 [node name="EastEntranceZone" type="Node3D" parent="."]
 
 [node name="EntryPlaza" type="CSGBox3D" parent="EastEntranceZone"]
 size = Vector3(18, 0.08, 10)
-position = Vector3(50, 0.04, -7)
+position = Vector3(65, 0.04, -10)
 material = SubResource("PathMat")
 
 [node name="EastGateRoad" type="CSGBox3D" parent="EastEntranceZone"]
 size = Vector3(12, 0.1, 6)
-position = Vector3(66, 0.05, -7)
+position = Vector3(80, 0.05, -10)
 material = SubResource("AsphaltMat")
 
 [node name="MainGateNorthPost" type="CSGBox3D" parent="EastEntranceZone"]
 size = Vector3(0.8, 3, 0.8)
-position = Vector3(60, 1.5, -11)
+position = Vector3(76, 1.5, -14)
 material = SubResource("MarkerMat")
 
 [node name="MainGateSouthPost" type="CSGBox3D" parent="EastEntranceZone"]
 size = Vector3(0.8, 3, 0.8)
-position = Vector3(60, 1.5, -3)
+position = Vector3(76, 1.5, -6)
 material = SubResource("MarkerMat")
 
 [node name="Guardhouse" type="CSGBox3D" parent="EastEntranceZone"]
 size = Vector3(6, 3, 6)
-position = Vector3(48, 1.5, -16)
+position = Vector3(57.5, 1.5, -17)
 material = SubResource("StructureMat")
 use_collision = true
 
 [node name="Garden" type="CSGBox3D" parent="EastEntranceZone"]
 size = Vector3(18, 0.08, 10)
-position = Vector3(48, 0.04, -26)
+position = Vector3(59, 0.04, -28)
 material = SubResource("GardenMat")
 
 [node name="HorticulturePlots" type="CSGBox3D" parent="EastEntranceZone"]
 size = Vector3(18, 0.08, 18)
-position = Vector3(48, 0.04, 14)
+position = Vector3(59, 0.04, 15)
 material = SubResource("GardenMat")
 
 [node name="HorticulturePlotWest" type="CSGBox3D" parent="EastEntranceZone/HorticulturePlots"]
@@ -306,20 +306,51 @@ material = SubResource("TerrainMat")
 
 [node name="TrailWest" type="CSGBox3D" parent="WestRestGardenTrail"]
 size = Vector3(2, 0.12, 58)
-position = Vector3(-70, 0.06, 0)
+position = Vector3(-92, 0.06, -1.3)
 material = SubResource("PathMat")
 
 [node name="TrailEast" type="CSGBox3D" parent="WestRestGardenTrail"]
 size = Vector3(2, 0.12, 58)
-position = Vector3(-62, 0.06, 0)
+position = Vector3(-82, 0.06, -1.3)
 material = SubResource("PathMat")
 
 [node name="TrailNorth" type="CSGBox3D" parent="WestRestGardenTrail"]
 size = Vector3(10, 0.12, 2)
-position = Vector3(-66, 0.06, -28)
+position = Vector3(-87, 0.06, -29)
 material = SubResource("PathMat")
 
 [node name="TrailSouth" type="CSGBox3D" parent="WestRestGardenTrail"]
 size = Vector3(10, 0.12, 2)
-position = Vector3(-66, 0.06, 28)
+position = Vector3(-87, 0.06, 27)
 material = SubResource("PathMat")
+
+[node name="FieldFloodlights" type="Node3D" parent="."]
+metadata/count = 4
+
+[node name="NorthWest" type="CSGCylinder3D" parent="FieldFloodlights"]
+radius = 0.35
+height = 12
+sides = 12
+position = Vector3(-36.5, 6, -24)
+material = SubResource("StructureMat")
+
+[node name="NorthEast" type="CSGCylinder3D" parent="FieldFloodlights"]
+radius = 0.35
+height = 12
+sides = 12
+position = Vector3(36.5, 6, -24)
+material = SubResource("StructureMat")
+
+[node name="SouthWest" type="CSGCylinder3D" parent="FieldFloodlights"]
+radius = 0.35
+height = 12
+sides = 12
+position = Vector3(-36.5, 6, 24)
+material = SubResource("StructureMat")
+
+[node name="SouthEast" type="CSGCylinder3D" parent="FieldFloodlights"]
+radius = 0.35
+height = 12
+sides = 12
+position = Vector3(36.5, 6, 24)
+material = SubResource("StructureMat")

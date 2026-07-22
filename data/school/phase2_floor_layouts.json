@@ -24,9 +24,26 @@
     {"id":"gym_f2","scene":"res://scenes/school/floors/gym/Gym_2F.tscn","reference":"11_강당_2F.png","capture":"gym_f2","size":[1600,1040]}
   ],
   "building_transforms": {
-    "main": {"position":[0,0,-44.5],"rotation_y_degrees":0,"scale":[1,1,1]},
-    "annex": {"position":[-51.25,0,0],"rotation_y_degrees":90,"mapping":"image right = site north; image bottom = site east"},
-    "gym": {"position":[0,0,39],"scale":[1,1,-1],"mapping":"image bottom = site north; east/west unchanged"}
+    "main": {"position":[0,0,-54.0],"rotation_y_degrees":0,"scale":[1,1,1]},
+    "annex": {"position":[-69.1,0,-1.3],"rotation_y_degrees":90,"mapping":"image right = site north; image bottom = site east"},
+    "gym": {"position":[0,0,45.0],"scale":[1,1,-1],"mapping":"image bottom = site north; east/west unchanged"}
+  },
+  "reference_coordinate_transforms": {
+    "main": {
+      "reference_px_outer": [79.5,103.5,1919.5,879.5],
+      "local_m_outer": [-30.0,-9.25,30.0,9.25],
+      "formula": "x=(px-999.5)*60/1840; z=(py-491.5)*18.5/776"
+    },
+    "annex": {
+      "reference_px_outer": [79.5,103.5,1919.5,879.5],
+      "local_m_outer": [-26.0,-8.75,26.0,8.75],
+      "formula": "x=(px-999.5)*52/1840; z=(py-491.5)*17.5/776"
+    },
+    "gym": {
+      "reference_px_outer": [199.5,83.5,1399.5,963.5],
+      "local_m_outer": [-20.0,-13.0,20.0,13.0],
+      "formula": "x=(px-799.5)*40/1200; z=(py-523.5)*26/880"
+    }
   },
   "required_counts": {
     "floor_scenes": 11,
