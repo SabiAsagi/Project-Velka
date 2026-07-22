@@ -1,0 +1,38 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/characters/Player.tscn" id="1"]
+[ext_resource type="PackedScene" path="res://scenes/cameras/FollowCamera.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://scenes/ui/PrototypeHUD.tscn" id="4_hud"]
+
+[sub_resource type="Environment" id="Environment_prologue"]
+background_mode = 1
+background_color = Color(0.035, 0.045, 0.06, 1)
+ambient_light_source = 3
+ambient_light_color = Color(0.38, 0.45, 0.55, 1)
+ambient_light_energy = 0.45
+
+[node name="Prologue" type="Node3D"]
+
+[node name="Player" parent="." instance=ExtResource("1")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
+
+[node name="FollowCamera" parent="." node_paths=PackedStringArray("target") instance=ExtResource("2")]
+target = NodePath("../Player")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.707107, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707107, -0.5, 0.5, 0, 10, 0)
+light_energy = 1.15
+shadow_enabled = true
+
+[node name="FillLight" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0)
+light_color = Color(0.62, 0.76, 0.9, 1)
+light_energy = 0.65
+omni_range = 20.0
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_prologue")
+
+[node name="PrototypeHUD" parent="." node_paths=PackedStringArray("player") instance=ExtResource("4_hud")]
+player = NodePath("../Player")

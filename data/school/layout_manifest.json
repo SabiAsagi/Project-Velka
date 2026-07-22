@@ -1,0 +1,485 @@
+{
+  "schema_version": 2,
+  "phase": 0,
+  "status": "phase_0_complete_waiting_approval",
+  "source_documents": [
+    {
+      "path": "docs/05.챕터1_학교/학교_맵_Godot_Codex_구현_가이드.md",
+      "sha256": "5571a7d5e326530d32b47959b70b62b9201da1e68f11ea94aebda73efa2bafc4",
+      "read_success": true
+    },
+    {
+      "path": "docs/04.맵_및_환경/학교_맵_상세.md",
+      "sha256": "aac5a01460144cbdfa56b93296f21460a16197b2e876d0a2320e75c68c864f9f",
+      "read_success": true
+    }
+  ],
+  "source_priority": [
+    "12 PNG files: shape, position, order, doors, stairs, elevators and connections",
+    "학교_맵_상세.md: dimensions, use, counts and heights",
+    "학교_맵_Godot_Codex_구현_가이드.md: process, coordinate rules and validation"
+  ],
+  "coordinate_system": {
+    "unit_meters": 1.0,
+    "east_axis": "+X",
+    "west_axis": "-X",
+    "north_axis": "-Z",
+    "south_axis": "+Z",
+    "up_axis": "+Y",
+    "origin_anchor": {
+      "name": "athletic_field_center",
+      "position": { "x": 0.0, "y": 0.0, "z": 0.0 },
+      "alignment": "main_entrance_and_assembly_podium_centerline_use_x_0"
+    },
+    "floor_interval_m": 3.8,
+    "snap_m": {
+      "building_and_room_boundaries": 0.5,
+      "furniture_and_props": 0.25
+    }
+  },
+  "reference_files": [
+    {
+      "index": 0,
+      "file_name": "00_전체_배치.png",
+      "path": "docs/맵 레퍼런스/학교/00_전체_배치.png",
+      "scope": "site",
+      "scene_target": "SchoolMap.tscn",
+      "pixel_size": { "width": 1472, "height": 1320 },
+      "guide_declared_pixel_size": { "width": 1600, "height": 1290 },
+      "matches_guide_declared_size": false,
+      "canonical_user_confirmed": true,
+      "canonical_confirmation": "The user explicitly identified the current file as the final site plan on 2026-07-22.",
+      "sha256": "39a33a062579ff9978de0dcbf7ab0a42a207daf0bfbaaf9d48620606f2a49523",
+      "read_success": true,
+      "edge_directions": { "top": "north", "right": "east", "bottom": "south", "left": "west" },
+      "site_transform": "none"
+    },
+    {
+      "index": 1,
+      "file_name": "01_본관_B1.png",
+      "path": "docs/맵 레퍼런스/학교/01_본관_B1.png",
+      "scope": "main_b1",
+      "scene_target": "Main_B1.tscn",
+      "pixel_size": { "width": 2160, "height": 1000 },
+      "guide_declared_pixel_size": { "width": 2160, "height": 1000 },
+      "matches_guide_declared_size": true,
+      "sha256": "4c73801aae541b1dd79f6cab04a5c4d779af1f3121371f3eab34344594e4318b",
+      "read_success": true,
+      "edge_directions": { "top": "north", "right": "east", "bottom": "south", "left": "west" },
+      "site_transform": "none"
+    },
+    {
+      "index": 2,
+      "file_name": "02_본관_1F.png",
+      "path": "docs/맵 레퍼런스/학교/02_본관_1F.png",
+      "scope": "main_f1",
+      "scene_target": "Main_F1.tscn",
+      "pixel_size": { "width": 2160, "height": 1000 },
+      "guide_declared_pixel_size": { "width": 2160, "height": 1000 },
+      "matches_guide_declared_size": true,
+      "sha256": "84f5b06629622680640184ce95bb834f588494cf576ac60375dd1b7eec293552",
+      "read_success": true,
+      "edge_directions": { "top": "north", "right": "east", "bottom": "south", "left": "west" },
+      "site_transform": "none"
+    },
+    {
+      "index": 3,
+      "file_name": "03_본관_2F.png",
+      "path": "docs/맵 레퍼런스/학교/03_본관_2F.png",
+      "scope": "main_f2",
+      "scene_target": "Main_F2.tscn",
+      "pixel_size": { "width": 2160, "height": 1000 },
+      "guide_declared_pixel_size": { "width": 2160, "height": 1000 },
+      "matches_guide_declared_size": true,
+      "sha256": "77663e0d8e93c55b280ef7c9c201ef5925ddbc0c83c473d69faaf980a75cfa89",
+      "read_success": true,
+      "edge_directions": { "top": "north", "right": "east", "bottom": "south", "left": "west" },
+      "site_transform": "none"
+    },
+    {
+      "index": 4,
+      "file_name": "04_본관_3F.png",
+      "path": "docs/맵 레퍼런스/학교/04_본관_3F.png",
+      "scope": "main_f3",
+      "scene_target": "Main_F3.tscn",
+      "pixel_size": { "width": 2160, "height": 1000 },
+      "guide_declared_pixel_size": { "width": 2160, "height": 1000 },
+      "matches_guide_declared_size": true,
+      "sha256": "6875b0528a8a9a97325e57d21184a2ab9209736373d4f0377061abe3e20139b7",
+      "read_success": true,
+      "edge_directions": { "top": "north", "right": "east", "bottom": "south", "left": "west" },
+      "site_transform": "none"
+    },
+    {
+      "index": 5,
+      "file_name": "05_본관_4F.png",
+      "path": "docs/맵 레퍼런스/학교/05_본관_4F.png",
+      "scope": "main_f4",
+      "scene_target": "Main_F4.tscn",
+      "pixel_size": { "width": 2160, "height": 1000 },
+      "guide_declared_pixel_size": { "width": 2160, "height": 1000 },
+      "matches_guide_declared_size": true,
+      "sha256": "18db6a4e57c375581bf1464bb9cb4c94017fcc79a8fa96b750394496896c8ed6",
+      "read_success": true,
+      "edge_directions": { "top": "north", "right": "east", "bottom": "south", "left": "west" },
+      "site_transform": "none"
+    },
+    {
+      "index": 6,
+      "file_name": "06_본관_옥상.png",
+      "path": "docs/맵 레퍼런스/학교/06_본관_옥상.png",
+      "scope": "main_roof",
+      "scene_target": "Main_Roof.tscn",
+      "pixel_size": { "width": 2160, "height": 1000 },
+      "guide_declared_pixel_size": { "width": 2160, "height": 1000 },
+      "matches_guide_declared_size": true,
+      "sha256": "9d01cee4d3d7face3c1cd04f4fe35513f0d389371376c0b53bc4e3e81db9af42",
+      "read_success": true,
+      "edge_directions": { "top": "north", "right": "east", "bottom": "south", "left": "west" },
+      "site_transform": "none"
+    },
+    {
+      "index": 7,
+      "file_name": "07_별관_1F.png",
+      "path": "docs/맵 레퍼런스/학교/07_별관_1F.png",
+      "scope": "annex_f1",
+      "scene_target": "Annex_F1.tscn",
+      "pixel_size": { "width": 2000, "height": 1000 },
+      "guide_declared_pixel_size": { "width": 2000, "height": 1000 },
+      "matches_guide_declared_size": true,
+      "sha256": "0b7002bbd1474a1b72950d13738536ce824b72158939cc6716d000ff766ab1d3",
+      "read_success": true,
+      "edge_directions": { "top": "west", "right": "north", "bottom": "east_field_facing", "left": "south" },
+      "site_transform": "rotate_counterclockwise_90_degrees"
+    },
+    {
+      "index": 8,
+      "file_name": "08_별관_2F.png",
+      "path": "docs/맵 레퍼런스/학교/08_별관_2F.png",
+      "scope": "annex_f2",
+      "scene_target": "Annex_F2.tscn",
+      "pixel_size": { "width": 2000, "height": 1000 },
+      "guide_declared_pixel_size": { "width": 2000, "height": 1000 },
+      "matches_guide_declared_size": true,
+      "sha256": "b621127cf294f87cae1ba0e17a60efb499907a9943963a6f11164117a7d6cbd8",
+      "read_success": true,
+      "edge_directions": { "top": "west", "right": "north", "bottom": "east_field_facing", "left": "south" },
+      "site_transform": "rotate_counterclockwise_90_degrees"
+    },
+    {
+      "index": 9,
+      "file_name": "09_별관_3F.png",
+      "path": "docs/맵 레퍼런스/학교/09_별관_3F.png",
+      "scope": "annex_f3",
+      "scene_target": "Annex_F3.tscn",
+      "pixel_size": { "width": 2000, "height": 1000 },
+      "guide_declared_pixel_size": { "width": 2000, "height": 1000 },
+      "matches_guide_declared_size": true,
+      "sha256": "1b6b53aae0b774e284a7b021a57656bf7d37623a701be6bf225e19b425749cb8",
+      "read_success": true,
+      "edge_directions": { "top": "west", "right": "north", "bottom": "east_field_facing", "left": "south" },
+      "site_transform": "rotate_counterclockwise_90_degrees"
+    },
+    {
+      "index": 10,
+      "file_name": "10_강당_1F.png",
+      "path": "docs/맵 레퍼런스/학교/10_강당_1F.png",
+      "scope": "gym_f1",
+      "scene_target": "Gym_F1.tscn",
+      "pixel_size": { "width": 1600, "height": 1120 },
+      "guide_declared_pixel_size": { "width": 1600, "height": 1120 },
+      "matches_guide_declared_size": true,
+      "sha256": "42594868adaa0dc24ee70aaf7a0b8cdee3095981ccd0b9d89c592dcfa9f70824",
+      "read_success": true,
+      "edge_directions": { "top": "south_stage", "right": "east", "bottom": "north_main_entrance", "left": "west" },
+      "site_transform": "invert_north_south_axis_without_swapping_east_west"
+    },
+    {
+      "index": 11,
+      "file_name": "11_강당_2F.png",
+      "path": "docs/맵 레퍼런스/학교/11_강당_2F.png",
+      "scope": "gym_f2",
+      "scene_target": "Gym_F2.tscn",
+      "pixel_size": { "width": 1600, "height": 1120 },
+      "guide_declared_pixel_size": { "width": 1600, "height": 1120 },
+      "matches_guide_declared_size": true,
+      "sha256": "aff45339df383ef7eb25bc1e82a8c254ef3bb8674c74ec80ec6e8256210ed040",
+      "read_success": true,
+      "edge_directions": { "top": "south_stage", "right": "east", "bottom": "north_main_entrance", "left": "west" },
+      "site_transform": "invert_north_south_axis_without_swapping_east_west"
+    }
+  ],
+  "site": {
+    "dimensions_m": { "east_west": 190.0, "north_south": 140.0 },
+    "athletic_field_dimensions_m": { "east_west": 70.0, "north_south": 45.0 },
+    "ground_levels_y_m": {
+      "field_annex_gym_and_basketball": 0.0,
+      "main_building_f1_plateau": 3.8
+    },
+    "building_placement": {
+      "main": "north",
+      "annex": "west_of_field_with_long_axis_north_south",
+      "gym": "south_center",
+      "athletic_field": "center"
+    },
+    "fixed_facilities": [
+      "main-building rear parking lot",
+      "north rear gate and centered vehicle approach",
+      "northeast bicycle racks behind main building",
+      "main-building south entrances: west, center and east",
+      "main grandstand with stairs only at west and east ends",
+      "central assembly podium and field-facing undercroft storage",
+      "continuous 3m front student path",
+      "east ramp between field level and main-building plateau",
+      "annex west rest garden and non-dead-end walking trail",
+      "east main gate, school road, spawn, entrance plaza and guardhouse",
+      "main-gate garden and horticulture plots",
+      "four field-corner floodlight towers",
+      "west and east 28m x 15m basketball courts",
+      "two basketball spectator stands and south flowerbed/tree strips",
+      "two 12m x 16m outdoor fitness areas",
+      "continuous south athletic-zone walkways",
+      "north and west forest, slope and drainage boundary"
+    ],
+    "prohibited_changes": [
+      "rotate_or_mirror_site",
+      "add_paths_to_main_building_east_or_west_sides",
+      "remove_rear_parking",
+      "remove_any_main_front_entrance",
+      "convert_podium_to_stairs",
+      "add_annex_center_stair",
+      "remove_annex_elevator",
+      "connect_main_f2_to_annex_f2",
+      "place_gym_east_of_field",
+      "add_gym_south_external_entrance"
+    ]
+  },
+  "buildings": {
+    "main": {
+      "name_ko": "본관",
+      "dimensions_m": { "east_west": 60.0, "north_south": 18.5 },
+      "levels": ["B1", "1F", "2F", "3F", "4F", "Roof"],
+      "floor_plan_count_including_roof": 6,
+      "orientation": "image_top_is_north",
+      "position_on_site": "north"
+    },
+    "annex": {
+      "name_ko": "별관",
+      "dimensions_m": { "long_axis_north_south": 52.0, "short_axis_east_west": 17.5 },
+      "levels": ["1F", "2F", "3F"],
+      "floor_plan_count": 3,
+      "orientation": "image_right_is_site_north_and_image_bottom_is_site_east",
+      "position_on_site": "west_of_field"
+    },
+    "gym": {
+      "name_ko": "강당",
+      "dimensions_m": { "east_west": 40.0, "north_south": 26.0 },
+      "levels": ["1F", "2F"],
+      "floor_plan_count": 2,
+      "orientation": "image_bottom_is_site_north_and_image_top_is_site_south",
+      "position_on_site": "south_center"
+    }
+  },
+  "floors": {
+    "main_b1": {
+      "building": "main", "level": "B1", "floor_y_m": 0.0, "reference": "01_본관_B1.png", "order_frame": "west_to_east",
+      "north_order": ["좌측 계단", "전기실", "시설관리 창고", "중앙 계단", "엘리베이터", "소방펌프실·배관실", "폐기물 임시보관실", "우측 계단"],
+      "south_order": ["구 도서관", "기록 보관실", "창고", "보일러실"]
+    },
+    "main_f1": {
+      "building": "main", "level": "1F", "floor_y_m": 3.8, "reference": "02_본관_1F.png", "order_frame": "west_to_east",
+      "north_order": ["좌측 계단", "여자 탈의실", "여자 화장실", "청소도구함", "남자 화장실", "남자 탈의실", "중앙 계단", "엘리베이터", "경비실", "학생회실", "우측 계단"],
+      "south_order": ["행정실", "교무실", "교장실", "중앙 로비·정문 현관", "보건실", "방송실"]
+    },
+    "main_f2": {
+      "building": "main", "level": "2F", "floor_y_m": 7.6, "reference": "03_본관_2F.png", "order_frame": "west_to_east",
+      "north_order": ["좌측 계단", "여자 탈의실", "여자 화장실", "청소도구함", "남자 화장실", "남자 탈의실", "중앙 계단", "엘리베이터", "일반 동아리실 1", "일반 동아리실 2", "우측 계단"],
+      "south_order": ["1-1 교실", "1-2 교실", "1-3 교실", "자습실", "1-4 교실", "1-5 교실", "1-6 교실"],
+      "west_end_connection": "main_annex_skybridge"
+    },
+    "main_f3": {
+      "building": "main", "level": "3F", "floor_y_m": 11.4, "reference": "04_본관_3F.png", "order_frame": "west_to_east",
+      "north_order": ["좌측 계단", "여자 탈의실", "여자 화장실", "청소도구함", "남자 화장실", "남자 탈의실", "중앙 계단", "엘리베이터", "일반 동아리실 1", "일반 동아리실 2", "우측 계단"],
+      "south_order": ["2-1 교실", "2-2 교실", "2-3 교실", "자습실", "2-4 교실", "2-5 교실", "2-6 교실"],
+      "east_end_normal_state": "sealed_wall",
+      "east_end_anomaly_state": "extend_east_4_to_6m_then_turn_south_to_nonexistent_classroom",
+      "nonexistent_classroom_directly_connected_to_2_6": false
+    },
+    "main_f4": {
+      "building": "main", "level": "4F", "floor_y_m": 15.2, "reference": "05_본관_4F.png", "order_frame": "west_to_east",
+      "north_order": ["좌측 계단", "여자 탈의실", "여자 화장실", "청소도구함", "남자 화장실", "남자 탈의실", "중앙 계단", "엘리베이터", "일반 동아리실 1", "일반 동아리실 2", "우측 계단"],
+      "south_order": ["3-1 교실", "3-2 교실", "3-3 교실", "자습실", "3-4 교실", "3-5 교실", "3-6 교실"],
+      "study_cubicle_count": 24,
+      "roof_connection": "central_stair_only"
+    },
+    "main_roof": {
+      "building": "main", "level": "Roof", "floor_y_m": 19.0, "floor_y_source": "derived_from_main_f4_plus_floor_interval", "reference": "06_본관_옥상.png",
+      "northwest": ["실외기·환기 설비구역"],
+      "north_center": ["옥상 출입실", "중앙 계단 연결", "평소 잠긴 출입문"],
+      "northeast": ["저상 물탱크", "배관", "안테나 설비구역"],
+      "south_order_west_to_east": ["좌측 옥상정원", "중앙 옥상정원·원형 중심 구조", "우측 옥상정원"],
+      "elevator_connected": false
+    },
+    "annex_f1": {
+      "building": "annex", "level": "1F", "floor_y_m": 0.0, "reference": "07_별관_1F.png",
+      "image_left_to_right_maps_to_site": "south_to_north", "image_top_row_site_side": "west", "image_bottom_row_site_side": "east_field_facing",
+      "support_order_image_left_to_right": ["좌측 계단", "영양교사실", "급식행정실", "열린 급식 안내 공간", "여자 화장실", "청소도구함", "남자 화장실", "엘리베이터", "매점", "매점 창고", "우측 계단"],
+      "large_space_order_image_left_to_right": ["급식실", "조리실·세척실·직원 휴게실", "조리 식품 창고"],
+      "cafeteria_seats": { "students": 480, "staff": 24, "total": 504 }
+    },
+    "annex_f2": {
+      "building": "annex", "level": "2F", "floor_y_m": 3.8, "reference": "08_별관_2F.png",
+      "image_left_to_right_maps_to_site": "south_to_north", "image_top_row_site_side": "west", "image_bottom_row_site_side": "east_field_facing",
+      "support_order_image_left_to_right": ["좌측 계단", "음악 준비실", "미술 준비실", "작품 전시 공간", "여자 화장실", "청소도구함", "남자 화장실", "엘리베이터", "공동 과학 준비실", "컴퓨터 기자재실", "우측 계단"],
+      "special_room_order_image_left_to_right": ["음악실", "미술실", "제1과학실", "제2과학실", "컴퓨터실"],
+      "center_stair_count": 0
+    },
+    "annex_f3": {
+      "building": "annex", "level": "3F", "floor_y_m": 7.6, "reference": "09_별관_3F.png",
+      "image_left_to_right_maps_to_site": "south_to_north", "image_top_row_site_side": "west", "image_bottom_row_site_side": "east_field_facing",
+      "support_order_image_left_to_right": ["좌측 계단", "사서실", "도서 정리실", "사물함·반납 공간", "여자 화장실", "청소도구함", "남자 화장실", "엘리베이터", "보존서고", "복사·정보검색실", "우측 계단"],
+      "large_space_order_image_left_to_right": ["도서관", "그룹학습실"],
+      "image_right_site_north_end_connection": "main_annex_skybridge"
+    },
+    "gym_f1": {
+      "building": "gym", "level": "1F", "floor_y_m": 0.0, "reference": "10_강당_1F.png",
+      "image_top_site_side": "south", "image_bottom_site_side": "north",
+      "south_order_west_to_east": ["소품·의상 준비실", "무대", "음향·조명·무대장치실"],
+      "center": ["마룻바닥", "농구·배구 코트"],
+      "north_order_west_to_east": ["체육기구 창고", "서측 2F 계단·화장실", "북측 주출입홀", "동측 2F 계단·화장실", "행사물품 창고", "휠체어 관람 구역·강당 관리실"],
+      "south_external_entrance_count": 0
+    },
+    "gym_f2": {
+      "building": "gym", "level": "2F", "floor_y_m": 4.0, "floor_y_approximate": true, "reference": "11_강당_2F.png",
+      "south_order_west_to_east": ["소품실 상부", "무대 상부·조명·스크린·커튼 설비", "장치실 상부"],
+      "north_order_west_to_east": ["촬영·관리대", "계단", "카메라대", "방송부스", "카메라대", "계단"],
+      "side_seating": ["서측 관람석", "동측 관람석"],
+      "seating_shape": "U_shape_open_to_south_stage", "center_open_void": true,
+      "external_emergency_exits": ["west", "east"]
+    }
+  },
+  "rooms": {
+    "main_b1": { "north": ["전기실", "시설관리 창고", "소방펌프실·배관실", "폐기물 임시보관실"], "south": ["구 도서관", "기록 보관실", "창고", "보일러실"] },
+    "main_f1": { "north": ["여자 탈의실", "여자 화장실", "청소도구함", "남자 화장실", "남자 탈의실", "경비실", "학생회실"], "south": ["행정실", "교무실", "교장실", "중앙 로비·정문 현관", "보건실", "방송실"] },
+    "main_f2": { "north": ["여자 탈의실", "여자 화장실", "청소도구함", "남자 화장실", "남자 탈의실", "일반 동아리실 1", "일반 동아리실 2"], "south": ["1-1 교실", "1-2 교실", "1-3 교실", "자습실", "1-4 교실", "1-5 교실", "1-6 교실"] },
+    "main_f3": { "north": ["여자 탈의실", "여자 화장실", "청소도구함", "남자 화장실", "남자 탈의실", "일반 동아리실 1", "일반 동아리실 2"], "south": ["2-1 교실", "2-2 교실", "2-3 교실", "자습실", "2-4 교실", "2-5 교실", "2-6 교실"], "conditional": ["존재하지 않는 교실"] },
+    "main_f4": { "north": ["여자 탈의실", "여자 화장실", "청소도구함", "남자 화장실", "남자 탈의실", "일반 동아리실 1", "일반 동아리실 2"], "south": ["3-1 교실", "3-2 교실", "3-3 교실", "자습실", "3-4 교실", "3-5 교실", "3-6 교실"] },
+    "main_roof": { "zones": ["실외기·환기 설비구역", "옥상 출입실", "저상 물탱크·배관·안테나 설비구역", "좌측 옥상정원", "중앙 옥상정원", "우측 옥상정원"] },
+    "annex_f1": { "support_image_left_to_right": ["영양교사실", "급식행정실", "열린 급식 안내 공간", "여자 화장실", "청소도구함", "남자 화장실", "매점", "매점 창고"], "large_image_left_to_right": ["급식실", "조리실", "세척실", "직원 휴게실", "조리 식품 창고"] },
+    "annex_f2": { "support_image_left_to_right": ["음악 준비실", "미술 준비실", "작품 전시 공간", "여자 화장실", "청소도구함", "남자 화장실", "공동 과학 준비실", "컴퓨터 기자재실"], "special_image_left_to_right": ["음악실", "미술실", "제1과학실", "제2과학실", "컴퓨터실"] },
+    "annex_f3": { "support_image_left_to_right": ["사서실", "도서 정리실", "사물함·반납 공간", "여자 화장실", "청소도구함", "남자 화장실", "보존서고", "복사·정보검색실"], "large_image_left_to_right": ["도서관", "그룹학습실"] },
+    "gym_f1": { "south": ["소품·의상 준비실", "무대", "음향·조명·무대장치실"], "center": ["마룻바닥"], "north": ["체육기구 창고", "서측 화장실", "북측 주출입홀", "동측 화장실", "행사물품 창고", "강당 관리실", "휠체어 관람 구역"] },
+    "gym_f2": { "south": ["소품실 상부", "무대 상부", "장치실 상부"], "north": ["촬영·관리대", "카메라대 서", "방송부스", "카메라대 동"], "other": ["서측 관람석", "북측 관람석", "동측 관람석", "중앙 개방부"] }
+  },
+  "entrances": [
+    { "id": "site_main_gate", "kind": "site_gate", "site_side": "east" },
+    { "id": "site_rear_gate", "kind": "site_gate", "site_side": "north" },
+    { "id": "main_f1_south_west", "kind": "building_external", "floor": "main_f1", "site_side": "south", "position": "west_end" },
+    { "id": "main_f1_south_center", "kind": "building_external", "floor": "main_f1", "site_side": "south", "position": "center_lobby" },
+    { "id": "main_f1_south_east", "kind": "building_external", "floor": "main_f1", "site_side": "south", "position": "east_end" },
+    { "id": "main_f1_north_rear", "kind": "building_external", "floor": "main_f1", "site_side": "north", "position": "center_behind_central_stair" },
+    { "id": "annex_f1_east_south_end", "kind": "building_external", "floor": "annex_f1", "site_side": "east", "position": "south_end", "use": "student_main_entrance" },
+    { "id": "annex_f1_east_north_end", "kind": "building_external", "floor": "annex_f1", "site_side": "east", "position": "north_end", "use": "emergency_and_food_delivery" },
+    { "id": "gym_f1_north_main", "kind": "building_external", "floor": "gym_f1", "site_side": "north", "position": "center" },
+    { "id": "gym_f1_west", "kind": "building_external", "floor": "gym_f1", "site_side": "west" },
+    { "id": "gym_f1_east", "kind": "building_external", "floor": "gym_f1", "site_side": "east" },
+    { "id": "gym_f2_west_emergency", "kind": "emergency_exit", "floor": "gym_f2", "site_side": "west" },
+    { "id": "gym_f2_east_emergency", "kind": "emergency_exit", "floor": "gym_f2", "site_side": "east" }
+  ],
+  "stairs": [
+    { "id": "main_west_stair", "kind": "vertical_core", "building": "main", "position": "west", "serves": ["B1", "1F", "2F", "3F", "4F"] },
+    { "id": "main_center_stair", "kind": "vertical_core", "building": "main", "position": "center", "serves": ["B1", "1F", "2F", "3F", "4F", "Roof"] },
+    { "id": "main_east_stair", "kind": "vertical_core", "building": "main", "position": "east", "serves": ["B1", "1F", "2F", "3F", "4F"] },
+    { "id": "annex_south_end_stair", "kind": "vertical_core", "building": "annex", "image_position": "left", "site_position": "south_end", "serves": ["1F", "2F", "3F"] },
+    { "id": "annex_north_end_stair", "kind": "vertical_core", "building": "annex", "image_position": "right", "site_position": "north_end", "serves": ["1F", "2F", "3F"] },
+    { "id": "gym_west_internal_stair", "kind": "vertical_core", "building": "gym", "serves": ["1F", "2F"] },
+    { "id": "gym_east_internal_stair", "kind": "vertical_core", "building": "gym", "serves": ["1F", "2F"] },
+    { "id": "gym_west_stage_stair", "kind": "stage_access", "building": "gym" },
+    { "id": "gym_east_stage_stair", "kind": "stage_access", "building": "gym" },
+    { "id": "gym_west_external_emergency_stair", "kind": "external_emergency", "building": "gym" },
+    { "id": "gym_east_external_emergency_stair", "kind": "external_emergency", "building": "gym" },
+    { "id": "main_grandstand_west_stair", "kind": "site_level_change", "serves_y_m": [0.0, 3.8] },
+    { "id": "main_grandstand_east_stair", "kind": "site_level_change", "serves_y_m": [0.0, 3.8] }
+  ],
+  "elevators": [
+    { "id": "main_elevator", "building": "main", "count": 1, "serves": ["B1", "1F", "2F", "3F", "4F"], "serves_roof": false },
+    { "id": "annex_elevator", "building": "annex", "count": 1, "serves": ["1F", "2F", "3F"], "aligned_same_position": true },
+    { "id": "gym_elevator", "building": "gym", "count": 0, "serves": [] }
+  ],
+  "connections": [
+    {
+      "id": "main_annex_skybridge", "kind": "enclosed_skybridge",
+      "from": "main_f2_west_corridor_end", "to": "annex_f3_image_right_site_north_end",
+      "floor_y_m": 7.6, "path_from_main": ["west", "south"], "shape": "right_angle",
+      "must_not_connect_to": "annex_f2", "direction_status": "confirmed"
+    },
+    { "id": "main_stairs_vertical", "kind": "vertical", "members": ["main_west_stair", "main_center_stair", "main_east_stair"] },
+    { "id": "main_roof_access", "kind": "vertical", "from": "main_f4", "to": "main_roof", "via": "main_center_stair", "elevator_connected": false },
+    { "id": "annex_vertical", "kind": "vertical", "members": ["annex_south_end_stair", "annex_north_end_stair", "annex_elevator"] },
+    { "id": "gym_vertical", "kind": "vertical", "members": ["gym_west_internal_stair", "gym_east_internal_stair"] },
+    { "id": "main_plateau_west_access", "kind": "exterior_level_change", "via": "main_grandstand_west_stair", "from_y_m": 0.0, "to_y_m": 3.8 },
+    { "id": "main_plateau_east_stair_access", "kind": "exterior_level_change", "via": "main_grandstand_east_stair", "from_y_m": 0.0, "to_y_m": 3.8 },
+    { "id": "main_plateau_east_ramp_access", "kind": "exterior_ramp", "site_position": "east", "from_y_m": 0.0, "to_y_m": 3.8 },
+    { "id": "main_f1_health_annex_f2_science2", "kind": "anomaly_only", "normal_connection": false, "from": "main_f1_보건실", "to": "annex_f2_제2과학실" }
+  ],
+  "required_counts": {
+    "input_documents": 2,
+    "reference_pngs": 12,
+    "site_reference_pngs": 1,
+    "floor_plan_pngs_including_roof": 11,
+    "building_floor_plan_counts": { "main_including_roof": 6, "annex": 3, "gym": 2 },
+    "main_stair_cores": 3,
+    "main_stairs_reaching_roof": 1,
+    "annex_stair_cores": 2,
+    "annex_center_stairs": 0,
+    "gym_internal_interfloor_stairs": 2,
+    "gym_stage_access_stairs": 2,
+    "gym_external_emergency_stairs": 2,
+    "main_grandstand_end_stairs": 2,
+    "elevator_shafts_total": 2,
+    "main_elevators": 1,
+    "annex_elevators": 1,
+    "gym_elevators": 0,
+    "main_f1_external_entrances": 4,
+    "annex_f1_external_entrances": 2,
+    "gym_f1_external_entrances": 3,
+    "gym_f2_external_emergency_exits": 2,
+    "normal_building_external_entrances_total": 9,
+    "building_external_openings_including_gym_f2_emergency": 11,
+    "site_gates": 2,
+    "main_front_south_entrances": 3,
+    "main_general_classrooms_total": 18,
+    "main_general_classrooms_by_grade": { "grade_1": 6, "grade_2": 6, "grade_3": 6 },
+    "main_study_rooms": 3,
+    "main_f4_study_cubicles": 24,
+    "main_general_club_rooms": 6,
+    "main_rear_parking_lots": 1,
+    "main_grandstands": 1,
+    "assembly_podiums": 1,
+    "podium_under_storage_rooms": 1,
+    "annex_cafeteria_student_seats": 480,
+    "annex_cafeteria_staff_seats": 24,
+    "annex_cafeteria_total_seats": 504,
+    "annex_f2_special_classrooms": 5,
+    "basketball_courts": 2,
+    "basketball_spectator_stands": 2,
+    "outdoor_fitness_areas": 2,
+    "field_corner_floodlights": 4,
+    "gym_f2_seating_shape": "U_shape",
+    "gym_f2_center_open_voids": 1,
+    "main_roof_elevator_connections": 0,
+    "main_f2_to_annex_f2_connections": 0,
+    "main_f2_to_annex_f3_skybridges": 1
+  },
+  "resolved_reference_issues": [
+    "Current 00_전체_배치.png is 1472x1320 rather than the revised guide table's 1600x1290; direct user confirmation makes the current PNG canonical.",
+    "The canonical detail document name is 학교_맵_상세.md.",
+    "Annex F1 south-end entrance is the student entrance and north-end entrance is emergency/delivery.",
+    "Annex F3 skybridge endpoint is the real north end.",
+    "Main grandstand center is an assembly podium with undercroft storage, not a stair.",
+    "Main F4 study room has 24 cubicles.",
+    "No paths are added to the main building east or west sides.",
+    "World origin is the athletic-field center."
+  ],
+  "todo_confirm": []
+}

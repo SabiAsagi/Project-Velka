@@ -1,0 +1,34 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/characters/Player.gd" id="1"]
+[ext_resource type="Texture2D" path="res://assets/characters/placeholders/sabi_placeholder.svg" id="2_sabi"]
+[ext_resource type="Texture2D" path="res://assets/characters/placeholders/shamu_placeholder.svg" id="3_shamu"]
+[ext_resource type="Script" path="res://scripts/player/components/InteractionComponent.gd" id="4_interaction"]
+[ext_resource type="Script" path="res://scripts/player/components/StealthComponent.gd" id="5_stealth"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_player"]
+radius = 0.4
+height = 1.8
+
+[node name="Player" type="CharacterBody3D"]
+script = ExtResource("1")
+sabi_texture = ExtResource("2_sabi")
+shamu_texture = ExtResource("3_shamu")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+shape = SubResource("CapsuleShape3D_player")
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+texture = ExtResource("2_sabi")
+pixel_size = 0.0035
+billboard = 2
+alpha_cut = 1
+shaded = true
+
+[node name="InteractionComponent" type="Node3D" parent="."]
+script = ExtResource("4_interaction")
+
+[node name="StealthComponent" type="Node" parent="."]
+script = ExtResource("5_stealth")

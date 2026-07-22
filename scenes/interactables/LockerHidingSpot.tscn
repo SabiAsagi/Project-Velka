@@ -1,0 +1,38 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/interactables/HidingSpot.gd" id="1"]
+
+[sub_resource type="StandardMaterial3D" id="Material_locker"]
+albedo_color = Color(0.31, 0.39, 0.43, 1)
+metallic = 0.25
+roughness = 0.65
+
+[sub_resource type="BoxMesh" id="Mesh_locker"]
+material = SubResource("Material_locker")
+size = Vector3(1.4, 2.2, 1.2)
+
+[sub_resource type="BoxShape3D" id="Shape_locker"]
+size = Vector3(1.4, 2.2, 1.2)
+
+[node name="LockerHidingSpot" type="Node3D"]
+script = ExtResource("1")
+interaction_prompt = "캐비닛에 숨기"
+
+[node name="LockerBody" type="StaticBody3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="LockerBody"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 0)
+mesh = SubResource("Mesh_locker")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="LockerBody"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 0)
+shape = SubResource("Shape_locker")
+
+[node name="InteractionPoint" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0.75)
+
+[node name="HiddenPoint" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
+
+[node name="ExitPoint" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 1.35)

@@ -1,18 +1,17 @@
-extends Node3D
+extends CharacterBody3D
 
 class_name AnomalyBase
 
-# 괴이의 기본 행동을 관리하는 클래스 (State Machine 기반)
-
 enum AnomalyState { IDLE, PATROL, CHASE, OBSERVE, ATTACK }
 
+signal state_changed(previous_state: AnomalyState, new_state: AnomalyState)
+
+@export var target_player: CharacterBody3D
+
 var current_state: AnomalyState = AnomalyState.IDLE
-var target_player: Node3D = null
 
-func _ready():
-	pass
 
-func _process(delta):
+func _physics_process(delta: float) -> void:
 	match current_state:
 		AnomalyState.IDLE:
 			_process_idle(delta)
@@ -25,19 +24,34 @@ func _process(delta):
 		AnomalyState.ATTACK:
 			_process_attack(delta)
 
-# 상태별 처리 함수 (하위 클래스에서 오버라이드)
-func _process_idle(delta):
+
+func set_state(new_state: AnomalyState) -> void:
+	if current_state == new_state:
+		return
+	var previous_state := current_state
+	current_state = new_state
+	state_changed.emit(previous_state, current_state)
+
+
+func is_target_hidden() -> bool:
+	return target_player != null and bool(target_player.get("is_hidden"))
+
+
+func _process_idle(_delta: float) -> void:
 	pass
 
-func _process_patrol(delta):
+
+func _process_patrol(_delta: float) -> void:
 	pass
 
-func _process_chase(delta):
+
+func _process_chase(_delta: float) -> void:
 	pass
 
-func _process_observe(delta):
-	# 시선, 소리 규칙 등을 확인하는 상태
+
+func _process_observe(_delta: float) -> void:
 	pass
 
-func _process_attack(delta):
+
+func _process_attack(_delta: float) -> void:
 	pass

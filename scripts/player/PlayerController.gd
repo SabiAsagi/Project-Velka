@@ -6,9 +6,9 @@ class_name PlayerController
 var character_type: int = 0 # 0 = SABI, 1 = SHAMU
 var is_active: bool = false
 
-# 공포/심박수 스탯
-var heart_rate: float = 60.0
-var fear_level: float = 0.0
+# 심박수/정신력 스탯
+var heart_rate: float = 78.0
+var mental_strength: float = 100.0
 
 func _ready():
 	# GameManager의 싱글톤 시그널을 연결
