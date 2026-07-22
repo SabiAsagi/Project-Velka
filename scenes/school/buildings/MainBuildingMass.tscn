@@ -15,46 +15,47 @@ metadata/_edit_lock_ = true
 use_collision = true
 
 [node name="BuildingEnvelope" type="CSGBox3D" parent="Mass"]
-size = Vector3(60, 15.2, 18.5)
+size = Vector3(79.9846, 15.2, 17.4349)
 position = Vector3(0, 7.6, 0)
 material = SubResource("MainGray")
+metadata/reference_bbox_px = Vector4(508.5, 164.5, 1054.5, 298.5)
 
 [node name="WestFrontEntranceCut" type="CSGBox3D" parent="Mass"]
 operation = 2
 size = Vector3(3, 2.8, 1.2)
-position = Vector3(-28.043, 1.4, 9.25)
+position = Vector3(-30.47, 1.4, 8.7175)
 
 [node name="CenterFrontEntranceCut" type="CSGBox3D" parent="Mass"]
 operation = 2
 size = Vector3(4, 3, 1.2)
-position = Vector3(0, 1.5, 9.25)
+position = Vector3(0, 1.5, 8.7175)
 
 [node name="EastFrontEntranceCut" type="CSGBox3D" parent="Mass"]
 operation = 2
 size = Vector3(3, 2.8, 1.2)
-position = Vector3(28.043, 1.4, 9.25)
+position = Vector3(30.47, 1.4, 8.7175)
 
 [node name="RearEntranceCut" type="CSGBox3D" parent="Mass"]
 operation = 2
 size = Vector3(3, 2.8, 1.2)
-position = Vector3(0, 1.4, -9.25)
+position = Vector3(0, 1.4, -8.7175)
 
 [node name="WestFrontEntrance" type="CSGBox3D" parent="."]
 size = Vector3(2.6, 2.5, 0.18)
-position = Vector3(-28.043, 1.25, 9.17)
+position = Vector3(-30.47, 1.25, 8.63)
 material = SubResource("DoorGray")
 
 [node name="CenterFrontEntrance" type="CSGBox3D" parent="."]
 size = Vector3(3.6, 2.7, 0.18)
-position = Vector3(0, 1.35, 9.17)
+position = Vector3(0, 1.35, 8.63)
 material = SubResource("DoorGray")
 
 [node name="EastFrontEntrance" type="CSGBox3D" parent="."]
 size = Vector3(2.6, 2.5, 0.18)
-position = Vector3(28.043, 1.25, 9.17)
+position = Vector3(30.47, 1.25, 8.63)
 material = SubResource("DoorGray")
 
 [node name="RearEntrance" type="CSGBox3D" parent="."]
 size = Vector3(2.6, 2.5, 0.18)
-position = Vector3(0, 1.25, -9.17)
+position = Vector3(0, 1.25, -8.63)
 material = SubResource("DoorGray")

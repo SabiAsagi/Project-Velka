@@ -29,7 +29,7 @@ metadata/north_order_csv = "좌측 계단|여자 탈의실|여자 화장실|청�
 metadata/south_order_csv = "3-1 교실|3-2 교실|3-3 교실|자습실|3-4 교실|3-5 교실|3-6 교실"
 metadata/stair_count = 3
 metadata/elevator_count = 1
-metadata/door_count = 22
+metadata/door_count = 23
 metadata/floor_y_m = 15.2
 metadata/roof_connection = "central_stair_only"
 
@@ -117,46 +117,49 @@ material = ExtResource("4_wall")
 [node name="Doors" type="Node3D" parent="."]
 
 [node name="SouthRoomDoors" type="Node3D" parent="Doors"]
-metadata/marker_count = 13
+metadata/marker_count = 14
 
 [node name="3-1 교실" parent="Doors/SouthRoomDoors" instance=ExtResource("7_marker")]
-position = Vector3(-28.777, 0.14, -1.24)
+position = Vector3(-29, 0.14, -1.24)
 
 [node name="3-1 교실 동측문" parent="Doors/SouthRoomDoors" instance=ExtResource("7_marker")]
-position = Vector3(-23.054, 0.14, -1.24)
+position = Vector3(-22.832, 0.14, -1.24)
 
 [node name="3-2 교실" parent="Doors/SouthRoomDoors" instance=ExtResource("7_marker")]
-position = Vector3(-20.625, 0.14, -1.24)
+position = Vector3(-20.848, 0.14, -1.24)
 
 [node name="3-2 교실 동측문" parent="Doors/SouthRoomDoors" instance=ExtResource("7_marker")]
-position = Vector3(-14.886, 0.14, -1.24)
+position = Vector3(-14.664, 0.14, -1.24)
 
 [node name="3-3 교실" parent="Doors/SouthRoomDoors" instance=ExtResource("7_marker")]
-position = Vector3(-12.44, 0.14, -1.24)
+position = Vector3(-12.663, 0.14, -1.24)
 
 [node name="3-3 교실 동측문" parent="Doors/SouthRoomDoors" instance=ExtResource("7_marker")]
-position = Vector3(-6.734, 0.14, -1.24)
+position = Vector3(-6.511, 0.14, -1.24)
 
-[node name="자습실" parent="Doors/SouthRoomDoors" instance=ExtResource("7_marker")]
-position = Vector3(3.832, 0.14, -1.24)
+[node name="자습실 서측문" parent="Doors/SouthRoomDoors" instance=ExtResource("7_marker")]
+position = Vector3(-4.526, 0.14, -1.24)
+
+[node name="자습실 동측문" parent="Doors/SouthRoomDoors" instance=ExtResource("7_marker")]
+position = Vector3(4.526, 0.14, -1.24)
 
 [node name="3-4 교실" parent="Doors/SouthRoomDoors" instance=ExtResource("7_marker")]
-position = Vector3(6.734, 0.14, -1.24)
+position = Vector3(6.511, 0.14, -1.24)
 
 [node name="3-4 교실 동측문" parent="Doors/SouthRoomDoors" instance=ExtResource("7_marker")]
-position = Vector3(12.44, 0.14, -1.24)
+position = Vector3(12.663, 0.14, -1.24)
 
 [node name="3-5 교실" parent="Doors/SouthRoomDoors" instance=ExtResource("7_marker")]
-position = Vector3(14.886, 0.14, -1.24)
+position = Vector3(14.664, 0.14, -1.24)
 
 [node name="3-5 교실 동측문" parent="Doors/SouthRoomDoors" instance=ExtResource("7_marker")]
-position = Vector3(20.625, 0.14, -1.24)
+position = Vector3(20.848, 0.14, -1.24)
 
 [node name="3-6 교실" parent="Doors/SouthRoomDoors" instance=ExtResource("7_marker")]
-position = Vector3(23.054, 0.14, -1.24)
+position = Vector3(22.832, 0.14, -1.24)
 
 [node name="3-6 교실 동측문" parent="Doors/SouthRoomDoors" instance=ExtResource("7_marker")]
-position = Vector3(28.777, 0.14, -1.24)
+position = Vector3(29, 0.14, -1.24)
 
 [node name="CentralRoofAccessMarker" type="Marker3D" parent="."]
 position = Vector3(2.022, 3.8, -6.6275)

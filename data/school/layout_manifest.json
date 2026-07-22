@@ -479,7 +479,9 @@
     "Main grandstand center is an assembly podium with undercroft storage, not a stair.",
     "Main F4 study room has 24 cubicles.",
     "No paths are added to the main building east or west sides.",
-    "World origin is the athletic-field center."
+    "World origin is the athletic-field center.",
+    "Phase 1 exterior graybox now uses the final PNG extents and centers for the main building, annex, gym, field, roads, and exterior door markers.",
+    "Phase 2 review corrections open all stair fronts, normalize main-room door symmetry, repair Annex 1F/3F openings, and rebuild Gym 1F/2F circulation."
   ],
   "todo_confirm": [
     {
@@ -487,7 +489,7 @@
       "status": "open",
       "scope": "00_전체_배치.png",
       "detail": "The 190x140m site boundary and 70x45m athletic field cannot both be obtained from one global pixel-to-meter scale in the final schematic PNG.",
-      "implemented_policy": "Keep confirmed metric dimensions; take facility centers, topology, direction, and ordering from the PNG."
+      "implemented_policy": "Take final PNG extents, centers, topology, direction, roads, and door-marker positions as the implementation priority; retain confirmed metric dimensions as semantic references until this global scale conflict is confirmed."
     }
   ]
 }

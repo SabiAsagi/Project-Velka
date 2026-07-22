@@ -43,9 +43,17 @@ material = ExtResource("3_corridor")
 metadata/width_m = 3.0
 metadata/reference_pixel_span = Vector2(323.5, 439.5)
 
-[node name="NorthCorridorWall" type="CSGBox3D" parent="."]
-size = Vector3(59.5, 3.4, 0.15)
-position = Vector3(0, 1.7, -4.005)
+[node name="NorthCorridorWall" type="Node3D" parent="."]
+metadata/stair_openings = "west|center|east"
+
+[node name="WestToCenter" type="CSGBox3D" parent="NorthCorridorWall"]
+size = Vector3(22.695, 3.4, 0.15)
+position = Vector3(-13.3045, 1.7, -4.005)
+material = ExtResource("2_wall")
+
+[node name="CenterToEast" type="CSGBox3D" parent="NorthCorridorWall"]
+size = Vector3(18.652, 3.4, 0.15)
+position = Vector3(15.326, 1.7, -4.005)
 material = ExtResource("2_wall")
 
 [node name="SouthCorridorWall" type="CSGBox3D" parent="."]

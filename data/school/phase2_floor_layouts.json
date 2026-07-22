@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "phase": 2,
-  "status": "validated_complete_waiting_approval",
+  "status": "review_corrections_validated_waiting_approval",
   "coordinate_system": {
     "origin": "athletic_field_center",
     "east": "+X",
@@ -24,9 +24,9 @@
     {"id":"gym_f2","scene":"res://scenes/school/floors/gym/Gym_2F.tscn","reference":"11_강당_2F.png","capture":"gym_f2","size":[1600,1040]}
   ],
   "building_transforms": {
-    "main": {"position":[0,0,-54.0],"rotation_y_degrees":0,"scale":[1,1,1]},
-    "annex": {"position":[-69.1,0,-1.3],"rotation_y_degrees":90,"mapping":"image right = site north; image bottom = site east"},
-    "gym": {"position":[0,0,45.0],"scale":[1,1,-1],"mapping":"image bottom = site north; east/west unchanged"}
+    "main": {"position":[0,0,-54.4517],"rotation_y_degrees":0,"scale":[1,1,1]},
+    "annex": {"position":[-68.7047,0,-1.4963],"rotation_y_degrees":90,"mapping":"image right = site north; image bottom = site east"},
+    "gym": {"position":[0,0,44.2379],"scale":[1,1,-1],"mapping":"image bottom = site north; east/west unchanged"}
   },
   "reference_coordinate_transforms": {
     "main": {
@@ -66,6 +66,15 @@
     "skybridges_main_f2_to_annex_f3": 1,
     "skybridges_main_f2_to_annex_f2": 0,
     "gym_f2_central_voids": 1
+  },
+  "review_corrections": {
+    "stair_fronts": "open_without_added_wall_or_door",
+    "main_upper_room_door_markers_per_floor": 14,
+    "main_upper_room_doors": "two_per_main_room_and_exact_left_right_symmetry_using_annex_f2_science1_pattern",
+    "annex_f1": ["end entrance passages open", "cafeteria west wall", "food storage east wall", "cafeteria-kitchen door"],
+    "annex_f3": ["library middle door 2 removed", "library middle door 3 removed"],
+    "gym_f1": ["stage restored", "stage stairs inside stage band", "upper walls restored", "manager center wall removed", "stair-to-entrance-hall walls removed", "two toilet entrances"],
+    "gym_f2": ["two emergency exits aligned to exterior walls", "two external emergency stairs connected by landings"]
   },
   "connections": {
     "main_annex_skybridge": {"from":"main_f2","to":"annex_f3","floor_y_m":7.6},

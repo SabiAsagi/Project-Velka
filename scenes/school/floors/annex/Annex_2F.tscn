@@ -32,7 +32,7 @@ metadata/large_order_csv = "음악실|미술실|제1과학실|제2과학실|컴�
 metadata/stair_count = 2
 metadata/center_stair_count = 0
 metadata/elevator_count = 1
-metadata/door_count = 19
+metadata/door_count = 18
 metadata/floor_y_m = 3.8
 
 [node name="Shell" parent="." instance=ExtResource("1_shell")]
@@ -223,10 +223,7 @@ material = ExtResource("5_wall")
 
 [node name="SupportDoors" type="Node3D" parent="Doors"]
 position = Vector3(0, 0, -2.239)
-metadata/marker_count = 10
-
-[node name="좌측 계단" parent="Doors/SupportDoors" instance=ExtResource("8_marker")]
-position = Vector3(-23.5, 0.14, -1.55)
+metadata/marker_count = 9
 [node name="음악 준비실" parent="Doors/SupportDoors" instance=ExtResource("8_marker")]
 position = Vector3(-18.285, 0.14, -1.55)
 [node name="미술 준비실" parent="Doors/SupportDoors" instance=ExtResource("8_marker")]

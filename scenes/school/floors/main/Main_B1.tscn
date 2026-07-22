@@ -150,9 +150,14 @@ metadata/order_index = 3
 
 [node name="CorridorBoundaryWalls" type="Node3D" parent="."]
 
-[node name="North" type="CSGBox3D" parent="CorridorBoundaryWalls"]
-size = Vector3(59.5, 3.4, 0.15)
-position = Vector3(0, 1.7, -4.005)
+[node name="NorthWestToCenter" type="CSGBox3D" parent="CorridorBoundaryWalls"]
+size = Vector3(22.695, 3.4, 0.15)
+position = Vector3(-13.3045, 1.7, -4.005)
+material = ExtResource("2_wall")
+
+[node name="NorthCenterToEast" type="CSGBox3D" parent="CorridorBoundaryWalls"]
+size = Vector3(18.652, 3.4, 0.15)
+position = Vector3(15.326, 1.7, -4.005)
 material = ExtResource("2_wall")
 
 [node name="South" type="CSGBox3D" parent="CorridorBoundaryWalls"]

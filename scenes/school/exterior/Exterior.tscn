@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=11 format=3]
 
 [sub_resource type="StandardMaterial3D" id="SiteMat"]
 shading_mode = 0
@@ -36,6 +36,10 @@ albedo_color = Color(0.38, 0.32, 0.36, 1)
 shading_mode = 0
 albedo_color = Color(0.94, 0.54, 0.22, 1)
 
+[sub_resource type="StandardMaterial3D" id="DoorMarkerMat"]
+shading_mode = 0
+albedo_color = Color(0.32, 0.75, 1, 1)
+
 [node name="Exterior" type="Node3D"]
 metadata/_edit_lock_ = true
 
@@ -43,7 +47,7 @@ metadata/_edit_lock_ = true
 
 [node name="SiteFloor" type="CSGBox3D" parent="Site"]
 size = Vector3(190, 0.5, 140)
-position = Vector3(-12.0, -0.25, -9.0)
+position = Vector3(-12.0123, -0.25, -8.9777)
 material = SubResource("SiteMat")
 use_collision = true
 
@@ -64,34 +68,35 @@ material = SubResource("TerrainMat")
 use_collision = true
 
 [node name="AthleticField" type="CSGBox3D" parent="Site"]
-size = Vector3(70, 0.08, 45)
-position = Vector3(0, 0.04, 0)
+size = Vector3(93.4618, 0.08, 52.8253)
+position = Vector3(0, 0.04, -0.0651)
 material = SubResource("FieldMat")
 use_collision = true
+metadata/reference_bbox_px = Vector4(462.5, 446.5, 1100.5, 852.5)
 
 [node name="FieldCenterLine" type="CSGBox3D" parent="Site/AthleticField"]
-size = Vector3(0.12, 0.04, 45)
-position = Vector3(0, 0.06, 0)
+size = Vector3(0.12, 0.04, 52.8253)
+position = Vector3(0, 0.06, 0.0651)
 material = SubResource("MarkerMat")
 
 [node name="FieldCenterMark" type="CSGCylinder3D" parent="Site/AthleticField"]
 radius = 5
 height = 0.04
 sides = 48
-position = Vector3(0, 0.06, 0)
+position = Vector3(0, 0.06, 0.0651)
 material = SubResource("MarkerMat")
 
 [node name="RearFacilities" type="Node3D" parent="."]
 
 [node name="RearParking" type="CSGBox3D" parent="RearFacilities"]
-size = Vector3(72, 0.12, 10)
-position = Vector3(-1.5, 3.86, -70.5)
+size = Vector3(81.16, 0.12, 8.59)
+position = Vector3(2.64, 3.86, -69.48)
 material = SubResource("AsphaltMat")
 use_collision = true
 
 [node name="RearGateRoad" type="CSGBox3D" parent="RearFacilities"]
-size = Vector3(9, 0.14, 13)
-position = Vector3(0, 3.87, -72.5)
+size = Vector3(14.36, 0.14, 13.79)
+position = Vector3(0, 3.87, -72.0)
 material = SubResource("AsphaltMat")
 use_collision = true
 
@@ -106,63 +111,63 @@ position = Vector3(4.8, 5.1, -78.4)
 material = SubResource("StructureMat")
 
 [node name="BicycleRacks" type="CSGBox3D" parent="RearFacilities"]
-size = Vector3(12, 0.6, 8)
-position = Vector3(44.5, 4.15, -70.5)
+size = Vector3(11.43, 0.6, 8.59)
+position = Vector3(44.3, 4.15, -69.48)
 material = SubResource("StructureMat")
 
 [node name="MainFrontSequence" type="Node3D" parent="."]
 
 [node name="NorthGardenBand" type="CSGBox3D" parent="MainFrontSequence"]
-size = Vector3(60, 0.18, 1)
-position = Vector3(0, 3.89, -43.75)
+size = Vector3(79.9846, 0.18, 1)
+position = Vector3(0, 3.89, -44.93)
 material = SubResource("GardenMat")
 
 [node name="StudentPath3m" type="CSGBox3D" parent="MainFrontSequence"]
-size = Vector3(60, 0.16, 3)
-position = Vector3(0, 3.88, -41.75)
+size = Vector3(80.8635, 0.16, 3.513)
+position = Vector3(0, 3.88, -41.2454)
 material = SubResource("PathMat")
 use_collision = true
 
 [node name="SouthGardenBand" type="CSGBox3D" parent="MainFrontSequence"]
-size = Vector3(60, 0.18, 0.5)
-position = Vector3(0, 3.89, -40)
+size = Vector3(79.9846, 0.18, 0.65)
+position = Vector3(0, 3.89, -39.15)
 material = SubResource("GardenMat")
 
 [node name="Grandstand" type="Node3D" parent="."]
 
 [node name="TierNorth" type="CSGBox3D" parent="Grandstand"]
-size = Vector3(60, 3.3, 2)
-position = Vector3(0, 1.65, -35)
+size = Vector3(79.9846, 3.3, 1.05)
+position = Vector3(0, 1.65, -34.88)
 material = SubResource("StructureMat")
 use_collision = true
 
 [node name="TierUpperMiddle" type="CSGBox3D" parent="Grandstand"]
-size = Vector3(60, 2.5, 1.6)
-position = Vector3(0, 1.25, -33.2)
+size = Vector3(79.9846, 2.5, 1.3)
+position = Vector3(0, 1.25, -33.43)
 material = SubResource("StructureMat")
 use_collision = true
 
 [node name="TierLowerMiddle" type="CSGBox3D" parent="Grandstand"]
-size = Vector3(60, 1.7, 1.6)
-position = Vector3(0, 0.85, -31.6)
+size = Vector3(79.9846, 1.7, 1.56)
+position = Vector3(0, 0.85, -31.81)
 material = SubResource("StructureMat")
 use_collision = true
 
 [node name="TierSouth" type="CSGBox3D" parent="Grandstand"]
-size = Vector3(60, 0.9, 2.4)
-position = Vector3(0, 0.45, -29.2)
+size = Vector3(79.9846, 0.9, 1.69)
+position = Vector3(0, 0.45, -29.36)
 material = SubResource("StructureMat")
 use_collision = true
 
 [node name="WestEndStair" type="CSGBox3D" parent="Grandstand"]
-size = Vector3(4, 0.5, 8)
-position = Vector3(-32, 0.25, -32)
+size = Vector3(7.47, 0.5, 10.54)
+position = Vector3(-47.03, 0.25, -32.72)
 material = SubResource("PathMat")
 use_collision = true
 
 [node name="EastEndStair" type="CSGBox3D" parent="Grandstand"]
-size = Vector3(4, 0.5, 8)
-position = Vector3(32, 0.25, -32)
+size = Vector3(7.47, 0.5, 10.54)
+position = Vector3(47.03, 0.25, -32.72)
 material = SubResource("PathMat")
 use_collision = true
 
@@ -183,71 +188,158 @@ position = Vector3(0, 1, -27.92)
 material = SubResource("AsphaltMat")
 
 [node name="EastRamp" type="CSGBox3D" parent="Grandstand"]
-size = Vector3(3, 0.3, 12)
-position = Vector3(50, 1.9, -32)
+size = Vector3(5.5667, 0.3, 10.54)
+position = Vector3(50.6862, 1.9, -32.72)
 rotation_degrees = Vector3(17.57, 0, 0)
 material = SubResource("PathMat")
 use_collision = true
 
 [node name="EastStudentPath3m" type="CSGBox3D" parent="."]
-size = Vector3(3, 0.14, 45)
-position = Vector3(50.5, 0.07, 0)
+size = Vector3(5.5667, 0.14, 69.7398)
+position = Vector3(50.6862, 0.07, -7.7416)
 material = SubResource("PathMat")
 use_collision = true
 
 [node name="SouthFacilities" type="Node3D" parent="."]
 
 [node name="WestBasketballCourt" type="CSGBox3D" parent="SouthFacilities"]
-size = Vector3(28, 0.08, 15)
-position = Vector3(-43.5, 0.04, 45)
+size = Vector3(30.1773, 0.08, 13.0112)
+position = Vector3(-43.6546, 0.04, 39.619)
 material = SubResource("CourtMat")
 use_collision = true
 
 [node name="EastBasketballCourt" type="CSGBox3D" parent="SouthFacilities"]
-size = Vector3(28, 0.08, 15)
-position = Vector3(43.5, 0.04, 45)
+size = Vector3(30.1773, 0.08, 13.0112)
+position = Vector3(43.6546, 0.04, 39.619)
 material = SubResource("CourtMat")
 use_collision = true
 
 [node name="WestCourtStand" type="CSGBox3D" parent="SouthFacilities"]
-size = Vector3(28, 1.4, 3)
-position = Vector3(-43.5, 0.7, 54.2)
+size = Vector3(30.1773, 1.4, 3)
+position = Vector3(-43.6546, 0.7, 48.2)
 material = SubResource("StructureMat")
 
 [node name="EastCourtStand" type="CSGBox3D" parent="SouthFacilities"]
-size = Vector3(28, 1.4, 3)
-position = Vector3(43.5, 0.7, 54.2)
+size = Vector3(30.1773, 1.4, 3)
+position = Vector3(43.6546, 0.7, 48.2)
 material = SubResource("StructureMat")
 
 [node name="WestCourtFlowerTreeMass" type="CSGBox3D" parent="SouthFacilities"]
-size = Vector3(28, 0.16, 4)
-position = Vector3(-43.5, 0.08, 58)
+size = Vector3(30.1773, 0.16, 4)
+position = Vector3(-43.6546, 0.08, 52.5)
 material = SubResource("GardenMat")
 
 [node name="EastCourtFlowerTreeMass" type="CSGBox3D" parent="SouthFacilities"]
-size = Vector3(28, 0.16, 4)
-position = Vector3(43.5, 0.08, 58)
+size = Vector3(30.1773, 0.16, 4)
+position = Vector3(43.6546, 0.08, 52.5)
 material = SubResource("GardenMat")
 
 [node name="WestFitnessArea" type="CSGBox3D" parent="SouthFacilities"]
-size = Vector3(12, 0.08, 16)
-position = Vector3(-69, 0.04, 45)
+size = Vector3(14.0632, 0.08, 24.3309)
+position = Vector3(-69.8766, 0.04, 43.8476)
 material = SubResource("StructureMat")
 
 [node name="EastFitnessArea" type="CSGBox3D" parent="SouthFacilities"]
-size = Vector3(12, 0.08, 16)
-position = Vector3(69, 0.04, 45)
+size = Vector3(14.6492, 0.08, 24.3309)
+position = Vector3(69.5837, 0.04, 43.8476)
 material = SubResource("StructureMat")
 
 [node name="GymNorthPath" type="CSGBox3D" parent="SouthFacilities"]
-size = Vector3(40, 0.12, 3)
-position = Vector3(0, 0.06, 30.2)
+size = Vector3(44.2406, 0.12, 3.77)
+position = Vector3(0, 0.06, 30.9)
 material = SubResource("PathMat")
 
 [node name="SouthFacilityPath" type="CSGBox3D" parent="SouthFacilities"]
-size = Vector3(142, 0.12, 3)
-position = Vector3(0, 0.06, 60)
+size = Vector3(156.31, 0.12, 1.041)
+position = Vector3(-1.318, 0.06, 60.891)
 material = SubResource("PathMat")
+
+[node name="RoadNetwork" type="Node3D" parent="."]
+metadata/source = "00_전체_배치.png_direct_pixel_mapping"
+
+[node name="MainFrontRoad" type="CSGBox3D" parent="RoadNetwork"]
+size = Vector3(97.2706, 0.1, 3.513)
+position = Vector3(-0.1465, 0.05, -41.2454)
+material = SubResource("AsphaltMat")
+use_collision = true
+
+[node name="AnnexEastVerticalRoad" type="CSGBox3D" parent="RoadNetwork"]
+size = Vector3(5.2737, 0.1, 55.6877)
+position = Vector3(-53.7625, 0.05, -0.7156)
+material = SubResource("AsphaltMat")
+use_collision = true
+
+[node name="AnnexNorthConnector" type="CSGBox3D" parent="RoadNetwork"]
+size = Vector3(26.9545, 0.1, 3.1227)
+position = Vector3(-75.1503, 0.05, -30.9015)
+material = SubResource("AsphaltMat")
+use_collision = true
+
+[node name="AnnexSouthConnector" type="CSGBox3D" parent="RoadNetwork"]
+size = Vector3(37.2089, 0.1, 4.684)
+position = Vector3(-69.7301, 0.05, 28.6896)
+material = SubResource("AsphaltMat")
+use_collision = true
+
+[node name="FieldSouthCrossRoad" type="CSGBox3D" parent="RoadNetwork"]
+size = Vector3(146.1989, 0.1, 3.2528)
+position = Vector3(-6.4456, 0.05, 29.4052)
+material = SubResource("AsphaltMat")
+use_collision = true
+
+[node name="FieldEastRoad" type="CSGBox3D" parent="RoadNetwork"]
+size = Vector3(5.5667, 0.1, 69.7398)
+position = Vector3(50.6862, 0.05, -7.7416)
+material = SubResource("AsphaltMat")
+use_collision = true
+
+[node name="ExteriorDoorMarkers" type="Node3D" parent="."]
+metadata/reference_color = "blue"
+
+[node name="MainFrontWest" type="CSGBox3D" parent="ExteriorDoorMarkers"]
+size = Vector3(6.15, 0.08, 0.7)
+position = Vector3(-30.47, 3.94, -45.34)
+material = SubResource("DoorMarkerMat")
+
+[node name="MainFrontCenter" type="CSGBox3D" parent="ExteriorDoorMarkers"]
+size = Vector3(6.15, 0.08, 0.7)
+position = Vector3(0, 3.94, -45.34)
+material = SubResource("DoorMarkerMat")
+
+[node name="MainFrontEast" type="CSGBox3D" parent="ExteriorDoorMarkers"]
+size = Vector3(6.15, 0.08, 0.7)
+position = Vector3(30.47, 3.94, -45.34)
+material = SubResource("DoorMarkerMat")
+
+[node name="MainRear" type="CSGBox3D" parent="ExteriorDoorMarkers"]
+size = Vector3(4.5, 0.08, 0.7)
+position = Vector3(0, 3.94, -63.17)
+material = SubResource("DoorMarkerMat")
+
+[node name="AnnexEastNorth" type="CSGBox3D" parent="ExteriorDoorMarkers"]
+size = Vector3(0.7, 0.08, 4.16)
+position = Vector3(-58.45, 0.16, -15.74)
+material = SubResource("DoorMarkerMat")
+
+[node name="AnnexEastSouth" type="CSGBox3D" parent="ExteriorDoorMarkers"]
+size = Vector3(0.7, 0.08, 4.16)
+position = Vector3(-58.45, 0.16, 11.97)
+material = SubResource("DoorMarkerMat")
+
+[node name="GymNorthMain" type="CSGBox3D" parent="ExteriorDoorMarkers"]
+size = Vector3(4.98, 0.08, 0.7)
+position = Vector3(0, 0.16, 31.16)
+material = SubResource("DoorMarkerMat")
+
+[node name="GymWest" type="CSGBox3D" parent="ExteriorDoorMarkers"]
+size = Vector3(0.7, 0.08, 4.16)
+position = Vector3(-22.56, 0.16, 43.26)
+material = SubResource("DoorMarkerMat")
+
+[node name="GymEast" type="CSGBox3D" parent="ExteriorDoorMarkers"]
+size = Vector3(0.7, 0.08, 4.16)
+position = Vector3(22.56, 0.16, 43.26)
+material = SubResource("DoorMarkerMat")
 
 [node name="EastEntranceZone" type="Node3D" parent="."]
 

@@ -22,7 +22,7 @@ func _ready() -> void:
 		"reference": "res://docs/맵 레퍼런스/학교/00_전체_배치.png",
 		"reference_sha256": "39a33a062579ff9978de0dcbf7ab0a42a207daf0bfbaaf9d48620606f2a49523",
 		"coordinate_system": {"origin":"athletic_field_center", "east":"+X", "north":"-Z", "up":"+Y"},
-		"registration": "site boundary mapped from final PNG; fixed metric dimensions retained",
+		"registration": "final PNG extents and positions take priority; confirmed metric dimensions remain semantic reference values",
 		"checks": checks,
 		"failed": failed,
 		"result": "PASS" if failed.is_empty() else "FAIL"
@@ -43,14 +43,15 @@ func _check_dimensions_and_registration(school_map: Node) -> void:
 	var annex := school_map.get_node("Annex/Mass/BuildingEnvelope") as CSGBox3D
 	var gym := school_map.get_node("Gym/Mass/BuildingEnvelope") as CSGBox3D
 	_check_vec3(site.size, Vector3(190.0, 0.5, 140.0), "site_size_190x140")
-	_check_vec3(site.position, Vector3(-12.0, -0.25, -9.0), "site_registration_from_final_png")
-	_check_vec3(field.size, Vector3(70.0, 0.08, 45.0), "field_size_70x45")
-	_check_vec3(main.size, Vector3(60.0, 15.2, 18.5), "main_size_60x18_5")
-	_check_vec3(annex.size, Vector3(17.5, 11.4, 52.0), "annex_size_52x17_5")
-	_check_vec3(gym.size, Vector3(40.0, 8.5, 26.0), "gym_size_40x26")
-	_check_vec3(school_map.get_node("MainBuilding").position, Vector3(0.0, 3.8, -54.0), "main_position_and_f1_y")
-	_check_vec3(school_map.get_node("Annex").position, Vector3(-69.1, 0.0, -1.3), "annex_position")
-	_check_vec3(school_map.get_node("Gym").position, Vector3(0.0, 0.0, 45.0), "gym_position")
+	_check_vec3(site.position, Vector3(-12.0123, -0.25, -8.9777), "site_registration_from_final_png")
+	_check_vec3(field.size, Vector3(93.4618, 0.08, 52.8253), "field_png_extent")
+	_check_vec3(field.position, Vector3(0.0, 0.04, -0.0651), "field_png_registration")
+	_check_vec3(main.size, Vector3(79.9846, 15.2, 17.4349), "main_png_extent")
+	_check_vec3(annex.size, Vector3(20.5089, 11.4, 49.9628), "annex_png_extent")
+	_check_vec3(gym.size, Vector3(44.2406, 8.5, 25.1115), "gym_png_extent")
+	_check_vec3(school_map.get_node("MainBuilding").position, Vector3(0.0, 3.8, -54.4517), "main_png_position_and_f1_y")
+	_check_vec3(school_map.get_node("Annex").position, Vector3(-68.7047, 0.0, -1.4963), "annex_png_position")
+	_check_vec3(school_map.get_node("Gym").position, Vector3(0.0, 0.0, 44.2379), "gym_png_position")
 
 
 func _check_required_site_structures(school_map: Node) -> void:
@@ -70,6 +71,10 @@ func _check_required_site_structures(school_map: Node) -> void:
 	_check(south_facilities.has_node("WestCourtStand") and south_facilities.has_node("EastCourtStand") and south_facilities.has_node("WestCourtFlowerTreeMass") and south_facilities.has_node("EastCourtFlowerTreeMass"), "court_stands_and_south_gardens", "west/east")
 	var floodlights := school_map.get_node("Exterior/FieldFloodlights")
 	_check(floodlights.get_child_count() == 4 and int(floodlights.get_meta("count")) == 4, "four_field_corner_floodlights", str(floodlights.get_child_count()))
+	var road_network := school_map.get_node("Exterior/RoadNetwork")
+	_check(road_network.get_child_count() == 6, "final_png_road_network", "본관 전면·별관 동측/연결·운동장 남/동측 6개 구간")
+	var exterior_door_markers := school_map.get_node("Exterior/ExteriorDoorMarkers")
+	_check(exterior_door_markers.get_child_count() == 9, "final_png_exterior_door_markers", "본관 4 + 별관 2 + 강당 3")
 	var bridge := school_map.get_node("Connections/MainAnnexSkybridge")
 	var turn := bridge.get_node("TurnAnchor") as Marker3D
 	var annex_anchor := bridge.get_node("AnnexNorthEndAnchor") as Marker3D

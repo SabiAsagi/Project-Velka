@@ -29,13 +29,13 @@ environment = SubResource("Environment_school")
 [node name="Exterior" parent="." instance=ExtResource("1_exterior")]
 
 [node name="MainBuilding" parent="." instance=ExtResource("2_main")]
-position = Vector3(0, 3.8, -54)
+position = Vector3(0, 3.8, -54.4517)
 
 [node name="Annex" parent="." instance=ExtResource("3_annex")]
-position = Vector3(-69.1, 0, -1.3)
+position = Vector3(-68.7047, 0, -1.4963)
 
 [node name="Gym" parent="." instance=ExtResource("4_gym")]
-position = Vector3(0, 0, 45)
+position = Vector3(0, 0, 44.2379)
 
 [node name="Connections" type="Node3D" parent="."]
 
@@ -46,14 +46,14 @@ visible = false
 metadata/visibility_note = "Enable per building for structural inspection; hidden by default to preserve Phase 1 exterior review."
 
 [node name="Main" parent="Phase2FloorPlans" instance=ExtResource("7_main_floors")]
-position = Vector3(0, 0, -54)
+position = Vector3(0, 0, -54.4517)
 
 [node name="Annex" parent="Phase2FloorPlans" instance=ExtResource("8_annex_floors")]
-position = Vector3(-69.1, 0, -1.3)
+position = Vector3(-68.7047, 0, -1.4963)
 rotation_degrees = Vector3(0, 90, 0)
 
 [node name="Gym" parent="Phase2FloorPlans" instance=ExtResource("9_gym_floors")]
-position = Vector3(0, 0, 45)
+position = Vector3(0, 0, 44.2379)
 scale = Vector3(1, 1, -1)
 
 [node name="Gameplay" type="Node3D" parent="."]

@@ -45,9 +45,10 @@ metadata/width_m = 3.0
 metadata/reference_pixel_span = Vector2(323.5, 439.5)
 
 [node name="NorthImageCorridorWall" type="CSGBox3D" parent="."]
-size = Vector3(51.5, 3.4, 0.15)
-position = Vector3(0, 1.7, -3.789)
+size = Vector3(42.1, 3.4, 0.15)
+position = Vector3(0.05, 1.7, -3.789)
 material = ExtResource("2_wall")
+metadata/stair_openings = "left_image_end|right_image_end"
 
 [node name="SouthImageCorridorWall" type="CSGBox3D" parent="."]
 size = Vector3(51.5, 3.4, 0.15)

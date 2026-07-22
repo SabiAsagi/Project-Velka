@@ -79,6 +79,11 @@
       "evidence": "3.0"
     },
     {
+      "name": "main_b1 계단 앞 벽·문 제거",
+      "passed": true,
+      "evidence": "북측 복도벽 2개 구간으로 분리"
+    },
+    {
       "name": "main_f1 씬 로드",
       "passed": true,
       "evidence": "res://scenes/school/floors/main/Main_1F.tscn"
@@ -139,6 +144,11 @@
       "evidence": "3.0"
     },
     {
+      "name": "main_f1 계단 앞 벽·문 제거",
+      "passed": true,
+      "evidence": "북측 복도벽 2개 구간으로 분리"
+    },
+    {
       "name": "main_f2 씬 로드",
       "passed": true,
       "evidence": "res://scenes/school/floors/main/Main_2F.tscn"
@@ -192,6 +202,16 @@
       "name": "main_f2 중앙 복도 3m",
       "passed": true,
       "evidence": "3.0"
+    },
+    {
+      "name": "main_f2 계단 앞 벽·문 제거",
+      "passed": true,
+      "evidence": "북측 복도벽 2개 구간으로 분리"
+    },
+    {
+      "name": "main_f2 메인 방 문 좌우 대칭·각 2개",
+      "passed": true,
+      "evidence": "[-29.0, -22.8320007324219, -20.8479995727539, -14.6639995574951, -12.6630001068115, -6.51100015640259, -4.52600002288818, 4.52600002288818, 6.51100015640259, 12.6630001068115, 14.6639995574951, 20.8479995727539, 22.8320007324219, 29.0]"
     },
     {
       "name": "main_f3 씬 로드",
@@ -249,6 +269,16 @@
       "evidence": "3.0"
     },
     {
+      "name": "main_f3 계단 앞 벽·문 제거",
+      "passed": true,
+      "evidence": "북측 복도벽 2개 구간으로 분리"
+    },
+    {
+      "name": "main_f3 메인 방 문 좌우 대칭·각 2개",
+      "passed": true,
+      "evidence": "[-29.0, -22.8320007324219, -20.8479995727539, -14.6639995574951, -12.6630001068115, -6.51100015640259, -4.52600002288818, 4.52600002288818, 6.51100015640259, 12.6630001068115, 14.6639995574951, 20.8479995727539, 22.8320007324219, 29.0]"
+    },
+    {
       "name": "main_f4 씬 로드",
       "passed": true,
       "evidence": "res://scenes/school/floors/main/Main_4F.tscn"
@@ -302,6 +332,16 @@
       "name": "main_f4 중앙 복도 3m",
       "passed": true,
       "evidence": "3.0"
+    },
+    {
+      "name": "main_f4 계단 앞 벽·문 제거",
+      "passed": true,
+      "evidence": "북측 복도벽 2개 구간으로 분리"
+    },
+    {
+      "name": "main_f4 메인 방 문 좌우 대칭·각 2개",
+      "passed": true,
+      "evidence": "[-29.0, -22.8320007324219, -20.8479995727539, -14.6639995574951, -12.6630001068115, -6.51100015640259, -4.52600002288818, 4.52600002288818, 6.51100015640259, 12.6630001068115, 14.6639995574951, 20.8479995727539, 22.8320007324219, 29.0]"
     },
     {
       "name": "main_roof 씬 로드",
@@ -412,6 +452,21 @@
       "name": "annex_f1 중앙 복도 3m",
       "passed": true,
       "evidence": "3.0"
+    },
+    {
+      "name": "annex_f1 급식실 좌측·식품창고 우측 벽",
+      "passed": true,
+      "evidence": "양쪽 외곽 칸막이 존재"
+    },
+    {
+      "name": "annex_f1 출입구 통로 앞 벽 제거",
+      "passed": true,
+      "evidence": "양 끝 통로 개방"
+    },
+    {
+      "name": "annex_f1 급식실–조리실 문",
+      "passed": true,
+      "evidence": "내부 연결문 존재"
     },
     {
       "name": "annex_f2 씬 로드",
@@ -534,6 +589,11 @@
       "evidence": "3.0"
     },
     {
+      "name": "annex_f3 도서관 중간 문 2개 제거",
+      "passed": true,
+      "evidence": "도서관 끝문 2개 + 그룹학습실문"
+    },
+    {
       "name": "gym_f1 씬 로드",
       "passed": true,
       "evidence": "res://scenes/school/floors/gym/Gym_1F.tscn"
@@ -599,6 +659,31 @@
       "evidence": "2"
     },
     {
+      "name": "gym_f1 무대 복구",
+      "passed": true,
+      "evidence": "(24.233, 0.45, 6.145)"
+    },
+    {
+      "name": "gym_f1 무대 계단 실내 배치",
+      "passed": true,
+      "evidence": "무대 전면 내부"
+    },
+    {
+      "name": "gym_f1 무대 구역 위쪽 벽",
+      "passed": true,
+      "evidence": "준비실·무대·장치실 전면벽"
+    },
+    {
+      "name": "gym_f1 계단–출입홀 벽·관리실 중앙벽 제거",
+      "passed": true,
+      "evidence": "불필요 칸막이 없음"
+    },
+    {
+      "name": "gym_f1 화장실 출입구 2개",
+      "passed": true,
+      "evidence": "서측 + 동측"
+    },
+    {
       "name": "gym_f2 씬 로드",
       "passed": true,
       "evidence": "res://scenes/school/floors/gym/Gym_2F.tscn"
@@ -662,6 +747,16 @@
       "name": "gym_f2 외부 비상계단·출구 각 2개",
       "passed": true,
       "evidence": "2 / 2"
+    },
+    {
+      "name": "gym_f2 비상출입구 외벽 정렬",
+      "passed": true,
+      "evidence": "x=±19.75m"
+    },
+    {
+      "name": "gym_f2 외부 비상계단·참 정렬",
+      "passed": true,
+      "evidence": "외벽 출구와 연결"
     },
     {
       "name": "SchoolMap Phase 2 등록",

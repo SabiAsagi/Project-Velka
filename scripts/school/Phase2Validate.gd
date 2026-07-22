@@ -96,7 +96,60 @@ func _validate_floor(spec: Dictionary) -> void:
 		_check(String(floor.get_meta("seating_shape")) == "U", "gym_f2 ㄷ자 관람석", String(floor.get_meta("seating_shape")))
 		_check(int(floor.get_meta("central_void_count")) == 1 and floor.has_node("CentralVoid/중앙 개방부"), "gym_f2 중앙 개방부 1개", "CentralVoid/중앙 개방부")
 		_check(int(floor.get_meta("external_emergency_stair_count")) == 2 and int(floor.get_meta("external_exit_count")) == 2, "gym_f2 외부 비상계단·출구 각 2개", "2 / 2")
+	_validate_review_corrections(String(spec["id"]), floor)
 	floor.queue_free()
+
+
+func _validate_review_corrections(floor_id: String, floor: Node) -> void:
+	if floor_id.begins_with("main_") and floor_id != "main_roof":
+		var stair_front := floor.get_node_or_null("Shell/NorthCorridorWall")
+		var stair_front_open := stair_front != null and stair_front.get_child_count() == 2
+		if floor_id in ["main_b1", "main_f1"]:
+			var boundary_walls := floor.get_node_or_null("CorridorBoundaryWalls")
+			stair_front_open = boundary_walls != null and boundary_walls.has_node("NorthWestToCenter") and boundary_walls.has_node("NorthCenterToEast")
+		_check(stair_front_open, "%s 계단 앞 벽·문 제거" % floor_id, "북측 복도벽 2개 구간으로 분리")
+
+	if floor_id in ["main_f2", "main_f3", "main_f4"]:
+		var room_doors := floor.get_node("Doors/SouthRoomDoors")
+		var expected_x := PackedFloat32Array([-29.0, -22.832, -20.848, -14.664, -12.663, -6.511, -4.526, 4.526, 6.511, 12.663, 14.664, 20.848, 22.832, 29.0])
+		var actual_x := PackedFloat32Array()
+		for marker in room_doors.get_children():
+			actual_x.append((marker as Node3D).position.x)
+		var symmetric := actual_x.size() == expected_x.size()
+		if symmetric:
+			for i in expected_x.size():
+				if not is_equal_approx(actual_x[i], expected_x[i]):
+					symmetric = false
+					break
+		_check(symmetric and int(room_doors.get_meta("marker_count", -1)) == 14, "%s 메인 방 문 좌우 대칭·각 2개" % floor_id, str(actual_x))
+
+	if floor_id == "annex_f1":
+		_check(floor.has_node("LargePartitions/CafeteriaWestWall") and floor.has_node("LargePartitions/FoodStorageEastWall"), "annex_f1 급식실 좌측·식품창고 우측 벽", "양쪽 외곽 칸막이 존재")
+		_check(floor.has_node("LargePartitions/EntrancePassageSouthWall") and not (floor.get_node("Shell/SouthImageWall") as Node3D).visible, "annex_f1 출입구 통로 앞 벽 제거", "양 끝 통로 개방")
+		var kitchen_door := floor.get_node_or_null("Doors/LargeRoomDoors/급식실-조리실 연결문")
+		_check(kitchen_door != null and String(kitchen_door.get_meta("connects", "")) == "급식실|조리실", "annex_f1 급식실–조리실 문", "내부 연결문 존재")
+
+	if floor_id == "annex_f3":
+		var library_doors := floor.get_node("Doors/LargeRoomDoors")
+		_check(not library_doors.has_node("도서관 출입문 2") and not library_doors.has_node("도서관 출입문 3") and int(library_doors.get_meta("marker_count", -1)) == 3, "annex_f3 도서관 중간 문 2개 제거", "도서관 끝문 2개 + 그룹학습실문")
+
+	if floor_id == "gym_f1":
+		var stage := floor.get_node("SouthStageBand/무대") as CSGBox3D
+		var west_stair := floor.get_node("SouthStageBand/StageWestStair") as CSGBox3D
+		var east_stair := floor.get_node("SouthStageBand/StageEastStair") as CSGBox3D
+		_check(stage.size.is_equal_approx(Vector3(24.233, 0.45, 6.145)), "gym_f1 무대 복구", str(stage.size))
+		_check(west_stair.position.z > stage.position.z and east_stair.position.z > stage.position.z, "gym_f1 무대 계단 실내 배치", "무대 전면 내부")
+		_check(floor.has_node("SouthStageBand/StageFrontWalls/PropsFront") and floor.has_node("SouthStageBand/StageFrontWalls/StageFront") and floor.has_node("SouthStageBand/StageFrontWalls/EquipmentFront"), "gym_f1 무대 구역 위쪽 벽", "준비실·무대·장치실 전면벽")
+		_check(not floor.has_node("NorthPartitions/P2") and not floor.has_node("NorthPartitions/P3") and not floor.has_node("NorthPartitions/ManagerWheelchair"), "gym_f1 계단–출입홀 벽·관리실 중앙벽 제거", "불필요 칸막이 없음")
+		_check(floor.has_node("Doors/InternalDoors/서측 화장실 출입구") and floor.has_node("Doors/InternalDoors/동측 화장실 출입구"), "gym_f1 화장실 출입구 2개", "서측 + 동측")
+
+	if floor_id == "gym_f2":
+		var west_exit := floor.get_node("Doors/WestEmergencyExit") as CSGBox3D
+		var east_exit := floor.get_node("Doors/EastEmergencyExit") as CSGBox3D
+		var west_emergency_stair := floor.get_node("ExternalEmergencyStairs/WestEmergencyStair") as CSGBox3D
+		var east_emergency_stair := floor.get_node("ExternalEmergencyStairs/EastEmergencyStair") as CSGBox3D
+		_check(is_equal_approx(absf(west_exit.position.x), 19.75) and is_equal_approx(absf(east_exit.position.x), 19.75), "gym_f2 비상출입구 외벽 정렬", "x=±19.75m")
+		_check(is_equal_approx(absf(west_emergency_stair.position.x), 21.17) and is_equal_approx(absf(east_emergency_stair.position.x), 21.17) and floor.has_node("ExternalEmergencyStairs/WestEmergencyLanding") and floor.has_node("ExternalEmergencyStairs/EastEmergencyLanding"), "gym_f2 외부 비상계단·참 정렬", "외벽 출구와 연결")
 
 
 func _validate_school_stack() -> void:

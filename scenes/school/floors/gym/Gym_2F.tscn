@@ -70,14 +70,24 @@ material = ExtResource("1_floor")
 
 [node name="OuterWalls" type="Node3D" parent="."]
 
-[node name="West" type="CSGBox3D" parent="OuterWalls"]
-size = Vector3(0.25, 3.8, 26)
-position = Vector3(-19.875, 1.9, 0)
+[node name="WestSouth" type="CSGBox3D" parent="OuterWalls"]
+size = Vector3(0.25, 3.8, 6.855)
+position = Vector3(-19.875, 1.9, -9.5725)
 material = ExtResource("2_wall")
 
-[node name="East" type="CSGBox3D" parent="OuterWalls"]
-size = Vector3(0.25, 3.8, 26)
-position = Vector3(19.875, 1.9, 0)
+[node name="WestNorth" type="CSGBox3D" parent="OuterWalls"]
+size = Vector3(0.25, 3.8, 17.491)
+position = Vector3(-19.875, 1.9, 4.2545)
+material = ExtResource("2_wall")
+
+[node name="EastSouth" type="CSGBox3D" parent="OuterWalls"]
+size = Vector3(0.25, 3.8, 6.855)
+position = Vector3(19.875, 1.9, -9.5725)
+material = ExtResource("2_wall")
+
+[node name="EastNorth" type="CSGBox3D" parent="OuterWalls"]
+size = Vector3(0.25, 3.8, 17.491)
+position = Vector3(19.875, 1.9, 4.2545)
 material = ExtResource("2_wall")
 
 [node name="South" type="CSGBox3D" parent="OuterWalls"]
@@ -131,21 +141,33 @@ material = ExtResource("2_wall")
 
 [node name="Seating" type="Node3D" parent="."]
 
-[node name="서측 관람석" type="CSGBox3D" parent="Seating"]
-size = Vector3(8, 0.35, 19.855)
-position = Vector3(-16, 0.175, 3.0725)
+[node name="서측 관람석 남측" type="CSGBox3D" parent="Seating"]
+size = Vector3(8, 0.35, 8.568)
+position = Vector3(-16, 0.175, -2.5405)
+material = ExtResource("4_seating")
+metadata/order_index = 0
+
+[node name="서측 관람석 북측" type="CSGBox3D" parent="Seating"]
+size = Vector3(8, 0.35, 8.925)
+position = Vector3(-16, 0.175, 7.4475)
 material = ExtResource("4_seating")
 metadata/order_index = 0
 
 [node name="북측 관람석" type="CSGBox3D" parent="Seating"]
-size = Vector3(24, 0.35, 7.8)
-position = Vector3(0, 0.175, 9.1)
+size = Vector3(24, 0.35, 6.559)
+position = Vector3(0, 0.175, 8.5145)
 material = ExtResource("4_seating")
 metadata/order_index = 1
 
-[node name="동측 관람석" type="CSGBox3D" parent="Seating"]
-size = Vector3(8, 0.35, 19.855)
-position = Vector3(16, 0.175, 3.0725)
+[node name="동측 관람석 남측" type="CSGBox3D" parent="Seating"]
+size = Vector3(8, 0.35, 8.568)
+position = Vector3(16, 0.175, -2.5405)
+material = ExtResource("4_seating")
+metadata/order_index = 2
+
+[node name="동측 관람석 북측" type="CSGBox3D" parent="Seating"]
+size = Vector3(8, 0.35, 8.925)
+position = Vector3(16, 0.175, 7.4475)
 material = ExtResource("4_seating")
 metadata/order_index = 2
 
@@ -190,25 +212,35 @@ material = ExtResource("5_core")
 [node name="ExternalEmergencyStairs" type="Node3D" parent="."]
 
 [node name="WestEmergencyStair" type="CSGBox3D" parent="ExternalEmergencyStairs"]
-size = Vector3(2.5, 0.18, 7)
-position = Vector3(-21.2, 0.09, -1)
+size = Vector3(1.17, 0.18, 17.8)
+position = Vector3(-21.17, 0.09, 3.1)
 material = ExtResource("5_core")
 
 [node name="EastEmergencyStair" type="CSGBox3D" parent="ExternalEmergencyStairs"]
-size = Vector3(2.5, 0.18, 7)
-position = Vector3(21.2, 0.09, -1)
+size = Vector3(1.17, 0.18, 17.8)
+position = Vector3(21.17, 0.09, 3.1)
+material = ExtResource("5_core")
+
+[node name="WestEmergencyLanding" type="CSGBox3D" parent="ExternalEmergencyStairs"]
+size = Vector3(2.767, 0.18, 2.452)
+position = Vector3(-18.583, 0.09, -5.6)
+material = ExtResource("5_core")
+
+[node name="EastEmergencyLanding" type="CSGBox3D" parent="ExternalEmergencyStairs"]
+size = Vector3(2.767, 0.18, 2.452)
+position = Vector3(18.583, 0.09, -5.6)
 material = ExtResource("5_core")
 
 [node name="Doors" type="Node3D" parent="."]
 
 [node name="WestEmergencyExit" type="CSGBox3D" parent="Doors"]
-size = Vector3(0.55, 0.08, 3)
-position = Vector3(-19.75, 0.2, -6)
+size = Vector3(0.55, 0.08, 1.654)
+position = Vector3(-19.75, 0.2, -5.318)
 material = ExtResource("6_door")
 
 [node name="EastEmergencyExit" type="CSGBox3D" parent="Doors"]
-size = Vector3(0.55, 0.08, 3)
-position = Vector3(19.75, 0.2, -6)
+size = Vector3(0.55, 0.08, 1.654)
+position = Vector3(19.75, 0.2, -5.318)
 material = ExtResource("6_door")
 
 [node name="ControlDoors" type="Node3D" parent="Doors"]

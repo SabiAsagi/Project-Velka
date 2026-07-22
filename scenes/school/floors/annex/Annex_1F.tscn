@@ -32,11 +32,14 @@ metadata/large_order_csv = "급식실|조리실|세척실|직원 휴게실|조�
 metadata/stair_count = 2
 metadata/center_stair_count = 0
 metadata/elevator_count = 1
-metadata/door_count = 17
+metadata/door_count = 18
 metadata/external_entrance_count = 2
 metadata/floor_y_m = 0.0
 
 [node name="Shell" parent="." instance=ExtResource("1_shell")]
+
+[node name="SouthImageWall" parent="Shell" index="3"]
+visible = false
 
 [node name="SupportZones" type="Node3D" parent="."]
 position = Vector3(0, 0, -2.6385)
@@ -217,6 +220,22 @@ size = Vector3(0.15, 3.4, 9.923)
 position = Vector3(20.348, 1.7, 3.7885)
 material = ExtResource("5_wall")
 
+[node name="CafeteriaWestWall" type="CSGBox3D" parent="LargePartitions"]
+size = Vector3(0.15, 3.4, 9.798)
+position = Vector3(-23.739, 1.7, 3.726)
+material = ExtResource("5_wall")
+
+[node name="FoodStorageEastWall" type="CSGBox3D" parent="LargePartitions"]
+size = Vector3(0.15, 3.4, 9.798)
+position = Vector3(23.739, 1.7, 3.726)
+material = ExtResource("5_wall")
+
+[node name="EntrancePassageSouthWall" type="CSGBox3D" parent="LargePartitions"]
+size = Vector3(47.478, 3.8, 0.25)
+position = Vector3(0, 1.9, 8.625)
+material = ExtResource("5_wall")
+metadata/end_passages_open = true
+
 [node name="Doors" type="Node3D" parent="."]
 
 [node name="SupportDoors" type="Node3D" parent="Doors"]
@@ -244,7 +263,7 @@ position = Vector3(18.285, 0.14, -1.55)
 
 [node name="LargeRoomDoors" type="Node3D" parent="Doors"]
 position = Vector3(0, 0, -2.723)
-metadata/marker_count = 6
+metadata/marker_count = 7
 
 [node name="급식실" parent="Doors/LargeRoomDoors" instance=ExtResource("8_marker")]
 position = Vector3(-7.249, 0.14, 1.55)
@@ -259,6 +278,11 @@ position = Vector3(10.555, 0.14, 8.327)
 position = Vector3(18.356, 0.14, 8.327)
 [node name="조리 식품 창고" parent="Doors/LargeRoomDoors" instance=ExtResource("8_marker")]
 position = Vector3(21.718, 0.14, 1.55)
+
+[node name="급식실-조리실 연결문" parent="Doors/LargeRoomDoors" instance=ExtResource("8_marker")]
+position = Vector3(10.174, 0.14, 6.55)
+rotation_degrees = Vector3(0, 90, 0)
+metadata/connects = "급식실|조리실"
 
 [node name="StudentMainEntrance" type="CSGBox3D" parent="Doors"]
 size = Vector3(3, 0.08, 0.5)

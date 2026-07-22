@@ -51,14 +51,24 @@ size = Vector3(40, 0.2, 26)
 position = Vector3(0, 3.9, 0)
 material = ExtResource("1_floor")
 
-[node name="WestWall" type="CSGBox3D" parent="Shell"]
-size = Vector3(0.25, 3.8, 26)
-position = Vector3(-19.875, 1.9, 0)
+[node name="WestWallSouth" type="CSGBox3D" parent="Shell"]
+size = Vector3(0.25, 3.8, 12.564)
+position = Vector3(-19.875, 1.9, -6.718)
 material = ExtResource("2_wall")
 
-[node name="EastWall" type="CSGBox3D" parent="Shell"]
-size = Vector3(0.25, 3.8, 26)
-position = Vector3(19.875, 1.9, 0)
+[node name="WestWallNorth" type="CSGBox3D" parent="Shell"]
+size = Vector3(0.25, 3.8, 10.436)
+position = Vector3(-19.875, 1.9, 7.782)
+material = ExtResource("2_wall")
+
+[node name="EastWallSouth" type="CSGBox3D" parent="Shell"]
+size = Vector3(0.25, 3.8, 12.564)
+position = Vector3(19.875, 1.9, -6.718)
+material = ExtResource("2_wall")
+
+[node name="EastWallNorth" type="CSGBox3D" parent="Shell"]
+size = Vector3(0.25, 3.8, 10.436)
+position = Vector3(19.875, 1.9, 7.782)
 material = ExtResource("2_wall")
 
 [node name="SouthWall" type="CSGBox3D" parent="Shell"]
@@ -66,9 +76,14 @@ size = Vector3(40, 3.8, 0.25)
 position = Vector3(0, 1.9, -12.875)
 material = ExtResource("2_wall")
 
-[node name="NorthWall" type="CSGBox3D" parent="Shell"]
-size = Vector3(40, 3.8, 0.25)
-position = Vector3(0, 1.9, 12.875)
+[node name="NorthWallWest" type="CSGBox3D" parent="Shell"]
+size = Vector3(17.5, 3.8, 0.25)
+position = Vector3(-11.25, 1.9, 12.875)
+material = ExtResource("2_wall")
+
+[node name="NorthWallEast" type="CSGBox3D" parent="Shell"]
+size = Vector3(17.5, 3.8, 0.25)
+position = Vector3(11.25, 1.9, 12.875)
 material = ExtResource("2_wall")
 
 [node name="SouthStageBand" type="Node3D" parent="."]
@@ -80,10 +95,11 @@ material = ExtResource("3_south")
 metadata/order_index = 0
 
 [node name="무대" type="CSGBox3D" parent="SouthStageBand"]
-size = Vector3(30.667, 0.3, 6.145)
-position = Vector3(0, 0.15, -9.9275)
+size = Vector3(24.233, 0.45, 6.145)
+position = Vector3(-0.067, 0.225, -9.9275)
 material = ExtResource("4_north")
 metadata/order_index = 1
+metadata/raised_stage = true
 
 [node name="음향·조명·무대장치실" type="CSGBox3D" parent="SouthStageBand"]
 size = Vector3(4.667, 0.12, 6.145)
@@ -102,14 +118,32 @@ position = Vector3(15.333, 1.7, -9.9275)
 material = ExtResource("2_wall")
 
 [node name="StageWestStair" type="CSGBox3D" parent="SouthStageBand"]
-size = Vector3(3, 0.18, 2.5)
-position = Vector3(-13.667, 0.09, -6.73)
+size = Vector3(3.1, 0.18, 2.718)
+position = Vector3(-13.783, 0.09, -8.214)
 material = ExtResource("5_core")
 
 [node name="StageEastStair" type="CSGBox3D" parent="SouthStageBand"]
-size = Vector3(3, 0.18, 2.5)
-position = Vector3(13.667, 0.09, -6.73)
+size = Vector3(3.333, 0.18, 2.718)
+position = Vector3(13.833, 0.09, -8.214)
 material = ExtResource("5_core")
+
+[node name="StageFrontWalls" type="Node3D" parent="SouthStageBand"]
+metadata/stair_openings = "west|east"
+
+[node name="PropsFront" type="CSGBox3D" parent="SouthStageBand/StageFrontWalls"]
+size = Vector3(4.667, 3.4, 0.15)
+position = Vector3(-17.667, 1.7, -6.855)
+material = ExtResource("2_wall")
+
+[node name="StageFront" type="CSGBox3D" parent="SouthStageBand/StageFrontWalls"]
+size = Vector3(24.233, 3.4, 0.15)
+position = Vector3(-0.067, 1.7, -6.855)
+material = ExtResource("2_wall")
+
+[node name="EquipmentFront" type="CSGBox3D" parent="SouthStageBand/StageFrontWalls"]
+size = Vector3(4.667, 3.4, 0.15)
+position = Vector3(17.667, 1.7, -6.855)
+material = ExtResource("2_wall")
 
 [node name="CenterCourt" type="Node3D" parent="."]
 
@@ -180,16 +214,6 @@ size = Vector3(0.15, 3.4, 3.989)
 position = Vector3(-10.667, 1.7, 11.0055)
 material = ExtResource("2_wall")
 
-[node name="P2" type="CSGBox3D" parent="NorthPartitions"]
-size = Vector3(0.15, 3.4, 3.989)
-position = Vector3(-6.667, 1.7, 11.0055)
-material = ExtResource("2_wall")
-
-[node name="P3" type="CSGBox3D" parent="NorthPartitions"]
-size = Vector3(0.15, 3.4, 3.989)
-position = Vector3(6.667, 1.7, 11.0055)
-material = ExtResource("2_wall")
-
 [node name="P4" type="CSGBox3D" parent="NorthPartitions"]
 size = Vector3(0.15, 3.4, 3.989)
 position = Vector3(10.667, 1.7, 11.0055)
@@ -210,9 +234,22 @@ size = Vector3(4, 3.4, 0.15)
 position = Vector3(8.667, 1.7, 10.991)
 material = ExtResource("2_wall")
 
-[node name="ManagerWheelchair" type="CSGBox3D" parent="NorthPartitions"]
-size = Vector3(3.333, 3.4, 0.15)
-position = Vector3(18.3335, 1.7, 10.991)
+[node name="CourtFacingWalls" type="Node3D" parent="NorthPartitions"]
+metadata/stair_fronts_open = true
+
+[node name="SportsStorageFront" type="CSGBox3D" parent="NorthPartitions/CourtFacingWalls"]
+size = Vector3(9.333, 3.4, 0.15)
+position = Vector3(-15.3335, 1.7, 9.011)
+material = ExtResource("2_wall")
+
+[node name="EntranceHallFront" type="CSGBox3D" parent="NorthPartitions/CourtFacingWalls"]
+size = Vector3(13.334, 3.4, 0.15)
+position = Vector3(0, 1.7, 9.011)
+material = ExtResource("2_wall")
+
+[node name="EventAndManagerFront" type="CSGBox3D" parent="NorthPartitions/CourtFacingWalls"]
+size = Vector3(9.333, 3.4, 0.15)
+position = Vector3(15.3335, 1.7, 9.011)
 material = ExtResource("2_wall")
 
 [node name="Doors" type="Node3D" parent="."]
@@ -222,12 +259,8 @@ metadata/marker_count = 11
 
 [node name="체육기구 창고" parent="Doors/InternalDoors" instance=ExtResource("8_marker")]
 position = Vector3(-15.333, 0.18, 9.011)
-[node name="서측 내부 계단" parent="Doors/InternalDoors" instance=ExtResource("8_marker")]
-position = Vector3(-8.667, 0.18, 9.011)
 [node name="북측 주출입홀" parent="Doors/InternalDoors" instance=ExtResource("8_marker")]
 position = Vector3(0, 0.18, 9.011)
-[node name="동측 내부 계단" parent="Doors/InternalDoors" instance=ExtResource("8_marker")]
-position = Vector3(8.667, 0.18, 9.011)
 [node name="행사물품 창고" parent="Doors/InternalDoors" instance=ExtResource("8_marker")]
 position = Vector3(13.667, 0.18, 9.011)
 [node name="강당 관리실" parent="Doors/InternalDoors" instance=ExtResource("8_marker")]
@@ -242,6 +275,12 @@ position = Vector3(-13.667, 0.18, -6.855)
 position = Vector3(13.667, 0.18, -6.855)
 [node name="장치실 무대측" parent="Doors/InternalDoors" instance=ExtResource("8_marker")]
 position = Vector3(17.667, 0.18, -6.855)
+
+[node name="서측 화장실 출입구" parent="Doors/InternalDoors" instance=ExtResource("8_marker")]
+position = Vector3(-8.667, 0.18, 10.991)
+
+[node name="동측 화장실 출입구" parent="Doors/InternalDoors" instance=ExtResource("8_marker")]
+position = Vector3(8.667, 0.18, 10.991)
 
 [node name="NorthMainEntrance" type="CSGBox3D" parent="Doors"]
 size = Vector3(5, 0.08, 0.55)

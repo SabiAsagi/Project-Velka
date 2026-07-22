@@ -9,7 +9,7 @@
     "north": "-Z",
     "up": "+Y"
   },
-  "registration": "site boundary mapped from final PNG; fixed metric dimensions retained",
+  "registration": "final PNG extents and positions take priority; confirmed metric dimensions remain semantic reference values",
   "checks": [
     {
       "name": "site_size_190x140",
@@ -19,42 +19,47 @@
     {
       "name": "site_registration_from_final_png",
       "passed": true,
-      "evidence": "(-12.0, -0.25, -9.0) expected (-12.0, -0.25, -9.0)"
+      "evidence": "(-12.0123, -0.25, -8.9777) expected (-12.0123, -0.25, -8.9777)"
     },
     {
-      "name": "field_size_70x45",
+      "name": "field_png_extent",
       "passed": true,
-      "evidence": "(70.0, 0.08, 45.0) expected (70.0, 0.08, 45.0)"
+      "evidence": "(93.4618, 0.08, 52.8253) expected (93.4618, 0.08, 52.8253)"
     },
     {
-      "name": "main_size_60x18_5",
+      "name": "field_png_registration",
       "passed": true,
-      "evidence": "(60.0, 15.2, 18.5) expected (60.0, 15.2, 18.5)"
+      "evidence": "(0.0, 0.04, -0.0651) expected (0.0, 0.04, -0.0651)"
     },
     {
-      "name": "annex_size_52x17_5",
+      "name": "main_png_extent",
       "passed": true,
-      "evidence": "(17.5, 11.4, 52.0) expected (17.5, 11.4, 52.0)"
+      "evidence": "(79.9846, 15.2, 17.4349) expected (79.9846, 15.2, 17.4349)"
     },
     {
-      "name": "gym_size_40x26",
+      "name": "annex_png_extent",
       "passed": true,
-      "evidence": "(40.0, 8.5, 26.0) expected (40.0, 8.5, 26.0)"
+      "evidence": "(20.5089, 11.4, 49.9628) expected (20.5089, 11.4, 49.9628)"
     },
     {
-      "name": "main_position_and_f1_y",
+      "name": "gym_png_extent",
       "passed": true,
-      "evidence": "(0.0, 3.8, -54.0) expected (0.0, 3.8, -54.0)"
+      "evidence": "(44.2406, 8.5, 25.1115) expected (44.2406, 8.5, 25.1115)"
     },
     {
-      "name": "annex_position",
+      "name": "main_png_position_and_f1_y",
       "passed": true,
-      "evidence": "(-69.1, 0.0, -1.3) expected (-69.1, 0.0, -1.3)"
+      "evidence": "(0.0, 3.8, -54.4517) expected (0.0, 3.8, -54.4517)"
     },
     {
-      "name": "gym_position",
+      "name": "annex_png_position",
       "passed": true,
-      "evidence": "(0.0, 0.0, 45.0) expected (0.0, 0.0, 45.0)"
+      "evidence": "(-68.7047, 0.0, -1.4963) expected (-68.7047, 0.0, -1.4963)"
+    },
+    {
+      "name": "gym_png_position",
+      "passed": true,
+      "evidence": "(0.0, 0.0, 44.2379) expected (0.0, 0.0, 44.2379)"
     },
     {
       "name": "rear_parking_present",
@@ -84,12 +89,12 @@
     {
       "name": "annex_long_axis_north_south",
       "passed": true,
-      "evidence": "(17.5, 11.4, 52.0)"
+      "evidence": "(20.5089, 11.4, 49.9628)"
     },
     {
       "name": "two_side_basketball_courts",
       "passed": true,
-      "evidence": "(-43.5, 0.04, 45.0) / (43.5, 0.04, 45.0)"
+      "evidence": "(-43.6546, 0.04, 39.619) / (43.6546, 0.04, 39.619)"
     },
     {
       "name": "court_stands_and_south_gardens",
@@ -102,9 +107,19 @@
       "evidence": "4"
     },
     {
+      "name": "final_png_road_network",
+      "passed": true,
+      "evidence": "본관 전면·별관 동측/연결·운동장 남/동측 6개 구간"
+    },
+    {
+      "name": "final_png_exterior_door_markers",
+      "passed": true,
+      "evidence": "본관 4 + 별관 2 + 강당 3"
+    },
+    {
       "name": "bridge_main_f2_to_annex_f3_route",
       "passed": true,
-      "evidence": "(-60.35, 7.6, -54.0) -> (-60.35, 7.6, -27.3)"
+      "evidence": "(-58.4502, 7.6, -54.4517) -> (-58.4502, 7.6, -26.4777)"
     },
     {
       "name": "site_not_rotated_or_mirrored",

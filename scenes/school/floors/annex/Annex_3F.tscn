@@ -32,7 +32,7 @@ metadata/large_order_csv = "도서관|그룹학습실"
 metadata/stair_count = 2
 metadata/center_stair_count = 0
 metadata/elevator_count = 1
-metadata/door_count = 16
+metadata/door_count = 13
 metadata/floor_y_m = 7.6
 metadata/skybridge_target = "main_f2"
 metadata/skybridge_floor_y_m = 7.6
@@ -192,10 +192,7 @@ material = ExtResource("5_wall")
 
 [node name="SupportDoors" type="Node3D" parent="Doors"]
 position = Vector3(0, 0, -2.239)
-metadata/marker_count = 10
-
-[node name="좌측 계단" parent="Doors/SupportDoors" instance=ExtResource("8_marker")]
-position = Vector3(-23.5, 0.14, -1.55)
+metadata/marker_count = 9
 [node name="사서실" parent="Doors/SupportDoors" instance=ExtResource("8_marker")]
 position = Vector3(-18.285, 0.14, -1.55)
 [node name="도서 정리실" parent="Doors/SupportDoors" instance=ExtResource("8_marker")]
@@ -217,16 +214,10 @@ position = Vector3(19.415, 0.14, -1.55)
 
 [node name="LargeRoomDoors" type="Node3D" parent="Doors"]
 position = Vector3(0, 0, -2.723)
-metadata/marker_count = 5
+metadata/marker_count = 3
 
 [node name="도서관" parent="Doors/LargeRoomDoors" instance=ExtResource("8_marker")]
 position = Vector3(-24.884, 0.14, 1.55)
-
-[node name="도서관 출입문 2" parent="Doors/LargeRoomDoors" instance=ExtResource("8_marker")]
-position = Vector3(-18.271, 0.14, 1.55)
-
-[node name="도서관 출입문 3" parent="Doors/LargeRoomDoors" instance=ExtResource("8_marker")]
-position = Vector3(-13.41, 0.14, 1.55)
 
 [node name="도서관 출입문 4" parent="Doors/LargeRoomDoors" instance=ExtResource("8_marker")]
 position = Vector3(14.088, 0.14, 1.55)

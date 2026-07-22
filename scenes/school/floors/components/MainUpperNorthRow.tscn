@@ -149,10 +149,7 @@ position = Vector3(-8.837, 0.14, -4.005)
 position = Vector3(-3.228, 0.14, -4.005)
 
 [node name="CenterCoreDoors" type="Node3D" parent="DoorMarkers"]
-metadata/marker_count = 2
-
-[node name="중앙 계단" parent="DoorMarkers/CenterCoreDoors" instance=ExtResource("5_marker")]
-position = Vector3(2.022, 0.14, -4.005)
+metadata/marker_count = 1
 
 [node name="엘리베이터" parent="DoorMarkers/CenterCoreDoors" instance=ExtResource("5_marker")]
 position = Vector3(8.152, 0.14, -4.005)

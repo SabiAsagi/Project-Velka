@@ -78,7 +78,7 @@ radius = 0.8
 height = 1.6
 radial_segments = 24
 rings = 12
-position = Vector3(0, 25.1, -54)
+position = Vector3(0, 25.1, -54.4517)
 material = SubResource("AnchorMat")
 
 [node name="AnnexCenter" type="CSGSphere3D" parent="ReferenceOverlay/Anchors"]
@@ -86,7 +86,7 @@ radius = 0.8
 height = 1.6
 radial_segments = 24
 rings = 12
-position = Vector3(-69.1, 25.1, -1.3)
+position = Vector3(-68.7047, 25.1, -1.4963)
 material = SubResource("AnchorMat")
 
 [node name="GymCenter" type="CSGSphere3D" parent="ReferenceOverlay/Anchors"]
@@ -94,7 +94,7 @@ radius = 0.8
 height = 1.6
 radial_segments = 24
 rings = 12
-position = Vector3(0, 25.1, 45)
+position = Vector3(0, 25.1, 44.2379)
 material = SubResource("AnchorMat")
 
 [node name="MainGate" type="CSGSphere3D" parent="ReferenceOverlay/Anchors"]
