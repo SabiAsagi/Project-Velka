@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/school/exterior/Exterior.tscn" id="1_exterior"]
 [ext_resource type="PackedScene" path="res://scenes/school/buildings/MainBuildingMass.tscn" id="2_main"]
@@ -6,6 +6,9 @@
 [ext_resource type="PackedScene" path="res://scenes/school/buildings/GymBuildingMass.tscn" id="4_gym"]
 [ext_resource type="PackedScene" path="res://scenes/school/connections/MainAnnexSkybridge.tscn" id="5_bridge"]
 [ext_resource type="PackedScene" path="res://scenes/school/debug/DebugTools.tscn" id="6_debug"]
+[ext_resource type="PackedScene" path="res://scenes/school/floors/MainFloorStack.tscn" id="7_main_floors"]
+[ext_resource type="PackedScene" path="res://scenes/school/floors/AnnexFloorStack.tscn" id="8_annex_floors"]
+[ext_resource type="PackedScene" path="res://scenes/school/floors/GymFloorStack.tscn" id="9_gym_floors"]
 
 [sub_resource type="Environment" id="Environment_school"]
 background_mode = 1
@@ -15,7 +18,7 @@ ambient_light_color = Color(1, 1, 1, 1)
 ambient_light_energy = 0.8
 
 [node name="SchoolMap" type="Node3D"]
-metadata/phase = 1
+metadata/phase = 2
 metadata/reference_policy = "png_shape_position_over_detail_document_over_guide_process"
 metadata/site_rotation_degrees = 0
 metadata/mirrored = false
@@ -37,6 +40,21 @@ position = Vector3(0, 0, 39)
 [node name="Connections" type="Node3D" parent="."]
 
 [node name="MainAnnexSkybridge" parent="Connections" instance=ExtResource("5_bridge")]
+
+[node name="Phase2FloorPlans" type="Node3D" parent="."]
+visible = false
+metadata/visibility_note = "Enable per building for structural inspection; hidden by default to preserve Phase 1 exterior review."
+
+[node name="Main" parent="Phase2FloorPlans" instance=ExtResource("7_main_floors")]
+position = Vector3(0, 0, -44.5)
+
+[node name="Annex" parent="Phase2FloorPlans" instance=ExtResource("8_annex_floors")]
+position = Vector3(-51.25, 0, 0)
+rotation_degrees = Vector3(0, 90, 0)
+
+[node name="Gym" parent="Phase2FloorPlans" instance=ExtResource("9_gym_floors")]
+position = Vector3(0, 0, 39)
+scale = Vector3(1, 1, -1)
 
 [node name="Gameplay" type="Node3D" parent="."]
 

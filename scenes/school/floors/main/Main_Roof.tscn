@@ -1,0 +1,135 @@
+[gd_scene load_steps=9 format=3]
+
+[ext_resource type="Material" path="res://resources/school/phase2/GrayFloor.tres" id="1_floor"]
+[ext_resource type="Material" path="res://resources/school/phase2/GrayWall.tres" id="2_wall"]
+[ext_resource type="Material" path="res://resources/school/phase2/Core.tres" id="3_core"]
+[ext_resource type="Material" path="res://resources/school/phase2/DoorMarker.tres" id="4_door"]
+[ext_resource type="Material" path="res://resources/school/phase2/RoofZone.tres" id="5_roof"]
+[ext_resource type="Texture2D" path="res://docs/맵 레퍼런스/학교/06_본관_옥상.png" id="6_reference"]
+
+[sub_resource type="StandardMaterial3D" id="OverlayMat"]
+shading_mode = 0
+transparency = 1
+albedo_color = Color(1, 1, 1, 0.5)
+albedo_texture = ExtResource("6_reference")
+cull_mode = 2
+no_depth_test = true
+render_priority = 10
+
+[sub_resource type="PlaneMesh" id="OverlayPlane"]
+material = SubResource("OverlayMat")
+size = Vector2(74.27, 25.1)
+
+[node name="Main_Roof" type="Node3D"]
+metadata/floor_id = "main_roof"
+metadata/reference = "06_본관_옥상.png"
+metadata/orientation = "image_top_is_north"
+metadata/north_order_csv = "실외기·환기 설비구역|옥상 출입실|저상 물탱크·배관·안테나 설비구역"
+metadata/south_order_csv = "좌측 옥상정원|중앙 옥상정원|우측 옥상정원"
+metadata/stair_count = 1
+metadata/elevator_count = 0
+metadata/door_count = 1
+metadata/floor_y_m = 19.0
+metadata/access = "central_stair_only"
+
+[node name="Floor" type="CSGBox3D" parent="."]
+size = Vector3(60, 0.2, 18.5)
+position = Vector3(0, -0.1, 0)
+material = ExtResource("1_floor")
+
+[node name="Perimeter" type="Node3D" parent="."]
+
+[node name="North" type="CSGBox3D" parent="Perimeter"]
+size = Vector3(60, 1.2, 0.3)
+position = Vector3(0, 0.6, -9.1)
+material = ExtResource("2_wall")
+
+[node name="South" type="CSGBox3D" parent="Perimeter"]
+size = Vector3(60, 1.2, 0.3)
+position = Vector3(0, 0.6, 9.1)
+material = ExtResource("2_wall")
+
+[node name="West" type="CSGBox3D" parent="Perimeter"]
+size = Vector3(0.3, 1.2, 18.5)
+position = Vector3(-29.85, 0.6, 0)
+material = ExtResource("2_wall")
+
+[node name="East" type="CSGBox3D" parent="Perimeter"]
+size = Vector3(0.3, 1.2, 18.5)
+position = Vector3(29.85, 0.6, 0)
+material = ExtResource("2_wall")
+
+[node name="NorthZones" type="Node3D" parent="."]
+
+[node name="실외기·환기 설비구역" type="CSGBox3D" parent="NorthZones"]
+size = Vector3(18, 0.12, 7)
+position = Vector3(-20, 0.06, -5.2)
+material = ExtResource("3_core")
+metadata/order_index = 0
+
+[node name="옥상 출입실" type="CSGBox3D" parent="NorthZones"]
+size = Vector3(10, 3.2, 6)
+position = Vector3(0, 1.6, -5.2)
+material = ExtResource("3_core")
+metadata/order_index = 1
+metadata/connection = "main_center_stair"
+
+[node name="저상 물탱크·배관·안테나 설비구역" type="CSGBox3D" parent="NorthZones"]
+size = Vector3(18, 0.12, 7)
+position = Vector3(20, 0.06, -5.2)
+material = ExtResource("3_core")
+metadata/order_index = 2
+
+[node name="SouthZones" type="Node3D" parent="."]
+
+[node name="좌측 옥상정원" type="CSGBox3D" parent="SouthZones"]
+size = Vector3(16, 0.12, 8)
+position = Vector3(-20, 0.06, 4)
+material = ExtResource("5_roof")
+metadata/order_index = 0
+
+[node name="중앙 옥상정원" type="CSGBox3D" parent="SouthZones"]
+size = Vector3(20, 0.12, 8)
+position = Vector3(0, 0.06, 4)
+material = ExtResource("5_roof")
+metadata/order_index = 1
+
+[node name="우측 옥상정원" type="CSGBox3D" parent="SouthZones"]
+size = Vector3(16, 0.12, 8)
+position = Vector3(20, 0.06, 4)
+material = ExtResource("5_roof")
+metadata/order_index = 2
+
+[node name="CentralPath" type="CSGBox3D" parent="."]
+size = Vector3(3, 0.1, 13)
+position = Vector3(0, 0.11, 1.2)
+material = ExtResource("2_wall")
+
+[node name="LockedRoofDoor" type="CSGBox3D" parent="."]
+size = Vector3(3, 0.08, 0.5)
+position = Vector3(0, 0.14, -2.15)
+material = ExtResource("4_door")
+metadata/normally_locked = true
+
+[node name="CentralStairOnly" type="Marker3D" parent="."]
+position = Vector3(0, 0, -5.2)
+metadata/connects_from = "main_f4"
+metadata/elevator_connected = false
+
+[node name="Debug" type="Node3D" parent="."]
+
+[node name="ReferenceOverlay" type="MeshInstance3D" parent="Debug"]
+visible = false
+position = Vector3(4.56, 20, 0.84)
+mesh = SubResource("OverlayPlane")
+cast_shadow = 0
+metadata/_edit_lock_ = true
+
+[node name="DebugTopCamera" type="Camera3D" parent="Debug"]
+position = Vector3(0, 40, 0)
+rotation_degrees = Vector3(-90, 0, 0)
+projection = 1
+size = 27.78
+near = 0.1
+far = 100
+current = true

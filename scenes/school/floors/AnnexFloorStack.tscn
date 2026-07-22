@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/school/floors/annex/Annex_1F.tscn" id="1_f1"]
+[ext_resource type="PackedScene" path="res://scenes/school/floors/annex/Annex_2F.tscn" id="2_f2"]
+[ext_resource type="PackedScene" path="res://scenes/school/floors/annex/Annex_3F.tscn" id="3_f3"]
+
+[node name="AnnexFloorStack" type="Node3D"]
+metadata/building_id = "annex"
+metadata/floor_spacing_m = 3.8
+metadata/site_position = Vector3(-51.25, 0, 0)
+metadata/site_rotation_y_degrees = 90.0
+
+[node name="F1" parent="." instance=ExtResource("1_f1")]
+
+[node name="F2" parent="." instance=ExtResource("2_f2")]
+position = Vector3(0, 3.8, 0)
+
+[node name="F3" parent="." instance=ExtResource("3_f3")]
+position = Vector3(0, 7.6, 0)

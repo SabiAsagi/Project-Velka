@@ -1,0 +1,242 @@
+[gd_scene load_steps=11 format=3]
+
+[ext_resource type="Material" path="res://resources/school/phase2/GrayFloor.tres" id="1_floor"]
+[ext_resource type="Material" path="res://resources/school/phase2/GrayWall.tres" id="2_wall"]
+[ext_resource type="Material" path="res://resources/school/phase2/RoomNorth.tres" id="3_room"]
+[ext_resource type="Material" path="res://resources/school/phase2/RoomSouth.tres" id="4_seating"]
+[ext_resource type="Material" path="res://resources/school/phase2/Core.tres" id="5_core"]
+[ext_resource type="Material" path="res://resources/school/phase2/DoorMarker.tres" id="6_door"]
+[ext_resource type="Texture2D" path="res://docs/맵 레퍼런스/학교/11_강당_2F.png" id="7_reference"]
+[ext_resource type="PackedScene" path="res://scenes/school/floors/components/DoorCenterMarker.tscn" id="8_marker"]
+
+[sub_resource type="StandardMaterial3D" id="OverlayMat"]
+shading_mode = 0
+transparency = 1
+albedo_color = Color(1, 1, 1, 0.5)
+albedo_texture = ExtResource("7_reference")
+cull_mode = 2
+no_depth_test = true
+render_priority = 10
+
+[sub_resource type="PlaneMesh" id="OverlayPlane"]
+material = SubResource("OverlayMat")
+size = Vector2(53.33, 37.82)
+
+[node name="Gym_2F" type="Node3D"]
+metadata/floor_id = "gym_f2"
+metadata/reference = "11_강당_2F.png"
+metadata/orientation = "image_bottom_is_site_north_image_top_is_site_south_east_west_unchanged"
+metadata/site_scale_z = -1.0
+metadata/south_order_csv = "소품실 상부|무대 상부|장치실 상부"
+metadata/north_order_csv = "촬영·관리대|카메라대 서|방송부스|카메라대 동"
+metadata/other_order_csv = "서측 관람석|북측 관람석|동측 관람석|중앙 개방부"
+metadata/internal_stair_count = 2
+metadata/stage_stair_count = 0
+metadata/external_emergency_stair_count = 2
+metadata/elevator_count = 0
+metadata/external_exit_count = 2
+metadata/seating_shape = "U"
+metadata/central_void_count = 1
+metadata/door_count = 6
+metadata/floor_y_m = 3.8
+
+[node name="UShapeFloor" type="Node3D" parent="."]
+
+[node name="WestWing" type="CSGBox3D" parent="UShapeFloor"]
+size = Vector3(8, 0.2, 26)
+position = Vector3(-16, -0.1, 0)
+material = ExtResource("1_floor")
+
+[node name="EastWing" type="CSGBox3D" parent="UShapeFloor"]
+size = Vector3(8, 0.2, 26)
+position = Vector3(16, -0.1, 0)
+material = ExtResource("1_floor")
+
+[node name="NorthWing" type="CSGBox3D" parent="UShapeFloor"]
+size = Vector3(24, 0.2, 7)
+position = Vector3(0, -0.1, 9.5)
+material = ExtResource("1_floor")
+
+[node name="SouthUpperFloor" type="CSGBox3D" parent="UShapeFloor"]
+size = Vector3(24, 0.2, 6.2)
+position = Vector3(0, -0.1, -9.9)
+material = ExtResource("1_floor")
+
+[node name="Ceiling" type="CSGBox3D" parent="UShapeFloor"]
+visible = false
+size = Vector3(40, 0.2, 26)
+position = Vector3(0, 3.9, 0)
+material = ExtResource("1_floor")
+
+[node name="OuterWalls" type="Node3D" parent="."]
+
+[node name="West" type="CSGBox3D" parent="OuterWalls"]
+size = Vector3(0.25, 3.8, 26)
+position = Vector3(-19.875, 1.9, 0)
+material = ExtResource("2_wall")
+
+[node name="East" type="CSGBox3D" parent="OuterWalls"]
+size = Vector3(0.25, 3.8, 26)
+position = Vector3(19.875, 1.9, 0)
+material = ExtResource("2_wall")
+
+[node name="South" type="CSGBox3D" parent="OuterWalls"]
+size = Vector3(40, 3.8, 0.25)
+position = Vector3(0, 1.9, -12.875)
+material = ExtResource("2_wall")
+
+[node name="North" type="CSGBox3D" parent="OuterWalls"]
+size = Vector3(40, 3.8, 0.25)
+position = Vector3(0, 1.9, 12.875)
+material = ExtResource("2_wall")
+
+[node name="CentralVoid" type="Node3D" parent="."]
+metadata/is_open_to_gym_1f = true
+metadata/count = 1
+
+[node name="중앙 개방부" type="Marker3D" parent="CentralVoid"]
+position = Vector3(0, 0, -0.5)
+metadata/structural_void = true
+metadata/size_m = Vector2(24, 13)
+
+[node name="SouthUpperRooms" type="Node3D" parent="."]
+
+[node name="소품실 상부" type="CSGBox3D" parent="SouthUpperRooms"]
+size = Vector3(4.7, 0.12, 6.1)
+position = Vector3(-17.65, 0.06, -9.8)
+material = ExtResource("3_room")
+metadata/order_index = 0
+
+[node name="무대 상부" type="CSGBox3D" parent="SouthUpperRooms"]
+size = Vector3(30.4, 0.12, 6.1)
+position = Vector3(0, 0.06, -9.8)
+material = ExtResource("3_room")
+metadata/order_index = 1
+
+[node name="장치실 상부" type="CSGBox3D" parent="SouthUpperRooms"]
+size = Vector3(4.7, 0.12, 6.1)
+position = Vector3(17.65, 0.06, -9.8)
+material = ExtResource("3_room")
+metadata/order_index = 2
+
+[node name="SouthWestPartition" type="CSGBox3D" parent="SouthUpperRooms"]
+size = Vector3(0.15, 3.4, 6.1)
+position = Vector3(-15.25, 1.7, -9.8)
+material = ExtResource("2_wall")
+
+[node name="SouthEastPartition" type="CSGBox3D" parent="SouthUpperRooms"]
+size = Vector3(0.15, 3.4, 6.1)
+position = Vector3(15.25, 1.7, -9.8)
+material = ExtResource("2_wall")
+
+[node name="Seating" type="Node3D" parent="."]
+
+[node name="서측 관람석" type="CSGBox3D" parent="Seating"]
+size = Vector3(8, 0.35, 19.5)
+position = Vector3(-16, 0.175, 3.15)
+material = ExtResource("4_seating")
+metadata/order_index = 0
+
+[node name="북측 관람석" type="CSGBox3D" parent="Seating"]
+size = Vector3(24, 0.35, 7)
+position = Vector3(0, 0.175, 9.5)
+material = ExtResource("4_seating")
+metadata/order_index = 1
+
+[node name="동측 관람석" type="CSGBox3D" parent="Seating"]
+size = Vector3(8, 0.35, 19.5)
+position = Vector3(16, 0.175, 3.15)
+material = ExtResource("4_seating")
+metadata/order_index = 2
+
+[node name="NorthControlBand" type="Node3D" parent="."]
+
+[node name="촬영·관리대" type="CSGBox3D" parent="NorthControlBand"]
+size = Vector3(4.6, 0.12, 2.6)
+position = Vector3(-9.6, 0.4, 11.2)
+material = ExtResource("3_room")
+metadata/order_index = 0
+
+[node name="카메라대 서" type="CSGBox3D" parent="NorthControlBand"]
+size = Vector3(2.6, 0.12, 2.6)
+position = Vector3(-4.8, 0.4, 11.2)
+material = ExtResource("5_core")
+metadata/order_index = 1
+
+[node name="방송부스" type="CSGBox3D" parent="NorthControlBand"]
+size = Vector3(4.8, 0.12, 2.6)
+position = Vector3(0, 0.4, 11.2)
+material = ExtResource("3_room")
+metadata/order_index = 2
+
+[node name="카메라대 동" type="CSGBox3D" parent="NorthControlBand"]
+size = Vector3(2.6, 0.12, 2.6)
+position = Vector3(4.8, 0.4, 11.2)
+material = ExtResource("5_core")
+metadata/order_index = 3
+
+[node name="InternalStairs" type="Node3D" parent="."]
+
+[node name="WestStair" type="CSGBox3D" parent="InternalStairs"]
+size = Vector3(2.8, 0.18, 3)
+position = Vector3(-6.7, 0.35, 11)
+material = ExtResource("5_core")
+
+[node name="EastStair" type="CSGBox3D" parent="InternalStairs"]
+size = Vector3(2.8, 0.18, 3)
+position = Vector3(6.7, 0.35, 11)
+material = ExtResource("5_core")
+
+[node name="ExternalEmergencyStairs" type="Node3D" parent="."]
+
+[node name="WestEmergencyStair" type="CSGBox3D" parent="ExternalEmergencyStairs"]
+size = Vector3(2.5, 0.18, 7)
+position = Vector3(-21.2, 0.09, -1)
+material = ExtResource("5_core")
+
+[node name="EastEmergencyStair" type="CSGBox3D" parent="ExternalEmergencyStairs"]
+size = Vector3(2.5, 0.18, 7)
+position = Vector3(21.2, 0.09, -1)
+material = ExtResource("5_core")
+
+[node name="Doors" type="Node3D" parent="."]
+
+[node name="WestEmergencyExit" type="CSGBox3D" parent="Doors"]
+size = Vector3(0.55, 0.08, 3)
+position = Vector3(-19.75, 0.2, -6)
+material = ExtResource("6_door")
+
+[node name="EastEmergencyExit" type="CSGBox3D" parent="Doors"]
+size = Vector3(0.55, 0.08, 3)
+position = Vector3(19.75, 0.2, -6)
+material = ExtResource("6_door")
+
+[node name="ControlDoors" type="Node3D" parent="Doors"]
+metadata/marker_count = 4
+
+[node name="촬영·관리대" parent="Doors/ControlDoors" instance=ExtResource("8_marker")]
+position = Vector3(-9.6, 0.45, 9.85)
+[node name="카메라대 서" parent="Doors/ControlDoors" instance=ExtResource("8_marker")]
+position = Vector3(-4.8, 0.45, 9.85)
+[node name="방송부스" parent="Doors/ControlDoors" instance=ExtResource("8_marker")]
+position = Vector3(0, 0.45, 9.85)
+[node name="카메라대 동" parent="Doors/ControlDoors" instance=ExtResource("8_marker")]
+position = Vector3(4.8, 0.45, 9.85)
+
+[node name="Debug" type="Node3D" parent="."]
+
+[node name="ReferenceOverlay" type="MeshInstance3D" parent="Debug"]
+visible = false
+position = Vector3(0, 20, 3.43)
+mesh = SubResource("OverlayPlane")
+cast_shadow = 0
+metadata/_edit_lock_ = true
+
+[node name="DebugTopCamera" type="Camera3D" parent="Debug"]
+position = Vector3(0, 45, 3.43)
+rotation_degrees = Vector3(-90, 0, 0)
+projection = 1
+size = 42
+near = 0.1
+far = 100
+current = true

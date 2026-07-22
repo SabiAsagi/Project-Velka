@@ -350,7 +350,7 @@
       "south_external_entrance_count": 0
     },
     "gym_f2": {
-      "building": "gym", "level": "2F", "floor_y_m": 4.0, "floor_y_approximate": true, "reference": "11_강당_2F.png",
+      "building": "gym", "level": "2F", "floor_y_m": 3.8, "floor_y_approximate": false, "floor_y_source": "fixed_common_floor_interval", "reference": "11_강당_2F.png",
       "south_order_west_to_east": ["소품실 상부", "무대 상부·조명·스크린·커튼 설비", "장치실 상부"],
       "north_order_west_to_east": ["촬영·관리대", "계단", "카메라대", "방송부스", "카메라대", "계단"],
       "side_seating": ["서측 관람석", "동측 관람석"],

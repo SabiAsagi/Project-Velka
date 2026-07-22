@@ -1,0 +1,15 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/school/floors/gym/Gym_1F.tscn" id="1_f1"]
+[ext_resource type="PackedScene" path="res://scenes/school/floors/gym/Gym_2F.tscn" id="2_f2"]
+
+[node name="GymFloorStack" type="Node3D"]
+metadata/building_id = "gym"
+metadata/floor_spacing_m = 3.8
+metadata/site_position = Vector3(0, 0, 39)
+metadata/site_scale_z = -1.0
+
+[node name="F1" parent="." instance=ExtResource("1_f1")]
+
+[node name="F2" parent="." instance=ExtResource("2_f2")]
+position = Vector3(0, 3.8, 0)

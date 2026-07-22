@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "phase": 2,
+  "status": "validated_complete_waiting_approval",
+  "coordinate_system": {
+    "origin": "athletic_field_center",
+    "east": "+X",
+    "north": "-Z",
+    "up": "+Y",
+    "floor_interval_m": 3.8
+  },
+  "reference_policy": "PNG shape and position > school detail document values and use > implementation guide procedure",
+  "floor_scenes": [
+    {"id":"main_b1","scene":"res://scenes/school/floors/main/Main_B1.tscn","reference":"01_본관_B1.png","capture":"main_b1","size":[1728,800]},
+    {"id":"main_f1","scene":"res://scenes/school/floors/main/Main_1F.tscn","reference":"02_본관_1F.png","capture":"main_f1","size":[1728,800]},
+    {"id":"main_f2","scene":"res://scenes/school/floors/main/Main_2F.tscn","reference":"03_본관_2F.png","capture":"main_f2","size":[1728,800]},
+    {"id":"main_f3","scene":"res://scenes/school/floors/main/Main_3F.tscn","reference":"04_본관_3F.png","capture":"main_f3","size":[1728,800]},
+    {"id":"main_f4","scene":"res://scenes/school/floors/main/Main_4F.tscn","reference":"05_본관_4F.png","capture":"main_f4","size":[1728,800]},
+    {"id":"main_roof","scene":"res://scenes/school/floors/main/Main_Roof.tscn","reference":"06_본관_옥상.png","capture":"main_roof","size":[1728,800]},
+    {"id":"annex_f1","scene":"res://scenes/school/floors/annex/Annex_1F.tscn","reference":"07_별관_1F.png","capture":"annex_f1","size":[1600,800]},
+    {"id":"annex_f2","scene":"res://scenes/school/floors/annex/Annex_2F.tscn","reference":"08_별관_2F.png","capture":"annex_f2","size":[1600,800]},
+    {"id":"annex_f3","scene":"res://scenes/school/floors/annex/Annex_3F.tscn","reference":"09_별관_3F.png","capture":"annex_f3","size":[1600,800]},
+    {"id":"gym_f1","scene":"res://scenes/school/floors/gym/Gym_1F.tscn","reference":"10_강당_1F.png","capture":"gym_f1","size":[1600,1040]},
+    {"id":"gym_f2","scene":"res://scenes/school/floors/gym/Gym_2F.tscn","reference":"11_강당_2F.png","capture":"gym_f2","size":[1600,1040]}
+  ],
+  "building_transforms": {
+    "main": {"position":[0,0,-44.5],"rotation_y_degrees":0,"scale":[1,1,1]},
+    "annex": {"position":[-51.25,0,0],"rotation_y_degrees":90,"mapping":"image right = site north; image bottom = site east"},
+    "gym": {"position":[0,0,39],"scale":[1,1,-1],"mapping":"image bottom = site north; east/west unchanged"}
+  },
+  "required_counts": {
+    "floor_scenes": 11,
+    "review_images": 22,
+    "main_stairs_per_indoor_floor": 3,
+    "main_roof_stairs": 1,
+    "main_elevators": 1,
+    "main_roof_elevator_connections": 0,
+    "annex_stairs_per_floor": 2,
+    "annex_center_stairs": 0,
+    "annex_elevators": 1,
+    "gym_internal_interfloor_stairs": 2,
+    "gym_stage_access_stairs": 2,
+    "gym_external_emergency_stairs": 2,
+    "gym_elevators": 0,
+    "main_f1_external_entrances": 4,
+    "annex_f1_external_entrances": 2,
+    "gym_f1_external_entrances": 3,
+    "gym_f2_external_emergency_exits": 2,
+    "skybridges_main_f2_to_annex_f3": 1,
+    "skybridges_main_f2_to_annex_f2": 0,
+    "gym_f2_central_voids": 1
+  },
+  "connections": {
+    "main_annex_skybridge": {"from":"main_f2","to":"annex_f3","floor_y_m":7.6},
+    "main_roof": {"from":"main_f4","to":"main_roof","via":"central_stair_only","elevator_connected":false}
+  },
+  "phase_scope": {
+    "included": ["outer shell", "floor", "hidden ceiling", "central corridor", "room boundaries", "reference doors", "stairs", "elevators", "skybridge endpoints", "gym 2F U seating and central void"],
+    "excluded": ["furniture", "small props", "final materials", "lighting", "NPC", "navigation", "Phase 3 room interiors"]
+  },
+  "todo_confirm": []
+}

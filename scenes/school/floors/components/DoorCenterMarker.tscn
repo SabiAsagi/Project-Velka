@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Material" path="res://resources/school/phase2/DoorMarker.tres" id="1_door"]
+
+[node name="DoorCenterMarker" type="CSGBox3D"]
+size = Vector3(1.2, 0.08, 0.45)
+material = ExtResource("1_door")
+metadata/reference_door_center = true

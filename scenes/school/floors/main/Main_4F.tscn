@@ -1,0 +1,164 @@
+[gd_scene load_steps=10 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/school/floors/components/MainFloorShell.tscn" id="1_shell"]
+[ext_resource type="PackedScene" path="res://scenes/school/floors/components/MainUpperNorthRow.tscn" id="2_northrow"]
+[ext_resource type="Material" path="res://resources/school/phase2/RoomSouth.tres" id="3_south"]
+[ext_resource type="Material" path="res://resources/school/phase2/GrayWall.tres" id="4_wall"]
+[ext_resource type="Material" path="res://resources/school/phase2/DoorMarker.tres" id="5_door"]
+[ext_resource type="Texture2D" path="res://docs/맵 레퍼런스/학교/05_본관_4F.png" id="6_reference"]
+[ext_resource type="PackedScene" path="res://scenes/school/floors/components/DoorCenterMarker.tscn" id="7_marker"]
+
+[sub_resource type="StandardMaterial3D" id="OverlayMat"]
+shading_mode = 0
+transparency = 1
+albedo_color = Color(1, 1, 1, 0.5)
+albedo_texture = ExtResource("6_reference")
+cull_mode = 2
+no_depth_test = true
+render_priority = 10
+
+[sub_resource type="PlaneMesh" id="OverlayPlane"]
+material = SubResource("OverlayMat")
+size = Vector2(74.27, 25.1)
+
+[node name="Main_4F" type="Node3D"]
+metadata/floor_id = "main_f4"
+metadata/reference = "05_본관_4F.png"
+metadata/orientation = "image_top_is_north"
+metadata/north_order_csv = "좌측 계단|여자 탈의실|여자 화장실|청소도구함|남자 화장실|남자 탈의실|중앙 계단|엘리베이터|일반 동아리실 1|일반 동아리실 2|우측 계단"
+metadata/south_order_csv = "3-1 교실|3-2 교실|3-3 교실|자습실|3-4 교실|3-5 교실|3-6 교실"
+metadata/stair_count = 3
+metadata/elevator_count = 1
+metadata/door_count = 16
+metadata/floor_y_m = 15.2
+metadata/roof_connection = "central_stair_only"
+
+[node name="Shell" parent="." instance=ExtResource("1_shell")]
+
+[node name="NorthRow" parent="." instance=ExtResource("2_northrow")]
+
+[node name="SouthZones" type="Node3D" parent="."]
+
+[node name="3-1 교실" type="CSGBox3D" parent="SouthZones"]
+size = Vector3(7.95, 0.12, 7.5)
+position = Vector3(-25.95, 0.06, 5.375)
+material = ExtResource("3_south")
+metadata/order_index = 0
+
+[node name="3-2 교실" type="CSGBox3D" parent="SouthZones"]
+size = Vector3(7.95, 0.12, 7.5)
+position = Vector3(-17.85, 0.06, 5.375)
+material = ExtResource("3_south")
+metadata/order_index = 1
+
+[node name="3-3 교실" type="CSGBox3D" parent="SouthZones"]
+size = Vector3(7.95, 0.12, 7.5)
+position = Vector3(-9.75, 0.06, 5.375)
+material = ExtResource("3_south")
+metadata/order_index = 2
+
+[node name="자습실" type="CSGBox3D" parent="SouthZones"]
+size = Vector3(11.25, 0.12, 7.5)
+position = Vector3(0, 0.06, 5.375)
+material = ExtResource("3_south")
+metadata/order_index = 3
+metadata/study_cubicle_count_phase3 = 24
+
+[node name="3-4 교실" type="CSGBox3D" parent="SouthZones"]
+size = Vector3(7.95, 0.12, 7.5)
+position = Vector3(9.75, 0.06, 5.375)
+material = ExtResource("3_south")
+metadata/order_index = 4
+
+[node name="3-5 교실" type="CSGBox3D" parent="SouthZones"]
+size = Vector3(7.95, 0.12, 7.5)
+position = Vector3(17.85, 0.06, 5.375)
+material = ExtResource("3_south")
+metadata/order_index = 5
+
+[node name="3-6 교실" type="CSGBox3D" parent="SouthZones"]
+size = Vector3(7.95, 0.12, 7.5)
+position = Vector3(25.95, 0.06, 5.375)
+material = ExtResource("3_south")
+metadata/order_index = 6
+
+[node name="SouthPartitions" type="Node3D" parent="."]
+
+[node name="P1" type="CSGBox3D" parent="SouthPartitions"]
+size = Vector3(0.15, 3.4, 7.5)
+position = Vector3(-21.9, 1.7, 5.375)
+material = ExtResource("4_wall")
+
+[node name="P2" type="CSGBox3D" parent="SouthPartitions"]
+size = Vector3(0.15, 3.4, 7.5)
+position = Vector3(-13.8, 1.7, 5.375)
+material = ExtResource("4_wall")
+
+[node name="P3" type="CSGBox3D" parent="SouthPartitions"]
+size = Vector3(0.15, 3.4, 7.5)
+position = Vector3(-5.7, 1.7, 5.375)
+material = ExtResource("4_wall")
+
+[node name="P4" type="CSGBox3D" parent="SouthPartitions"]
+size = Vector3(0.15, 3.4, 7.5)
+position = Vector3(5.7, 1.7, 5.375)
+material = ExtResource("4_wall")
+
+[node name="P5" type="CSGBox3D" parent="SouthPartitions"]
+size = Vector3(0.15, 3.4, 7.5)
+position = Vector3(13.8, 1.7, 5.375)
+material = ExtResource("4_wall")
+
+[node name="P6" type="CSGBox3D" parent="SouthPartitions"]
+size = Vector3(0.15, 3.4, 7.5)
+position = Vector3(21.9, 1.7, 5.375)
+material = ExtResource("4_wall")
+
+[node name="Doors" type="Node3D" parent="."]
+
+[node name="SouthRoomDoors" type="Node3D" parent="Doors"]
+metadata/marker_count = 7
+
+[node name="3-1 교실" parent="Doors/SouthRoomDoors" instance=ExtResource("7_marker")]
+position = Vector3(-25.95, 0.14, 1.55)
+
+[node name="3-2 교실" parent="Doors/SouthRoomDoors" instance=ExtResource("7_marker")]
+position = Vector3(-17.85, 0.14, 1.55)
+
+[node name="3-3 교실" parent="Doors/SouthRoomDoors" instance=ExtResource("7_marker")]
+position = Vector3(-9.75, 0.14, 1.55)
+
+[node name="자습실" parent="Doors/SouthRoomDoors" instance=ExtResource("7_marker")]
+position = Vector3(0, 0.14, 1.55)
+
+[node name="3-4 교실" parent="Doors/SouthRoomDoors" instance=ExtResource("7_marker")]
+position = Vector3(9.75, 0.14, 1.55)
+
+[node name="3-5 교실" parent="Doors/SouthRoomDoors" instance=ExtResource("7_marker")]
+position = Vector3(17.85, 0.14, 1.55)
+
+[node name="3-6 교실" parent="Doors/SouthRoomDoors" instance=ExtResource("7_marker")]
+position = Vector3(25.95, 0.14, 1.55)
+
+[node name="CentralRoofAccessMarker" type="Marker3D" parent="."]
+position = Vector3(1.95, 3.8, -5.375)
+metadata/connects_to = "main_roof"
+metadata/elevator_connected = false
+
+[node name="Debug" type="Node3D" parent="."]
+
+[node name="ReferenceOverlay" type="MeshInstance3D" parent="Debug"]
+visible = false
+position = Vector3(4.56, 20, 0.84)
+mesh = SubResource("OverlayPlane")
+cast_shadow = 0
+metadata/_edit_lock_ = true
+
+[node name="DebugTopCamera" type="Camera3D" parent="Debug"]
+position = Vector3(0, 40, 0)
+rotation_degrees = Vector3(-90, 0, 0)
+projection = 1
+size = 27.78
+near = 0.1
+far = 100
+current = true

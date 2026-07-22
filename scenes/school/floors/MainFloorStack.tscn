@@ -1,0 +1,30 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/school/floors/main/Main_B1.tscn" id="1_b1"]
+[ext_resource type="PackedScene" path="res://scenes/school/floors/main/Main_1F.tscn" id="2_f1"]
+[ext_resource type="PackedScene" path="res://scenes/school/floors/main/Main_2F.tscn" id="3_f2"]
+[ext_resource type="PackedScene" path="res://scenes/school/floors/main/Main_3F.tscn" id="4_f3"]
+[ext_resource type="PackedScene" path="res://scenes/school/floors/main/Main_4F.tscn" id="5_f4"]
+[ext_resource type="PackedScene" path="res://scenes/school/floors/main/Main_Roof.tscn" id="6_roof"]
+
+[node name="MainFloorStack" type="Node3D"]
+metadata/building_id = "main"
+metadata/floor_spacing_m = 3.8
+metadata/site_position = Vector3(0, 0, -44.5)
+
+[node name="B1" parent="." instance=ExtResource("1_b1")]
+
+[node name="F1" parent="." instance=ExtResource("2_f1")]
+position = Vector3(0, 3.8, 0)
+
+[node name="F2" parent="." instance=ExtResource("3_f2")]
+position = Vector3(0, 7.6, 0)
+
+[node name="F3" parent="." instance=ExtResource("4_f3")]
+position = Vector3(0, 11.4, 0)
+
+[node name="F4" parent="." instance=ExtResource("5_f4")]
+position = Vector3(0, 15.2, 0)
+
+[node name="Roof" parent="." instance=ExtResource("6_roof")]
+position = Vector3(0, 19, 0)
