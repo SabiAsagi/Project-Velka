@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/school/Phase1Validate.gd" id="1_validate"]
+
+[node name="Phase1Validate" type="Node"]
+script = ExtResource("1_validate")

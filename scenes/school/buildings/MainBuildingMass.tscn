@@ -1,0 +1,60 @@
+[gd_scene load_steps=3 format=3]
+
+[sub_resource type="StandardMaterial3D" id="MainGray"]
+shading_mode = 0
+albedo_color = Color(0.27, 0.36, 0.43, 1)
+
+[sub_resource type="StandardMaterial3D" id="DoorGray"]
+shading_mode = 0
+albedo_color = Color(0.08, 0.12, 0.15, 1)
+
+[node name="MainBuilding" type="Node3D"]
+metadata/_edit_lock_ = true
+
+[node name="Mass" type="CSGCombiner3D" parent="."]
+use_collision = true
+
+[node name="BuildingEnvelope" type="CSGBox3D" parent="Mass"]
+size = Vector3(60, 15.2, 18.5)
+position = Vector3(0, 7.6, 0)
+material = SubResource("MainGray")
+
+[node name="WestFrontEntranceCut" type="CSGBox3D" parent="Mass"]
+operation = 2
+size = Vector3(3, 2.8, 1.2)
+position = Vector3(-24, 1.4, 9.25)
+
+[node name="CenterFrontEntranceCut" type="CSGBox3D" parent="Mass"]
+operation = 2
+size = Vector3(4, 3, 1.2)
+position = Vector3(0, 1.5, 9.25)
+
+[node name="EastFrontEntranceCut" type="CSGBox3D" parent="Mass"]
+operation = 2
+size = Vector3(3, 2.8, 1.2)
+position = Vector3(24, 1.4, 9.25)
+
+[node name="RearEntranceCut" type="CSGBox3D" parent="Mass"]
+operation = 2
+size = Vector3(3, 2.8, 1.2)
+position = Vector3(0, 1.4, -9.25)
+
+[node name="WestFrontEntrance" type="CSGBox3D" parent="."]
+size = Vector3(2.6, 2.5, 0.18)
+position = Vector3(-24, 1.25, 9.17)
+material = SubResource("DoorGray")
+
+[node name="CenterFrontEntrance" type="CSGBox3D" parent="."]
+size = Vector3(3.6, 2.7, 0.18)
+position = Vector3(0, 1.35, 9.17)
+material = SubResource("DoorGray")
+
+[node name="EastFrontEntrance" type="CSGBox3D" parent="."]
+size = Vector3(2.6, 2.5, 0.18)
+position = Vector3(24, 1.25, 9.17)
+material = SubResource("DoorGray")
+
+[node name="RearEntrance" type="CSGBox3D" parent="."]
+size = Vector3(2.6, 2.5, 0.18)
+position = Vector3(0, 1.25, -9.17)
+material = SubResource("DoorGray")

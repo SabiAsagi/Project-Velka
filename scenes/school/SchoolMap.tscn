@@ -1,0 +1,45 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/school/exterior/Exterior.tscn" id="1_exterior"]
+[ext_resource type="PackedScene" path="res://scenes/school/buildings/MainBuildingMass.tscn" id="2_main"]
+[ext_resource type="PackedScene" path="res://scenes/school/buildings/AnnexBuildingMass.tscn" id="3_annex"]
+[ext_resource type="PackedScene" path="res://scenes/school/buildings/GymBuildingMass.tscn" id="4_gym"]
+[ext_resource type="PackedScene" path="res://scenes/school/connections/MainAnnexSkybridge.tscn" id="5_bridge"]
+[ext_resource type="PackedScene" path="res://scenes/school/debug/DebugTools.tscn" id="6_debug"]
+
+[sub_resource type="Environment" id="Environment_school"]
+background_mode = 1
+background_color = Color(0.055, 0.065, 0.075, 1)
+ambient_light_source = 3
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_energy = 0.8
+
+[node name="SchoolMap" type="Node3D"]
+metadata/phase = 1
+metadata/reference_policy = "png_shape_position_over_detail_document_over_guide_process"
+metadata/site_rotation_degrees = 0
+metadata/mirrored = false
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_school")
+
+[node name="Exterior" parent="." instance=ExtResource("1_exterior")]
+
+[node name="MainBuilding" parent="." instance=ExtResource("2_main")]
+position = Vector3(0, 3.8, -44.5)
+
+[node name="Annex" parent="." instance=ExtResource("3_annex")]
+position = Vector3(-51.25, 0, 0)
+
+[node name="Gym" parent="." instance=ExtResource("4_gym")]
+position = Vector3(0, 0, 39)
+
+[node name="Connections" type="Node3D" parent="."]
+
+[node name="MainAnnexSkybridge" parent="Connections" instance=ExtResource("5_bridge")]
+
+[node name="Gameplay" type="Node3D" parent="."]
+
+[node name="Navigation" type="Node3D" parent="."]
+
+[node name="Debug" parent="." instance=ExtResource("6_debug")]
