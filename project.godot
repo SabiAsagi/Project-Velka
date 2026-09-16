@@ -16,12 +16,16 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 config/name="Project Velka"
 config/description="2.5D Mystery Horror Game with 2-character switching system."
-run/main_scene="res://scenes/chapters/Prologue.tscn"
+run/main_scene="res://scenes/ui/TitleScreen.tscn"
 config/features=PackedStringArray("4.7", "Forward Plus")
 
 [autoload]
 
 GameManager="*res://scripts/managers/GameManager.gd"
+SaveManager="*res://scripts/managers/SaveManager.gd"
+SettingsManager="*res://scripts/managers/SettingsManager.gd"
+SceneManager="*res://scripts/managers/SceneManager.gd"
+DialogueManager="*res://scripts/managers/DialogueManager.gd"
 RuleManager="*res://scripts/managers/RuleManager.gd"
 
 [display]

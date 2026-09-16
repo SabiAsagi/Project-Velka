@@ -1,8 +1,10 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=9 format=3]
 
-[ext_resource type="PackedScene" path="res://scenes/characters/Player.tscn" id="1"]
-[ext_resource type="PackedScene" path="res://scenes/cameras/FollowCamera.tscn" id="2"]
+[ext_resource type="Script" path="res://scripts/chapters/Prologue.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://scenes/characters/Player.tscn" id="2_player"]
+[ext_resource type="PackedScene" path="res://scenes/cameras/FollowCamera.tscn" id="3_camera"]
 [ext_resource type="PackedScene" path="res://scenes/ui/PrototypeHUD.tscn" id="4_hud"]
+[ext_resource type="PackedScene" path="res://scenes/ui/DialogueBox.tscn" id="5_dialogue"]
 
 [sub_resource type="Environment" id="Environment_prologue"]
 background_mode = 1
@@ -11,12 +13,19 @@ ambient_light_source = 3
 ambient_light_color = Color(0.38, 0.45, 0.55, 1)
 ambient_light_energy = 0.45
 
-[node name="Prologue" type="Node3D"]
+[sub_resource type="BoxShape3D" id="BoxShape3D_floor"]
+size = Vector3(40, 1, 40)
 
-[node name="Player" parent="." instance=ExtResource("1")]
+[sub_resource type="PlaneMesh" id="PlaneMesh_floor"]
+size = Vector2(40, 40)
+
+[node name="Prologue" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="Player" parent="." instance=ExtResource("2_player")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
 
-[node name="FollowCamera" parent="." node_paths=PackedStringArray("target") instance=ExtResource("2")]
+[node name="FollowCamera" parent="." node_paths=PackedStringArray("target") instance=ExtResource("3_camera")]
 target = NodePath("../Player")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
@@ -34,5 +43,17 @@ shadow_enabled = true
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_prologue")
 
+[node name="Floor" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor"]
+shape = SubResource("BoxShape3D_floor")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Floor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+mesh = SubResource("PlaneMesh_floor")
+
 [node name="PrototypeHUD" parent="." node_paths=PackedStringArray("player") instance=ExtResource("4_hud")]
 player = NodePath("../Player")
+
+[node name="DialogueBox" parent="." instance=ExtResource("5_dialogue")]

@@ -1,0 +1,132 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/DialogueBox.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/characters/portraits/sabi_neutral.png" id="2_sabi"]
+[ext_resource type="Texture2D" path="res://assets/characters/portraits/shamu_neutral.png" id="3_shamu"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.08, 0.09, 0.11, 0.92)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.3, 0.35, 0.42, 0.8)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.6)
+shadow_size = 12
+
+[node name="DialogueBox" type="CanvasLayer"]
+layer = 50
+script = ExtResource("1_script")
+
+[node name="RootContainer" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="LeftPortrait" type="TextureRect" parent="RootContainer"]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 80.0
+offset_top = -620.0
+offset_right = 430.0
+offset_bottom = -270.0
+grow_vertical = 0
+pivot_offset = Vector2(175, 175)
+texture = ExtResource("2_sabi")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="RightPortrait" type="TextureRect" parent="RootContainer"]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -430.0
+offset_top = -620.0
+offset_right = -80.0
+offset_bottom = -270.0
+grow_horizontal = 0
+grow_vertical = 0
+pivot_offset = Vector2(175, 175)
+texture = ExtResource("3_shamu")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ChoicesContainer" type="VBoxContainer" parent="RootContainer"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -400.0
+offset_top = -430.0
+offset_right = 400.0
+offset_bottom = -280.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 10
+alignment = 2
+
+[node name="TextPanel" type="PanelContainer" parent="RootContainer"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -600.0
+offset_top = -260.0
+offset_right = 600.0
+offset_bottom = -40.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_panel")
+
+[node name="MarginContainer" type="MarginContainer" parent="RootContainer/TextPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 24
+
+[node name="VBoxContainer" type="VBoxContainer" parent="RootContainer/TextPanel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="SpeakerHeader" type="HBoxContainer" parent="RootContainer/TextPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="SpeakerLabel" type="Label" parent="RootContainer/TextPanel/MarginContainer/VBoxContainer/SpeakerHeader"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "사비 아사기"
+
+[node name="DialogueLabel" type="RichTextLabel" parent="RootContainer/TextPanel/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/normal_font_size = 21
+theme_override_font_sizes/bold_font_size = 21
+bbcode_enabled = true
+text = "여기가 의뢰인들이 사라졌다는 그 장소인가..."
+scroll_active = false
+
+[node name="NextIndicator" type="Label" parent="RootContainer/TextPanel"]
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 8
+theme_override_colors/font_color = Color(0.85, 0.64, 0.21, 1)
+theme_override_font_sizes/font_size = 20
+text = "▼"

@@ -1,8 +1,8 @@
 [gd_scene load_steps=7 format=3]
 
 [ext_resource type="Script" path="res://scripts/characters/Player.gd" id="1"]
-[ext_resource type="Texture2D" path="res://assets/characters/placeholders/sabi_placeholder.svg" id="2_sabi"]
-[ext_resource type="Texture2D" path="res://assets/characters/placeholders/shamu_placeholder.svg" id="3_shamu"]
+[ext_resource type="Texture2D" path="res://assets/characters/sprites/sabi_standing.png" id="2_sabi"]
+[ext_resource type="Texture2D" path="res://assets/characters/sprites/shamu_standing.png" id="3_shamu"]
 [ext_resource type="Script" path="res://scripts/player/components/InteractionComponent.gd" id="4_interaction"]
 [ext_resource type="Script" path="res://scripts/player/components/StealthComponent.gd" id="5_stealth"]
 
@@ -22,7 +22,7 @@ shape = SubResource("CapsuleShape3D_player")
 [node name="Sprite3D" type="Sprite3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 texture = ExtResource("2_sabi")
-pixel_size = 0.0035
+pixel_size = 0.0014
 billboard = 2
 alpha_cut = 1
 shaded = true

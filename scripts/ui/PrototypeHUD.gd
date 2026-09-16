@@ -8,6 +8,7 @@ extends CanvasLayer
 @onready var heart_rate_label: Label = $MarginContainer/PanelContainer/VBoxContainer/HeartRateLabel
 @onready var mental_strength_label: Label = $MarginContainer/PanelContainer/VBoxContainer/MentalStrengthLabel
 @onready var status_label: Label = $MarginContainer/PanelContainer/VBoxContainer/StatusLabel
+@onready var trust_label: Label = $MarginContainer/PanelContainer/VBoxContainer/TrustLabel
 @onready var interaction_panel: PanelContainer = $InteractionPanel
 @onready var interaction_label: Label = $InteractionPanel/InteractionLabel
 
@@ -28,8 +29,27 @@ func _ready() -> void:
 		if not school_map.is_connected("zone_changed", _on_zone_changed):
 			school_map.connect("zone_changed", _on_zone_changed)
 		_on_zone_changed(String(school_map.get("current_zone_name")))
+	
+	# 사비-샤무 신뢰도 시그널 연결
+	if not GameManager.trust_changed.is_connected(_on_trust_changed):
+		GameManager.trust_changed.connect(_on_trust_changed)
+	_update_trust_display(GameManager.sabi_shamu_trust)
+
 	_on_stats_changed(GameManager.active_character, player.heart_rate, player.mental_strength)
 	_refresh_status()
+
+
+func _on_trust_changed(new_trust: float, delta: float) -> void:
+	_update_trust_display(new_trust)
+	# 신뢰도 변동 시 시각 피드백 (Tween)
+	var tween = create_tween()
+	var flash_col = Color(0.4, 1.0, 0.6) if delta > 0 else Color(1.0, 0.4, 0.4)
+	tween.tween_property(trust_label, "modulate", flash_col, 0.2)
+	tween.tween_property(trust_label, "modulate", Color.WHITE, 0.4)
+
+
+func _update_trust_display(trust_val: float) -> void:
+	trust_label.text = "유대 신뢰도  %d%%" % roundi(trust_val)
 
 
 func _on_stats_changed(character_type: int, heart_rate: float, mental_strength: float) -> void:

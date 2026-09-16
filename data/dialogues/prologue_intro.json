@@ -1,0 +1,79 @@
+{
+  "dialogue_id": "prologue_intro",
+  "lines": [
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "현장 부근에 도착했어... 주변의 전자기파 간섭이 극도로 심해지고 있어.",
+      "shake": false
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "laugh",
+      "text": "하! 사비, 긴장이라도 한 거냐? 얌전히 내 등 뒤에 붙어있어. 방해되는 놈들은 내가 전부 날려버릴 테니까!",
+      "shake": false
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "closed",
+      "shamu_emotion": "smile",
+      "text": "단순한 습격이나 납치 사건이 아니야, 샤무... 사라진 의뢰인들의 마지막 통신 기록에는 [color=#60d0e0]물리적 법칙을 벗어난 모순[/color]이 적혀 있었어.",
+      "shake": false
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "괴이 경고",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "[shake rate=25.0 level=8][color=#ff4040]─── 쿵! ───\n복도 깊은 곳에서 사람의 것이 아닌 기괴한 마찰음이 울려 퍼집니다.[/color][/shake]",
+      "shake": true
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "쳇... 기분 나쁜 소리로군. 사비, 어떻게 할까? 네 계산대로 움직일까, 아니면 내 식대로 뚫어버릴까?",
+      "shake": false,
+      "choices": [
+        {
+          "text": "사비의 분석에 따라 주변 단서와 모순을 먼저 파악한다.",
+          "outcome": {
+            "trust_delta": 5.0,
+            "suspicion_delta": 3.0,
+            "flags": { "prologue_approach": "sabi_investigate" }
+          }
+        },
+        {
+          "text": "샤무의 직감을 믿고 신속하게 내부로 돌파한다.",
+          "outcome": {
+            "trust_delta": 5.0,
+            "suspicion_delta": -2.0,
+            "flags": { "prologue_approach": "shamu_breakthrough" }
+          }
+        },
+        {
+          "text": "위험하니 일단 한 걸음 물러서서 상태를 지켜본다.",
+          "outcome": {
+            "trust_delta": -2.0,
+            "suspicion_delta": 1.0,
+            "flags": { "prologue_approach": "cautious_wait" }
+          }
+        }
+      ]
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "smile",
+      "shamu_emotion": "smile",
+      "text": "결정됐어. 어떤 상황이 닥치든, 서로의 등을 지키며 괴이의 규칙을 찾아내자.",
+      "shake": false
+    }
+  ]
+}
