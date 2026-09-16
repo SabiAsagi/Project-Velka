@@ -61,12 +61,17 @@ func show_next_line() -> void:
 	var line = _current_lines[_current_line_index]
 	_current_line_index += 1
 
-	line_started.emit(line)
-
-	# 대사에 선택지가 포함된 경우
+	# 대사에 선택지가 포함된 경우 대기 플래그 활성화
 	if line.has("choices") and line["choices"].size() > 0:
 		_waiting_for_choice = true
 		_current_choices = line["choices"]
+
+	line_started.emit(line)
+
+
+## 타이핑 완료 후 선택지 표시 요청 (DialogueBox에서 호출하거나 수동 호출 가능)
+func present_pending_choices() -> void:
+	if _waiting_for_choice and _current_choices.size() > 0:
 		choices_presented.emit(_current_choices)
 
 

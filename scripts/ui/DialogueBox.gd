@@ -33,6 +33,7 @@ var _type_timer: float = 0.0
 var _current_full_text: String = ""
 var _is_shaking: bool = false
 var _original_panel_pos: Vector2 = Vector2.ZERO
+var _pending_choices: Array = []
 
 
 func _ready() -> void:
@@ -97,6 +98,7 @@ func _on_dialogue_completed(_dialogue_id: String) -> void:
 
 ## 단일 대사 출력 시작
 func _on_line_started(line: Dictionary) -> void:
+	_pending_choices = line.get("choices", []).duplicate()
 	choices_container.visible = false
 	next_indicator.visible = false
 
@@ -155,11 +157,16 @@ func _update_portraits(active_speaker: String, sabi_emotion: String, shamu_emoti
 		right_portrait.modulate = Color(0.5, 0.5, 0.5, 0.8)
 
 
-## 타이핑 완료 처리
+## 타이핑 완료 처리 (텍스트 노출이 끝났을 때 선택지 표시 또는 진행 인디케이터 표시)
 func _finish_typing() -> void:
 	_is_typing = false
 	dialogue_label.visible_characters = -1
-	next_indicator.visible = true
+	
+	if _pending_choices.size() > 0:
+		_on_choices_presented(_pending_choices)
+		next_indicator.visible = false
+	else:
+		next_indicator.visible = true
 
 
 ## 화면 및 대화창 흔들림 연출
