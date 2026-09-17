@@ -11,3 +11,14 @@ export_presets.cfg
 .mono/
 data_*/
 mono_crash.*.json
+
+# Temporary, Logs & Test artifacts
+*.log
+*.tmp
+*.bak
+test_out.log
+debug/test_results.txt
+debug/screenshots/
+debug/*_validation.json
+.DS_Store
+Thumbs.db
