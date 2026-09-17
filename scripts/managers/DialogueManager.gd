@@ -49,6 +49,33 @@ func start_dialogue(dialogue_id: String) -> void:
 	show_next_line()
 
 
+## 현재 조작 중인 캐릭터에 맞는 대사 텍스트 반환 (사비 시점 vs 샤무 시점)
+func resolve_line_text(line: Dictionary) -> String:
+	if GameManager.active_character == GameManager.CharacterType.SABI:
+		if line.has("text_sabi") and not String(line["text_sabi"]).is_empty():
+			return String(line["text_sabi"])
+	elif GameManager.active_character == GameManager.CharacterType.SHAMU:
+		if line.has("text_shamu") and not String(line["text_shamu"]).is_empty():
+			return String(line["text_shamu"])
+	return line.get("text", "")
+
+
+## 현재 조작 중인 캐릭터에 맞는 선택지만 필터링
+func filter_choices_for_active_character(choices: Array) -> Array:
+	var filtered: Array = []
+	var active_char_str = "sabi" if GameManager.active_character == GameManager.CharacterType.SABI else "shamu"
+	
+	for c in choices:
+		if not c is Dictionary:
+			continue
+		var req_char = c.get("character", "").to_lower()
+		# 특정 캐릭터 전용이 아니거나, 현재 활성 캐릭터와 일치하는 경우 포함
+		if req_char.is_empty() or req_char == active_char_str:
+			filtered.append(c)
+			
+	return filtered
+
+
 ## 다음 대사 진행
 func show_next_line() -> void:
 	if not is_dialogue_active or _waiting_for_choice:
@@ -61,10 +88,12 @@ func show_next_line() -> void:
 	var line = _current_lines[_current_line_index]
 	_current_line_index += 1
 
-	# 대사에 선택지가 포함된 경우 대기 플래그 활성화
-	if line.has("choices") and line["choices"].size() > 0:
+	# 대사에 선택지가 포함된 경우 대기 플래그 활성화 (현재 캐릭터 전용 필터링)
+	var raw_choices = line.get("choices", [])
+	var filtered_choices = filter_choices_for_active_character(raw_choices)
+	if filtered_choices.size() > 0:
 		_waiting_for_choice = true
-		_current_choices = line["choices"]
+		_current_choices = filtered_choices
 
 	line_started.emit(line)
 

@@ -7,6 +7,8 @@
       "sabi_emotion": "neutral",
       "shamu_emotion": "neutral",
       "text": "현장 부근에 도착했어... 주변의 전자기파 간섭이 극도로 심해지고 있어.",
+      "text_sabi": "[color=#60d0e0][사비 시점][/color] 현장 부근에 도착했어. 측정기 주파수가 계속 어긋나... 공간 좌표가 왜곡되고 있어.",
+      "text_shamu": "[color=#e0b040][샤무 시점][/color] 사비가 중얼거리는 걸 들으며 복도 입구에 선다. 목덜미가 서늘해지는 살기가 느껴진다.",
       "shake": false
     },
     {
@@ -31,6 +33,8 @@
       "sabi_emotion": "neutral",
       "shamu_emotion": "neutral",
       "text": "[shake rate=25.0 level=8][color=#ff4040]─── 쿵! ───\n복도 깊은 곳에서 사람의 것이 아닌 기괴한 마찰음이 울려 퍼집니다.[/color][/shake]",
+      "text_sabi": "[shake rate=25.0 level=8][color=#ff4040]─── 쿵! ───\n[사비 분석: 규칙서에 기록되지 않은 미확인 진동입니다. 심박수가 급격히 상승합니다.][/color][/shake]",
+      "text_shamu": "[shake rate=25.0 level=8][color=#ff4040]─── 쿵! ───\n[샤무 직감: 복도 저편에서 살기를 띤 괴이가 냄새를 맡고 접근 중입니다!][/color][/shake]",
       "shake": true
     },
     {
@@ -42,7 +46,8 @@
       "shake": false,
       "choices": [
         {
-          "text": "사비의 분석에 따라 주변 단서와 모순을 먼저 파악한다.",
+          "character": "sabi",
+          "text": "[사비 전용] 규칙서의 모순을 비교하며 숨은 단서를 먼저 수집한다.",
           "outcome": {
             "trust_delta": 5.0,
             "suspicion_delta": 3.0,
@@ -50,7 +55,8 @@
           }
         },
         {
-          "text": "샤무의 직감을 믿고 신속하게 내부로 돌파한다.",
+          "character": "shamu",
+          "text": "[샤무 전용] 무기를 고쳐 쥐고 위험을 감수해 통로를 정면 돌파한다.",
           "outcome": {
             "trust_delta": 5.0,
             "suspicion_delta": -2.0,
@@ -58,9 +64,9 @@
           }
         },
         {
-          "text": "위험하니 일단 한 걸음 물러서서 상태를 지켜본다.",
+          "text": "[공통 판단] 일단 둘이서 등을 맞대고 주변 상황을 면밀히 살핀다.",
           "outcome": {
-            "trust_delta": -2.0,
+            "trust_delta": 3.0,
             "suspicion_delta": 1.0,
             "flags": { "prologue_approach": "cautious_wait" }
           }

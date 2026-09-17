@@ -1,10 +1,13 @@
 extends Node
 
-# 프로젝트 벨카 - 1단계 게임 틀 및 대화·신뢰도 로직 단위 테스트 러너 (씬 모드)
+# 프로젝트 벨카 - 종합 시스템 단위 테스트 러너 (씬 모드)
+# 1. 게임 틀 및 대화·신뢰도 로직
+# 2. 사비/샤무 화면별 대화 분기 및 전용 선택지
+# 3. 나폴리탄 규칙서(RuleManager) 및 세이브 연동
 
 func _ready() -> void:
 	print("==================================================")
-	print("   [검증] 프로젝트 벨카 1단계 게임 틀 시스템 테스트   ")
+	print("   [검증] 프로젝트 벨카 핵심 게임 시스템 단위 테스트   ")
 	print("==================================================")
 	
 	var pass_count = 0
@@ -95,13 +98,103 @@ func _ready() -> void:
 		printerr("❌ [테스트 8 실패] 씬 리소스 로드 실패")
 		fail_count += 1
 
+	# 7. 게임 모드 싱글 우선 검증
+	if GameManager.current_game_mode == GameManager.GameMode.SINGLE:
+		print("✅ [테스트 9 통과] 기본 게임 모드가 싱글(SINGLE, 1인 2캐릭터 전환)로 설정됨 확인")
+		pass_count += 1
+	else:
+		printerr("❌ [테스트 9 실패] 게임 모드 오류: ", GameManager.current_game_mode)
+		fail_count += 1
+
+	# 8. 조작 캐릭터별(사비/샤무) 대화 분기 텍스트 해석 검증
+	var test_line = {
+		"text": "공통 대사",
+		"text_sabi": "사비 조작 시의 내면 분석 대사",
+		"text_shamu": "샤무 조작 시의 호쾌한 대사"
+	}
+	GameManager.active_character = GameManager.CharacterType.SABI
+	var sabi_resolved = DialogueManager.resolve_line_text(test_line)
+	GameManager.active_character = GameManager.CharacterType.SHAMU
+	var shamu_resolved = DialogueManager.resolve_line_text(test_line)
+
+	if sabi_resolved == "사비 조작 시의 내면 분석 대사" and shamu_resolved == "샤무 조작 시의 호쾌한 대사":
+		print("✅ [테스트 10 통과] 조작 캐릭터에 따른 화면별 대사(text_sabi vs text_shamu) 분기 해석 성공!")
+		pass_count += 1
+	else:
+		printerr("❌ [테스트 10 실패] 대사 분기 오류: sabi='%s', shamu='%s'" % [sabi_resolved, shamu_resolved])
+		fail_count += 1
+
+	# 9. 캐릭터 전용 선택지 필터링 검증
+	var test_choices = [
+		{ "text": "모두의 선택지" },
+		{ "text": "사비 전용 선택지", "character": "sabi" },
+		{ "text": "샤무 전용 선택지", "character": "shamu" }
+	]
+	GameManager.active_character = GameManager.CharacterType.SABI
+	var sabi_filtered = DialogueManager.filter_choices_for_active_character(test_choices)
+	GameManager.active_character = GameManager.CharacterType.SHAMU
+	var shamu_filtered = DialogueManager.filter_choices_for_active_character(test_choices)
+
+	if sabi_filtered.size() == 2 and shamu_filtered.size() == 2 and sabi_filtered[1]["text"] == "사비 전용 선택지" and shamu_filtered[1]["text"] == "샤무 전용 선택지":
+		print("✅ [테스트 11 통과] 활성 캐릭터 전용 선택지 필터링 성공!")
+		pass_count += 1
+	else:
+		printerr("❌ [테스트 11 실패] 선택지 필터링 오류")
+		fail_count += 1
+
+	# 10. RuleManager 룰북 로드 검증 (26개 수칙 확인)
+	var total_rules = RuleManager.get_total_count()
+	if total_rules >= 25:
+		print("✅ [테스트 12 통과] RuleManager 학교 안전수칙서 정상 로드 완료 (총 %d개 수칙)" % total_rules)
+		pass_count += 1
+	else:
+		printerr("❌ [테스트 12 실패] 수칙 로드 개수 부족: ", total_rules)
+		fail_count += 1
+
+	# 11. RuleManager 규칙 상태 변경, 발견 및 메모 해금 검증
+	var target_rule_id = "RULE_CAFETERIA_02"
+	RuleManager.discover_rule(target_rule_id)
+	RuleManager.update_rule_status(target_rule_id, RuleManager.RuleStatus.ANOMALY)
+	RuleManager.unlock_memo(target_rule_id, "sabi")
+	
+	var rule_data = RuleManager.get_rule(target_rule_id)
+	if rule_data.get("discovered") == true and rule_data.get("status") == RuleManager.RuleStatus.ANOMALY and rule_data.get("memo_unlocked_sabi") == true:
+		print("✅ [테스트 13 통과] RuleManager 수칙 발견/괴이상태(ANOMALY) 변경/사비 메모 해금 정상 동작!")
+		pass_count += 1
+	else:
+		printerr("❌ [테스트 13 실패] RuleManager 상태 갱신 실패: ", rule_data)
+		fail_count += 1
+
+	# 12. SaveManager와 RuleManager 연동 검증
+	SaveManager.save_game()
+	# 룰북 리셋 후 복원 검증
+	RuleManager.reset_to_default()
+	var reset_rule = RuleManager.get_rule(target_rule_id)
+	var was_reset = (reset_rule.get("status") == RuleManager.RuleStatus.UNKNOWN)
+	
+	SaveManager.load_game()
+	var restored_rule = RuleManager.get_rule(target_rule_id)
+	var was_restored = (restored_rule.get("status") == RuleManager.RuleStatus.ANOMALY)
+
+	if was_reset and was_restored:
+		print("✅ [테스트 14 통과] SaveManager를 통한 RuleManager 룰북 상태(ANOMALY 복구) 완벽 보존/로드 성공!")
+		pass_count += 1
+	else:
+		printerr("❌ [테스트 14 실패] RuleManager 세이브 복원 실패: reset=%s, restored=%s" % [was_reset, was_restored])
+		fail_count += 1
+
 	print("==================================================")
-	print("   검증 결과: %d 통과 / %d 실패" % [pass_count, fail_count])
+	print("   최종 검증 결과: %d 통과 / %d 실패" % [pass_count, fail_count])
 	print("==================================================")
 	
 	# 검증 결과를 파일로도 기록
-	var report_file = FileAccess.open("res://debug/test_results.txt", FileAccess.WRITE)
-	report_file.store_line("Passed: %d, Failed: %d" % [pass_count, fail_count])
-	report_file.close()
+	var abs_path = ProjectSettings.globalize_path("res://debug/test_results.txt")
+	var report_file = FileAccess.open(abs_path, FileAccess.WRITE)
+	if report_file:
+		report_file.store_line("Passed: %d, Failed: %d" % [pass_count, fail_count])
+		report_file.close()
+		print("검증 결과 파일 작성 완료: ", abs_path)
+	else:
+		push_error("결과 파일 작성 실패: " + abs_path)
 
 	get_tree().quit(0 if fail_count == 0 else 1)

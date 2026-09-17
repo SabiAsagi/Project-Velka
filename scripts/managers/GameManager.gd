@@ -4,6 +4,10 @@ extends Node
 # 캐릭터 전환, 챕터 진행도, 사비-샤무 신뢰도 및 스토리 플래그를 관리합니다.
 
 enum CharacterType { SABI, SHAMU }
+enum GameMode { SINGLE, LOCAL_COOP }
+
+# 현재 활성 게임 모드 (기본: 1인 싱글 전환 모드)
+var current_game_mode: GameMode = GameMode.SINGLE
 
 # 현재 활성 캐릭터 및 챕터
 var current_chapter: String = "Prologue"
@@ -31,6 +35,7 @@ var story_flags: Dictionary = {}
 # 이벤트 시그널 정의
 signal character_switched(new_character: CharacterType)
 signal chapter_changed(new_chapter: String)
+signal game_mode_changed(new_mode: GameMode)
 signal trust_changed(new_trust: float, delta: float)
 signal suspicion_changed(new_suspicion: float, delta: float)
 signal story_flag_set(flag_name: String, value: Variant)
@@ -38,7 +43,15 @@ signal choice_outcome_applied(outcome: Dictionary)
 
 
 func _ready() -> void:
-	print("[GameManager] 초기화 완료 - 사비-샤무 신뢰도: %.1f" % sabi_shamu_trust)
+	print("[GameManager] 초기화 완료 - 게임 모드: %s, 사비-샤무 신뢰도: %.1f" % ["싱글(SINGLE)" if current_game_mode == GameMode.SINGLE else "로컬2인(COOP)", sabi_shamu_trust])
+
+
+## 게임 모드 변경 (싱글 우선, 로컬 2인 화면분할은 추후 확장 지원)
+func set_game_mode(mode: GameMode) -> void:
+	if current_game_mode != mode:
+		current_game_mode = mode
+		game_mode_changed.emit(current_game_mode)
+		print("[GameManager] 게임 모드 변경: ", "싱글(SINGLE)" if current_game_mode == GameMode.SINGLE else "로컬2인(COOP)")
 
 
 ## 캐릭터 전환 처리 (사비 <-> 샤무)

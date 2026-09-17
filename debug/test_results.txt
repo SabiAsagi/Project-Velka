@@ -1,1 +1,1 @@
-Passed: 8, Failed: 0
+Passed: 14, Failed: 0

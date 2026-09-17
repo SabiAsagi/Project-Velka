@@ -98,13 +98,17 @@ func _on_dialogue_completed(_dialogue_id: String) -> void:
 
 ## 단일 대사 출력 시작
 func _on_line_started(line: Dictionary) -> void:
-	_pending_choices = line.get("choices", []).duplicate()
+	_pending_choices = DialogueManager.filter_choices_for_active_character(line.get("choices", []))
 	choices_container.visible = false
 	next_indicator.visible = false
 
+	# 조작 캐릭터에 따른 UI 테마(청록 vs 황색) 적용
+	_update_ui_theme_for_active_character()
+
 	var speaker_id: String = line.get("speaker", "sabi").to_lower()
 	var speaker_display_name: String = line.get("speaker_name", "사비 아사기")
-	var raw_text: String = line.get("text", "")
+	# 조작 캐릭터별 분기 대사(text_sabi vs text_shamu) 우선 해석
+	var raw_text: String = DialogueManager.resolve_line_text(line)
 	var shake: bool = line.get("shake", false)
 
 	# 1. 화자 이름표 설정 및 테마 색상 적용
@@ -129,6 +133,17 @@ func _on_line_started(line: Dictionary) -> void:
 	# 4. 화면/대화창 흔들림 연출
 	if shake:
 		_trigger_shake_effect()
+
+
+## 조작 캐릭터에 따른 대화창 테두리 포인트 테마 전환 (기획서 UI 명세 충족)
+func _update_ui_theme_for_active_character() -> void:
+	var style_box = text_panel.get_theme_stylebox("panel")
+	if style_box is StyleBoxFlat:
+		# 사비 조작 시: 청록색 포인트, 샤무 조작 시: 노랑/황색 투톤 포인트
+		if GameManager.active_character == GameManager.CharacterType.SHAMU:
+			style_box.border_color = Color(0.85, 0.64, 0.21, 0.9) # 샤무 황색
+		else:
+			style_box.border_color = Color(0.27, 0.63, 0.71, 0.9) # 사비 청록색
 
 
 ## 초상화 하이라이트 및 표정 업데이트

@@ -1,7 +1,8 @@
 {
   "schema_version": 1,
   "phase": 1,
-  "status": "phase_1_rebuilt_png_priority_validated",
+  "status": "phase_1_hybrid_conformance_applied",
+  "scale_policy": "Option 1: Hybrid Conformance (Semantic sizes strictly maintained for gameplay, PNG layout for arrangement)",
   "coordinate_system": {
     "unit": "meter",
     "origin": "athletic_field_center",
@@ -24,29 +25,34 @@
   },
   "primary_masses": {
     "athletic_field": {
-      "center": [0.0, 0.04, -0.0651],
-      "size": [93.4618, 0.08, 52.8253],
-      "confirmed_semantic_size_m": [70.0, 45.0]
+      "center": [0.0, 0.04, 0.0],
+      "size": [70.0, 0.08, 45.0],
+      "confirmed_semantic_size_m": [70.0, 45.0],
+      "note": "기획서 실측 고정"
     },
     "main_building": {
-      "center": [0.0, 11.4, -54.4517],
-      "size": [79.9846, 15.2, 17.4349],
+      "center": [0.0, 11.4, -54.0],
+      "size": [60.0, 15.2, 18.5],
       "confirmed_semantic_size_m": [60.0, 18.5],
-      "floor_y": 3.8
+      "floor_y": 3.8,
+      "note": "기획서 실측 고정 (4개 층, 층고 3.8m)"
     },
     "annex": {
-      "center": [-68.7047, 5.7, -1.4963],
-      "size": [20.5089, 11.4, 49.9628],
+      "center": [-60.0, 5.7, -1.5],
+      "size": [20.0, 11.4, 50.0],
+      "confirmed_semantic_size_m": [20.0, 50.0],
       "floor_y": 0.0,
-      "long_axis": "north_south"
+      "long_axis": "north_south",
+      "note": "기획서 실측 고정 (3개 층, 층고 3.8m)"
     },
     "gym": {
-      "center": [0.0, 4.25, 44.2379],
-      "size": [44.2406, 8.5, 25.1115],
+      "center": [0.0, 4.25, 42.0],
+      "size": [40.0, 8.5, 26.0],
       "confirmed_semantic_size_m": [40.0, 26.0],
       "floor_y": 0.0,
       "stage_side": "south",
-      "main_entrance_side": "north"
+      "main_entrance_side": "north",
+      "note": "기획서 실측 고정 (단층 대강당)"
     }
   },
   "exterior_facilities": {
