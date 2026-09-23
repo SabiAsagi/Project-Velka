@@ -4,8 +4,11 @@
   "status": "phase_0_complete_waiting_approval",
   "source_documents": [
     {
-      "path": "docs/05.챕터1_학교/학교_맵_Godot_Codex_구현_가이드.md",
-      "sha256": "5571a7d5e326530d32b47959b70b62b9201da1e68f11ea94aebda73efa2bafc4",
+      "path": "docs/01.기획_및_시스템/Project_Velka_Godot_구현_가이드.md",
+      "read_success": true
+    },
+    {
+      "path": "docs/05.챕터1_학교/맵 구현 문서/학교맵_재구축.md",
       "read_success": true
     },
     {
@@ -15,9 +18,9 @@
     }
   ],
   "source_priority": [
-    "12 PNG files: shape, position, order, doors, stairs, elevators and connections",
-    "학교_맵_상세.md: dimensions, use, counts and heights",
-    "학교_맵_Godot_Codex_구현_가이드.md: process, coordinate rules and validation"
+    "1. 기획서 실측 수치 (학교_맵_상세.md, 학교맵_재구축.md): 건축/공간 치수 및 층고 절대 우선 (1m = 1 Godot Unit)",
+    "2. 12 PNG 도면: 상대적 배치 형태, 동선 연결, 출입구 및 계단 위치 레퍼런스",
+    "3. 구현 가이드 (Project_Velka_Godot_구현_가이드.md): 씬 구조, FSM 및 검증 기준"
   ],
   "coordinate_system": {
     "unit_meters": 1.0,

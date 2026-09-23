@@ -15,7 +15,7 @@ metadata/_edit_lock_ = true
 use_collision = true
 
 [node name="BuildingEnvelope" type="CSGBox3D" parent="Mass"]
-size = Vector3(20.5089, 11.4, 49.9628)
+size = Vector3(20, 11.4, 50)
 position = Vector3(0, 5.7, 0)
 material = SubResource("AnnexGray")
 metadata/reference_bbox_px = Vector4(242.5, 446.5, 382.5, 830.5)
@@ -23,19 +23,19 @@ metadata/reference_bbox_px = Vector4(242.5, 446.5, 382.5, 830.5)
 [node name="NorthEastEntranceCut" type="CSGBox3D" parent="Mass"]
 operation = 2
 size = Vector3(1.2, 2.8, 3)
-position = Vector3(10.2545, 1.4, -12.74)
+position = Vector3(10, 1.4, -12.74)
 
 [node name="SouthEastEntranceCut" type="CSGBox3D" parent="Mass"]
 operation = 2
 size = Vector3(1.2, 2.8, 3)
-position = Vector3(10.2545, 1.4, 13.47)
+position = Vector3(10, 1.4, 13.47)
 
 [node name="NorthEastEntrance" type="CSGBox3D" parent="."]
 size = Vector3(0.18, 2.5, 2.6)
-position = Vector3(10.16, 1.25, -12.74)
+position = Vector3(9.91, 1.25, -12.74)
 material = SubResource("DoorGray")
 
 [node name="SouthEastEntrance" type="CSGBox3D" parent="."]
 size = Vector3(0.18, 2.5, 2.6)
-position = Vector3(10.16, 1.25, 13.47)
+position = Vector3(9.91, 1.25, 13.47)
 material = SubResource("DoorGray")

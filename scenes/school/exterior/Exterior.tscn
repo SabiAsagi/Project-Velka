@@ -68,22 +68,22 @@ material = SubResource("TerrainMat")
 use_collision = true
 
 [node name="AthleticField" type="CSGBox3D" parent="Site"]
-size = Vector3(93.4618, 0.08, 52.8253)
-position = Vector3(0, 0.04, -0.0651)
+size = Vector3(70, 0.08, 45)
+position = Vector3(0, 0.04, 0)
 material = SubResource("FieldMat")
 use_collision = true
 metadata/reference_bbox_px = Vector4(462.5, 446.5, 1100.5, 852.5)
 
 [node name="FieldCenterLine" type="CSGBox3D" parent="Site/AthleticField"]
-size = Vector3(0.12, 0.04, 52.8253)
-position = Vector3(0, 0.06, 0.0651)
+size = Vector3(0.12, 0.04, 45)
+position = Vector3(0, 0.06, 0)
 material = SubResource("MarkerMat")
 
 [node name="FieldCenterMark" type="CSGCylinder3D" parent="Site/AthleticField"]
 radius = 5
 height = 0.04
 sides = 48
-position = Vector3(0, 0.06, 0.0651)
+position = Vector3(0, 0.06, 0)
 material = SubResource("MarkerMat")
 
 [node name="RearFacilities" type="Node3D" parent="."]

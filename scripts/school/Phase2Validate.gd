@@ -157,7 +157,7 @@ func _validate_school_stack() -> void:
 	var school := packed.instantiate()
 	add_child(school)
 	_check(int(school.get_meta("phase")) == 2, "SchoolMap Phase 2 등록", str(school.get_meta("phase")))
-	var plans := school.get_node("Phase2FloorPlans")
+	var plans := school.get_node_or_null("FloorPlans") if school.has_node("FloorPlans") else school.get_node("Phase2FloorPlans")
 	_check(not plans.visible, "Phase 2 층 스택 기본 숨김", "Phase 1 외관 검토 보존")
 	_check((plans.get_node("Annex") as Node3D).rotation_degrees.is_equal_approx(Vector3(0, 90, 0)), "별관 방향 변환", "Y +90°")
 	_check((plans.get_node("Gym") as Node3D).scale.is_equal_approx(Vector3(1, 1, -1)), "강당 방향 변환", "image bottom → site north, east/west unchanged")

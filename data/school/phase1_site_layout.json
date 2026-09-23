@@ -83,19 +83,19 @@
   },
   "entrances": {
     "main": [
-      { "id": "west_front", "position": [-30.47, 5.1, -45.7342], "faces": "south" },
-      { "id": "center_front", "position": [0.0, 5.1, -45.7342], "faces": "south" },
-      { "id": "east_front", "position": [30.47, 5.1, -45.7342], "faces": "south" },
-      { "id": "rear", "position": [0.0, 5.1, -63.1692], "faces": "north" }
+      { "id": "west_front", "position": [-22.5, 5.1, -44.75], "faces": "south" },
+      { "id": "center_front", "position": [0.0, 5.1, -44.75], "faces": "south" },
+      { "id": "east_front", "position": [22.5, 5.1, -44.75], "faces": "south" },
+      { "id": "rear", "position": [0.0, 5.1, -63.25], "faces": "north" }
     ],
     "annex": [
-      { "id": "north_east", "position": [-60.35, 1.3, -26.17], "faces": "east" },
-      { "id": "south_east", "position": [-60.35, 1.3, 23.57], "faces": "east" }
+      { "id": "north_east", "position": [-50.0, 1.3, -12.74], "faces": "east" },
+      { "id": "south_east", "position": [-50.0, 1.3, 13.47], "faces": "east" }
     ],
     "gym": [
-      { "id": "north_main", "position": [0.0, 1.5, 32.0], "faces": "north" },
-      { "id": "west", "position": [-20.0, 1.5, 43.936], "faces": "west" },
-      { "id": "east", "position": [20.0, 1.5, 43.936], "faces": "east" }
+      { "id": "north_main", "position": [0.0, 1.5, 29.0], "faces": "north" },
+      { "id": "west", "position": [-20.0, 1.5, 42.0], "faces": "west" },
+      { "id": "east", "position": [20.0, 1.5, 42.0], "faces": "east" }
     ]
   },
   "connections": {
@@ -103,9 +103,9 @@
       "floor_y": 7.6,
       "width": 3.0,
       "route": [
-        [-39.9923, 7.6, -54.4517],
-        [-58.4502, 7.6, -54.4517],
-        [-58.4502, 7.6, -26.4777]
+        [-30.0, 7.6, -54.0],
+        [-60.0, 7.6, -54.0],
+        [-60.0, 7.6, -26.5]
       ],
       "turn_rule": "from_main_west_then_south_to_annex_north_end"
     }
@@ -124,7 +124,7 @@
     "site_boundary_px": [51.0, 43.0, 1348.0, 1119.0],
     "field_center_px": [781.5, 650.0],
     "world_m_per_px": [0.1464919044, 0.1301115242],
-    "rule": "PNG extents, centers, topology, orientation, roads, and door markers take priority; confirmed metric values remain semantic labels"
+    "rule": "Hybrid Conformance: Confirmed metric dimensions from GDD take strict priority for building and field dimensions (1m = 1 Godot Unit); 00_전체_배치.png serves as spatial layout and routing topology reference"
   },
   "tolerances_m": {
     "building_outline_target": 0.25,
@@ -134,9 +134,9 @@
   "todo_confirm": [
     {
       "id": "SITE_PNG_GLOBAL_SCALE_CONFLICT",
-      "status": "open",
-      "detail": "The final site PNG is schematic: registering its site boundary to 190x140m makes the drawn athletic-field outline approximately 94.5x53.9m, while registering the field to 70x45m makes the site boundary approximately 140.9x116.6m.",
-      "current_implementation": "Use the final PNG extents and positions directly, while preserving confirmed metric dimensions as semantic reference values and keeping this scale conflict open for confirmation."
+      "status": "resolved",
+      "detail": "The schematic scale conflict between the 00_전체_배치.png reference and GDD metric dimensions is resolved using Option 1 (Hybrid Conformance).",
+      "resolution": "Confirmed metric dimensions (Athletic Field 70x45m, Main Building 60x18.5m, Annex 20x50m, Gym 40x26m) strictly maintained in 1m = 1 Godot Unit. Relative positions, entrances, and routing topology follow 00_전체_배치.png."
     }
   ]
 }

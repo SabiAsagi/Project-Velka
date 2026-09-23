@@ -1,0 +1,14 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/characters/PlayerPartyManager.gd" id="1_manager"]
+[ext_resource type="PackedScene" path="res://scenes/characters/Sabi.tscn" id="2_sabi"]
+[ext_resource type="PackedScene" path="res://scenes/characters/Shamu.tscn" id="3_shamu"]
+
+[node name="PlayerParty" type="Node3D"]
+script = ExtResource("1_manager")
+
+[node name="Sabi" parent="." instance=ExtResource("2_sabi")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="Shamu" parent="." instance=ExtResource("3_shamu")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, 0, 0.5)

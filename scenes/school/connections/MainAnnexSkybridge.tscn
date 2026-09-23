@@ -12,29 +12,29 @@ albedo_color = Color(0.16, 0.24, 0.29, 1)
 metadata/_edit_lock_ = true
 
 [node name="WestSegment" type="CSGBox3D" parent="."]
-size = Vector3(18.458, 3.2, 3)
-position = Vector3(-49.2213, 9.2, -54.4517)
+size = Vector3(30, 3.2, 3)
+position = Vector3(-45, 9.2, -54)
 material = SubResource("BridgeGray")
 use_collision = true
 
 [node name="SouthSegment" type="CSGBox3D" parent="."]
-size = Vector3(3, 3.2, 27.974)
-position = Vector3(-58.4502, 9.2, -40.4647)
+size = Vector3(3, 3.2, 27.5)
+position = Vector3(-60, 9.2, -40.25)
 material = SubResource("BridgeGray")
 use_collision = true
 
 [node name="WestFloor" type="CSGBox3D" parent="."]
-size = Vector3(18.458, 0.2, 3)
-position = Vector3(-49.2213, 7.5, -54.4517)
+size = Vector3(30, 0.2, 3)
+position = Vector3(-45, 7.5, -54)
 material = SubResource("BridgeFloor")
 
 [node name="SouthFloor" type="CSGBox3D" parent="."]
-size = Vector3(3, 0.2, 27.974)
-position = Vector3(-58.4502, 7.5, -40.4647)
+size = Vector3(3, 0.2, 27.5)
+position = Vector3(-60, 7.5, -40.25)
 material = SubResource("BridgeFloor")
 
 [node name="TurnAnchor" type="Marker3D" parent="."]
-position = Vector3(-58.4502, 7.6, -54.4517)
+position = Vector3(-60, 7.6, -54)
 
 [node name="AnnexNorthEndAnchor" type="Marker3D" parent="."]
-position = Vector3(-58.4502, 7.6, -26.4777)
+position = Vector3(-60, 7.6, -26.5)

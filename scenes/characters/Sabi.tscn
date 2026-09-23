@@ -1,0 +1,46 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/characters/PartyMember.gd" id="1_party_member"]
+[ext_resource type="Texture2D" path="res://assets/characters/sprites/sabi_standing.png" id="2_sabi_tex"]
+[ext_resource type="Script" path="res://scripts/player/components/InteractionComponent.gd" id="3_interact"]
+[ext_resource type="Script" path="res://scripts/player/components/StealthComponent.gd" id="4_stealth"]
+[ext_resource type="Script" path="res://scripts/characters/CompanionAI.gd" id="5_companion_ai"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_sabi"]
+radius = 0.4
+height = 1.8
+
+[node name="Sabi" type="CharacterBody3D" groups=["party_member", "player"]]
+collision_layer = 2
+collision_mask = 3
+script = ExtResource("1_party_member")
+character_type = 0
+character_name = "사비"
+speed = 4.5
+base_heart_rate = 78.0
+base_mental_strength = 100.0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+shape = SubResource("CapsuleShape3D_sabi")
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+texture = ExtResource("2_sabi_tex")
+pixel_size = 0.0014
+billboard = 2
+alpha_cut = 1
+shaded = true
+
+[node name="InteractionComponent" type="Node3D" parent="."]
+script = ExtResource("3_interact")
+
+[node name="StealthComponent" type="Node" parent="."]
+script = ExtResource("4_stealth")
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+target_desired_distance = 1.0
+path_max_distance = 3.0
+
+[node name="CompanionAI" type="Node" parent="."]
+script = ExtResource("5_companion_ai")

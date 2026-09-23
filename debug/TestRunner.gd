@@ -183,6 +183,55 @@ func _ready() -> void:
 		printerr("❌ [테스트 14 실패] RuleManager 세이브 복원 실패: reset=%s, restored=%s" % [was_reset, was_restored])
 		fail_count += 1
 
+	# 15. PlayerParty 씬 인스턴스화 및 2인 공존 검증
+	var companion_ai_script = preload("res://scripts/characters/CompanionAI.gd")
+	var party_scene = load("res://scenes/characters/PlayerParty.tscn") as PackedScene
+	var party_instance = party_scene.instantiate()
+	add_child(party_instance)
+	await get_tree().process_frame
+
+	var has_both = (party_instance.get("sabi") != null and party_instance.get("shamu") != null)
+	if has_both:
+		print("✅ [테스트 15 통과] PlayerParty 2인(사비·샤무) 개별 CharacterBody3D 동시 존재 확인!")
+		pass_count += 1
+	else:
+		printerr("❌ [테스트 15 실패] PlayerParty 사비/샤무 노드 누락")
+		fail_count += 1
+
+	# 16. 캐릭터 조작권 전환 (Sabi -> Shamu -> Sabi) 검증
+	GameManager.switch_character(GameManager.CharacterType.SHAMU)
+	var shamu_active = (party_instance.active_member == party_instance.shamu and party_instance.shamu.is_controlled and not party_instance.sabi.is_controlled)
+	var shamu_leader = (party_instance.sabi.companion_ai.target_leader == party_instance.shamu)
+
+	GameManager.switch_character(GameManager.CharacterType.SABI)
+	var sabi_active = (party_instance.active_member == party_instance.sabi and party_instance.sabi.is_controlled and not party_instance.shamu.is_controlled)
+	var sabi_leader = (party_instance.shamu.companion_ai.target_leader == party_instance.sabi)
+
+	if shamu_active and shamu_leader and sabi_active and sabi_leader:
+		print("✅ [테스트 16 통과] 캐릭터 전환 시 조작 권한 인계 및 Companion AI 타겟 자동 재설정 확인!")
+		pass_count += 1
+	else:
+		printerr("❌ [테스트 16 실패] 캐릭터 조작권 전환 오류: shamu=(%s, %s), sabi=(%s, %s)" % [shamu_active, shamu_leader, sabi_active, sabi_leader])
+		fail_count += 1
+
+	# 17. Companion AI 상태 머신 (FOLLOW -> WAIT -> HIDE) 전이 검증
+	var companion_ai = party_instance.shamu.companion_ai
+	companion_ai.set_state(companion_ai_script.CompanionState.WAIT)
+	var is_wait = (companion_ai.current_state == companion_ai_script.CompanionState.WAIT)
+	companion_ai.set_state(companion_ai_script.CompanionState.HIDE)
+	var is_hide = (companion_ai.current_state == companion_ai_script.CompanionState.HIDE)
+	companion_ai.set_state(companion_ai_script.CompanionState.FOLLOW)
+	var is_follow = (companion_ai.current_state == companion_ai_script.CompanionState.FOLLOW)
+
+	if is_wait and is_hide and is_follow:
+		print("✅ [테스트 17 통과] Companion AI 상태 머신(FOLLOW/WAIT/HIDE) 전이 정상 동작 확인!")
+		pass_count += 1
+	else:
+		printerr("❌ [테스트 17 실패] Companion AI 상태 전이 오류: wait=%s, hide=%s, follow=%s" % [is_wait, is_hide, is_follow])
+		fail_count += 1
+
+	party_instance.queue_free()
+
 	print("==================================================")
 	print("   최종 검증 결과: %d 통과 / %d 실패" % [pass_count, fail_count])
 	print("==================================================")
