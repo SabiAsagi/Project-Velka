@@ -19,6 +19,10 @@ config/description="2.5D Mystery Horror Game with 2-character switching system."
 run/main_scene="res://scenes/ui/TitleScreen.tscn"
 config/features=PackedStringArray("4.7", "Forward Plus")
 
+[audio]
+
+buses/default_bus_layout="res://default_bus_layout.tres"
+
 [autoload]
 
 GameManager="*res://scripts/managers/GameManager.gd"

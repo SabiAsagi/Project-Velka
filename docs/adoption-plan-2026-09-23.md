@@ -32,7 +32,7 @@
 **문제**: `production/stage.txt`가 없음 (`production/` 디렉터리 자체가 없었음 — `production/review-mode.txt`는 이번 `/adopt` 세션에서 생성함). 단계 자동 감지는 이 프로젝트의 실제 폴더 구조(`src/`가 아닌 `scripts/`/`scenes/`)와 맞지 않는 휴리스틱에 의존할 수밖에 없음.
 **조치**: 1단계 완료 후 `/gate-check production`(또는 적절한 단계 명령)을 실행해 실제 상태를 반영하는 `production/stage.txt`를 작성. 아직 에픽/스토리가 없어 정식 게이트 체크가 이르다고 느껴지면, `production`이라는 값만 담은 수동 `production/stage.txt`도 임시 조치로 허용 — 정식 게이트 체크 전까지는 "비공식"으로 표시할 것.
 **예상 시간**: 5-15분
-- [ ] production/stage.txt 작성
+- [x] production/stage.txt 작성 (2026-09-23, "Production" — 비공식, 정식 /gate-check 미실행)
 
 ### 2b. systems-index.md 없음 (경량 버전)
 **문제**: `design/gdd/systems-index.md`가 없음. 경량 전략 하에서는 이것이 전체 메커닉별 GDD 분해가 **되어서는 안 되며**, 향후 스킬 실행(과 향후 세션)이 실제 설계 콘텐츠가 어디 있는지 알 수 있도록 하는 짧은 포인터 인덱스여야 함.
