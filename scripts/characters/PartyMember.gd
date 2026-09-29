@@ -18,7 +18,7 @@ signal controlled_changed(is_controlled: bool)
 @export var base_heart_rate: float = 78.0
 @export var base_mental_strength: float = 100.0
 
-@onready var sprite: Sprite3D = $Sprite3D
+@onready var sprite: AnimatedSprite3D = $AnimatedSprite3D
 @onready var collision_shape: CollisionShape3D = $CollisionShape3D
 @onready var interaction_component: InteractionComponent = $InteractionComponent
 @onready var stealth_component: StealthComponent = $StealthComponent
@@ -49,6 +49,7 @@ var mental_strength: float:
 
 var is_hidden: bool = false
 var is_threatened: bool = false
+var _facing: String = "front"
 
 var _current_heart_rate: float = 78.0
 var _current_mental_strength: float = 100.0
@@ -74,6 +75,8 @@ func _physics_process(delta: float) -> void:
 	else:
 		if companion_ai:
 			companion_ai.process_companion(delta)
+
+	_update_animation()
 
 
 func _process_player_input(delta: float) -> void:
@@ -110,12 +113,36 @@ func apply_gravity_and_slide(delta: float) -> void:
 
 
 func face_direction(direction: Vector3) -> void:
-	if sprite == null:
+	if direction.length_squared() < 0.0025:
 		return
-	if direction.x < -0.05:
-		sprite.flip_h = true
-	elif direction.x > 0.05:
-		sprite.flip_h = false
+
+	var camera := get_viewport().get_camera_3d()
+	var right_amount: float
+	var forward_amount: float
+	if camera:
+		var camera_forward := -camera.global_basis.z
+		var camera_right := camera.global_basis.x
+		camera_forward.y = 0.0
+		camera_right.y = 0.0
+		right_amount = direction.dot(camera_right.normalized())
+		forward_amount = direction.dot(camera_forward.normalized())
+	else:
+		right_amount = direction.x
+		forward_amount = -direction.z
+
+	if absf(right_amount) > absf(forward_amount):
+		_facing = "right" if right_amount > 0.0 else "left"
+	else:
+		_facing = "front" if forward_amount < 0.0 else "back"
+
+
+func _update_animation() -> void:
+	if sprite == null or sprite.sprite_frames == null:
+		return
+	var is_moving := Vector2(velocity.x, velocity.z).length() > 0.3
+	var anim_name := ("walk_" if is_moving else "idle_") + _facing
+	if sprite.animation != anim_name:
+		sprite.play(anim_name)
 
 
 func set_hidden_state(hidden: bool, target_position: Vector3) -> void:

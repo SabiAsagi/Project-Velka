@@ -19,12 +19,22 @@ var _portraits: Dictionary = {
 	"sabi": {
 		"neutral": preload("res://assets/characters/portraits/sabi_neutral.png"),
 		"smile": preload("res://assets/characters/portraits/sabi_smile.png"),
-		"closed": preload("res://assets/characters/portraits/sabi_closed.png")
+		"serious": preload("res://assets/characters/portraits/sabi_serious.png"),
+		"worried": preload("res://assets/characters/portraits/sabi_worried.png"),
+		"surprised": preload("res://assets/characters/portraits/sabi_surprised.png"),
+		"embarrassed": preload("res://assets/characters/portraits/sabi_embarrassed.png"),
+		"sad": preload("res://assets/characters/portraits/sabi_sad.png"),
+		"determined": preload("res://assets/characters/portraits/sabi_determined.png")
 	},
 	"shamu": {
 		"neutral": preload("res://assets/characters/portraits/shamu_neutral.png"),
 		"laugh": preload("res://assets/characters/portraits/shamu_laugh.png"),
-		"smile": preload("res://assets/characters/portraits/shamu_smile.png")
+		"smile": preload("res://assets/characters/portraits/shamu_smile.png"),
+		"serious": preload("res://assets/characters/portraits/shamu_serious.png"),
+		"annoyed": preload("res://assets/characters/portraits/shamu_annoyed.png"),
+		"surprised": preload("res://assets/characters/portraits/shamu_surprised.png"),
+		"sad": preload("res://assets/characters/portraits/shamu_sad.png"),
+		"determined": preload("res://assets/characters/portraits/shamu_determined.png")
 	}
 }
 

@@ -2,8 +2,8 @@
 
 [ext_resource type="Script" path="res://scripts/ui/TitleScreen.gd" id="1_script"]
 [ext_resource type="PackedScene" path="res://scenes/ui/SettingsMenu.tscn" id="2_settings"]
-[ext_resource type="Texture2D" path="res://assets/characters/sprites/sabi_standing.png" id="3_sabi_bg"]
-[ext_resource type="Texture2D" path="res://assets/characters/sprites/shamu_standing.png" id="4_shamu_bg"]
+[ext_resource type="Texture2D" path="res://assets/characters/sprites/sabi_idle_front.png" id="3_sabi_bg"]
+[ext_resource type="Texture2D" path="res://assets/characters/sprites/shamu_idle_front.png" id="4_shamu_bg"]
 
 [sub_resource type="Gradient" id="Gradient_bg"]
 offsets = PackedFloat32Array(0, 0.45, 1)

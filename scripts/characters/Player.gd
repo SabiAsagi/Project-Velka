@@ -6,14 +6,17 @@ signal hidden_state_changed(is_hidden: bool)
 signal threat_state_changed(is_threatened: bool)
 
 @export var speed: float = 5.0
+@export var sprint_multiplier: float = 1.6
 @export var acceleration: float = 20.0
 @export var deceleration: float = 28.0
-@export var sabi_texture: Texture2D
-@export var shamu_texture: Texture2D
+@export var sabi_frames: SpriteFrames
+@export var shamu_frames: SpriteFrames
 
-@onready var sprite: Sprite3D = $Sprite3D
+@onready var sprite: AnimatedSprite3D = $AnimatedSprite3D
 @onready var collision_shape: CollisionShape3D = $CollisionShape3D
 @onready var stealth_component: StealthComponent = $StealthComponent
+
+var _facing: String = "front"
 
 var _gravity: float = 9.8
 var is_hidden: bool = false
@@ -61,7 +64,9 @@ func _physics_process(delta: float) -> void:
 
 	var input_dir := _get_movement_input()
 	var direction := _get_camera_relative_direction(input_dir)
-	var target_velocity := direction * speed
+	var is_sprinting := Input.is_action_pressed("sprint") and direction != Vector3.ZERO
+	var current_speed := speed * sprint_multiplier if is_sprinting else speed
+	var target_velocity := direction * current_speed
 	var change_rate := acceleration if direction != Vector3.ZERO else deceleration
 
 	velocity.x = move_toward(velocity.x, target_velocity.x, change_rate * delta)
@@ -73,10 +78,9 @@ func _physics_process(delta: float) -> void:
 	else:
 		velocity.y -= _gravity * delta
 
-	if input_dir.x < 0.0:
-		sprite.flip_h = true
-	elif input_dir.x > 0.0:
-		sprite.flip_h = false
+	if input_dir != Vector2.ZERO:
+		_facing = _facing_from_input(input_dir)
+	_update_animation(input_dir != Vector2.ZERO, is_sprinting)
 	stealth_component.noise_level = move_toward(stealth_component.noise_level, 1.0 if direction != Vector3.ZERO else 0.0, delta * 4.0)
 
 	move_and_slide()
@@ -121,13 +125,27 @@ func _on_character_switched(_new_character: int) -> void:
 
 func _apply_active_character() -> void:
 	if GameManager.active_character == GameManager.CharacterType.SHAMU:
-		sprite.texture = shamu_texture
+		sprite.sprite_frames = shamu_frames
 	else:
-		sprite.texture = sabi_texture
+		sprite.sprite_frames = sabi_frames
 	sprite.modulate = Color.WHITE
 	sprite.visible = not is_hidden
+	sprite.play("idle_" + _facing)
 	active_character_changed.emit(GameManager.active_character)
 	_emit_stats_changed()
+
+
+func _facing_from_input(input_dir: Vector2) -> String:
+	if absf(input_dir.x) > absf(input_dir.y):
+		return "right" if input_dir.x > 0.0 else "left"
+	return "front" if input_dir.y > 0.0 else "back"
+
+
+func _update_animation(is_moving: bool, is_sprinting: bool) -> void:
+	var anim_name := ("walk_" if is_moving else "idle_") + _facing
+	if sprite.animation != anim_name:
+		sprite.play(anim_name)
+	sprite.speed_scale = sprint_multiplier if (is_moving and is_sprinting) else 1.0
 
 
 func _active_stats() -> Dictionary:
