@@ -30,7 +30,7 @@ var is_controlled: bool = false:
 		is_controlled = val
 		set_physics_process(true)
 		if interaction_component:
-			interaction_component.set_process(val)
+			interaction_component.set_enabled(val)
 		controlled_changed.emit(val)
 
 var heart_rate: float:
@@ -174,6 +174,8 @@ func _update_heart_rate(delta: float) -> void:
 
 
 func _get_movement_input() -> Vector2:
+	if GameManager.is_exploration_locked():
+		return Vector2.ZERO
 	var input_dir := Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	if input_dir == Vector2.ZERO:
 		input_dir = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")

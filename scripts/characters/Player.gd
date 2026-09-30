@@ -89,6 +89,8 @@ func _physics_process(delta: float) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("switch_character") or event.is_action_pressed("ui_focus_next"):
+		if GameManager.is_exploration_locked():
+			return
 		var next_character := GameManager.CharacterType.SHAMU
 		if GameManager.active_character == GameManager.CharacterType.SHAMU:
 			next_character = GameManager.CharacterType.SABI
@@ -97,6 +99,8 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _get_movement_input() -> Vector2:
+	if GameManager.is_exploration_locked():
+		return Vector2.ZERO
 	var input_dir := Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	if input_dir == Vector2.ZERO:
 		input_dir = Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")

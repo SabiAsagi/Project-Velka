@@ -37,9 +37,16 @@ func start_dialogue(dialogue_id: String) -> void:
 		push_error("[DialogueManager] 대화 JSON 형식이 올바르지 않습니다: %s" % path)
 		return
 
+	start_dialogue_data(dialogue_id, data["lines"])
+
+
+## 파일 없이 대사 배열로 대화 시작 (조사 오브젝트의 짧은 독백 등)
+func start_dialogue_data(dialogue_id: String, lines: Array) -> void:
+	if lines.is_empty():
+		return
 	is_dialogue_active = true
 	current_dialogue_id = dialogue_id
-	_current_lines = data["lines"]
+	_current_lines = lines.duplicate()
 	_current_line_index = 0
 	_waiting_for_choice = false
 	_current_choices.clear()

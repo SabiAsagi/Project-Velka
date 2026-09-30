@@ -40,6 +40,10 @@ signal trust_changed(new_trust: float, delta: float)
 signal suspicion_changed(new_suspicion: float, delta: float)
 signal story_flag_set(flag_name: String, value: Variant)
 signal choice_outcome_applied(outcome: Dictionary)
+signal exploration_lock_changed(is_locked: bool)
+
+# 탐색 입력 잠금 사유 (컷신, 연출 등). 대화 중에는 별도 등록 없이 자동으로 잠긴다.
+var _exploration_locks: Dictionary = {}
 
 
 func _ready() -> void:
@@ -52,6 +56,23 @@ func set_game_mode(mode: GameMode) -> void:
 		current_game_mode = mode
 		game_mode_changed.emit(current_game_mode)
 		print("[GameManager] 게임 모드 변경: ", "싱글(SINGLE)" if current_game_mode == GameMode.SINGLE else "로컬2인(COOP)")
+
+
+## 이동·상호작용·전환 입력을 막아야 하는 상태인지 (대화 진행 중 또는 잠금 사유 존재)
+func is_exploration_locked() -> bool:
+	return DialogueManager.is_dialogue_active or not _exploration_locks.is_empty()
+
+
+## 연출 등으로 탐색 입력을 잠그거나 해제한다. reason 별로 관리되어 중첩 잠금이 가능하다.
+func set_exploration_lock(reason: String, locked: bool) -> void:
+	var was_locked := not _exploration_locks.is_empty()
+	if locked:
+		_exploration_locks[reason] = true
+	else:
+		_exploration_locks.erase(reason)
+	var now_locked := not _exploration_locks.is_empty()
+	if was_locked != now_locked:
+		exploration_lock_changed.emit(now_locked)
 
 
 ## 캐릭터 전환 처리 (사비 <-> 샤무)

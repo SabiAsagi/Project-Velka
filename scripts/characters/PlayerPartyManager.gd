@@ -10,12 +10,15 @@ signal stats_updated(character_type: int, heart_rate: float, mental_strength: fl
 signal companion_alert(speaker: String, text: String)
 
 @export var camera: Camera3D = null
+## 연속 전환 방지용 최소 간격(초)
+@export var switch_cooldown: float = 0.35
 
 @onready var sabi: PartyMember = $Sabi
 @onready var shamu: PartyMember = $Shamu
 
 var active_member: PartyMember = null
 var companion_member: PartyMember = null
+var _switch_cooldown_left: float = 0.0
 
 
 func _ready() -> void:
@@ -39,11 +42,25 @@ func _ready() -> void:
 	_apply_active_character(GameManager.active_character)
 
 
+func _process(delta: float) -> void:
+	if _switch_cooldown_left > 0.0:
+		_switch_cooldown_left -= delta
+
+
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("switch_character") or event.is_action_pressed("ui_focus_next"):
-		var next_char := GameManager.CharacterType.SHAMU if GameManager.active_character == GameManager.CharacterType.SABI else GameManager.CharacterType.SABI
-		GameManager.switch_character(next_char)
 		get_viewport().set_input_as_handled()
+		request_switch()
+
+
+## 조작 캐릭터 전환 요청. 대화·연출 중이거나 쿨타임이면 무시하고 false를 반환한다.
+func request_switch() -> bool:
+	if GameManager.is_exploration_locked() or _switch_cooldown_left > 0.0:
+		return false
+	_switch_cooldown_left = switch_cooldown
+	var next_char := GameManager.CharacterType.SHAMU if GameManager.active_character == GameManager.CharacterType.SABI else GameManager.CharacterType.SABI
+	GameManager.switch_character(next_char)
+	return true
 
 
 func _on_game_manager_character_switched(new_char: int) -> void:
