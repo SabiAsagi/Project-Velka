@@ -1,0 +1,152 @@
+[gd_resource type="SpriteFrames" load_steps=21 format=3]
+
+[ext_resource type="Texture2D" path="res://assets/characters/sprites/shamu_walk_side.png" id="tex_side"]
+
+[sub_resource type="AtlasTexture" id="Atlas_side_00"]
+atlas = ExtResource("tex_side")
+region = Rect2(0, 0, 255, 409)
+
+[sub_resource type="AtlasTexture" id="Atlas_side_01"]
+atlas = ExtResource("tex_side")
+region = Rect2(255, 0, 255, 409)
+
+[sub_resource type="AtlasTexture" id="Atlas_side_02"]
+atlas = ExtResource("tex_side")
+region = Rect2(510, 0, 255, 409)
+
+[sub_resource type="AtlasTexture" id="Atlas_side_03"]
+atlas = ExtResource("tex_side")
+region = Rect2(765, 0, 255, 409)
+
+[sub_resource type="AtlasTexture" id="Atlas_side_04"]
+atlas = ExtResource("tex_side")
+region = Rect2(1020, 0, 255, 409)
+
+[sub_resource type="AtlasTexture" id="Atlas_side_05"]
+atlas = ExtResource("tex_side")
+region = Rect2(1275, 0, 255, 409)
+
+[sub_resource type="AtlasTexture" id="Atlas_side_06"]
+atlas = ExtResource("tex_side")
+region = Rect2(1530, 0, 255, 409)
+
+[sub_resource type="AtlasTexture" id="Atlas_side_07"]
+atlas = ExtResource("tex_side")
+region = Rect2(1785, 0, 255, 409)
+
+[sub_resource type="AtlasTexture" id="Atlas_side_08"]
+atlas = ExtResource("tex_side")
+region = Rect2(2040, 0, 255, 409)
+
+[sub_resource type="AtlasTexture" id="Atlas_side_09"]
+atlas = ExtResource("tex_side")
+region = Rect2(2295, 0, 255, 409)
+
+[sub_resource type="AtlasTexture" id="Atlas_side_10"]
+atlas = ExtResource("tex_side")
+region = Rect2(2550, 0, 255, 409)
+
+[sub_resource type="AtlasTexture" id="Atlas_side_11"]
+atlas = ExtResource("tex_side")
+region = Rect2(2805, 0, 255, 409)
+
+[sub_resource type="AtlasTexture" id="Atlas_side_12"]
+atlas = ExtResource("tex_side")
+region = Rect2(3060, 0, 255, 409)
+
+[sub_resource type="AtlasTexture" id="Atlas_side_13"]
+atlas = ExtResource("tex_side")
+region = Rect2(3315, 0, 255, 409)
+
+[sub_resource type="AtlasTexture" id="Atlas_side_14"]
+atlas = ExtResource("tex_side")
+region = Rect2(3570, 0, 255, 409)
+
+[sub_resource type="AtlasTexture" id="Atlas_side_15"]
+atlas = ExtResource("tex_side")
+region = Rect2(3825, 0, 255, 409)
+
+[sub_resource type="AtlasTexture" id="Atlas_side_16"]
+atlas = ExtResource("tex_side")
+region = Rect2(4080, 0, 255, 409)
+
+[sub_resource type="AtlasTexture" id="Atlas_side_17"]
+atlas = ExtResource("tex_side")
+region = Rect2(4335, 0, 255, 409)
+
+[sub_resource type="AtlasTexture" id="Atlas_side_18"]
+atlas = ExtResource("tex_side")
+region = Rect2(4590, 0, 255, 409)
+
+[resource]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("Atlas_side_04")
+}],
+"loop": true,
+"name": &"idle_side",
+"speed": 1.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("Atlas_side_00")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_side_01")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_side_02")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_side_03")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_side_04")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_side_05")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_side_06")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_side_07")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_side_08")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_side_09")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_side_10")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_side_11")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_side_12")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_side_13")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_side_14")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_side_15")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_side_16")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_side_17")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_side_18")
+}],
+"loop": true,
+"name": &"walk_side",
+"speed": 20.0
+}]

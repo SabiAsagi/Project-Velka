@@ -17,6 +17,7 @@ signal threat_state_changed(is_threatened: bool)
 @onready var stealth_component: StealthComponent = $StealthComponent
 
 var _facing: String = "front"
+var _facing_right: bool = true
 
 var _gravity: float = 9.8
 var is_hidden: bool = false
@@ -130,22 +131,22 @@ func _apply_active_character() -> void:
 		sprite.sprite_frames = sabi_frames
 	sprite.modulate = Color.WHITE
 	sprite.visible = not is_hidden
-	sprite.play("idle_" + _facing)
+	CharacterSpriteAnimator.play(sprite, false, _facing, _facing_right)
 	active_character_changed.emit(GameManager.active_character)
 	_emit_stats_changed()
 
 
 func _facing_from_input(input_dir: Vector2) -> String:
+	if absf(input_dir.x) > 0.1:
+		_facing_right = input_dir.x > 0.0
 	if absf(input_dir.x) > absf(input_dir.y):
 		return "right" if input_dir.x > 0.0 else "left"
 	return "front" if input_dir.y > 0.0 else "back"
 
 
 func _update_animation(is_moving: bool, is_sprinting: bool) -> void:
-	var anim_name := ("walk_" if is_moving else "idle_") + _facing
-	if sprite.animation != anim_name:
-		sprite.play(anim_name)
-	sprite.speed_scale = sprint_multiplier if (is_moving and is_sprinting) else 1.0
+	var speed_scale := sprint_multiplier if (is_moving and is_sprinting) else 1.0
+	CharacterSpriteAnimator.play(sprite, is_moving, _facing, _facing_right, speed_scale)
 
 
 func _active_stats() -> Dictionary:

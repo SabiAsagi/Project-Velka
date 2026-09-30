@@ -25,10 +25,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 shape = SubResource("CapsuleShape3D_sabi")
 
 [node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
 sprite_frames = ExtResource("2_sabi_tex")
-animation = &"idle_front"
-pixel_size = 0.0014
+animation = &"idle_side"
+pixel_size = 0.0042
 billboard = 2
 alpha_cut = 1
 shaded = true

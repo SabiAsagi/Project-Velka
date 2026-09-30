@@ -4,7 +4,7 @@
     {
       "speaker": "sabi",
       "speaker_name": "사비 아사기",
-      "sabi_emotion": "neutral",
+      "sabi_emotion": "serious",
       "shamu_emotion": "neutral",
       "text": "현장 부근에 도착했어... 주변의 전자기파 간섭이 극도로 심해지고 있어.",
       "text_sabi": "[color=#60d0e0][사비 시점][/color] 현장 부근에 도착했어. 측정기 주파수가 계속 어긋나... 공간 좌표가 왜곡되고 있어.",
@@ -15,7 +15,7 @@
       "speaker": "shamu",
       "speaker_name": "카즈네 샤무",
       "sabi_emotion": "neutral",
-      "shamu_emotion": "laugh",
+      "shamu_emotion": "smug",
       "text": "하! 사비, 긴장이라도 한 거냐? 얌전히 내 등 뒤에 붙어있어. 방해되는 놈들은 내가 전부 날려버릴 테니까!",
       "shake": false
     },
@@ -23,15 +23,15 @@
       "speaker": "sabi",
       "speaker_name": "사비 아사기",
       "sabi_emotion": "worried",
-      "shamu_emotion": "smile",
+      "shamu_emotion": "serious",
       "text": "단순한 습격이나 납치 사건이 아니야, 샤무... 사라진 의뢰인들의 마지막 통신 기록에는 [color=#60d0e0]물리적 법칙을 벗어난 모순[/color]이 적혀 있었어.",
       "shake": false
     },
     {
       "speaker": "system",
       "speaker_name": "괴이 경고",
-      "sabi_emotion": "neutral",
-      "shamu_emotion": "neutral",
+      "sabi_emotion": "surprised",
+      "shamu_emotion": "surprised",
       "text": "[shake rate=25.0 level=8][color=#ff4040]─── 쿵! ───\n복도 깊은 곳에서 사람의 것이 아닌 기괴한 마찰음이 울려 퍼집니다.[/color][/shake]",
       "text_sabi": "[shake rate=25.0 level=8][color=#ff4040]─── 쿵! ───\n[사비 분석: 규칙서에 기록되지 않은 미확인 진동입니다. 심박수가 급격히 상승합니다.][/color][/shake]",
       "text_shamu": "[shake rate=25.0 level=8][color=#ff4040]─── 쿵! ───\n[샤무 직감: 복도 저편에서 살기를 띤 괴이가 냄새를 맡고 접근 중입니다!][/color][/shake]",
@@ -40,8 +40,8 @@
     {
       "speaker": "shamu",
       "speaker_name": "카즈네 샤무",
-      "sabi_emotion": "neutral",
-      "shamu_emotion": "neutral",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "annoyed",
       "text": "쳇... 기분 나쁜 소리로군. 사비, 어떻게 할까? 네 계산대로 움직일까, 아니면 내 식대로 뚫어버릴까?",
       "shake": false,
       "choices": [
@@ -76,8 +76,8 @@
     {
       "speaker": "sabi",
       "speaker_name": "사비 아사기",
-      "sabi_emotion": "smile",
-      "shamu_emotion": "smile",
+      "sabi_emotion": "determined",
+      "shamu_emotion": "cheerful_grin",
       "text": "결정됐어. 어떤 상황이 닥치든, 서로의 등을 지키며 괴이의 규칙을 찾아내자.",
       "shake": false
     }

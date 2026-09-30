@@ -14,29 +14,37 @@ extends CanvasLayer
 @onready var next_indicator: Label = $RootContainer/TextPanel/NextIndicator
 @onready var choices_container: VBoxContainer = $RootContainer/ChoicesContainer
 
-# 초상화 텍스처 사전 캐싱
-var _portraits: Dictionary = {
+# 초상화 경로 테이블 (감정 키 -> 파일). 대사 데이터의 sabi_emotion / shamu_emotion 값으로 조회한다.
+const PORTRAIT_DIR := "res://assets/characters/portraits/"
+const PORTRAIT_FILES := {
 	"sabi": {
-		"neutral": preload("res://assets/characters/portraits/sabi_neutral.png"),
-		"smile": preload("res://assets/characters/portraits/sabi_smile.png"),
-		"serious": preload("res://assets/characters/portraits/sabi_serious.png"),
-		"worried": preload("res://assets/characters/portraits/sabi_worried.png"),
-		"surprised": preload("res://assets/characters/portraits/sabi_surprised.png"),
-		"embarrassed": preload("res://assets/characters/portraits/sabi_embarrassed.png"),
-		"sad": preload("res://assets/characters/portraits/sabi_sad.png"),
-		"determined": preload("res://assets/characters/portraits/sabi_determined.png")
+		"neutral": "sabi_neutral.png",
+		"gentle_smile": "sabi_gentle_smile.png",
+		"serious": "sabi_serious.png",
+		"worried": "sabi_worried.png",
+		"surprised": "sabi_surprised.png",
+		"embarrassed": "sabi_embarrassed.png",
+		"sad": "sabi_sad.png",
+		"determined": "sabi_determined.png",
 	},
 	"shamu": {
-		"neutral": preload("res://assets/characters/portraits/shamu_neutral.png"),
-		"laugh": preload("res://assets/characters/portraits/shamu_laugh.png"),
-		"smile": preload("res://assets/characters/portraits/shamu_smile.png"),
-		"serious": preload("res://assets/characters/portraits/shamu_serious.png"),
-		"annoyed": preload("res://assets/characters/portraits/shamu_annoyed.png"),
-		"surprised": preload("res://assets/characters/portraits/shamu_surprised.png"),
-		"sad": preload("res://assets/characters/portraits/shamu_sad.png"),
-		"determined": preload("res://assets/characters/portraits/shamu_determined.png")
-	}
+		"neutral": "shamu_neutral.png",
+		"cheerful_grin": "shamu_cheerful_grin.png",
+		"smug": "shamu_smug.png",
+		"serious": "shamu_serious.png",
+		"annoyed": "shamu_annoyed.png",
+		"surprised": "shamu_surprised.png",
+		"sad": "shamu_sad.png",
+		"determined": "shamu_determined.png",
+	},
 }
+# 이전 대사 데이터에서 쓰던 키 호환용 별칭
+const EMOTION_ALIASES := {
+	"sabi": {"smile": "gentle_smile", "surprise": "surprised", "embarassed": "embarrassed"},
+	"shamu": {"smile": "cheerful_grin", "laugh": "cheerful_grin", "grin": "cheerful_grin", "surprise": "surprised"},
+}
+
+var _portrait_cache: Dictionary = {}
 
 var _is_typing: bool = false
 var _type_timer: float = 0.0
@@ -158,13 +166,8 @@ func _update_ui_theme_for_active_character() -> void:
 
 ## 초상화 하이라이트 및 표정 업데이트
 func _update_portraits(active_speaker: String, sabi_emotion: String, shamu_emotion: String) -> void:
-	# 사비 초상화
-	var sabi_tex = _portraits["sabi"].get(sabi_emotion, _portraits["sabi"]["neutral"])
-	left_portrait.texture = sabi_tex
-
-	# 샤무 초상화
-	var shamu_tex = _portraits["shamu"].get(shamu_emotion, _portraits["shamu"]["neutral"])
-	right_portrait.texture = shamu_tex
+	left_portrait.texture = get_portrait("sabi", sabi_emotion)
+	right_portrait.texture = get_portrait("shamu", shamu_emotion)
 
 	# 활성 화자 하이라이트 연출
 	if active_speaker == "sabi":
@@ -180,6 +183,22 @@ func _update_portraits(active_speaker: String, sabi_emotion: String, shamu_emoti
 	else:
 		left_portrait.modulate = Color(0.5, 0.5, 0.5, 0.8)
 		right_portrait.modulate = Color(0.5, 0.5, 0.5, 0.8)
+
+
+## 캐릭터/감정 키로 초상화 텍스처를 반환한다. 알 수 없는 감정은 neutral로 대체한다.
+func get_portrait(character_id: String, emotion: String) -> Texture2D:
+	var files: Dictionary = PORTRAIT_FILES.get(character_id, {})
+	if files.is_empty():
+		return null
+	var key := emotion.to_lower()
+	key = EMOTION_ALIASES.get(character_id, {}).get(key, key)
+	if not files.has(key):
+		push_warning("[DialogueBox] 알 수 없는 표정 '%s' (%s) - neutral로 대체" % [emotion, character_id])
+		key = "neutral"
+	var path: String = PORTRAIT_DIR + files[key]
+	if not _portrait_cache.has(path):
+		_portrait_cache[path] = load(path)
+	return _portrait_cache[path]
 
 
 ## 타이핑 완료 처리 (텍스트 노출이 끝났을 때 선택지 표시 또는 진행 인디케이터 표시)

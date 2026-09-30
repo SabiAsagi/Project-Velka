@@ -1,9 +1,17 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/TitleScreen.gd" id="1_script"]
 [ext_resource type="PackedScene" path="res://scenes/ui/SettingsMenu.tscn" id="2_settings"]
-[ext_resource type="Texture2D" path="res://assets/characters/sprites/sabi_idle_front.png" id="3_sabi_bg"]
-[ext_resource type="Texture2D" path="res://assets/characters/sprites/shamu_idle_front.png" id="4_shamu_bg"]
+[ext_resource type="Texture2D" path="res://assets/characters/sprites/sabi_walk_side.png" id="3_sabi_sheet"]
+[ext_resource type="Texture2D" path="res://assets/characters/sprites/shamu_walk_side.png" id="4_shamu_sheet"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sabi_idle"]
+atlas = ExtResource("3_sabi_sheet")
+region = Rect2(1084, 0, 271, 405)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_shamu_idle"]
+atlas = ExtResource("4_shamu_sheet")
+region = Rect2(1020, 0, 255, 409)
 
 [sub_resource type="Gradient" id="Gradient_bg"]
 offsets = PackedFloat32Array(0, 0.45, 1)
@@ -47,9 +55,10 @@ offset_right = -280.0
 offset_bottom = 540.0
 grow_horizontal = 0
 grow_vertical = 2
-texture = ExtResource("3_sabi_bg")
+texture = SubResource("AtlasTexture_sabi_idle")
 expand_mode = 1
 stretch_mode = 5
+flip_h = true
 
 [node name="ShamuSilhouette" type="TextureRect" parent="."]
 modulate = Color(0.32, 0.26, 0.1, 0.35)
@@ -65,9 +74,10 @@ offset_right = -20.0
 offset_bottom = 540.0
 grow_horizontal = 0
 grow_vertical = 2
-texture = ExtResource("4_shamu_bg")
+texture = SubResource("AtlasTexture_shamu_idle")
 expand_mode = 1
 stretch_mode = 5
+flip_h = true
 
 [node name="VignetteOverlay" type="ColorRect" parent="."]
 layout_mode = 1

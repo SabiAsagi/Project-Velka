@@ -50,6 +50,7 @@ var mental_strength: float:
 var is_hidden: bool = false
 var is_threatened: bool = false
 var _facing: String = "front"
+var _facing_right: bool = true
 
 var _current_heart_rate: float = 78.0
 var _current_mental_strength: float = 100.0
@@ -130,6 +131,8 @@ func face_direction(direction: Vector3) -> void:
 		right_amount = direction.x
 		forward_amount = -direction.z
 
+	if absf(right_amount) > 0.1:
+		_facing_right = right_amount > 0.0
 	if absf(right_amount) > absf(forward_amount):
 		_facing = "right" if right_amount > 0.0 else "left"
 	else:
@@ -137,12 +140,8 @@ func face_direction(direction: Vector3) -> void:
 
 
 func _update_animation() -> void:
-	if sprite == null or sprite.sprite_frames == null:
-		return
 	var is_moving := Vector2(velocity.x, velocity.z).length() > 0.3
-	var anim_name := ("walk_" if is_moving else "idle_") + _facing
-	if sprite.animation != anim_name:
-		sprite.play(anim_name)
+	CharacterSpriteAnimator.play(sprite, is_moving, _facing, _facing_right)
 
 
 func set_hidden_state(hidden: bool, target_position: Vector3) -> void:
