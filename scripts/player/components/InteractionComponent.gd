@@ -64,7 +64,8 @@ func _scan_for_interactable() -> void:
 		if not candidate is InteractableBase:
 			continue
 		var interactable := candidate as InteractableBase
-		if not interactable.can_interact(player):
+		# 현재 세계 상태에 존재하지 않는(숨겨진) 대상은 제외
+		if not interactable.is_visible_in_tree() or not interactable.can_interact(player):
 			continue
 		var distance := player.global_position.distance_to(interactable.get_interaction_position())
 		if distance > highlight_range:

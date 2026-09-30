@@ -4,7 +4,7 @@ extends SceneTree
 # 실행: godot --headless --path . -s res://tests/smoke/abilities_smoke_test.gd
 # 사비 스파이 비전(단서·위험·규칙 흔적), 샤무 장애물 파괴/주의 끌기, 두 갈래 탈출 동선을 검사한다.
 
-const PROLOGUE := "res://scenes/chapters/Prologue.tscn"
+const PROLOGUE := "res://scenes/sandbox/ExplorationSandbox.tscn"
 # AnomalyBase.AnomalyState 값
 const STATE_PATROL := 1
 const STATE_OBSERVE := 3

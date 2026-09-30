@@ -1,0 +1,257 @@
+{
+  "classroom_blackboard": {
+    "prompt": "칠판 살펴보기",
+    "lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "칠판에 오늘 수업 내용이 반쯤 지워진 채 남아 있다.",
+        "text_sabi": "3교시 국어, 받아쓰기… 평범한 수업 흔적이야. 지우개 자국이 좀 급하긴 하네.",
+        "text_shamu": "받아쓰기? 이 나이에도 이런 걸 하는구나."
+      }
+    ],
+    "otherworld_prompt": "칠판 살펴보기",
+    "otherworld_lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "serious",
+        "shamu_emotion": "neutral",
+        "text": "수업 내용이 사라지고, 흰 분필로 적힌 이름 네 개가 남아 있다.",
+        "text_sabi": "흰 분필로 적힌 이름이 네 개… 아까는 없었어. 규칙서대로라면 흰 분필 이름은 아직 낙서 단계야.",
+        "text_shamu": "누가 이름을 휘갈겨 놨네. 아까 수업 내용은 어디 갔어?"
+      },
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "worried",
+        "shamu_emotion": "serious",
+        "text": "그 아래에 붉은 분필로 이름 하나가 따로 적혀 있다.",
+        "text_sabi": "그런데 붉은 분필 이름은… 절대 건드리면 안 돼. 지정된 이름이야.",
+        "text_shamu": "빨간 건 기분 나쁘군. 손대지 말자. 사비가 싫어할 거야."
+      }
+    ],
+    "otherworld_repeat_lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "serious",
+        "shamu_emotion": "annoyed",
+        "text": "붉은 이름은 여전히 그 자리에 있다."
+      }
+    ]
+  },
+  "classroom_attendance": {
+    "prompt": "교탁 위 출석부",
+    "lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "serious",
+        "shamu_emotion": "neutral",
+        "text": "1학년 1반 출석부. 최근 몇 주 동안 결석 표시가 유난히 많다.",
+        "text_sabi": "출석부… 최근 몇 주 결석이 너무 많아. 사라진 의뢰인들 자녀 이름도 있어.",
+        "text_shamu": "결석이 왜 이렇게 많아? 요즘 애들 학교 안 다니나."
+      },
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "worried",
+        "shamu_emotion": "annoyed",
+        "text": "마지막 페이지의 날짜가 내일로 적혀 있다.",
+        "text_sabi": "마지막 페이지 날짜가… 내일이야. 누가 미리 적어 둔 거지?",
+        "text_shamu": "마지막 장 날짜가 내일이네. 장난치고는 기분 나쁜데."
+      }
+    ],
+    "otherworld_lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "worried",
+        "shamu_emotion": "annoyed",
+        "text": "출석부의 날짜가 오늘로 바뀌어 있다. 맨 아래 칸이 비어 있다.",
+        "text_sabi": "날짜가 오늘로 바뀌었어. 맨 아래 빈칸… 지금은 아무것도 적지 않을 거야.",
+        "text_shamu": "빈칸 하나 남겨 놨네. 여기 이름 쓰면 큰일 나는 거, 나도 알아."
+      }
+    ]
+  },
+  "classroom_window": {
+    "prompt": "창밖 보기",
+    "lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "창밖으로 텅 빈 운동장이 보인다. 방과 후라 조용하다.",
+        "text_sabi": "방과 후 운동장. 아무도 없어. 오늘은 전교생 조기 하교였대.",
+        "text_shamu": "운동장 텅 비었네. 조용한 게 오히려 수상한데."
+      }
+    ],
+    "otherworld_lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "surprised",
+        "shamu_emotion": "surprised",
+        "text": "창밖이 새까맣다. 운동장도, 하늘도 보이지 않는다.",
+        "text_sabi": "…아무것도 없어. 유리 너머에 검은 공간만 붙어 있어.",
+        "text_shamu": "야, 밖이 없어. 창문 너머가 그냥 까매."
+      }
+    ]
+  },
+  "classroom_locker": {
+    "prompt": "사물함 조사",
+    "lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "smug",
+        "text": "학생들의 사물함. 이름표가 붙어 있고, 몇 개는 열려 있다.",
+        "text_sabi": "사물함 이름표… 결석이 많은 아이들 칸만 깨끗하게 비워져 있어.",
+        "text_shamu": "사물함이네. 뒤져 볼까? …농담이야."
+      }
+    ],
+    "otherworld_lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "worried",
+        "shamu_emotion": "serious",
+        "text": "이름표가 전부 떨어져 있다. 안쪽에서 무언가 굴러다니는 소리가 난다.",
+        "text_sabi": "이름표가 전부 떼어져 있어. 안에서 뭔가 굴러다녀… 지금 열 필요는 없어.",
+        "text_shamu": "이름표가 다 떨어졌네. 안에서 뭐가 굴러다니는데, 발로 차 볼까? …참는다."
+      }
+    ]
+  },
+  "closet": {
+    "prompt": "청소도구함",
+    "lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "대걸레와 양동이. 평범한 청소도구함이다.",
+        "text_sabi": "대걸레, 양동이, 락스. 안쪽 벽은 막혀 있어.",
+        "text_shamu": "청소도구함. 냄새 난다."
+      }
+    ],
+    "otherworld_lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "surprised",
+        "shamu_emotion": "serious",
+        "text": "안쪽 벽이 사라지고, 어두운 계단참이 이어져 있다.",
+        "text_sabi": "안쪽 벽이 없어졌어. 원래 계단은 막혔는데… 여기로 이어지게 바뀐 거야.",
+        "text_shamu": "벽이 없어졌네. 아까 계단은 막혀 있더니, 이제 여기로 가라는 거냐."
+      }
+    ]
+  },
+  "corridor_notice_2f": {
+    "prompt": "복도 게시판",
+    "lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "게시판에 '실종 학생을 찾습니다' 전단이 여러 장 붙어 있다.",
+        "text_sabi": "실종 학생 전단이 네 장… 모두 1학년이야.",
+        "text_shamu": "전단이 잔뜩이네. 애들이 이렇게 없어지는데 학교는 뭐 한 거야."
+      }
+    ],
+    "otherworld_lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "worried",
+        "shamu_emotion": "annoyed",
+        "text": "전단의 얼굴 부분만 전부 지워져 있다.",
+        "text_sabi": "얼굴만 지워졌어. 이름은 그대로인데.",
+        "text_shamu": "얼굴만 깔끔하게 없네. 기분 더럽게."
+      }
+    ]
+  },
+  "corridor_notice_1f": {
+    "prompt": "1층 게시판",
+    "lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "학교 안전수칙 안내문이 붙어 있다.",
+        "text_sabi": "평범한 학교 안전수칙이야. 복도에서 뛰지 말 것, 큰 소리 내지 말 것.",
+        "text_shamu": "복도에서 뛰지 말라네. 난 뛸 건데."
+      }
+    ],
+    "otherworld_lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "serious",
+        "shamu_emotion": "serious",
+        "text": "안전수칙이 낯선 문장으로 바뀌어 있다. '이 안내문은 교내 방송보다 우선합니다.'",
+        "text_sabi": "문장이 바뀌었어. '이 안내문은 교내 방송보다 우선합니다'… 규칙서 첫 줄이랑 같아.",
+        "text_shamu": "이상한 걸로 바뀌었네. 방송보다 이게 우선이라고?"
+      }
+    ]
+  },
+  "nurse_cabinet": {
+    "prompt": "약품 보관함",
+    "lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "소독약, 붕대, 진통제가 정리되어 있다.",
+        "text_sabi": "소독약, 붕대, 진통제. 필요하면 챙길 수 있겠어.",
+        "text_shamu": "붕대 좀 챙겨 둘까. 누구 때문에 쓸 일이 생길 것 같거든."
+      }
+    ],
+    "otherworld_lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "worried",
+        "shamu_emotion": "serious",
+        "text": "약병 라벨이 전부 읽을 수 없는 글자로 바뀌어 있다. 하나만 선명하게 빛난다.",
+        "text_sabi": "라벨이 다 뭉개졌어. 저 병 하나만 선명해… 함부로 마시면 안 될 것 같아.",
+        "text_shamu": "이거 하나만 멀쩡하네. 먹어도 되는 건지 모르겠다."
+      }
+    ]
+  },
+  "nurse_bed": {
+    "prompt": "침대 살펴보기",
+    "lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "정돈된 침대. 시트가 깨끗하다.",
+        "text_sabi": "누가 쓴 흔적은 없어.",
+        "text_shamu": "누워 있고 싶다."
+      }
+    ],
+    "otherworld_lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "worried",
+        "shamu_emotion": "serious",
+        "text": "시트가 사람 모양으로 움푹 꺼져 있다. 아직 따뜻하다.",
+        "text_sabi": "…방금까지 누가 누워 있었어. 아직 따뜻해.",
+        "text_shamu": "따뜻해. 방금 누가 있었다는 거잖아."
+      }
+    ]
+  },
+  "gym_stage": {
+    "prompt": "무대 살펴보기",
+    "lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "체육관 무대. 졸업식 현수막 틀만 남아 있다.",
+        "text_sabi": "무대 위에 현수막 틀만 남아 있어.",
+        "text_shamu": "무대 넓네. 여기서 한 판 붙기 딱 좋겠다."
+      }
+    ],
+    "otherworld_lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "serious",
+        "shamu_emotion": "annoyed",
+        "text": "무대 앞에 의자들이 줄지어 놓여 있다. 모두 무대를 향하고 있다.",
+        "text_sabi": "의자가 전부 무대를 보고 있어. 곧 뭔가 시작되는 것처럼.",
+        "text_shamu": "관객석 준비 끝났다는 거냐. 누가 공연하는데."
+      }
+    ]
+  }
+}

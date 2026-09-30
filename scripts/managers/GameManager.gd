@@ -10,7 +10,9 @@ enum GameMode { SINGLE, LOCAL_COOP }
 var current_game_mode: GameMode = GameMode.SINGLE
 
 # 현재 활성 캐릭터 및 챕터
-var current_chapter: String = "Prologue"
+## 현재 챕터. 게임은 챕터 1(학교) 정문 앞에서 시작한다.
+const CHAPTER_SCHOOL := "Chapter1_School"
+var current_chapter: String = CHAPTER_SCHOOL
 var active_character: CharacterType = CharacterType.SABI
 
 # 사비와 샤무의 유대감 / 상호 신뢰도 (0 ~ 100, 기본값 50)
@@ -41,6 +43,12 @@ signal suspicion_changed(new_suspicion: float, delta: float)
 signal story_flag_set(flag_name: String, value: Variant)
 signal choice_outcome_applied(outcome: Dictionary)
 signal exploration_lock_changed(is_locked: bool)
+signal world_phase_changed(new_phase: String)
+
+## 현재 세계 상태: "real"(현실) / "otherworld"(이계). 같은 맵이 상태에 따라 조명·소리·배치가 달라진다.
+const WORLD_REAL := "real"
+const WORLD_OTHERWORLD := "otherworld"
+var world_phase: String = WORLD_REAL
 
 # 탐색 입력 잠금 사유 (컷신, 연출 등). 대화 중에는 별도 등록 없이 자동으로 잠긴다.
 var _exploration_locks: Dictionary = {}
@@ -56,6 +64,18 @@ func set_game_mode(mode: GameMode) -> void:
 		current_game_mode = mode
 		game_mode_changed.emit(current_game_mode)
 		print("[GameManager] 게임 모드 변경: ", "싱글(SINGLE)" if current_game_mode == GameMode.SINGLE else "로컬2인(COOP)")
+
+
+## 세계 상태 변경 (WorldPhaseController가 호출)
+func set_world_phase(phase: String) -> void:
+	if world_phase == phase:
+		return
+	world_phase = phase
+	world_phase_changed.emit(phase)
+
+
+func is_otherworld() -> bool:
+	return world_phase == WORLD_OTHERWORLD
 
 
 ## 이동·상호작용·전환 입력을 막아야 하는 상태인지 (대화 진행 중 또는 잠금 사유 존재)
@@ -161,9 +181,11 @@ func apply_choice_outcome(outcome: Dictionary) -> void:
 
 ## 신규 게임 시작 시 상태 초기화
 func reset_game_state() -> void:
-	current_chapter = "Prologue"
+	current_chapter = CHAPTER_SCHOOL
 	active_character = CharacterType.SABI
 	sabi_shamu_trust = 50.0
 	anomaly_suspicion = 0.0
 	story_flags.clear()
+	world_phase = WORLD_REAL
+	_exploration_locks.clear()
 	print("[GameManager] 게임 상태 초기화 완료")

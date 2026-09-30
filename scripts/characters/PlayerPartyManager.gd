@@ -22,6 +22,7 @@ var _switch_cooldown_left: float = 0.0
 
 
 func _ready() -> void:
+	add_to_group("player_party")
 	if not sabi or not shamu:
 		push_error("[PlayerPartyManager] Sabi 또는 Shamu 노드를 찾을 수 없습니다.")
 		return

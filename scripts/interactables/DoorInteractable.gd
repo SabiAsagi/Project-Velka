@@ -9,6 +9,8 @@ class_name DoorInteractable
 ## 잠긴 상태에서 조사했을 때 보여줄 대사 (비우면 아무 반응 없음)
 @export_multiline var locked_line: String = ""
 @export var open_angle: float = -90.0
+## 문 폭(m). 기본 씬은 2.8m이며, 다른 값이면 메시·충돌·상호작용 위치를 맞춰 조정한다.
+@export var door_width: float = 2.8
 @export var animation_duration: float = 0.35
 
 @onready var hinge: Node3D = $Hinge
@@ -16,6 +18,31 @@ class_name DoorInteractable
 
 var is_open: bool = false
 var _is_animating: bool = false
+
+
+func _ready() -> void:
+	super._ready()
+	show_nearby_marker = false
+	if not is_equal_approx(door_width, 2.8):
+		_resize_door(door_width)
+
+
+## 공유 리소스를 복제한 뒤 폭을 바꾼다 (다른 문 인스턴스에 영향 없음).
+func _resize_door(width: float) -> void:
+	var mesh_instance := get_node_or_null("Hinge/DoorBody/DoorMesh") as MeshInstance3D
+	if mesh_instance and mesh_instance.mesh is BoxMesh:
+		var mesh := mesh_instance.mesh.duplicate() as BoxMesh
+		mesh.size.x = width
+		mesh_instance.mesh = mesh
+		mesh_instance.position.x = width * 0.5
+	if collision_shape.shape is BoxShape3D:
+		var shape := collision_shape.shape.duplicate() as BoxShape3D
+		shape.size.x = width
+		collision_shape.shape = shape
+		collision_shape.position.x = width * 0.5
+	var point := get_node_or_null("InteractionPoint") as Node3D
+	if point:
+		point.position.x = width * 0.5
 
 
 func can_interact(player: Node3D) -> bool:

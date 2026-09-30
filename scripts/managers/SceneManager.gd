@@ -5,7 +5,7 @@ extends CanvasLayer
 
 const SCENE_TITLE := "res://scenes/ui/TitleScreen.tscn"
 const SCENE_PROLOGUE := "res://scenes/chapters/Prologue.tscn"
-const SCENE_SCHOOL := "res://scenes/school/SchoolMap.tscn"
+const SCENE_SCHOOL := "res://scenes/chapters/Chapter1_School.tscn"
 
 # 씬 전환 신호
 signal scene_transition_started(target_scene: String)
@@ -71,11 +71,12 @@ func to_title() -> void:
 	change_scene(SCENE_TITLE)
 
 
-## 새 게임 시작 (상태 초기화 후 프롤로그 진입)
+## 새 게임 시작 (상태 초기화 후 챕터 1 학교 정문 앞에서 시작)
+## 프롤로그는 현재 게임 흐름에서 제외되어 있다 (컷신·대화 형식으로 추후 제작).
 func start_new_game() -> void:
 	print("[SceneManager] 새 게임 시작")
 	GameManager.reset_game_state()
-	change_scene(SCENE_PROLOGUE)
+	change_scene(SCENE_SCHOOL)
 
 
 ## 이어하기 (세이브 데이터 로드 후 해당 챕터로 진입)
@@ -86,13 +87,11 @@ func continue_game() -> void:
 
 	var success = SaveManager.load_game()
 	if success:
-		var target_scene = SCENE_PROLOGUE
-		if GameManager.current_chapter == "School" or GameManager.current_chapter == "Chapter1":
-			target_scene = SCENE_SCHOOL
-		change_scene(target_scene)
+		# 현재 진행 가능한 챕터는 학교(챕터 1)뿐이다.
+		change_scene(SCENE_SCHOOL)
 
 
-## 프롤로그로 이동
+## 프롤로그로 이동 (현재 게임 흐름에서는 사용하지 않음)
 func to_prologue() -> void:
 	GameManager.change_chapter("Prologue")
 	change_scene(SCENE_PROLOGUE)
@@ -100,5 +99,5 @@ func to_prologue() -> void:
 
 ## 학교(챕터 1)로 이동
 func to_school() -> void:
-	GameManager.change_chapter("School")
+	GameManager.change_chapter(GameManager.CHAPTER_SCHOOL)
 	change_scene(SCENE_SCHOOL)

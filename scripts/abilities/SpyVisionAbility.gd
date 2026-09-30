@@ -53,7 +53,7 @@ func _activate() -> void:
 	AbilityFx.spawn_ring(get_tree().current_scene, member.global_position, VISION_COLOR, radius, pulse_seconds)
 	_set_overlay(true)
 	for target in get_tree().get_nodes_in_group(SpyVisionTarget.GROUP):
-		if not target is SpyVisionTarget or _revealed.has(target):
+		if not target is SpyVisionTarget or _revealed.has(target) or not (target as SpyVisionTarget).is_visible_in_tree():
 			continue
 		var distance := member.global_position.distance_to((target as SpyVisionTarget).global_position)
 		if distance <= radius:

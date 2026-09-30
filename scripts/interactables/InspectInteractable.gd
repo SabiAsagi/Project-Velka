@@ -6,6 +6,7 @@ class_name InspectInteractable
 # data/inspectables/*.json 에서 inspect_id 항목을 읽어 짧은 독백/대화로 보여준다.
 # 대사 speaker를 "inspector"로 두면 조사한 캐릭터(사비/샤무)가 화자가 된다.
 # 두 번째 조사부터는 repeat_lines가 있으면 그것을 사용한다.
+# 이계 상태에서는 otherworld_lines / otherworld_prompt가 있으면 그것을 우선한다 (조사 횟수도 따로 센다).
 
 signal inspected(inspect_id: String, inspector: Node3D, first_time: bool)
 
@@ -18,6 +19,7 @@ static var _data_cache: Dictionary = {}
 
 var _entry: Dictionary = {}
 var _inspect_count: int = 0
+var _otherworld_inspect_count: int = 0
 
 
 func _ready() -> void:
@@ -28,20 +30,40 @@ func _ready() -> void:
 
 
 func get_interaction_prompt(_player: Node3D) -> String:
-	return interaction_prompt + ("  (확인함)" if _inspect_count > 0 else "")
+	var prompt := interaction_prompt
+	if _use_otherworld() and _entry.has("otherworld_prompt"):
+		prompt = String(_entry["otherworld_prompt"])
+	return prompt + ("  (확인함)" if _current_count() > 0 else "")
+
+
+func _use_otherworld() -> bool:
+	return GameManager.is_otherworld() and _entry.has("otherworld_lines")
+
+
+func _current_count() -> int:
+	return _otherworld_inspect_count if _use_otherworld() else _inspect_count
 
 
 func _on_interact(player: Node3D) -> void:
 	if _entry.is_empty():
 		push_warning("[InspectInteractable] 조사 데이터 없음: %s (%s)" % [inspect_id, data_path])
 		return
-	var first_time := _inspect_count == 0
-	_inspect_count += 1
+	var otherworld := _use_otherworld()
+	var first_time := _current_count() == 0
 	var source: Array = _entry.get("lines", [])
-	if not first_time and _entry.has("repeat_lines"):
-		source = _entry["repeat_lines"]
+	var repeat_key := "repeat_lines"
+	if otherworld:
+		_otherworld_inspect_count += 1
+		source = _entry["otherworld_lines"]
+		repeat_key = "otherworld_repeat_lines"
+	else:
+		_inspect_count += 1
+	if not first_time and _entry.has(repeat_key):
+		source = _entry[repeat_key]
 	DialogueManager.start_dialogue_data("inspect_" + inspect_id, _resolve_lines(source, player))
-	GameManager.set_story_flag("inspected_" + inspect_id, _inspect_count)
+	GameManager.set_story_flag("inspected_" + inspect_id, _inspect_count + _otherworld_inspect_count)
+	if otherworld:
+		GameManager.set_story_flag("inspected_otherworld_" + inspect_id, _otherworld_inspect_count)
 	inspected.emit(inspect_id, player, first_time)
 
 

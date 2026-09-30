@@ -4,7 +4,7 @@ extends SceneTree
 # 실행: godot --headless --path . -s res://tests/smoke/exploration_smoke_test.gd
 # 프롤로그 테스트 교실을 띄워 이동/벽 충돌/캐릭터 전환/카메라 추적/조사 강조/대화 잠금/가림 처리를 검사한다.
 
-const PROLOGUE := "res://scenes/chapters/Prologue.tscn"
+const PROLOGUE := "res://scenes/sandbox/ExplorationSandbox.tscn"
 const ROOM_MIN := Vector2(-7.0, -5.0)
 # InteractableBase.HighlightLevel 값 (오토로드 이전 컴파일을 피하려고 타입 대신 숫자로 비교)
 const HIGHLIGHT_NEARBY := 1

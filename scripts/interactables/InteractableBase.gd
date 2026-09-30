@@ -15,6 +15,8 @@ const MARKER_COLOR_INSPECTED := Color(0.55, 0.58, 0.62, 0.55)
 ## 머리 위 표식(◆) 표시 여부와 높이 (InteractionPoint 기준)
 @export var show_marker: bool = true
 @export var marker_height: float = 1.0
+## false면 주변(NEARBY) 단계에서는 표식을 띄우지 않고, 가까이 가서 대상이 됐을 때만 강조한다 (문처럼 눈에 잘 띄는 물체).
+@export var show_nearby_marker: bool = true
 
 ## 한 번 이상 조사/사용했는지. 표식이 회색으로 바뀐다.
 var was_used: bool = false
@@ -102,7 +104,8 @@ func _get_highlight_targets() -> Array[GeometryInstance3D]:
 func _update_marker() -> void:
 	if not show_marker:
 		return
-	if _highlight_level == HighlightLevel.NONE:
+	var hide := _highlight_level == HighlightLevel.NONE or (_highlight_level == HighlightLevel.NEARBY and not show_nearby_marker)
+	if hide:
 		if _marker:
 			_marker.visible = false
 		return
