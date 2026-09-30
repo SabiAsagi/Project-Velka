@@ -24,6 +24,8 @@ signal controlled_changed(is_controlled: bool)
 @onready var stealth_component: StealthComponent = $StealthComponent
 @onready var nav_agent: NavigationAgent3D = $NavigationAgent3D
 @onready var companion_ai: CompanionAI = $CompanionAI
+## 캐릭터 고유 능력 (F 키). 사비: 스파이 비전 / 샤무: 주의 끌기
+@onready var ability: CharacterAbility = get_node_or_null("Ability")
 
 var is_controlled: bool = false:
 	set(val):
@@ -31,6 +33,8 @@ var is_controlled: bool = false:
 		set_physics_process(true)
 		if interaction_component:
 			interaction_component.set_enabled(val)
+		if ability and not val:
+			ability.cancel()
 		controlled_changed.emit(val)
 
 var heart_rate: float:
@@ -66,6 +70,12 @@ func _ready() -> void:
 
 	if companion_ai:
 		companion_ai.init(self)
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if is_controlled and ability and event.is_action_pressed("ability"):
+		get_viewport().set_input_as_handled()
+		ability.try_activate()
 
 
 func _physics_process(delta: float) -> void:

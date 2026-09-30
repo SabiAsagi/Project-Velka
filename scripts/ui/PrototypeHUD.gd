@@ -11,6 +11,7 @@ extends CanvasLayer
 @onready var mental_strength_label: Label = $MarginContainer/PanelContainer/VBoxContainer/MentalStrengthLabel
 @onready var status_label: Label = $MarginContainer/PanelContainer/VBoxContainer/StatusLabel
 @onready var trust_label: Label = $MarginContainer/PanelContainer/VBoxContainer/TrustLabel
+@onready var ability_label: Label = $MarginContainer/PanelContainer/VBoxContainer/AbilityLabel
 @onready var interaction_panel: PanelContainer = $InteractionPanel
 @onready var interaction_label: Label = $InteractionPanel/InteractionLabel
 
@@ -70,6 +71,28 @@ func _set_player_connections(target: CharacterBody3D, connect_signals: bool) -> 
 			sig.connect(callable)
 		elif not connect_signals and sig.is_connected(callable):
 			sig.disconnect(callable)
+
+
+func _process(_delta: float) -> void:
+	_update_ability_display()
+
+
+## 조작 캐릭터의 F 능력 상태 (준비 / 발동 중 / 쿨타임)
+func _update_ability_display() -> void:
+	var ability: CharacterAbility = player.get("ability") if player else null
+	if ability == null:
+		ability_label.visible = false
+		return
+	ability_label.visible = true
+	if ability.is_active():
+		ability_label.text = "[F] %s  발동 중" % ability.display_name
+		ability_label.modulate = Color(0.45, 0.95, 1.0)
+	elif ability.is_ready():
+		ability_label.text = "[F] %s  준비" % ability.display_name
+		ability_label.modulate = Color(0.85, 0.9, 0.95)
+	else:
+		ability_label.text = "[F] %s  %.1f초" % [ability.display_name, ability.get_cooldown_left()]
+		ability_label.modulate = Color(0.55, 0.58, 0.62)
 
 
 func _on_trust_changed(new_trust: float, delta: float) -> void:

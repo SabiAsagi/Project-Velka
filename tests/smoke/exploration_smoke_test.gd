@@ -96,10 +96,11 @@ func _run() -> void:
 	_check(book.get_interaction_prompt(sabi).contains("확인함"), "조사한 대상은 프롬프트에 확인함 표시")
 
 	# --- 문 상호작용 ---
-	party.teleport_party(Vector3(6.1, 0.05, 0.0))
-	shamu.global_position = Vector3(3.0, 0.05, 3.5)
+	_gm.set_story_flag("inspected_backdoor_code", 1)
+	party.teleport_party(Vector3(6.1, 0.05, 3.2))
+	shamu.global_position = Vector3(-3.0, 0.05, -1.0)
 	await _seconds(0.3)
-	var door = scene.get_node("Classroom/ClassroomDoor")
+	var door = scene.get_node("Classroom/BackDoor")
 	_check(interaction.current_interactable == door, "문 앞에서는 문이 상호작용 대상이 된다")
 	_press_action("interact")
 	await _seconds(0.6)

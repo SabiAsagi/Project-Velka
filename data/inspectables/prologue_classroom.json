@@ -74,5 +74,34 @@
         "text_shamu": "잠겼네. 발로 한 번 차면 열릴 것 같은데… 지금은 참아 둔다."
       }
     ]
+  },
+  "backdoor_code": {
+    "prompt": "긁힌 숫자 자국 확인",
+    "lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "serious",
+        "shamu_emotion": "neutral",
+        "text": "문틀 옆에 손톱으로 긁은 숫자가 있다. 0-4-1-7.",
+        "text_sabi": "문틀 옆에 긁힌 숫자… 0-4-1-7. 뒷문 자물쇠 번호야. 누군가 여기서 조용히 빠져나갔어.",
+        "text_shamu": "사비가 찾은 숫자다. 0-4-1-7. 이걸로 뒷문이 열린다 이거지."
+      },
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "determined",
+        "shamu_emotion": "smug",
+        "text": "뒷문 번호를 알아냈다.",
+        "text_sabi": "앞문은 시선이 고정된 구역이야. 나가려면 뒷문으로, 소리 없이.",
+        "text_shamu": "조용히 나가는 건 내 취향은 아닌데… 이번엔 사비 말대로 하지."
+      }
+    ],
+    "repeat_lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "뒷문 번호는 0-4-1-7."
+      }
+    ]
   }
 }

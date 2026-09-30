@@ -9,6 +9,8 @@ class_name TrainingStalker
 @export var lose_sight_delay: float = 1.6
 @export var attack_distance: float = 1.0
 @export var patrol_span: Vector3 = Vector3(0, 0, -5.5)
+## 소음을 들으면 그 지점까지 가서 머무르는 시간(초)
+@export var investigate_time: float = 4.0
 
 @onready var sprite: Sprite3D = $Sprite3D
 @onready var alert_light: OmniLight3D = $AlertLight
@@ -19,6 +21,8 @@ var _patrol_index: int = 1
 var _facing_direction: Vector3 = Vector3.FORWARD
 var _last_known_position: Vector3
 var _lost_sight_time: float = 0.0
+var _investigate_point: Vector3
+var _investigate_left: float = 0.0
 
 
 func _ready() -> void:
@@ -27,6 +31,8 @@ func _ready() -> void:
 	_last_known_position = global_position
 	floor_snap_length = 0.45
 	floor_max_angle = deg_to_rad(42.0)
+	add_to_group(NoiseEvents.NOISE_GROUP)
+	add_to_group("camera_solid")
 	set_state(AnomalyState.PATROL)
 	_update_visual_state()
 
@@ -69,8 +75,30 @@ func _process_chase(delta: float) -> void:
 	_move_toward(_last_known_position, chase_speed, delta)
 
 
+## 소음을 들으면 추격 중이 아닐 때 그 지점을 조사하러 간다 (OBSERVE 상태).
+func hear_noise(noise_position: Vector3, _source: Node) -> void:
+	if current_state == AnomalyState.CHASE or current_state == AnomalyState.ATTACK:
+		return
+	_investigate_point = noise_position
+	_investigate_left = investigate_time
+	set_state(AnomalyState.OBSERVE)
+	_update_visual_state()
+
+
 func _process_observe(delta: float) -> void:
-	_process_patrol(delta)
+	if _can_see_target():
+		_begin_chase()
+		return
+	var offset := _investigate_point - global_position
+	offset.y = 0.0
+	if offset.length() > 0.8:
+		_move_toward(_investigate_point, chase_speed * 0.8, delta)
+		return
+	_move_toward(global_position, patrol_speed, delta)
+	_investigate_left -= delta
+	if _investigate_left <= 0.0:
+		set_state(AnomalyState.PATROL)
+		_update_visual_state()
 
 
 func _process_attack(_delta: float) -> void:
@@ -150,5 +178,11 @@ func _can_see_target(ignore_view_angle: bool = false) -> bool:
 
 func _update_visual_state() -> void:
 	var chasing := current_state == AnomalyState.CHASE
-	sprite.modulate = Color(1.0, 0.28, 0.24) if chasing else Color(0.72, 0.78, 0.84)
+	var investigating := current_state == AnomalyState.OBSERVE
+	if chasing:
+		sprite.modulate = Color(1.0, 0.28, 0.24)
+	elif investigating:
+		sprite.modulate = Color(0.95, 0.75, 0.35)
+	else:
+		sprite.modulate = Color(0.72, 0.78, 0.84)
 	alert_light.visible = chasing

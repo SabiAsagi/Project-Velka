@@ -10,6 +10,8 @@ const MARKER_COLOR_INSPECTED := Color(0.55, 0.58, 0.62, 0.55)
 
 @export var interaction_prompt: String = "조사하기"
 @export var require_item: String = ""
+## false면 존재하지만 아직 상호작용할 수 없다 (예: 스파이 비전으로 발견해야 조사 가능한 단서)
+@export var available: bool = true
 ## 머리 위 표식(◆) 표시 여부와 높이 (InteractionPoint 기준)
 @export var show_marker: bool = true
 @export var marker_height: float = 1.0
@@ -28,6 +30,8 @@ func _ready() -> void:
 
 
 func can_interact(player: Node3D) -> bool:
+	if not available:
+		return false
 	if require_item != "":
 		var inventory_manager := get_node_or_null("/root/InventoryManager")
 		if inventory_manager == null or not inventory_manager.has_item(require_item):

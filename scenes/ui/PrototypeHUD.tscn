@@ -86,11 +86,17 @@ theme_override_colors/font_color = Color(0.9, 0.75, 0.35, 1)
 theme_override_font_sizes/font_size = 16
 text = "유대 신뢰도  50%"
 
+[node name="AbilityLabel" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 16
+text = "[F] 스파이 비전  준비"
+
 [node name="HintLabel" type="Label" parent="MarginContainer/PanelContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.66, 0.7, 0.75, 1)
 theme_override_font_sizes/font_size = 13
-text = "이동  WASD     조사  E     전환  Q / Tab"
+text = "이동  WASD   조사  E   능력  F   전환  Q / Tab"
 
 [node name="InteractionPanel" type="PanelContainer" parent="."]
 visible = false

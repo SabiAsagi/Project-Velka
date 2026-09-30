@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://scripts/characters/PartyMember.gd" id="1_party_member"]
 [ext_resource type="SpriteFrames" path="res://assets/characters/sprites/sabi_frames.tres" id="2_sabi_tex"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://scripts/player/components/StealthComponent.gd" id="4_stealth"]
 [ext_resource type="Script" path="res://scripts/characters/CompanionAI.gd" id="5_companion_ai"]
 
+[ext_resource type="Script" path="res://scripts/abilities/SpyVisionAbility.gd" id="6_ability"]
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_sabi"]
 radius = 0.4
 height = 1.8
@@ -45,3 +46,7 @@ path_max_distance = 3.0
 
 [node name="CompanionAI" type="Node" parent="."]
 script = ExtResource("5_companion_ai")
+
+[node name="Ability" type="Node" parent="."]
+script = ExtResource("6_ability")
+ability_id = "spy_vision"

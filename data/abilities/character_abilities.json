@@ -1,0 +1,24 @@
+{
+  "spy_vision": {
+    "name": "스파이 비전",
+    "character": "sabi",
+    "cooldown": 8.0,
+    "radius": 9.0,
+    "duration": 6.0,
+    "pulse_seconds": 0.9
+  },
+  "distract": {
+    "name": "주의 끌기",
+    "character": "shamu",
+    "cooldown": 10.0,
+    "radius": 11.0,
+    "pulse_seconds": 0.7,
+    "shout_lines": ["어이! 이쪽이다!", "여기야, 이 괴물아!", "덤벼 봐, 이쪽으로!"]
+  },
+  "shamu_break": {
+    "name": "위험 돌파",
+    "character": "shamu",
+    "noise_radius": 12.0,
+    "break_seconds": 0.45
+  }
+}

@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3]
+[gd_scene load_steps=22 format=3]
 
 [ext_resource type="Script" path="res://scripts/chapters/Prologue.gd" id="1_script"]
 [ext_resource type="PackedScene" path="res://scenes/characters/PlayerParty.tscn" id="2_party"]
@@ -8,6 +8,9 @@
 [ext_resource type="PackedScene" path="res://scenes/interactables/DoorInteractable.tscn" id="6_door"]
 [ext_resource type="Script" path="res://scripts/interactables/InspectInteractable.gd" id="7_inspect"]
 
+[ext_resource type="Script" path="res://scripts/interactables/BreakableObstacle.gd" id="8_break"]
+[ext_resource type="Script" path="res://scripts/interactables/SpyVisionTarget.gd" id="9_spy"]
+[ext_resource type="PackedScene" path="res://scenes/entities/TrainingStalker.tscn" id="10_stalker"]
 [sub_resource type="Environment" id="Environment_prologue"]
 background_mode = 1
 background_color = Color(0.035, 0.045, 0.06, 1)
@@ -41,6 +44,10 @@ roughness = 0.85
 [sub_resource type="StandardMaterial3D" id="Mat_locker"]
 albedo_color = Color(0.3, 0.36, 0.4, 1)
 roughness = 0.85
+
+[sub_resource type="StandardMaterial3D" id="Mat_plank"]
+albedo_color = Color(0.46, 0.34, 0.22, 1)
+roughness = 0.9
 
 [sub_resource type="StandardMaterial3D" id="Mat_book"]
 albedo_color = Color(0.45, 0.12, 0.1, 1)
@@ -101,24 +108,6 @@ use_collision = true
 size = Vector3(0.3, 3, 10)
 material = SubResource("Mat_wall")
 
-[node name="WallEastA" type="CSGBox3D" parent="Classroom"]
-transform = Transform3D(1.0, 0, 0, 0, 1, 0, 0, 0, 1.0, 7.15, 1.5, -3.2)
-use_collision = true
-size = Vector3(0.3, 3, 3.6)
-material = SubResource("Mat_wall")
-
-[node name="WallEastB" type="CSGBox3D" parent="Classroom"]
-transform = Transform3D(1.0, 0, 0, 0, 1, 0, 0, 0, 1.0, 7.15, 1.5, 3.2)
-use_collision = true
-size = Vector3(0.3, 3, 3.6)
-material = SubResource("Mat_wall")
-
-[node name="WallEastLintel" type="CSGBox3D" parent="Classroom"]
-transform = Transform3D(1.0, 0, 0, 0, 1, 0, 0, 0, 1.0, 7.15, 2.7, 0)
-use_collision = true
-size = Vector3(0.3, 0.6, 2.8)
-material = SubResource("Mat_wall")
-
 [node name="TeacherDesk" type="CSGBox3D" parent="Classroom"]
 transform = Transform3D(1.0, 0, 0, 0, 1, 0, 0, 0, 1.0, 0, 0.5, -3.3)
 use_collision = true
@@ -160,9 +149,6 @@ transform = Transform3D(1.0, 0, 0, 0, 1, 0, 0, 0, 1.0, 3.5, 0.375, 2.3)
 use_collision = true
 size = Vector3(1.0, 0.75, 0.6)
 material = SubResource("Mat_desk")
-
-[node name="ClassroomDoor" parent="Classroom" instance=ExtResource("6_door")]
-transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 7.15, 0, 1.4)
 
 [node name="Blackboard" type="Node3D" parent="Classroom"]
 transform = Transform3D(1.0, 0, 0, 0, 1, 0, 0, 0, 1.0, 0, 0, -4.95)
@@ -220,6 +206,127 @@ transform = Transform3D(1.0, 0, 0, 0, 1, 0, 0, 0, 1.0, 0, 0.9, 0)
 use_collision = true
 size = Vector3(1.2, 1.8, 0.5)
 material = SubResource("Mat_locker")
+
+[node name="WallEastFrontEnd" type="CSGBox3D" parent="Classroom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.15, 1.5, -4.8)
+use_collision = true
+size = Vector3(0.3, 3, 0.4)
+material = SubResource("Mat_wall")
+
+[node name="WallEastMiddle" type="CSGBox3D" parent="Classroom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.15, 1.5, 0)
+use_collision = true
+size = Vector3(0.3, 3, 3.6)
+material = SubResource("Mat_wall")
+
+[node name="WallEastBackEnd" type="CSGBox3D" parent="Classroom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.15, 1.5, 4.8)
+use_collision = true
+size = Vector3(0.3, 3, 0.4)
+material = SubResource("Mat_wall")
+
+[node name="LintelFront" type="CSGBox3D" parent="Classroom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.15, 2.7, -3.2)
+use_collision = true
+size = Vector3(0.3, 0.6, 2.8)
+material = SubResource("Mat_wall")
+
+[node name="LintelBack" type="CSGBox3D" parent="Classroom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.15, 2.7, 3.2)
+use_collision = true
+size = Vector3(0.3, 0.6, 2.8)
+material = SubResource("Mat_wall")
+
+[node name="FrontDoor" parent="Classroom" instance=ExtResource("6_door")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 7.15, 0, -1.8)
+
+[node name="BackDoor" parent="Classroom" instance=ExtResource("6_door")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 7.15, 0, 4.6)
+is_locked = true
+unlock_flag = "inspected_backdoor_code"
+locked_prompt = "잠긴 뒷문 (번호 자물쇠)"
+locked_line = "번호 자물쇠로 잠겨 있다. 번호를 모르면 열 수 없다."
+
+[node name="FrontBarricade" type="Node3D" parent="Classroom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.55, 0, -3.2)
+script = ExtResource("8_break")
+interaction_prompt = "바리케이드"
+marker_height = 1.3
+obstacle_id = "front_door_barricade"
+break_prompt = "바리케이드 부수기 (소음 발생)"
+blocked_prompt = "바리케이드가 앞문을 막고 있다"
+
+[node name="InteractionPoint" type="Marker3D" parent="Classroom/FrontBarricade"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.45, 1.0, 0)
+
+[node name="Plank1" type="CSGBox3D" parent="Classroom/FrontBarricade"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, 0)
+use_collision = true
+size = Vector3(0.14, 0.3, 3.0)
+material = SubResource("Mat_plank")
+
+[node name="Plank2" type="CSGBox3D" parent="Classroom/FrontBarricade"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
+use_collision = true
+size = Vector3(0.14, 0.3, 3.0)
+material = SubResource("Mat_plank")
+
+[node name="Plank3" type="CSGBox3D" parent="Classroom/FrontBarricade"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.35, 0)
+use_collision = true
+size = Vector3(0.14, 0.3, 3.0)
+material = SubResource("Mat_plank")
+
+[node name="Plank4" type="CSGBox3D" parent="Classroom/FrontBarricade"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.85, 0)
+use_collision = true
+size = Vector3(0.14, 0.3, 3.0)
+material = SubResource("Mat_plank")
+
+[node name="FrontDoorDanger" type="Node3D" parent="Classroom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.6, 0.2, -3.2)
+script = ExtResource("9_spy")
+target_id = "front_door_gaze"
+category = 1
+caption = "시선 고정 구역 (앞문)"
+ground_radius = 1.4
+
+[node name="BlackboardTrace" type="Node3D" parent="Classroom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2, 1.7, -4.8)
+script = ExtResource("9_spy")
+target_id = "blackboard_red_chalk"
+category = 2
+caption = "붉은 분필 흔적"
+
+[node name="BackdoorCodeTrace" type="Node3D" parent="Classroom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.9, 1.3, 1.35)
+script = ExtResource("9_spy")
+target_id = "backdoor_code"
+category = 0
+caption = "긁힌 숫자 자국"
+linked_interactable = NodePath("../BackdoorCodeInspect")
+
+[node name="BackdoorCodeInspect" type="Node3D" parent="Classroom"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.9, 0, 1.35)
+script = ExtResource("7_inspect")
+available = false
+marker_height = 0.4
+inspect_id = "backdoor_code"
+
+[node name="InteractionPoint" type="Marker3D" parent="Classroom/BackdoorCodeInspect"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 1.1, 0)
+
+[node name="Hallway" type="Node3D" parent="."]
+
+[node name="HallwayFarWall" type="CSGBox3D" parent="Hallway"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.15, 1.5, 0)
+use_collision = true
+size = Vector3(0.3, 3, 16)
+material = SubResource("Mat_wall")
+
+[node name="HallwayStalker" parent="Hallway" instance=ExtResource("10_stalker")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.5, 0.05, -6)
+patrol_span = Vector3(0, 0, 12)
 
 [node name="PlayerParty" parent="." node_paths=PackedStringArray("camera") instance=ExtResource("2_party")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0.05, 1)
