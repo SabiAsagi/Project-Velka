@@ -28,3 +28,10 @@ scripts/characters/Player.gd
 scripts/ui/DialogueBox.gd
 ---
 
+## Session End: 20260930_091433
+### Commits
+cdc6929 feat: 챕터 1 학교 전체 맵 생성 및 정문 시작으로 게임 흐름 변경
+bdb1bac feat: 캐릭터별 능력 (사비 스파이 비전, 샤무 파괴·주의 끌기)
+ee219b5 feat: 기본 탐색 시스템 (파티 전환·조사 강조·카메라 가림 처리)
+---
+
