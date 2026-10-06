@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://scripts/characters/PartyMember.gd" id="1_party_member"]
 [ext_resource type="SpriteFrames" path="res://assets/characters/sprites/shamu_frames.tres" id="2_shamu_tex"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" path="res://scripts/characters/CompanionAI.gd" id="5_companion_ai"]
 
 [ext_resource type="Script" path="res://scripts/abilities/DistractAbility.gd" id="6_ability"]
+[ext_resource type="Script" path="res://scripts/survival/CharacterVitals.gd" id="7_vitals"]
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_shamu"]
 radius = 0.4
 height = 1.8
@@ -50,3 +51,7 @@ script = ExtResource("5_companion_ai")
 [node name="Ability" type="Node" parent="."]
 script = ExtResource("6_ability")
 ability_id = "distract"
+
+[node name="Vitals" type="Node" parent="."]
+script = ExtResource("7_vitals")
+character_id = "shamu"

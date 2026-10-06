@@ -1,0 +1,11 @@
+{
+  "_source": "docs/01.기획_및_시스템/규칙서.md 6·9장, 밸런스_기획서.md 7장. danger_level(1~5) -> 위반 결과 등급",
+  "by_danger_level": {"1": "safe", "2": "safe", "3": "caution", "4": "danger", "5": "forbidden"},
+  "grades": {
+    "safe": {"name": "안전", "type": "accumulate", "heart": 10, "mental": -2, "strike_limit": 3},
+    "caution": {"name": "주의", "type": "accumulate", "heart": 18, "mental": -5, "strike_limit": 3},
+    "danger": {"name": "위험", "type": "immediate", "heart": 35, "mental": -10, "damage": 25, "injuries": ["injured"], "noise_radius": 14},
+    "forbidden": {"name": "금지", "type": "fail", "heart": 50, "mental": -20}
+  },
+  "strike_penalty": {"mental": -15, "status": "fear", "noise_radius": 16, "heart": 20}
+}

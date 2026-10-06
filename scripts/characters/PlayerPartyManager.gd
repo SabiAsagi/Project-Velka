@@ -41,11 +41,37 @@ func _ready() -> void:
 
 	# 초기 조작 캐릭터 활성화
 	_apply_active_character(GameManager.active_character)
+	FailureManager.register_party(self)
 
 
 func _process(delta: float) -> void:
 	if _switch_cooldown_left > 0.0:
 		_switch_cooldown_left -= delta
+	_update_bond_link(delta)
+
+
+## 유대감 링크: 한 사람의 체력이나 정신력이 임계치 이하면 다른 사람의 심박이 오르고 정신력이 깎인다.
+func _update_bond_link(delta: float) -> void:
+	if sabi == null or shamu == null or sabi.vitals == null or shamu.vitals == null:
+		return
+	var cfg: Dictionary = CharacterVitals.data().get("bond_link", {})
+	var threshold := float(cfg.get("threshold", 30))
+	for pair in [[sabi, shamu], [shamu, sabi]]:
+		var hurt = pair[0].vitals
+		var other = pair[1].vitals
+		if not other.is_downed and (hurt.hp <= threshold or hurt.mental <= threshold):
+			other.add_heart(float(cfg.get("heart_per_sec", 6.0)) * delta)
+			other.hold_heart()
+			other.change_mental(-float(cfg.get("mental_per_sec", 0.3)) * delta)
+
+
+## 한쪽이 위험 구간이면 true (HUD 표시용)
+func is_bond_link_active() -> bool:
+	var threshold := float(CharacterVitals.data().get("bond_link", {}).get("threshold", 30))
+	for m in [sabi, shamu]:
+		if m.vitals and (m.vitals.hp <= threshold or m.vitals.mental <= threshold):
+			return true
+	return false
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -60,6 +86,9 @@ func request_switch() -> bool:
 		return false
 	_switch_cooldown_left = switch_cooldown
 	var next_char := GameManager.CharacterType.SHAMU if GameManager.active_character == GameManager.CharacterType.SABI else GameManager.CharacterType.SABI
+	var next_member := shamu if next_char == GameManager.CharacterType.SHAMU else sabi
+	if next_member.is_downed():
+		return false
 	GameManager.switch_character(next_char)
 	return true
 

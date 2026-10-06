@@ -26,6 +26,10 @@ signal controlled_changed(is_controlled: bool)
 @onready var companion_ai: CompanionAI = $CompanionAI
 ## 캐릭터 고유 능력 (F 키). 사비: 스파이 비전 / 샤무: 주의 끌기
 @onready var ability: CharacterAbility = get_node_or_null("Ability")
+## 체력·심박·정신력·상태이상 (data/balance/vitals.json)
+@onready var vitals: CharacterVitals = get_node_or_null("Vitals")
+
+signal attacked(targets: Array)
 
 var is_controlled: bool = false:
 	set(val):
@@ -39,17 +43,29 @@ var is_controlled: bool = false:
 
 var heart_rate: float:
 	get:
-		return _current_heart_rate
+		return vitals.heart_rate if vitals else _current_heart_rate
 	set(val):
+		if vitals:
+			vitals.heart_rate = clampf(val, 40.0, 200.0)
 		_current_heart_rate = clampf(val, 40.0, 200.0)
-		stats_changed.emit(character_type, _current_heart_rate, _current_mental_strength)
+		stats_changed.emit(character_type, heart_rate, mental_strength)
 
 var mental_strength: float:
 	get:
-		return _current_mental_strength
+		return vitals.mental if vitals else _current_mental_strength
 	set(val):
+		if vitals:
+			vitals.change_mental(val - vitals.mental)
 		_current_mental_strength = clampf(val, 0.0, 100.0)
-		stats_changed.emit(character_type, _current_heart_rate, _current_mental_strength)
+		stats_changed.emit(character_type, heart_rate, mental_strength)
+
+var hp: float:
+	get:
+		return vitals.hp if vitals else 100.0
+
+## 달리는 중인지 (규칙 구역의 '뛰지 마십시오' 판정용)
+var is_sprinting: bool = false
+var _attack_cooldown: float = 0.0
 
 var is_hidden: bool = false
 var is_threatened: bool = false
@@ -70,16 +86,54 @@ func _ready() -> void:
 
 	if companion_ai:
 		companion_ai.init(self)
+	if vitals:
+		vitals.changed.connect(func(_v): stats_changed.emit(character_type, heart_rate, mental_strength))
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if is_controlled and ability and event.is_action_pressed("ability"):
+	if not is_controlled or is_downed():
+		return
+	if ability and event.is_action_pressed("ability"):
 		get_viewport().set_input_as_handled()
 		ability.try_activate()
+	elif event.is_action_pressed("attack") and not GameManager.is_exploration_locked():
+		get_viewport().set_input_as_handled()
+		perform_attack()
+
+
+func is_downed() -> bool:
+	return vitals != null and vitals.is_downed
+
+
+## 근접 공격: 샤무만 가능. 앞쪽 가까운 괴이에게 take_hit을 호출한다. (괴이를 처치하지는 못한다)
+func perform_attack() -> Array:
+	if character_type != GameManager.CharacterType.SHAMU or _attack_cooldown > 0.0:
+		return []
+	var cfg: Dictionary = CharacterVitals.data().get("shamu_attack", {})
+	_attack_cooldown = float(cfg.get("cooldown", 0.45))
+	var hit: Array = []
+	for node in get_tree().get_nodes_in_group("anomaly"):
+		if node is Node3D and node.has_method("take_hit") and (node as Node3D).is_visible_in_tree():
+			if global_position.distance_to((node as Node3D).global_position) <= float(cfg.get("range", 1.7)):
+				node.take_hit(self)
+				hit.append(node)
+	AbilityFx.spawn_text(get_tree().current_scene, global_position + Vector3.UP * 2.0, "퍽!" if not hit.is_empty() else "휙", Color(0.95, 0.72, 0.25), 0.6)
+	if vitals:
+		vitals.add_heart(float(cfg.get("heart_gain", 6.0)))
+	attacked.emit(hit)
+	return hit
 
 
 func _physics_process(delta: float) -> void:
 	_update_heart_rate(delta)
+	if _attack_cooldown > 0.0:
+		_attack_cooldown -= delta
+	if is_downed():
+		velocity.x = 0.0
+		velocity.z = 0.0
+		apply_gravity_and_slide(delta)
+		_update_animation()
+		return
 
 	if is_controlled:
 		_process_player_input(delta)
@@ -98,7 +152,11 @@ func _process_player_input(delta: float) -> void:
 
 	var input_dir := _get_movement_input()
 	var direction := _get_camera_relative_direction(input_dir)
-	var target_velocity := direction * speed
+	is_sprinting = direction != Vector3.ZERO and Input.is_action_pressed("sprint") and not GameManager.is_exploration_locked()
+	var mult := vitals.speed_multiplier() if vitals else 1.0
+	if is_sprinting:
+		mult *= float(CharacterVitals.data().get("sprint", {}).get("speed_mult", 1.6))
+	var target_velocity := direction * speed * mult
 	var change_rate := acceleration if direction != Vector3.ZERO else deceleration
 
 	velocity.x = move_toward(velocity.x, target_velocity.x, change_rate * delta)
@@ -175,6 +233,9 @@ func set_threatened(threatened: bool) -> void:
 
 
 func _update_heart_rate(delta: float) -> void:
+	if vitals:
+		vitals.threatened = is_threatened
+		return
 	var target_rate := 135.0 if is_threatened else base_heart_rate
 	var change_rate := 9.0 if is_threatened else 4.0
 	var next_rate := move_toward(_current_heart_rate, target_rate, change_rate * delta)

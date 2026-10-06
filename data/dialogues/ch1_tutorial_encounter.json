@@ -1,0 +1,26 @@
+{
+  "dialogue_id": "ch1_tutorial_encounter",
+  "lines": [
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "serious",
+      "text": "샤무… 운동장 쪽. 저거, 사람 아니야."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "determined",
+      "text": "뒤로 빠져. 내가 처리한다."
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "시스템",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "determined",
+      "text": "[color=#e0b040]샤무 조작 — Space / 마우스 왼쪽: 공격[/color]"
+    }
+  ]
+}

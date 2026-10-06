@@ -124,6 +124,9 @@ func _end_chase() -> void:
 func _attack_target() -> void:
 	if target_player == null:
 		return
+	if capture_on_attack:
+		FailureManager.fail("captured")
+		return
 	target_player.set("heart_rate", float(target_player.get("heart_rate")) + 20.0)
 	target_player.set("mental_strength", float(target_player.get("mental_strength")) - 5.0)
 	global_position = _patrol_points[0]

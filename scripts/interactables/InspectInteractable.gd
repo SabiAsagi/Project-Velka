@@ -7,6 +7,8 @@ class_name InspectInteractable
 # 대사 speaker를 "inspector"로 두면 조사한 캐릭터(사비/샤무)가 화자가 된다.
 # 두 번째 조사부터는 repeat_lines가 있으면 그것을 사용한다.
 # 이계 상태에서는 otherworld_lines / otherworld_prompt가 있으면 그것을 우선한다 (조사 횟수도 따로 센다).
+# 규칙 연동: discovers_rules(배열)는 조사하면 수첩에 등록, violates_rule은 조사 자체가 규칙 위반.
+#   이계 전용은 otherworld_discovers_rules / otherworld_violates_rule.
 
 signal inspected(inspect_id: String, inspector: Node3D, first_time: bool)
 
@@ -61,6 +63,13 @@ func _on_interact(player: Node3D) -> void:
 	if not first_time and _entry.has(repeat_key):
 		source = _entry[repeat_key]
 	DialogueManager.start_dialogue_data("inspect_" + inspect_id, _resolve_lines(source, player))
+	var prefix := "otherworld_" if otherworld else ""
+	var character := _character_id_of(player)
+	for rule_id in _entry.get(prefix + "discovers_rules", []):
+		RuleManager.discover_rule(String(rule_id), "inspect", character)
+	var violated := String(_entry.get(prefix + "violates_rule", ""))
+	if not violated.is_empty():
+		RuleManager.report_violation(violated, player, get_interaction_position())
 	GameManager.set_story_flag("inspected_" + inspect_id, _inspect_count + _otherworld_inspect_count)
 	if otherworld:
 		GameManager.set_story_flag("inspected_otherworld_" + inspect_id, _otherworld_inspect_count)

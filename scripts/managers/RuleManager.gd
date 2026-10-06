@@ -28,11 +28,20 @@ signal rule_updated(rule_id: String, new_status: int)
 signal rule_discovered(rule_id: String)
 signal memo_unlocked(rule_id: String, character: String)
 signal rules_loaded(total_count: int)
+## 규칙 위반: grade는 safe/caution/danger/forbidden, strikes는 해당 규칙 누적 위반 횟수
+signal rule_violated(rule_id: String, grade: String, strikes: int, penalty: bool)
+
+const GRADES_PATH := "res://data/rules/violation_grades.json"
+var _grades: Dictionary = {}
 
 
 func _ready() -> void:
 	print("[RuleManager] 초기화 중...")
 	_load_initial_rules()
+	if FileAccess.file_exists(GRADES_PATH):
+		var parsed = JSON.parse_string(FileAccess.get_file_as_string(GRADES_PATH))
+		if parsed is Dictionary:
+			_grades = parsed
 
 
 ## 초기 규칙서 데이터 로드
@@ -90,7 +99,9 @@ func load_rules_from_file(file_path: String) -> bool:
 			"sabi_memo": r.get("sabi_memo", ""),
 			"shamu_comment": r.get("shamu_comment", ""),
 			"memo_unlocked_sabi": bool(r.get("discovered", false)),
-			"memo_unlocked_shamu": bool(r.get("discovered", false))
+			"memo_unlocked_shamu": bool(r.get("discovered", false)),
+			"strikes": 0,
+			"source": "rulebook" if bool(r.get("discovered", false)) else "",
 		}
 		rule_book[r_id] = rule_entry
 	
@@ -144,14 +155,16 @@ func update_rule_status(rule_id: String, new_status: int) -> bool:
 	return true
 
 
-## 새로운 규칙 발견 처리
-func discover_rule(rule_id: String) -> bool:
+## 새로운 규칙 발견 처리. source: "inspect"/"violation"/"spy_vision" 등, character: 발견한 캐릭터 ("sabi"/"shamu")
+func discover_rule(rule_id: String, source: String = "", character: String = "") -> bool:
 	if not rule_book.has(rule_id):
 		push_warning("[RuleManager] 존재하지 않는 규칙 발견 시도: %s" % rule_id)
 		return false
-	
+	if not character.is_empty():
+		unlock_memo(rule_id, character)
 	if not rule_book[rule_id]["discovered"]:
 		rule_book[rule_id]["discovered"] = true
+		rule_book[rule_id]["source"] = source
 		rule_discovered.emit(rule_id)
 		print("[RuleManager] 새로운 수칙 발견: %s (%s)" % [rule_id, rule_book[rule_id]["title"]])
 	return true
@@ -177,6 +190,76 @@ func unlock_memo(rule_id: String, character: String) -> bool:
 		memo_unlocked.emit(rule_id, character)
 		print("[RuleManager] %s 메모 해금: %s" % [character, rule_id])
 	return unlocked
+
+
+## 규칙 위반의 결과 등급 (danger_level 기준)
+func grade_of(rule_id: String) -> String:
+	var level := str(int(rule_book.get(rule_id, {}).get("danger_level", 1)))
+	return String(_grades.get("by_danger_level", {}).get(level, "safe"))
+
+
+func grade_info(grade: String) -> Dictionary:
+	return _grades.get("grades", {}).get(grade, {})
+
+
+## 규칙 위반 처리. member는 위반한 PartyMember. 위반하면 그 규칙을 (몰랐더라도) 알게 된다.
+## 누적형: 횟수가 쌓이다 한도에서 페널티(정신력·공포·괴이 유인), 즉시형: 부상과 소음, 금지: 실패.
+func report_violation(rule_id: String, member: Node = null, position: Vector3 = Vector3.ZERO) -> String:
+	if not rule_book.has(rule_id):
+		return ""
+	var character := ""
+	if member and member.get("character_type") != null:
+		character = "shamu" if member.character_type == GameManager.CharacterType.SHAMU else "sabi"
+	discover_rule(rule_id, "violation", character)
+	var grade := grade_of(rule_id)
+	var info := grade_info(grade)
+	rule_book[rule_id]["strikes"] = int(rule_book[rule_id].get("strikes", 0)) + 1
+	var strikes: int = rule_book[rule_id]["strikes"]
+	var vitals = member.get("vitals") if member else null
+	if vitals:
+		vitals.add_heart(float(info.get("heart", 0)))
+		vitals.change_mental(float(info.get("mental", 0)))
+		if info.has("damage"):
+			vitals.take_damage(float(info["damage"]), "rule_" + rule_id, info.get("injuries", []))
+	var penalty := false
+	match String(info.get("type", "accumulate")):
+		"accumulate":
+			if strikes % int(info.get("strike_limit", 3)) == 0:
+				penalty = true
+				var p: Dictionary = _grades.get("strike_penalty", {})
+				if vitals:
+					vitals.change_mental(float(p.get("mental", -15)))
+					vitals.add_heart(float(p.get("heart", 20)))
+					vitals.apply_status(String(p.get("status", "fear")))
+				if member:
+					NoiseEvents.emit(get_tree(), position, float(p.get("noise_radius", 16)), member, false)
+		"immediate":
+			penalty = true
+			if member:
+				NoiseEvents.emit(get_tree(), position, float(info.get("noise_radius", 14)), member, false)
+		"fail":
+			penalty = true
+			FailureManager.fail("rule_forbidden", rule_id)
+	rule_violated.emit(rule_id, grade, strikes, penalty)
+	print("[RuleManager] 규칙 위반: %s (%s, %d회)" % [rule_id, grade, strikes])
+	return grade
+
+
+## 체크포인트용 저장/복원 (발견·상태·메모·누적 위반)
+func snapshot() -> Dictionary:
+	var snap := {}
+	for id in rule_book:
+		var r: Dictionary = rule_book[id]
+		snap[id] = {"discovered": r["discovered"], "status": r["status"], "strikes": r.get("strikes", 0),
+			"memo_unlocked_sabi": r["memo_unlocked_sabi"], "memo_unlocked_shamu": r["memo_unlocked_shamu"], "source": r.get("source", "")}
+	return snap
+
+
+func restore(snap: Dictionary) -> void:
+	for id in snap:
+		if rule_book.has(id):
+			for key in snap[id]:
+				rule_book[id][key] = snap[id][key]
 
 
 ## 전체 규칙 배열 반환

@@ -1,0 +1,27 @@
+{
+  "dialogue_id": "ch1_tutorial_sabi_hurt",
+  "lines": [
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "sad",
+      "shamu_emotion": "surprised",
+      "text": "[shake rate=25.0 level=10]사비!![/shake]",
+      "shake": true
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "sad",
+      "shamu_emotion": "surprised",
+      "text": "…괜찮아. 샤무, 공격 멈춰. 칠수록 빨라져."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "sad",
+      "shamu_emotion": "annoyed",
+      "text": "안 죽으면 못 움직이게 하면 돼."
+    }
+  ]
+}

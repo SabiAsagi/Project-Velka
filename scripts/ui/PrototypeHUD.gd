@@ -14,9 +14,24 @@ extends CanvasLayer
 @onready var ability_label: Label = $MarginContainer/PanelContainer/VBoxContainer/AbilityLabel
 @onready var interaction_panel: PanelContainer = $InteractionPanel
 @onready var interaction_label: Label = $InteractionPanel/InteractionLabel
+@onready var hint_label: Label = $MarginContainer/PanelContainer/VBoxContainer/HintLabel
+
+var hp_label: Label
+var effects_label: Label
+var partner_label: Label
+var _notice_box: VBoxContainer
+var _warning_panel: PanelContainer
+var _warning_label: Label
+var _warning_tween: Tween
 
 
 func _ready() -> void:
+	add_to_group("rule_warning_listener")
+	_build_survival_ui()
+	if not RuleManager.rule_discovered.is_connected(_on_rule_discovered):
+		RuleManager.rule_discovered.connect(_on_rule_discovered)
+		RuleManager.rule_violated.connect(_on_rule_violated)
+		FailureManager.checkpoint_saved.connect(_on_checkpoint_saved)
 	if school_map:
 		if not school_map.is_connected("zone_changed", _on_zone_changed):
 			school_map.connect("zone_changed", _on_zone_changed)
@@ -75,6 +90,139 @@ func _set_player_connections(target: CharacterBody3D, connect_signals: bool) -> 
 
 func _process(_delta: float) -> void:
 	_update_ability_display()
+	_update_vitals_display()
+
+
+## 체력·상태이상·심박/정신력 단계 표시
+func _update_vitals_display() -> void:
+	var v = player.get("vitals") if player else null
+	if v == null:
+		hp_label.visible = false
+		effects_label.visible = false
+		return
+	hp_label.visible = true
+	hp_label.text = "체력  %d / %d" % [ceili(v.hp), roundi(v.max_hp)]
+	var ratio: float = v.hp / maxf(v.max_hp, 1.0)
+	hp_label.modulate = Color(1.0, 0.35, 0.3) if ratio <= 0.3 else (Color(1.0, 0.8, 0.4) if ratio <= 0.6 else Color(0.85, 0.95, 0.85))
+	heart_rate_label.text = "심박수  %d BPM (%s)" % [roundi(v.heart_rate), v.stage("heart").get("name", "")]
+	mental_strength_label.text = "정신력  %d / 100 (%s)" % [roundi(v.mental), v.stage("mental").get("name", "")]
+	var names: Array = v.status_names()
+	if party and party.has_method("is_bond_link_active") and party.is_bond_link_active():
+		names.append("유대감 링크")
+	effects_label.visible = not names.is_empty()
+	effects_label.text = "상태이상  " + ", ".join(names)
+	# 동료 상태 (유대감 링크가 왜 켜졌는지 보이도록)
+	var partner = party.get_companion_member() if party and party.has_method("get_companion_member") else null
+	var pv = partner.vitals if partner else null
+	partner_label.visible = pv != null
+	if pv:
+		var pname := "샤무" if partner.character_type == GameManager.CharacterType.SHAMU else "사비"
+		var ptext := "동료 %s  체력 %d / %d" % [pname, ceili(pv.hp), roundi(pv.max_hp)]
+		var pstatus: Array = pv.status_names()
+		if not pstatus.is_empty():
+			ptext += "  " + "·".join(pstatus)
+		partner_label.text = ptext
+		partner_label.modulate = Color(1.0, 0.45, 0.4) if pv.hp / maxf(pv.max_hp, 1.0) <= 0.3 else Color(0.7, 0.75, 0.8)
+
+
+## 화면 위쪽 가운데 알림 (규칙 발견·위반, 체크포인트)
+func show_notice(text: String, color: Color = Color(0.9, 0.93, 0.96), seconds: float = 3.0) -> void:
+	var label := Label.new()
+	label.text = text
+	label.modulate = color
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.add_theme_font_size_override("font_size", 20)
+	label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.85))
+	label.add_theme_constant_override("outline_size", 6)
+	_notice_box.add_child(label)
+	var tween := label.create_tween()
+	tween.tween_interval(seconds)
+	tween.tween_property(label, "modulate:a", 0.0, 0.6)
+	tween.tween_callback(label.queue_free)
+
+
+## RuleZone이 부른다: 알고 있는 규칙이 적용되는 곳에 들어왔을 때 경고
+func show_rule_warning(rule_id: String, text: String) -> void:
+	var rule := RuleManager.get_rule(rule_id)
+	_warning_label.text = "⚠  %s\n%s" % [String(rule.get("title", "")), text]
+	_warning_panel.visible = true
+	_warning_panel.modulate.a = 1.0
+	if _warning_tween:
+		_warning_tween.kill()
+	_warning_tween = create_tween()
+	_warning_tween.tween_interval(4.0)
+	_warning_tween.tween_property(_warning_panel, "modulate:a", 0.0, 0.8)
+	_warning_tween.tween_callback(func(): _warning_panel.visible = false)
+
+
+func is_warning_visible() -> bool:
+	return _warning_panel.visible
+
+
+func _on_rule_discovered(rule_id: String) -> void:
+	var rule := RuleManager.get_rule(rule_id)
+	show_notice("수첩에 기록됨 — %s" % String(rule.get("title", rule_id)), Color(0.55, 0.9, 1.0))
+
+
+func _on_rule_violated(rule_id: String, grade: String, strikes: int, penalty: bool) -> void:
+	var rule := RuleManager.get_rule(rule_id)
+	var info := RuleManager.grade_info(grade)
+	var text := "규칙 위반 [%s] %s" % [String(info.get("name", grade)), String(rule.get("title", rule_id))]
+	if String(info.get("type", "")) == "accumulate":
+		text += "  (%d/%d)" % [((strikes - 1) % int(info.get("strike_limit", 3))) + 1, int(info.get("strike_limit", 3))]
+	if penalty and String(info.get("type", "")) == "accumulate":
+		text += " — 무언가가 알아챘다"
+	show_notice(text, Color(1.0, 0.4, 0.35), 3.5)
+
+
+func _on_checkpoint_saved(_id: String, display_name: String) -> void:
+	show_notice("체크포인트 — %s" % display_name, Color(0.7, 0.95, 0.75), 2.0)
+
+
+func _build_survival_ui() -> void:
+	var vbox := character_label.get_parent()
+	hp_label = Label.new()
+	hp_label.name = "HPLabel"
+	vbox.add_child(hp_label)
+	vbox.move_child(hp_label, character_label.get_index() + 1)
+	partner_label = Label.new()
+	partner_label.name = "PartnerLabel"
+	partner_label.add_theme_font_size_override("font_size", 15)
+	vbox.add_child(partner_label)
+	vbox.move_child(partner_label, hp_label.get_index() + 1)
+	effects_label = Label.new()
+	effects_label.name = "EffectsLabel"
+	effects_label.modulate = Color(1.0, 0.55, 0.45)
+	vbox.add_child(effects_label)
+	vbox.move_child(effects_label, status_label.get_index() + 1)
+	hint_label.text = "이동 WASD  달리기 Shift  조사 E  능력 F  공격 Space  수첩 R  전환 Q"
+	_notice_box = VBoxContainer.new()
+	_notice_box.name = "NoticeBox"
+	_notice_box.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
+	_notice_box.offset_left = -400
+	_notice_box.offset_right = 400
+	_notice_box.offset_top = 24
+	_notice_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_notice_box)
+	_warning_panel = PanelContainer.new()
+	_warning_panel.name = "RuleWarning"
+	_warning_panel.visible = false
+	_warning_panel.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
+	_warning_panel.offset_left = -330
+	_warning_panel.offset_right = 330
+	_warning_panel.offset_top = 150
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.25, 0.04, 0.04, 0.85)
+	style.border_color = Color(0.95, 0.35, 0.3)
+	style.set_border_width_all(2)
+	style.set_content_margin_all(12)
+	_warning_panel.add_theme_stylebox_override("panel", style)
+	_warning_label = Label.new()
+	_warning_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_warning_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	_warning_label.add_theme_font_size_override("font_size", 18)
+	_warning_panel.add_child(_warning_label)
+	add_child(_warning_panel)
 
 
 ## 조작 캐릭터의 F 능력 상태 (준비 / 발동 중 / 쿨타임)

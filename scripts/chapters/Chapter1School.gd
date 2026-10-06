@@ -13,6 +13,11 @@ extends Node3D
 
 func _ready() -> void:
 	GameManager.current_chapter = GameManager.CHAPTER_SCHOOL
+	# 시작 지점을 첫 체크포인트로 저장한다 (파티가 준비된 다음 프레임)
+	await get_tree().process_frame
+	var gate := get_node_or_null("SchoolWorld/Checkpoints/Checkpoint_gate") as Checkpoint
+	if gate:
+		gate.activate()
 	if not arrival_dialogue_id.is_empty():
 		await get_tree().create_timer(0.4).timeout
 		DialogueManager.start_dialogue(arrival_dialogue_id)

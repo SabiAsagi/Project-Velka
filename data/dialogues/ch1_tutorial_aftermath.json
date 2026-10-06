@@ -1,0 +1,47 @@
+{
+  "dialogue_id": "ch1_tutorial_aftermath",
+  "lines": [
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "sad",
+      "shamu_emotion": "worried",
+      "text": "…여기, 보건실?"
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "sad",
+      "text": "움직이지 마. 피 많이 흘렸어."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "worried",
+      "text": "공격하면… 빨라졌어. 여기서는 싸우는 방식이 통하지 않아."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "annoyed",
+      "text": "그럼 뭘로 버티는데."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "determined",
+      "shamu_emotion": "serious",
+      "text": "규칙. 이곳에도 규칙이 있을 거야. 게시판이나 칠판 같은 데를 먼저 보자."
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "시스템",
+      "sabi_emotion": "determined",
+      "shamu_emotion": "serious",
+      "text": "[color=#60d0e0]R: 규칙 수첩  —  조사로 규칙을 찾아 기록하십시오.[/color]"
+    }
+  ]
+}
