@@ -27,3 +27,6 @@ Thumbs.db
 .env.*
 !.env.example
 node_modules/
+
+# 세션 종료 로그 (Stop 훅이 매번 덧붙임 — 로컬에만 보관)
+production/session-logs/
