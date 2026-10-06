@@ -22,3 +22,8 @@ debug/screenshots/
 debug/*_validation.json
 .DS_Store
 Thumbs.db
+.genex/
+.env
+.env.*
+!.env.example
+node_modules/

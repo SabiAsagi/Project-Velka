@@ -1,0 +1,7 @@
+{
+  "name": "genex-tools-workspace",
+  "private": true,
+  "devDependencies": {
+    "@genex-ai/cli-demo": "^1.35.0"
+  }
+}

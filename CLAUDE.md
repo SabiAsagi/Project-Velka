@@ -60,3 +60,5 @@ See `docs/COLLABORATIVE-DESIGN-PRINCIPLE.md` for full protocol and examples.
 ## Context Management
 
 @.claude/docs/context-management.md
+
+@AGENTS.md
