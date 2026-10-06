@@ -36,10 +36,10 @@ status. Re-run whenever new ADRs are accepted or existing ADRs are revised.
   forbidden patterns
 
 ### Engine Reference
-- Read `docs/engine-reference/[engine]/VERSION.md` for engine + version
-- Read `docs/engine-reference/[engine]/deprecated-apis.md` — these become
+- Read `기획서/07.기술_문서/engine-reference/[engine]/VERSION.md` for engine + version
+- Read `기획서/07.기술_문서/engine-reference/[engine]/deprecated-apis.md` — these become
   forbidden API entries
-- Read `docs/engine-reference/[engine]/current-best-practices.md` if it exists
+- Read `기획서/07.기술_문서/engine-reference/[engine]/current-best-practices.md` if it exists
 
 Report: "Loaded [N] Accepted ADRs, engine: [name + version]."
 
@@ -258,7 +258,7 @@ rule, see the referenced ADR.
 ### Forbidden APIs ([engine version])
 These APIs are deprecated or unverified for [engine + version]:
 - `[api name]` — deprecated since [version] / unverified post-cutoff
-- Source: `docs/engine-reference/[engine]/deprecated-apis.md`
+- Source: `기획서/07.기술_문서/engine-reference/[engine]/deprecated-apis.md`
 
 ### Cross-Cutting Constraints
 - [constraint that applies everywhere, regardless of layer]

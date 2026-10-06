@@ -4,15 +4,15 @@
   "status": "phase_0_complete_waiting_approval",
   "source_documents": [
     {
-      "path": "docs/01.기획_및_시스템/Project_Velka_Godot_구현_가이드.md",
+      "path": "기획서/01. 기획 및 시스템/Project_Velka_Godot_구현_가이드.md",
       "read_success": true
     },
     {
-      "path": "docs/05.챕터1_학교/맵 구현 문서/학교맵_재구축.md",
+      "path": "기획서/06.챕터1_학교/맵 구현 문서/학교맵_재구축.md",
       "read_success": true
     },
     {
-      "path": "docs/04.맵_및_환경/학교_맵_상세.md",
+      "path": "기획서/04. 맵 및 환경/학교_맵_상세.md",
       "sha256": "aac5a01460144cbdfa56b93296f21460a16197b2e876d0a2320e75c68c864f9f",
       "read_success": true
     }
@@ -44,7 +44,7 @@
     {
       "index": 0,
       "file_name": "00_전체_배치.png",
-      "path": "docs/맵 레퍼런스/학교/00_전체_배치.png",
+      "path": "맵 레퍼런스/학교/00_전체_배치.png",
       "scope": "site",
       "scene_target": "SchoolMap.tscn",
       "pixel_size": { "width": 1472, "height": 1320 },
@@ -60,7 +60,7 @@
     {
       "index": 1,
       "file_name": "01_본관_B1.png",
-      "path": "docs/맵 레퍼런스/학교/01_본관_B1.png",
+      "path": "맵 레퍼런스/학교/01_본관_B1.png",
       "scope": "main_b1",
       "scene_target": "Main_B1.tscn",
       "pixel_size": { "width": 2160, "height": 1000 },
@@ -74,7 +74,7 @@
     {
       "index": 2,
       "file_name": "02_본관_1F.png",
-      "path": "docs/맵 레퍼런스/학교/02_본관_1F.png",
+      "path": "맵 레퍼런스/학교/02_본관_1F.png",
       "scope": "main_f1",
       "scene_target": "Main_F1.tscn",
       "pixel_size": { "width": 2160, "height": 1000 },
@@ -88,7 +88,7 @@
     {
       "index": 3,
       "file_name": "03_본관_2F.png",
-      "path": "docs/맵 레퍼런스/학교/03_본관_2F.png",
+      "path": "맵 레퍼런스/학교/03_본관_2F.png",
       "scope": "main_f2",
       "scene_target": "Main_F2.tscn",
       "pixel_size": { "width": 2160, "height": 1000 },
@@ -102,7 +102,7 @@
     {
       "index": 4,
       "file_name": "04_본관_3F.png",
-      "path": "docs/맵 레퍼런스/학교/04_본관_3F.png",
+      "path": "맵 레퍼런스/학교/04_본관_3F.png",
       "scope": "main_f3",
       "scene_target": "Main_F3.tscn",
       "pixel_size": { "width": 2160, "height": 1000 },
@@ -116,7 +116,7 @@
     {
       "index": 5,
       "file_name": "05_본관_4F.png",
-      "path": "docs/맵 레퍼런스/학교/05_본관_4F.png",
+      "path": "맵 레퍼런스/학교/05_본관_4F.png",
       "scope": "main_f4",
       "scene_target": "Main_F4.tscn",
       "pixel_size": { "width": 2160, "height": 1000 },
@@ -130,7 +130,7 @@
     {
       "index": 6,
       "file_name": "06_본관_옥상.png",
-      "path": "docs/맵 레퍼런스/학교/06_본관_옥상.png",
+      "path": "맵 레퍼런스/학교/06_본관_옥상.png",
       "scope": "main_roof",
       "scene_target": "Main_Roof.tscn",
       "pixel_size": { "width": 2160, "height": 1000 },
@@ -144,7 +144,7 @@
     {
       "index": 7,
       "file_name": "07_별관_1F.png",
-      "path": "docs/맵 레퍼런스/학교/07_별관_1F.png",
+      "path": "맵 레퍼런스/학교/07_별관_1F.png",
       "scope": "annex_f1",
       "scene_target": "Annex_F1.tscn",
       "pixel_size": { "width": 2000, "height": 1000 },
@@ -158,7 +158,7 @@
     {
       "index": 8,
       "file_name": "08_별관_2F.png",
-      "path": "docs/맵 레퍼런스/학교/08_별관_2F.png",
+      "path": "맵 레퍼런스/학교/08_별관_2F.png",
       "scope": "annex_f2",
       "scene_target": "Annex_F2.tscn",
       "pixel_size": { "width": 2000, "height": 1000 },
@@ -172,7 +172,7 @@
     {
       "index": 9,
       "file_name": "09_별관_3F.png",
-      "path": "docs/맵 레퍼런스/학교/09_별관_3F.png",
+      "path": "맵 레퍼런스/학교/09_별관_3F.png",
       "scope": "annex_f3",
       "scene_target": "Annex_F3.tscn",
       "pixel_size": { "width": 2000, "height": 1000 },
@@ -186,7 +186,7 @@
     {
       "index": 10,
       "file_name": "10_강당_1F.png",
-      "path": "docs/맵 레퍼런스/학교/10_강당_1F.png",
+      "path": "맵 레퍼런스/학교/10_강당_1F.png",
       "scope": "gym_f1",
       "scene_target": "Gym_F1.tscn",
       "pixel_size": { "width": 1600, "height": 1120 },
@@ -200,7 +200,7 @@
     {
       "index": 11,
       "file_name": "11_강당_2F.png",
-      "path": "docs/맵 레퍼런스/학교/11_강당_2F.png",
+      "path": "맵 레퍼런스/학교/11_강당_2F.png",
       "scope": "gym_f2",
       "scene_target": "Gym_F2.tscn",
       "pixel_size": { "width": 1600, "height": 1120 },

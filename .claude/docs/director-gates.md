@@ -179,7 +179,7 @@ workflow that produces a GDD)
 complete system set before GDD authoring begins
 
 **Context to pass**:
-- Systems index path (`design/gdd/systems-index.md`)
+- Systems index path (`기획서/01. 기획 및 시스템/systems-index.md`)
 - Game pillars and core fantasy (from `design/gdd/game-concept.md`)
 - Priority tier assignments (MVP / Vertical Slice / Alpha / Full Vision)
 - Any high-risk or bottleneck systems identified in the dependency map
@@ -375,7 +375,7 @@ or before finalizing any engine-specific implementation approach
 
 **Context to pass**:
 - The specific API or feature being used
-- Engine version and LLM knowledge cutoff (from `docs/engine-reference/[engine]/VERSION.md`)
+- Engine version and LLM knowledge cutoff (from `기획서/07.기술_문서/engine-reference/[engine]/VERSION.md`)
 - Relevant excerpt from breaking-changes or deprecated-apis docs
 
 **Prompt**:

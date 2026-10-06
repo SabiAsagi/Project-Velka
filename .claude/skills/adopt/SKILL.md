@@ -45,12 +45,12 @@ Then read silently before presenting anything else.
 ### Existence check
 - `production/stage.txt` — if present, read it (authoritative phase)
 - `design/gdd/game-concept.md` — concept exists?
-- `design/gdd/systems-index.md` — systems index exists?
+- `기획서/01. 기획 및 시스템/systems-index.md` — systems index exists?
 - Count GDD files: `design/gdd/*.md` (excluding game-concept.md and systems-index.md)
 - Count ADR files: `docs/architecture/adr-*.md`
 - Count story files: `production/epics/**/*.md` (excluding EPIC.md)
 - `.claude/docs/technical-preferences.md` — engine configured?
-- `docs/engine-reference/` — engine reference docs present?
+- `기획서/07.기술_문서/engine-reference/` — engine reference docs present?
 - Glob `docs/adoption-plan-*.md` — note the filename of the most recent prior plan if any exist
 
 ### Infer phase (if no stage.txt)
@@ -122,7 +122,7 @@ if the Status section exists.
 
 ### 2c: systems-index.md Format Audit
 
-If `design/gdd/systems-index.md` exists:
+If `기획서/01. 기획 및 시스템/systems-index.md` exists:
 
 1. **Parenthetical status values** — Grep for any Status cell containing
    parentheses: `"Needs Revision ("`, `"In Progress ("`, etc.
@@ -155,7 +155,7 @@ For each story file found:
 | Manifest version stamp | In manifest header: `Manifest Version:` | MEDIUM — staleness checks blind |
 | Sprint status | `production/sprint-status.yaml` | MEDIUM — `/sprint-status` falls back to markdown |
 | Stage file | `production/stage.txt` | MEDIUM — phase auto-detect unreliable |
-| Engine reference | `docs/engine-reference/[engine]/VERSION.md` | HIGH — ADR engine checks blind |
+| Engine reference | `기획서/07.기술_문서/engine-reference/[engine]/VERSION.md` | HIGH — ADR engine checks blind |
 | Architecture traceability | `docs/architecture/architecture-traceability.md` | MEDIUM — no persistent matrix |
 
 ### 2f: Technical Preferences Audit

@@ -46,7 +46,7 @@ See `.Codex/docs/director-gates.md` for the full check pattern.
 Read the following files to understand the full design intent:
 - `AGENTS.md` — tech stack and engine
 - `design/gdd/game-concept.md` — core fantasy and game pillars
-- `design/gdd/systems-index.md` — MVP systems and their priorities
+- `기획서/01. 기획 및 시스템/systems-index.md` — MVP systems and their priorities
 - `docs/architecture/architecture.md` — layer structure
 - `docs/architecture/control-manifest.md` — technical rules for implementation
 - Key GDDs for the systems being sliced

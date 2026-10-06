@@ -19,7 +19,7 @@ func _ready() -> void:
 	var report := {
 		"phase": 1,
 		"scene": "res://scenes/school/SchoolMap.tscn",
-		"reference": "res://docs/맵 레퍼런스/학교/00_전체_배치.png",
+		"reference": "res://맵 레퍼런스/학교/00_전체_배치.png",
 		"reference_sha256": "39a33a062579ff9978de0dcbf7ab0a42a207daf0bfbaaf9d48620606f2a49523",
 		"coordinate_system": {"origin":"athletic_field_center", "east":"+X", "north":"-Z", "up":"+Y"},
 		"registration": "Option 1 Hybrid Conformance: confirmed metric dimensions take strict priority; PNG provides spatial arrangement and topology reference",

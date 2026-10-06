@@ -86,7 +86,7 @@ Full-read the in-scope documents:
 
 1. `design/gdd/game-concept.md` — game vision, core loop, MVP definition
 2. `design/gdd/game-pillars.md` if it exists — design pillars and anti-pillars
-3. `design/gdd/systems-index.md` — authoritative system list, layers, dependencies, status
+3. `기획서/01. 기획 및 시스템/systems-index.md` — authoritative system list, layers, dependencies, status
 4. **Every in-scope system GDD in `design/gdd/`** — read completely (skip
    game-concept.md and systems-index.md — those are read above)
 
@@ -109,7 +109,7 @@ starting Phase 3. Collect both results before writing the combined report.
 - The complete list of GDD file paths loaded in Phase 1 (explicit paths, not just counts)
 - The full TR registry contents if loaded in Phase 1b (paste the registry text, not just a file path)
 - The specific checklist items assigned to that agent's phase (Phase 2 gets 2a–2f; Phase 3 gets 3a–3g)
-- The engine name and version from `.claude/docs/technical-preferences.md` and `docs/engine-reference/[engine]/VERSION.md`
+- The engine name and version from `.claude/docs/technical-preferences.md` and `기획서/07.기술_문서/engine-reference/[engine]/VERSION.md`
 
 Do not rely on the subagent to re-read these files — it has its own context window and cannot access Phase 1 results unless they are explicitly passed in the Task prompt.
 

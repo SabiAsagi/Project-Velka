@@ -75,7 +75,7 @@ Use the user's response as the title, then proceed to Step 1.
 
 Before doing anything else, establish the engine environment:
 
-1. Read `docs/engine-reference/[engine]/VERSION.md` to get:
+1. Read `기획서/07.기술_문서/engine-reference/[engine]/VERSION.md` to get:
    - Engine name and version
    - LLM knowledge cutoff date
    - Post-cutoff version risk levels (LOW / MEDIUM / HIGH)
@@ -85,12 +85,12 @@ Before doing anything else, establish the engine environment:
    Animation, Networking, Core, Input, Scripting.
 
 3. Read the corresponding module reference if it exists:
-   `docs/engine-reference/[engine]/modules/[domain].md`
+   `기획서/07.기술_문서/engine-reference/[engine]/modules/[domain].md`
 
-4. Read `docs/engine-reference/[engine]/breaking-changes.md` — flag any
+4. Read `기획서/07.기술_문서/engine-reference/[engine]/breaking-changes.md` — flag any
    changes in the relevant domain that post-date the LLM's training cutoff.
 
-5. Read `docs/engine-reference/[engine]/deprecated-apis.md` — flag any APIs
+5. Read `기획서/07.기술_문서/engine-reference/[engine]/deprecated-apis.md` — flag any APIs
    in the relevant domain that should not be used.
 
 6. **Display a knowledge gap warning** before proceeding if the domain carries
@@ -246,7 +246,7 @@ Following this format:
 | **Engine** | [e.g. Godot 4.6] |
 | **Domain** | [Physics / Rendering / UI / Audio / Navigation / Animation / Networking / Core / Input] |
 | **Knowledge Risk** | [LOW / MEDIUM / HIGH — from VERSION.md] |
-| **References Consulted** | [List engine-reference docs read, e.g. `docs/engine-reference/godot/modules/physics.md`] |
+| **References Consulted** | [List engine-reference docs read, e.g. `기획서/07.기술_문서/engine-reference/godot/modules/physics.md`] |
 | **Post-Cutoff APIs Used** | [Any APIs from post-LLM-cutoff versions this decision depends on, or "None"] |
 | **Verification Required** | [Specific behaviours to test before shipping, or "None"] |
 

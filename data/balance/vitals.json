@@ -1,5 +1,5 @@
 {
-  "_source": "docs/01.기획_및_시스템/밸런스_기획서.md 1~3, 7장 플레이스홀더 값",
+  "_source": "기획서/01. 기획 및 시스템/밸런스_기획서.md 1~3, 7장 플레이스홀더 값",
   "characters": {
     "sabi": {"max_hp": 100, "heart_rest": 78, "heart_gain_mult": 1.3, "mental_loss_mult": 0.85},
     "shamu": {"max_hp": 120, "heart_rest": 68, "heart_gain_mult": 0.8, "mental_loss_mult": 1.0}

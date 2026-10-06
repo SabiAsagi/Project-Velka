@@ -5,7 +5,7 @@
 [ext_resource type="Material" path="res://resources/school/phase2/Core.tres" id="3_core"]
 [ext_resource type="Material" path="res://resources/school/phase2/DoorMarker.tres" id="4_door"]
 [ext_resource type="Material" path="res://resources/school/phase2/RoofZone.tres" id="5_roof"]
-[ext_resource type="Texture2D" path="res://docs/맵 레퍼런스/학교/06_본관_옥상.png" id="6_reference"]
+[ext_resource type="Texture2D" path="res://맵 레퍼런스/학교/06_본관_옥상.png" id="6_reference"]
 
 [sub_resource type="StandardMaterial3D" id="OverlayMat"]
 shading_mode = 0

@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3]
 
-[ext_resource type="Texture2D" path="res://docs/맵 레퍼런스/학교/00_전체_배치.png" id="1_reference"]
+[ext_resource type="Texture2D" path="res://맵 레퍼런스/학교/00_전체_배치.png" id="1_reference"]
 
 [sub_resource type="StandardMaterial3D" id="OverlayMat"]
 shading_mode = 0

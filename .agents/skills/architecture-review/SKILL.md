@@ -55,17 +55,17 @@ Read all inputs appropriate to the mode:
 
 ### Design Documents
 - All in-scope GDDs in `design/gdd/` — read every file completely
-- `design/gdd/systems-index.md` — the authoritative list of systems
+- `기획서/01. 기획 및 시스템/systems-index.md` — the authoritative list of systems
 
 ### Architecture Documents
 - All in-scope ADRs in `docs/architecture/` — read every file completely
 - `docs/architecture/architecture.md` if it exists
 
 ### Engine Reference
-- `docs/engine-reference/[engine]/VERSION.md`
-- `docs/engine-reference/[engine]/breaking-changes.md`
-- `docs/engine-reference/[engine]/deprecated-apis.md`
-- All files in `docs/engine-reference/[engine]/modules/`
+- `기획서/07.기술_문서/engine-reference/[engine]/VERSION.md`
+- `기획서/07.기술_문서/engine-reference/[engine]/breaking-changes.md`
+- `기획서/07.기술_문서/engine-reference/[engine]/deprecated-apis.md`
+- All files in `기획서/07.기술_문서/engine-reference/[engine]/modules/`
 
 ### Project Standards
 - `.Codex/docs/technical-preferences.md`

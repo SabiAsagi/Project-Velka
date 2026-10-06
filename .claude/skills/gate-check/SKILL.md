@@ -82,7 +82,7 @@ Note: in `solo` mode, director spawns (CD-PHASE-GATE, TD-PHASE-GATE, PR-PHASE-GA
 ### Gate: Systems Design → Technical Setup
 
 **Required Artifacts:**
-- [ ] Systems index exists at `design/gdd/systems-index.md` with at least MVP systems enumerated
+- [ ] Systems index exists at `기획서/01. 기획 및 시스템/systems-index.md` with at least MVP systems enumerated
 - [ ] All MVP-tier GDDs exist in `design/gdd/` and individually pass `/design-review`
 - [ ] A cross-GDD review report exists in `design/gdd/` (from `/review-all-gdds`)
 
@@ -104,7 +104,7 @@ Note: in `solo` mode, director spawns (CD-PHASE-GATE, TD-PHASE-GATE, PR-PHASE-GA
 - [ ] Art bible exists at `design/art/art-bible.md` with at least Sections 1–4 (Visual Identity Foundation)
 - [ ] At least 3 Architecture Decision Records in `docs/architecture/` covering
       Foundation-layer systems (scene management, event architecture, save/load)
-- [ ] Engine reference docs exist in `docs/engine-reference/[engine]/`
+- [ ] Engine reference docs exist in `기획서/07.기술_문서/engine-reference/[engine]/`
 - [ ] Test framework initialized: `tests/unit/` and `tests/integration/` directories exist
 - [ ] CI/CD test workflow exists at `.github/workflows/tests.yml` (or equivalent)
 - [ ] At least one example test file exists to confirm the framework is functional
@@ -121,7 +121,7 @@ Note: in `solo` mode, director spawns (CD-PHASE-GATE, TD-PHASE-GATE, PR-PHASE-GA
 - [ ] At least one screen's UX spec started (often the main menu or core HUD is designed during Technical Setup)
 - [ ] All ADRs have an **Engine Compatibility section** with engine version stamped
 - [ ] All ADRs have a **GDD Requirements Addressed section** with explicit GDD linkage
-- [ ] No ADR references APIs listed in `docs/engine-reference/[engine]/deprecated-apis.md`
+- [ ] No ADR references APIs listed in `기획서/07.기술_문서/engine-reference/[engine]/deprecated-apis.md`
 - [ ] All HIGH RISK engine domains (per VERSION.md) have been explicitly addressed
       in the architecture document or flagged as open questions
 - [ ] Architecture traceability matrix has **zero Foundation layer gaps**
@@ -134,7 +134,7 @@ A depends on B). If any cycle is detected (e.g. A→B→A, or A→B→C→A):
   Neither can reach Accepted while the cycle exists. Remove one 'Depends On' edge to
   break the cycle."
 
-**Engine Validation** (read `docs/engine-reference/[engine]/VERSION.md` first):
+**Engine Validation** (read `기획서/07.기술_문서/engine-reference/[engine]/VERSION.md` first):
 - [ ] ADRs that touch post-cutoff engine APIs are flagged with Knowledge Risk: HIGH/MEDIUM
 - [ ] `/architecture-review` engine audit shows no deprecated API usage
 - [ ] All ADRs agree on the same engine version (no stale version references)

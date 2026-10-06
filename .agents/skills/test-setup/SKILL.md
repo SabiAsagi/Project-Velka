@@ -233,7 +233,7 @@ jobs:
       - name: Run GdUnit4 Tests
         uses: MikeSchulze/gdUnit4-action@v1
         with:
-          godot-version: '[VERSION FROM docs/engine-reference/godot/VERSION.md]'
+          godot-version: '[VERSION FROM 기획서/07.기술_문서/engine-reference/godot/VERSION.md]'
           paths: |
             tests/unit
             tests/integration

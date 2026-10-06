@@ -19,7 +19,7 @@ Parse the argument:
 
 ## Phase 1 — Context Gathering
 
-1. **Read `design/gdd/systems-index.md`** for the full list of systems, their
+1. **Read `기획서/01. 기획 및 시스템/systems-index.md`** for the full list of systems, their
    categories, and MVP/priority tier.
 
 2. **L0 pre-scan**: Before full-reading any GDDs, Grep all GDD files for

@@ -21,8 +21,8 @@
 - Epic story files: `production/epics/[epic-slug]/story-[NNN]-[slug].md`
 - Control manifest: `docs/architecture/control-manifest.md`
 - Session state: `production/session-state/active.md`
-- Systems index: `design/gdd/systems-index.md`
-- Engine reference: `docs/engine-reference/[engine]/VERSION.md`
+- Systems index: `기획서/01. 기획 및 시스템/systems-index.md`
+- Engine reference: `기획서/07.기술_문서/engine-reference/[engine]/VERSION.md`
 
 ### Skills Completed
 - `story-done` — end-of-story completion handshake (Phase 1-8, writes story file)

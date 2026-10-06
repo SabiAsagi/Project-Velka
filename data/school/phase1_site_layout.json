@@ -111,7 +111,7 @@
     }
   },
   "reference_overlay": {
-    "file": "docs/맵 레퍼런스/학교/00_전체_배치.png",
+    "file": "맵 레퍼런스/학교/00_전체_배치.png",
     "sha256": "39a33a062579ff9978de0dcbf7ab0a42a207daf0bfbaaf9d48620606f2a49523",
     "pixel_size": [1472, 1320],
     "world_center": [-6.6654, 25.0, 1.3011],

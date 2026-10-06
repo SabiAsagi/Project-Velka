@@ -1,5 +1,5 @@
 {
-  "_source": "docs/01.기획_및_시스템/규칙서.md 6·9장, 밸런스_기획서.md 7장. danger_level(1~5) -> 위반 결과 등급",
+  "_source": "기획서/01. 기획 및 시스템/규칙서.md 6·9장, 밸런스_기획서.md 7장. danger_level(1~5) -> 위반 결과 등급",
   "by_danger_level": {"1": "safe", "2": "safe", "3": "caution", "4": "danger", "5": "forbidden"},
   "grades": {
     "safe": {"name": "안전", "type": "accumulate", "heart": 10, "mental": -2, "strike_limit": 3},

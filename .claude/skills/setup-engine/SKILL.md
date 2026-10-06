@@ -326,7 +326,7 @@ Inform the user which category they're in and why.
 
 ### If WITHIN training data (LOW RISK):
 
-Create a minimal `docs/engine-reference/<engine>/VERSION.md`:
+Create a minimal `기획서/07.기술_문서/engine-reference/<engine>/VERSION.md`:
 
 ```markdown
 # [Engine] — Version Reference
@@ -364,13 +364,13 @@ Create the full reference doc set by searching the web:
    - Deprecated APIs with replacements
    - New features and best practices
 
-Ask: "May I create the engine reference docs under `docs/engine-reference/<engine>/`?"
+Ask: "May I create the engine reference docs under `기획서/07.기술_문서/engine-reference/<engine>/`?"
 
 Wait for confirmation before writing any files.
 
 3. **Create the full reference directory**:
    ```
-   docs/engine-reference/<engine>/
+   기획서/07.기술_문서/engine-reference/<engine>/
    ├── VERSION.md              # Version pin + knowledge gap analysis
    ├── breaking-changes.md     # Version-by-version breaking changes
    ├── deprecated-apis.md      # "Don't use X → Use Y" tables
@@ -397,7 +397,7 @@ correct engine:
 ```markdown
 ## Engine Version Reference
 
-@docs/engine-reference/<engine>/VERSION.md
+@기획서/07.기술_문서/engine-reference/<engine>/VERSION.md
 ```
 
 If the previous import pointed to a different engine (e.g., switching from
@@ -414,7 +414,7 @@ For the chosen engine's specialist agents, verify they have a
 the existing Godot specialist agents.
 
 The section should instruct the agent to:
-1. Read `docs/engine-reference/<engine>/VERSION.md`
+1. Read `기획서/07.기술_문서/engine-reference/<engine>/VERSION.md`
 2. Check deprecated APIs before suggesting code
 3. Check breaking changes for relevant version transitions
 4. Use WebSearch to verify uncertain APIs
@@ -425,7 +425,7 @@ The section should instruct the agent to:
 
 If invoked as `/setup-engine refresh`:
 
-1. Read the existing `docs/engine-reference/<engine>/VERSION.md` to get
+1. Read the existing `기획서/07.기술_문서/engine-reference/<engine>/VERSION.md` to get
    the current engine and version
 2. Use WebSearch to check for:
    - New engine releases since last verification
@@ -443,7 +443,7 @@ If invoked as `/setup-engine upgrade [old-version] [new-version]`:
 
 ### Step 1 — Read Current Version State
 
-Read `docs/engine-reference/<engine>/VERSION.md` to confirm the current pinned
+Read `기획서/07.기술_문서/engine-reference/<engine>/VERSION.md` to confirm the current pinned
 version, risk level, and any migration note URLs already recorded. If
 `old-version` was not provided as an argument, use the pinned version from this
 file.
@@ -510,7 +510,7 @@ Wait for explicit confirmation before continuing.
 
 After confirmation:
 
-1. Update `docs/engine-reference/<engine>/VERSION.md`:
+1. Update `기획서/07.기술_문서/engine-reference/<engine>/VERSION.md`:
    - `Engine Version` → `[new-version]`
    - `Project Pinned` → today's date
    - `Last Docs Verified` → today's date
@@ -558,7 +558,7 @@ Tech Prefs:      [created/updated]
 Agent Config:    [verified]
 
 Next Steps:
-1. Review docs/engine-reference/<engine>/VERSION.md
+1. Review 기획서/07.기술_문서/engine-reference/<engine>/VERSION.md
 2. [If from /brainstorm] Run /map-systems to decompose your concept into individual systems
 3. [If from /brainstorm] Run /design-system to author per-system GDDs (guided, section-by-section)
 4. [If from /brainstorm] Run /prototype [core-mechanic] to validate the core idea before writing GDDs

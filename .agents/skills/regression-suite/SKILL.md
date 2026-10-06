@@ -70,7 +70,7 @@ Do not read test file contents unless needed for name-to-test mapping.
 
 ### Step 2c — Load GDD critical paths
 
-For `audit` mode: read `design/gdd/systems-index.md` to get all systems.
+For `audit` mode: read `기획서/01. 기획 및 시스템/systems-index.md` to get all systems.
 For each MVP-tier system, read its GDD and extract:
 - Acceptance Criteria (these define the critical paths)
 - Formulas section (formulas must have regression tests)

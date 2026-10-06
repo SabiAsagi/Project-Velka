@@ -63,7 +63,7 @@ phases:
         command: /map-systems
         required: true
         artifact:
-          glob: "design/gdd/systems-index.md"
+          glob: "기획서/01. 기획 및 시스템/systems-index.md"
         description: "Decompose concept into systems with dependency ordering and priority tiers"
 
   systems-design:
@@ -77,7 +77,7 @@ phases:
         required: true
         repeatable: true
         artifact:
-          note: "Check design/gdd/systems-index.md — each MVP system needs Status: Approved"
+          note: "Check 기획서/01. 기획 및 시스템/systems-index.md — each MVP system needs Status: Approved"
         description: "Author per-system GDDs (guided, section-by-section). Run once per system."
 
       - id: design-review

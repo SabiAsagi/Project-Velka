@@ -5,7 +5,7 @@
 [ext_resource type="Material" path="res://resources/school/phase2/RoomSouth.tres" id="3_south"]
 [ext_resource type="Material" path="res://resources/school/phase2/GrayWall.tres" id="4_wall"]
 [ext_resource type="Material" path="res://resources/school/phase2/DoorMarker.tres" id="5_door"]
-[ext_resource type="Texture2D" path="res://docs/맵 레퍼런스/학교/04_본관_3F.png" id="6_reference"]
+[ext_resource type="Texture2D" path="res://맵 레퍼런스/학교/04_본관_3F.png" id="6_reference"]
 [ext_resource type="PackedScene" path="res://scenes/school/floors/components/DoorCenterMarker.tscn" id="7_marker"]
 
 [sub_resource type="StandardMaterial3D" id="OverlayMat"]

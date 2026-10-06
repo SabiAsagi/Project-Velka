@@ -20,7 +20,7 @@ See `.Codex/docs/director-gates.md` for the full check pattern.
 
 A system name or retrofit path is **required**. If missing:
 
-1. Check if `design/gdd/systems-index.md` exists.
+1. Check if `기획서/01. 기획 및 시스템/systems-index.md` exists.
 2. If it exists: read it, find the highest-priority system with status "Not Started" or equivalent, and use `AskUserQuestion`:
    - Prompt: "The next system in your design order is **[system-name]** ([priority] | [layer]). Start designing it?"
    - Options: `[A] Yes — design [system-name]` / `[B] Pick a different system` / `[C] Stop here`
@@ -75,7 +75,7 @@ primary advantage over ad-hoc design — it arrives informed.
 
 - **Game concept**: Read `design/gdd/game-concept.md` — fail if missing:
   > "No game concept found. Run `/brainstorm` first."
-- **Systems index**: Read `design/gdd/systems-index.md` — fail if missing:
+- **Systems index**: Read `기획서/01. 기획 및 시스템/systems-index.md` — fail if missing:
   > "No systems index found. Run `/map-systems` first to map your systems."
 - **Target system**: Find the system in the index. If not listed, warn:
   > "[system-name] is not in the systems index. Would you like to add it, or
@@ -162,9 +162,9 @@ Map the system's category (from systems-index.md) to an engine domain:
 
 **Step 2 — Read engine context (if available):**
 - Read `.Codex/docs/technical-preferences.md` to identify the engine and version
-- If engine is configured, read `docs/engine-reference/[engine]/VERSION.md`
-- Read `docs/engine-reference/[engine]/modules/[domain].md` if it exists
-- Read `docs/engine-reference/[engine]/breaking-changes.md` for domain-relevant entries
+- If engine is configured, read `기획서/07.기술_문서/engine-reference/[engine]/VERSION.md`
+- Read `기획서/07.기술_문서/engine-reference/[engine]/modules/[domain].md` if it exists
+- Read `기획서/07.기술_문서/engine-reference/[engine]/breaking-changes.md` for domain-relevant entries
 - Glob `docs/architecture/adr-*.md` and read any ADRs whose domain matches
   (check the Engine Compatibility table's "Domain" field)
 
@@ -759,7 +759,7 @@ After the GDD is complete (and optionally reviewed):
   - Design Doc: link to `design/gdd/[system-name].md`
 - Update the Progress Tracker counts
 
-Ask: "May I update the systems index at `design/gdd/systems-index.md`?"
+Ask: "May I update the systems index at `기획서/01. 기획 및 시스템/systems-index.md`?"
 
 ### 5e: Update Session State
 

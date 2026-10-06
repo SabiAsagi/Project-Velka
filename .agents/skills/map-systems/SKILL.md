@@ -39,7 +39,7 @@ for systems decomposition.
 
 **Optional (read if they exist):**
 - Read `design/gdd/game-pillars.md` — pillars constrain priority and scope
-- Read `design/gdd/systems-index.md` — if exists, **resume** from where it left off
+- Read `기획서/01. 기획 및 시스템/systems-index.md` — if exists, **resume** from where it left off
   (update, don't recreate from scratch)
 - Glob `design/gdd/*.md` — check which system GDDs already exist
 
@@ -233,7 +233,7 @@ Present a summary of the document:
 - First 3 systems in the design order
 - Any high-risk items
 
-Ask: "May I write the systems index to `design/gdd/systems-index.md`?"
+Ask: "May I write the systems index to `기획서/01. 기획 및 시스템/systems-index.md`?"
 
 Wait for approval. Write the file only after "yes."
 
@@ -253,10 +253,10 @@ Present the assessment. If REJECT, revise the system set with the user before GD
 After writing, create `production/session-state/active.md` if it does not exist, then update it with:
 - Task: Systems decomposition
 - Status: Systems index created
-- File: design/gdd/systems-index.md
+- File: 기획서/01. 기획 및 시스템/systems-index.md
 - Next: Design individual system GDDs
 
-**Verdict: COMPLETE** — systems index written to `design/gdd/systems-index.md`.
+**Verdict: COMPLETE** — systems index written to `기획서/01. 기획 및 시스템/systems-index.md`.
 If the user declined: **Verdict: BLOCKED** — user did not approve the write.
 
 ---
@@ -351,7 +351,7 @@ This skill follows the collaborative design principle at every phase:
 If context reaches or exceeds 70% at any point, append this notice:
 
 > **Context is approaching the limit (≥70%).** The systems index is saved to
-> `design/gdd/systems-index.md`. Open a fresh Codex session to continue
+> `기획서/01. 기획 및 시스템/systems-index.md`. Open a fresh Codex session to continue
 > designing individual GDDs — run `/map-systems next` to pick up where you left off.
 
 ---

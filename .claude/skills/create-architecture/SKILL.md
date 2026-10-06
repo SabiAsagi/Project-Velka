@@ -41,15 +41,15 @@ Before anything else, load the full project context in this order:
 
 Read the engine reference library completely:
 
-1. `docs/engine-reference/[engine]/VERSION.md`
+1. `기획서/07.기술_문서/engine-reference/[engine]/VERSION.md`
    → Extract: engine name, version, LLM cutoff, post-cutoff risk levels
-2. `docs/engine-reference/[engine]/breaking-changes.md`
+2. `기획서/07.기술_문서/engine-reference/[engine]/breaking-changes.md`
    → Extract: all HIGH and MEDIUM risk changes
-3. `docs/engine-reference/[engine]/deprecated-apis.md`
+3. `기획서/07.기술_문서/engine-reference/[engine]/deprecated-apis.md`
    → Extract: APIs to avoid
-4. `docs/engine-reference/[engine]/current-best-practices.md`
+4. `기획서/07.기술_문서/engine-reference/[engine]/current-best-practices.md`
    → Extract: post-cutoff best practices that differ from training data
-5. All files in `docs/engine-reference/[engine]/modules/`
+5. All files in `기획서/07.기술_문서/engine-reference/[engine]/modules/`
    → Extract: current API patterns per domain
 
 If no engine is configured, stop and prompt:
@@ -61,7 +61,7 @@ If no engine is configured, stop and prompt:
 Read all approved design documents and extract technical requirements from each:
 
 1. `design/gdd/game-concept.md` — game pillars, genre, core loop
-2. `design/gdd/systems-index.md` — all systems, dependencies, priority tiers
+2. `기획서/01. 기획 및 시스템/systems-index.md` — all systems, dependencies, priority tiers
 3. `.claude/docs/technical-preferences.md` — naming conventions, performance budgets,
    allowed libraries, forbidden patterns
 4. **Every GDD in `design/gdd/`** — for each, extract technical requirements:
@@ -178,7 +178,7 @@ relevant module reference doc. If an API is post-cutoff, flag it:
 
 ```
 ⚠️  [ClassName.method()] — Godot 4.6 (post-cutoff, HIGH risk)
-    Verified against: docs/engine-reference/godot/modules/[domain].md
+    Verified against: 기획서/07.기술_문서/engine-reference/godot/modules/[domain].md
     Behaviour confirmed: [yes / NEEDS VERIFICATION]
 ```
 
