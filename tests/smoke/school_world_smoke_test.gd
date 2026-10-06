@@ -35,14 +35,16 @@ func _run() -> void:
 	_hud = scene.get_node("PrototypeHUD")
 	_party = scene.get_node("PlayerParty")
 	_camera = scene.get_node("FollowCamera")
+	# 동선 검사만 하므로 패배 확정 튜토리얼은 이미 끝난 것으로 둔다 (튜토리얼은 rules_failure 테스트에서 검사)
+	_gm.set_story_flag("tutorial_defeat_done", true)
 	await _seconds(0.3)
 	_check(String(_hud.zone_label.text).contains("정문"), "정문 진입광장에서 시작한다")
 
 	# --- 부지: 정문은 닫혀 있고, 동측 경사로로 본관 고지대에 오른다 ---
 	await _walk([Vector3(80.0, 0.05, -10.0)], 2.0)
 	_check(_member().global_position.x < 76.0, "닫힌 정문 밖으로는 나갈 수 없다")
-	var ok := await _walk([Vector3(62.0, 0.05, -10.0), Vector3(50.7, 0.05, -10.0), Vector3(50.7, 0.05, -26.5),
-		Vector3(50.7, 3.85, -39.0), Vector3(50.7, 3.85, -41.2), Vector3(2.0, 3.85, -41.2), Vector3(2.0, 3.85, -43.4)], 14.0)
+	var ok := await _walk([Vector3(62.0, 0.05, -10.0), Vector3(49.4, 0.05, -10.0), Vector3(49.4, 0.05, -26.5),
+		Vector3(49.4, 3.85, -39.0), Vector3(49.4, 3.85, -41.2), Vector3(2.0, 3.85, -41.2), Vector3(2.0, 3.85, -43.4)], 14.0)
 	_check(ok and _member().global_position.y > 3.6, "동측 경사로로 본관 앞 보행로(고지대)에 오른다")
 	await _open_nearest_door()
 	ok = await _walk([Vector3(2.0, 3.85, -47.0), Vector3(2.0, 3.85, -56.6)])
@@ -56,14 +58,18 @@ func _run() -> void:
 		_check(ok and absf(_member().global_position.y - floor_y) < 0.3, "중앙 계단으로 %s에 올라간다 (y=%.2f)" % [label, _member().global_position.y])
 	ok = await _climb_center_stair(floor_y, true)
 	_check(ok and _member().global_position.y > 18.8, "중앙 계단으로 옥상 출입실에 도착한다")
-	await _walk([Vector3(0.2, 19.05, -55.5)], 2.0)
+	await _walk([Vector3(2.05, 19.05, -57.6), Vector3(2.05, 19.05, -55.5)], 2.5)
 	_check(_member().global_position.z < -56.9, "옥상 출입문은 잠겨 있어 옥상정원으로 나갈 수 없다")
 
 	# --- 지하 1층: 1층 중앙 계단에서 내려간다 ---
-	_party.teleport_party(Vector3(4.0, 3.85, -57.0))
+	var down := _stair_points(1.0, 3.0, 0.0, -64.0, -50.0)
+	var back: Array = []
+	for i in range(down.size() - 1, -1, -1):
+		back.append(down[i])
+	_party.teleport_party(Vector3(back[0].x, 3.85, -56.6))
 	await _seconds(0.3)
-	ok = await _walk([Vector3(4.0, 3.85, -58.6), Vector3(4.0, 2.3, -61.6), Vector3(4.0, 1.95, -62.7), Vector3(0.0, 1.95, -62.7),
-		Vector3(0.0, 0.4, -59.4), Vector3(0.0, 0.05, -58.5), Vector3(0.0, 0.05, -56.6)])
+	back.append(Vector3(back[back.size() - 1].x, 0.05, -56.6))
+	ok = await _walk(back)
 	_check(ok and _member().global_position.y < 0.3 and String(_hud.zone_label.text).contains("B1"), "중앙 계단으로 지하 1층에 내려간다")
 	_check(_camera.get_cull_mask_value(2) and not _camera.get_cull_mask_value(3), "지하에서는 지하층만 보이고 위층은 가려진다")
 
@@ -86,19 +92,24 @@ func _run() -> void:
 	var where: Array = _school.locate(_member().global_position)
 	_check(ok and where[0] == "annex" and where[1] == 2, "구름다리를 건너 별관 3층에 도착한다")
 
-	# --- 강당: 북측 주출입구 -> 마룻바닥 -> 내부 계단으로 2층 ---
-	_party.teleport_party(Vector3(0.0, 0.05, 26.5))
+	# --- 강당: 북측 주출입구 -> 출입홀 -> 방화문 -> 마룻바닥 -> 내부 계단으로 2층 ---
+	var gz := _building_z0("gym")
+	_party.teleport_party(Vector3(0.0, 0.05, gz - 2.5))
 	await _seconds(0.3)
-	await _walk([Vector3(0.0, 0.05, 28.3)])
+	await _walk([Vector3(0.0, 0.05, gz - 0.7)])
 	await _open_nearest_door()
-	await _walk([Vector3(0.0, 0.05, 32.3)])
+	await _walk([Vector3(0.0, 0.05, gz + 2.0), Vector3(-2.5, 0.05, gz + 3.9)])
 	await _open_nearest_door()
-	ok = await _walk([Vector3(0.0, 0.05, 36.0), Vector3(-10.2, 0.05, 35.0)])
-	_check(ok and String(_hud.zone_label.text).contains("강당"), "강당 주출입구와 로비를 지나 마룻바닥에 들어간다")
-	ok = await _walk([Vector3(-2.0, 0.05, 34.0), Vector3(0.0, 0.05, 32.3), Vector3(-4.5, 0.05, 32.0), Vector3(-9.0, 2.8, 32.0), Vector3(-11.5, 3.85, 32.0)])
-	_check(ok and _member().global_position.y > 3.5, "강당 내부 계단으로 2층 관람층에 오른다")
+	ok = await _walk([Vector3(-2.5, 0.05, gz + 7.0), Vector3(-10.2, 0.05, gz + 9.0)])
+	_check(ok and String(_hud.zone_label.text).contains("강당"), "강당 주출입구와 출입홀·방화문을 지나 마룻바닥에 들어간다")
+	var inner := _stair_points(-6.0, -5.0, 0.0, gz + 2.0, gz + 5.0)
+	var climb: Array = [Vector3(-2.5, 0.05, gz + 4.5), Vector3(-4.8, 0.05, gz + 4.2)]
+	for p in inner:
+		climb.append(p)
+	ok = await _walk(climb)
+	_check(ok and _member().global_position.y > 4.6, "강당 내부 계단으로 2층 관람석 뒤쪽 통로에 오른다 (y=%.2f)" % _member().global_position.y)
 
-	# --- 본관 3층 동쪽 끝: 현실은 막힘, 이계에서는 존재하지 않는 교실로 이어진다 ---
+	# --- 본관 3층 동쪽 끝: 현실은 막힘, 이계에서는 복도가 늘어나 2-7 교실로 이어진다 ---
 	_party.teleport_party(Vector3(26.0, 11.45, -56.6))
 	await _seconds(0.3)
 	await _walk([Vector3(33.0, 11.45, -56.6)], 2.0)
@@ -106,8 +117,10 @@ func _run() -> void:
 	_gm.set_world_phase("otherworld")
 	_school.apply_phase("otherworld", false)
 	await _frames(3)
-	ok = await _walk([Vector3(33.5, 11.45, -56.6), Vector3(33.5, 11.45, -51.5), Vector3(33.5, 11.45, -50.0)])
-	_check(ok and String(_hud.zone_label.text).contains("존재하지 않는 교실"), "이계에서는 복도가 늘어나 존재하지 않는 교실로 이어진다")
+	ok = await _walk([Vector3(33.5, 11.45, -56.6), Vector3(31.2, 11.45, -56.3)])
+	await _open_nearest_door()
+	ok = await _walk([Vector3(31.2, 11.45, -53.5), Vector3(31.2, 11.45, -52.4)])
+	_check(ok and String(_hud.zone_label.text).contains("2-7"), "이계에서는 복도가 늘어나 2-6 옆에 2-7 교실이 생긴다")
 
 	# --- 모든 계단 구간 (본관 좌·중앙·우측, 별관 양 끝, 강당 내부·비상계단, 운동장 양 끝) ---
 	_gm.set_world_phase("real")
@@ -137,11 +150,25 @@ func _run() -> void:
 
 
 func _climb_center_stair(y: float, to_roof: bool = false) -> bool:
-	var points := [Vector3(0.0, y + 0.05, -57.0), Vector3(0.0, y + 0.05, -58.6), Vector3(0.0, y + 1.5, -61.6),
-		Vector3(0.0, y + 1.95, -62.7), Vector3(4.0, y + 1.95, -62.7), Vector3(4.0, y + 3.4, -59.6), Vector3(4.0, y + 3.85, -58.6)]
+	var pts := _stair_points(1.0, 3.0, y, -64.0, -50.0)
+	if pts.is_empty():
+		print("    중앙 계단 경로 없음 y=", y)
+		return false
+	# 계단 선이 복도로 0.75m 나와 있으므로 복도 가운데(z = -56.6)로 다닌다
+	var route: Array = [Vector3(pts[0].x, y + 0.05, -56.6)]
+	for p in pts:
+		route.append(p)
 	if not to_roof:
-		points.append(Vector3(4.0, y + 3.85, -57.0))
-	return await _walk(points)
+		route.append(Vector3(pts[pts.size() - 1].x, y + 3.85, -56.6))
+	return await _walk(route)
+
+
+## 건물(main / annex / gym) 평면의 북쪽 끝 z (건물 노드의 footprint 메타데이터)
+func _building_z0(building_id: String) -> float:
+	for building in get_nodes_in_group("school_building"):
+		if String(building.get_meta("building")) == building_id:
+			return (building.get_meta("footprint") as Rect2).position.y
+	return 0.0
 
 
 func _member():
@@ -163,16 +190,29 @@ func _nearest(group: String):
 	return best
 
 
+## 가장 가까운 문이 닫혀 있으면 연다 (이미 열린 문은 그대로 둔다)
 func _open_nearest_door() -> void:
 	var waited := 0.0
 	while waited < 1.0:
 		var target = _active_interaction().current_interactable
-		if target and target.get_script() and String(target.get_script().get_global_name()) == "DoorInteractable" and not target.is_open:
-			break
+		if target and "is_open" in target:
+			if target.is_open:
+				return
+			_press("interact")
+			await _seconds(0.6)
+			return
 		await _seconds(0.05)
 		waited += 0.05
-	_press("interact")
-	await _seconds(0.6)
+
+
+## (x0~x1, 높이 y) 에서 시작하는 계단 경로 점들
+func _stair_points(x0: float, x1: float, y: float, z0: float = -1000.0, z1: float = 1000.0) -> PackedVector3Array:
+	for path in get_nodes_in_group("stair_path"):
+		var pts: PackedVector3Array = path.get_meta("points")
+		var p: Vector3 = pts[0]
+		if p.x >= x0 and p.x <= x1 and absf(p.y - (y + 0.05)) < 0.3 and p.z >= z0 and p.z <= z1:
+			return pts
+	return PackedVector3Array()
 
 
 func _press(action: String) -> void:

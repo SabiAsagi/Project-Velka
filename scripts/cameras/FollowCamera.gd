@@ -19,6 +19,9 @@ extends Camera3D
 @export var fade_speed: float = 8.0
 ## 캐릭터 머리/발 등 여러 지점을 검사해 일부만 가려도 투명화한다.
 @export var probe_heights: PackedFloat32Array = PackedFloat32Array([0.2, 0.9, 1.6])
+## 학교 표면 셰이더(school_surface)의 원형 컷어웨이 반경(m). 0이면 끈다.
+## 셰이더를 쓰는 지오메트리는 오브젝트 단위 투명화 대신 이 컷어웨이로 가려진 부분을 걷어낸다.
+@export var cutaway_radius: float = 3.4
 
 const MAX_HITS_PER_RAY := 6
 
@@ -32,6 +35,10 @@ func _ready() -> void:
 	current = true
 	projection = Camera3D.PROJECTION_PERSPECTIVE
 	fov = camera_fov
+	# 카메라는 캐릭터에서 20m쯤 떨어져 있다. 가까운 면을 넉넉히 잡아 깊이 정밀도를 높인다
+	# (바닥 포장·선처럼 몇 mm 간격으로 겹친 면이 멀리서 깜빡이지 않게).
+	near = 1.0
+	far = 500.0
 	if target:
 		global_position = target.global_position + target_offset
 		_look_at_target()
@@ -47,8 +54,18 @@ func _physics_process(delta: float) -> void:
 		var follow_weight := 1.0 - exp(-smooth_speed * delta)
 		global_position = global_position.lerp(desired_position, follow_weight)
 	_look_at_target()
+	_update_cutaway()
 	if fade_occluders:
 		_update_occluders(delta)
+
+
+func _update_cutaway() -> void:
+	RenderingServer.global_shader_parameter_set("cutaway_center", target.global_position)
+	RenderingServer.global_shader_parameter_set("cutaway_radius", cutaway_radius)
+
+
+func _exit_tree() -> void:
+	RenderingServer.global_shader_parameter_set("cutaway_radius", 0.0)
 
 
 func _look_at_target() -> void:
@@ -92,6 +109,7 @@ func _begin_fade(geometry: GeometryInstance3D) -> void:
 	}
 	var material := StandardMaterial3D.new()
 	material.albedo_color = _base_color_of(geometry)
+	_copy_texture(geometry, material)
 	material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	material.depth_draw_mode = BaseMaterial3D.DEPTH_DRAW_DISABLED
 	material.roughness = 0.85
@@ -106,6 +124,16 @@ func _end_fade(geometry: GeometryInstance3D) -> void:
 	geometry.cast_shadow = original.get("cast_shadow", GeometryInstance3D.SHADOW_CASTING_SETTING_ON)
 	_faded.erase(geometry)
 	_originals.erase(geometry)
+
+
+## 원래 재질의 텍스처(삼면 투영 포함)를 반투명 재질에 옮긴다 (문짝 나뭇결 등). 색은 _base_color_of가 맞춘다.
+func _copy_texture(geometry: GeometryInstance3D, material: StandardMaterial3D) -> void:
+	var source := geometry.material_override as BaseMaterial3D
+	if source == null or source.albedo_texture == null:
+		return
+	material.albedo_texture = source.albedo_texture
+	material.uv1_triplanar = source.uv1_triplanar
+	material.uv1_scale = source.uv1_scale
 
 
 func _base_color_of(geometry: GeometryInstance3D) -> Color:
@@ -138,8 +166,17 @@ func _find_occluding_geometry() -> Dictionary:
 			if collider == null or _is_solid(collider):
 				continue
 			for geometry in _geometry_of(collider):
-				found[geometry] = true
+				if not _uses_cutaway_shader(geometry):
+					found[geometry] = true
 	return found
+
+
+## 셰이더 컷어웨이로 처리되는 지오메트리는 재질을 덮어쓰지 않는다.
+func _uses_cutaway_shader(geometry: GeometryInstance3D) -> bool:
+	var material: Material = geometry.material_override
+	if material == null and geometry is MeshInstance3D:
+		material = (geometry as MeshInstance3D).get_active_material(0)
+	return material is ShaderMaterial
 
 
 func _is_solid(node: Node) -> bool:

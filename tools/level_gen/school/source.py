@@ -100,7 +100,7 @@ GYM_LEVELS = [("1F", "Gym_1F"), ("2F", "Gym_2F")]
 BUILDINGS = {
     "main": {"origin": (0.0, 0.0, -54.0), "rot90": False, "flip_z": False, "levels": MAIN_LEVELS, "dir": "main", "base_level": -1},
     "annex": {"origin": (-60.0, 0.0, -1.5), "rot90": True, "flip_z": False, "levels": ANNEX_LEVELS, "dir": "annex", "base_level": 0},
-    "gym": {"origin": (0.0, 0.0, 42.0), "rot90": False, "flip_z": True, "levels": GYM_LEVELS, "dir": "gym", "base_level": 0},
+    "gym": {"origin": (0.0, 0.0, 44.25), "rot90": False, "flip_z": True, "levels": GYM_LEVELS, "dir": "gym", "base_level": 0},
 }
 
 

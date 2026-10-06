@@ -108,12 +108,12 @@ def window_items(w, gaps, inward_sign):
     return items
 
 
-def emit_zone(sw, parent, zone_script, box_rect, y0, height, zone_id, name, building, level_idx, other_name=""):
+def emit_zone(sw, parent, zone_script, box_rect, y0, height, zone_id, name, building, level_idx, other_name="", groups=()):
     props = {"transform": tf((box_rect.cx, y0 + height / 2, box_rect.cz)), "script": zone_script,
              "zone_id": q(zone_id), "zone_name": q(name), "building": q(building), "level_index": str(level_idx)}
     if other_name:
         props["otherworld_zone_name"] = q(other_name)
-    n = sw.node("Zone", "Area3D", parent, props)
+    n = sw.node("Zone", "Area3D", parent, props, groups=list(groups) or None)
     sw.node("Shape", "CollisionShape3D", parent + "/" + n,
             {"shape": sw.box_shape((max(box_rect.w - 0.2, 0.3), height, max(box_rect.d - 0.2, 0.3)))}, unique=False)
 

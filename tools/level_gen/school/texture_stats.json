@@ -1,0 +1,362 @@
+{
+  "Bark014": {
+    "avg": [
+      0.1955,
+      0.136,
+      0.0833
+    ],
+    "path": "res://assets/third_party/ambientcg/Bark014/Bark014_Color.jpg"
+  },
+  "Bricks089": {
+    "avg": [
+      0.2351,
+      0.2007,
+      0.1053
+    ],
+    "path": "res://assets/third_party/ambientcg/Bricks089/Bricks089_Color.jpg"
+  },
+  "Cardboard004": {
+    "avg": [
+      0.4843,
+      0.2706,
+      0.0735
+    ],
+    "path": "res://assets/third_party/ambientcg/Cardboard004/Cardboard004_Color.jpg"
+  },
+  "Carpet001": {
+    "avg": [
+      0.2953,
+      0.2834,
+      0.2578
+    ],
+    "path": "res://assets/third_party/ambientcg/Carpet001/Carpet001_Color.jpg"
+  },
+  "Concrete030": {
+    "avg": [
+      0.1258,
+      0.1156,
+      0.1076
+    ],
+    "path": "res://assets/third_party/ambientcg/Concrete030/Concrete030_Color.jpg"
+  },
+  "Concrete032": {
+    "avg": [
+      0.0816,
+      0.0731,
+      0.0563
+    ],
+    "path": "res://assets/third_party/ambientcg/Concrete032/Concrete032_Color.jpg"
+  },
+  "Concrete034": {
+    "avg": [
+      0.4803,
+      0.4803,
+      0.4803
+    ],
+    "path": "res://assets/third_party/ambientcg/Concrete034/Concrete034_Color.jpg"
+  },
+  "Concrete035": {
+    "avg": [
+      0.2382,
+      0.2304,
+      0.192
+    ],
+    "path": "res://assets/third_party/ambientcg/Concrete035/Concrete035_Color.jpg"
+  },
+  "CorrugatedSteel003": {
+    "avg": [
+      0.6271,
+      0.6213,
+      0.623
+    ],
+    "path": "res://assets/third_party/ambientcg/CorrugatedSteel003/CorrugatedSteel003_Color.jpg"
+  },
+  "DoorPaint": {
+    "avg": [
+      0.1408,
+      0.1408,
+      0.1408
+    ],
+    "path": "res://assets/textures/school/DoorPaint_Color.jpg"
+  },
+  "DoorWood": {
+    "avg": [
+      0.1995,
+      0.1247,
+      0.0755
+    ],
+    "path": "res://assets/textures/school/DoorWood_Color.jpg"
+  },
+  "Fabric036": {
+    "avg": [
+      0.4914,
+      0.4914,
+      0.4914
+    ],
+    "path": "res://assets/third_party/ambientcg/Fabric036/Fabric036_Color.jpg"
+  },
+  "Grass004": {
+    "avg": [
+      0.1217,
+      0.1565,
+      0.0326
+    ],
+    "path": "res://assets/third_party/ambientcg/Grass004/Grass004_Color.jpg"
+  },
+  "Ground091": {
+    "avg": [
+      0.4483,
+      0.3751,
+      0.2751
+    ],
+    "path": "res://assets/third_party/ambientcg/Ground091/Ground091_Color.jpg"
+  },
+  "Ground102": {
+    "avg": [
+      0.2835,
+      0.1955,
+      0.0735
+    ],
+    "path": "res://assets/third_party/ambientcg/Ground102/Ground102_Color.jpg"
+  },
+  "Ground104": {
+    "avg": [
+      0.2274,
+      0.1528,
+      0.0598
+    ],
+    "path": "res://assets/third_party/ambientcg/Ground104/Ground104_Color.jpg"
+  },
+  "Horror_Brick_12": {
+    "avg": [
+      0.1521,
+      0.0835,
+      0.0411
+    ],
+    "path": "res://assets/third_party/screaming_brain_studios/horror_textures_128/Horror_Brick_12-128x128.png"
+  },
+  "Horror_Floor_01": {
+    "avg": [
+      0.1227,
+      0.1427,
+      0.0809
+    ],
+    "path": "res://assets/third_party/screaming_brain_studios/horror_textures_128/Horror_Floor_01-128x128.png"
+  },
+  "Horror_Floor_10": {
+    "avg": [
+      0.0477,
+      0.0347,
+      0.0239
+    ],
+    "path": "res://assets/third_party/screaming_brain_studios/horror_textures_128/Horror_Floor_10-128x128.png"
+  },
+  "Horror_Metal_08": {
+    "avg": [
+      0.1968,
+      0.1597,
+      0.1179
+    ],
+    "path": "res://assets/third_party/screaming_brain_studios/horror_textures_128/Horror_Metal_08-128x128.png"
+  },
+  "Horror_Wall_02": {
+    "avg": [
+      0.7256,
+      0.6547,
+      0.4597
+    ],
+    "path": "res://assets/third_party/screaming_brain_studios/horror_textures_128/Horror_Wall_02-128x128.png"
+  },
+  "Horror_Wall_06": {
+    "avg": [
+      0.3421,
+      0.241,
+      0.0986
+    ],
+    "path": "res://assets/third_party/screaming_brain_studios/horror_textures_128/Horror_Wall_06-128x128.png"
+  },
+  "Horror_Wall_09": {
+    "avg": [
+      0.1878,
+      0.2021,
+      0.1722
+    ],
+    "path": "res://assets/third_party/screaming_brain_studios/horror_textures_128/Horror_Wall_09-128x128.png"
+  },
+  "Leaking001": {
+    "avg": [
+      0.0111,
+      0.0112,
+      0.0085
+    ],
+    "path": "res://assets/third_party/ambientcg/Leaking001/Leaking001_Color.jpg"
+  },
+  "Metal016": {
+    "avg": [
+      0.7386,
+      0.7051,
+      0.7083
+    ],
+    "path": "res://assets/third_party/ambientcg/Metal016/Metal016_Color.jpg"
+  },
+  "Moss002": {
+    "avg": [
+      0.0701,
+      0.1326,
+      0.0105
+    ],
+    "path": "res://assets/third_party/ambientcg/Moss002/Moss002_Color.jpg"
+  },
+  "PaintedMetal002": {
+    "avg": [
+      0.0498,
+      0.1579,
+      0.7714
+    ],
+    "path": "res://assets/third_party/ambientcg/PaintedMetal002/PaintedMetal002_Color.jpg"
+  },
+  "PaintedMetal012": {
+    "avg": [
+      0.6814,
+      0.6716,
+      0.6649
+    ],
+    "path": "res://assets/third_party/ambientcg/PaintedMetal012/PaintedMetal012_Color.jpg"
+  },
+  "PaintedPlaster003": {
+    "avg": [
+      0.09,
+      0.199,
+      0.0997
+    ],
+    "path": "res://assets/third_party/ambientcg/PaintedPlaster003/PaintedPlaster003_Color.jpg"
+  },
+  "PaintedPlaster017": {
+    "avg": [
+      0.513,
+      0.5151,
+      0.4969
+    ],
+    "path": "res://assets/third_party/ambientcg/PaintedPlaster017/PaintedPlaster017_Color.jpg"
+  },
+  "PaintedWood008C": {
+    "avg": [
+      0.113,
+      0.068,
+      0.0281
+    ],
+    "path": "res://assets/third_party/ambientcg/PaintedWood008C/PaintedWood008C_Color.jpg"
+  },
+  "PavingStones099": {
+    "avg": [
+      0.2517,
+      0.2495,
+      0.2277
+    ],
+    "path": "res://assets/third_party/ambientcg/PavingStones099/PavingStones099_Color.jpg"
+  },
+  "Planks023A": {
+    "avg": [
+      0.1001,
+      0.0778,
+      0.0607
+    ],
+    "path": "res://assets/third_party/ambientcg/Planks023A/Planks023A_Color.jpg"
+  },
+  "Plastic018B": {
+    "avg": [
+      0.1861,
+      0.1861,
+      0.1861
+    ],
+    "path": "res://assets/third_party/ambientcg/Plastic018B/Plastic018B_Color.jpg"
+  },
+  "Road015A": {
+    "avg": [
+      0.0479,
+      0.0464,
+      0.0435
+    ],
+    "path": "res://assets/third_party/ambientcg/Road015A/Road015A_Color.jpg"
+  },
+  "Rubber004": {
+    "avg": [
+      0.0236,
+      0.0242,
+      0.0311
+    ],
+    "path": "res://assets/third_party/ambientcg/Rubber004/Rubber004_Color.jpg"
+  },
+  "ScatteredLeaves009": {
+    "avg": [
+      0.2899,
+      0.1582,
+      0.0455
+    ],
+    "path": "res://assets/third_party/ambientcg/ScatteredLeaves009/ScatteredLeaves009_Color.jpg"
+  },
+  "Terrazzo005": {
+    "avg": [
+      0.5958,
+      0.5613,
+      0.5332
+    ],
+    "path": "res://assets/third_party/ambientcg/Terrazzo005/Terrazzo005_Color.jpg"
+  },
+  "Terrazzo019S": {
+    "avg": [
+      0.353,
+      0.271,
+      0.1792
+    ],
+    "path": "res://assets/third_party/ambientcg/Terrazzo019S/Terrazzo019S_Color.jpg"
+  },
+  "Tiles107": {
+    "avg": [
+      0.9633,
+      0.9621,
+      0.9609
+    ],
+    "path": "res://assets/third_party/ambientcg/Tiles107/Tiles107_Color.jpg"
+  },
+  "Tiles141": {
+    "avg": [
+      0.662,
+      0.6034,
+      0.5535
+    ],
+    "path": "res://assets/third_party/ambientcg/Tiles141/Tiles141_Color.jpg"
+  },
+  "Wood049": {
+    "avg": [
+      0.2026,
+      0.1267,
+      0.0772
+    ],
+    "path": "res://assets/third_party/ambientcg/Wood049/Wood049_Color.jpg"
+  },
+  "WoodFloor061": {
+    "avg": [
+      0.4973,
+      0.1891,
+      0.0444
+    ],
+    "path": "res://assets/third_party/ambientcg/WoodFloor061/WoodFloor061_Color.jpg"
+  },
+  "WoodFloor064": {
+    "avg": [
+      0.1511,
+      0.0562,
+      0.0072
+    ],
+    "path": "res://assets/third_party/ambientcg/WoodFloor064/WoodFloor064_Color.jpg"
+  },
+  "WoodFloor065B": {
+    "avg": [
+      0.3527,
+      0.1492,
+      0.0362
+    ],
+    "path": "res://assets/third_party/ambientcg/WoodFloor065B/WoodFloor065B_Color.jpg"
+  }
+}

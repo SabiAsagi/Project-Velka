@@ -3,19 +3,20 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://cgdtyhp4ymx0y"
-path="res://.godot/imported/Horror_Wall_06-128x128.png-b50034bce02fad41ab1f0f36e765087d.ctex"
+path.s3tc="res://.godot/imported/Horror_Wall_06-128x128.png-b50034bce02fad41ab1f0f36e765087d.s3tc.ctex"
 metadata={
-"vram_texture": false
+"imported_formats": ["s3tc_bptc"],
+"vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/third_party/screaming_brain_studios/horror_textures_128/Horror_Wall_06-128x128.png"
-dest_files=["res://.godot/imported/Horror_Wall_06-128x128.png-b50034bce02fad41ab1f0f36e765087d.ctex"]
+dest_files=["res://.godot/imported/Horror_Wall_06-128x128.png-b50034bce02fad41ab1f0f36e765087d.s3tc.ctex"]
 
 [params]
 
-compress/mode=0
+compress/mode=2
 compress/high_quality=false
 compress/lossy_quality=0.7
 compress/uastc_level=0
@@ -23,7 +24,7 @@ compress/rdo_quality_loss=0.0
 compress/hdr_compression=1
 compress/normal_map=0
 compress/channel_pack=0
-mipmaps/generate=false
+mipmaps/generate=true
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""

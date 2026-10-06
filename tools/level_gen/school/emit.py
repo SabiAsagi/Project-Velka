@@ -147,6 +147,51 @@ class SceneWriter:
         })
         return self.node(name, "MultiMeshInstance3D", parent, {"multimesh": mm}, groups)
 
+    def multimesh_rows(self, parent, name, mat, items, groups=None):
+        """items: [(center, size, rows)] 단위 박스를 (회전 rows) x (크기)로 변형해 한 번에 그린다."""
+        if not items:
+            return None
+        floats = []
+        for center, size, rows in items:
+            sx, sy, sz = size
+            r = rows
+            floats += [r[0] * sx, r[1] * sy, r[2] * sz, center[0],
+                       r[3] * sx, r[4] * sy, r[5] * sz, center[1],
+                       r[6] * sx, r[7] * sy, r[8] * sz, center[2]]
+        unit = self.box_mesh((1, 1, 1), mat)
+        mm = self.sub_res(("mm", parent, name, len(self._sub_keys)), "MultiMesh", {
+            "transform_format": "1",
+            "instance_count": str(len(items)),
+            "mesh": unit,
+            "buffer": "PackedFloat32Array(" + ", ".join(fmt(f) for f in floats) + ")",
+        })
+        return self.node(name, "MultiMeshInstance3D", parent, {"multimesh": mm}, groups)
+
+    def multimesh_cyl(self, parent, name, mat, items, groups=None, top_radius=0.5):
+        """items: [(center, (지름, 높이, 지름))] 단위 원통(지름 1, 높이 1)을 스케일해 한 번에 그린다."""
+        if not items:
+            return None
+        floats = []
+        for center, size in items:
+            floats += [size[0], 0, 0, center[0], 0, size[1], 0, center[1], 0, 0, size[2], center[2]]
+        unit = self.sub_res(("cylmesh", mat, top_radius), "CylinderMesh", {
+            "material": mat, "top_radius": "%.2f" % top_radius, "bottom_radius": "0.5", "height": "1.0", "radial_segments": "20",
+            "rings": "1"})
+        mm = self.sub_res(("mmc", parent, name, len(self._sub_keys)), "MultiMesh", {
+            "transform_format": "1",
+            "instance_count": str(len(items)),
+            "mesh": unit,
+            "buffer": "PackedFloat32Array(" + ", ".join(fmt(f) for f in floats) + ")",
+        })
+        return self.node(name, "MultiMeshInstance3D", parent, {"multimesh": mm}, groups)
+
+    def shader_material(self, name, shader, params):
+        """school_surface 셰이더 재질. params: {이름: 값 문자열}"""
+        props = {"render_priority": "0", "shader": shader}
+        for k, v in params.items():
+            props["shader_parameter/" + k] = v
+        return self.sub_res(("smat", name), "ShaderMaterial", props)
+
     def text(self):
         return "[gd_scene load_steps=%d format=3]\n\n" % (len(self.ext) + len(self.subs) + 1) + \
             "\n".join(self.ext) + "\n\n" + "\n".join(self.subs) + "\n" + "\n".join(self.nodes)

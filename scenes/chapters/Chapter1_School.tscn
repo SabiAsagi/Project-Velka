@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scripts/chapters/Chapter1School.gd" id="1_script"]
 [ext_resource type="PackedScene" path="res://scenes/school/SchoolWorld.tscn" id="2_school"]
@@ -6,6 +6,9 @@
 [ext_resource type="PackedScene" path="res://scenes/cameras/FollowCamera.tscn" id="4_camera"]
 [ext_resource type="PackedScene" path="res://scenes/ui/PrototypeHUD.tscn" id="5_hud"]
 [ext_resource type="PackedScene" path="res://scenes/ui/DialogueBox.tscn" id="6_dialogue"]
+[ext_resource type="Script" path="res://scripts/ui/RuleNotebook.gd" id="7_notebook"]
+[ext_resource type="Script" path="res://scripts/ui/FailureScreen.gd" id="8_failure"]
+[ext_resource type="Script" path="res://scripts/ui/VitalsOverlay.gd" id="9_overlay"]
 
 [node name="Chapter1School" type="Node3D"]
 script = ExtResource("1_script")
@@ -26,3 +29,13 @@ party = NodePath("../PlayerParty")
 school_map = NodePath("../SchoolWorld")
 
 [node name="DialogueBox" parent="." instance=ExtResource("6_dialogue")]
+
+[node name="VitalsOverlay" type="CanvasLayer" parent="." node_paths=PackedStringArray("party")]
+script = ExtResource("9_overlay")
+party = NodePath("../PlayerParty")
+
+[node name="RuleNotebook" type="CanvasLayer" parent="."]
+script = ExtResource("7_notebook")
+
+[node name="FailureScreen" type="CanvasLayer" parent="."]
+script = ExtResource("8_failure")
