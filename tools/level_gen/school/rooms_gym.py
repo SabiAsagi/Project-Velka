@@ -2,6 +2,7 @@
 """강당 내부 (학교_맵_상세.md 강당 내부 구성 + 레퍼런스 10·11).
 코트·무대·2층은 강당 좌표를 쓴다: u = 서 -> 동 0~40, s = 남쪽 무대 0 -> 북쪽 주출입구 26 (월드 x = u-20, z = 55-s).
 벽으로 둘러싸인 방(준비실·창고·관리실·출입홀·화장실)은 다른 건물과 같은 방 좌표(RoomCtx)를 쓴다."""
+from school_info import SCHOOL_NAME
 import math
 from props_base import Props, label, wall_item, bench, plant, bins, shelf_along
 from props_more import office_desk, table, whiteboard_wall
@@ -211,7 +212,7 @@ def court(batch, sw, path):
     _nlabel(sw, path, 26.4, 2.3, "경기 일정", 0.004, 40)
     _nboard(p, 29.6, 0.9, 1.2, 1.9, "floor_map")
     p.box("banner_roll", 28.0, N_WALL - 0.02, 6.0, 0.02, 2.65, 3.3)
-    _nlabel(sw, path, 28.0, 2.98, "OO고등학교 한마음 체육대회", 0.0075, 64, (0.14, 0.24, 0.5))
+    _nlabel(sw, path, 28.0, 2.98, SCHOOL_NAME + " 한마음 체육대회", 0.0075, 64, (0.14, 0.24, 0.5))
     for u in (16.2, 23.8):
         p.box("extinguisher", u, N_WALL - 0.14, 0.17, 0.17, 0.0, 0.56)
     p.box("extinguisher", 4.2, 6.5, 0.17, 0.17, 0.0, 0.56)
@@ -417,7 +418,7 @@ def gym_hall(ctx):
     for a in (0.95, W - 0.95):                                                                 # 행사 사진 (계단 입구 옆 벽)
         wall_item(p, W, D, "back", a, 0.9, 0.0, 0.03, 1.3, 1.9, "frame_wood")
         wall_item(p, W, D, "back", a, 0.8, 0.03, 0.004, 1.36, 1.84, "photo")
-    wall_label(ctx, "front", 1.35, 2.75, "OO고등학교 강당", 0.05, 0.0045, 48)
+    wall_label(ctx, "front", 1.35, 2.75, SCHOOL_NAME + " 강당", 0.05, 0.0045, 48)
 
 
 def gym_toilet(ctx, men=False):

@@ -10,6 +10,7 @@ const SHOTS := [
 	["gate", Vector3(70.0, 0.05, -10), "real"],
 	["main_front", Vector3(2.0, 3.85, -41.5), "real"],
 	["main_1f_lobby", Vector3(2.0, 3.85, -50), "real"],
+	["main_1f_lobby_display", Vector3(4.2, 3.85, -50.8), "real"],
 	["main_2f_corridor_w", Vector3(-24.0, 7.65, -56.6), "real"],
 	["main_2f_class_1_1", Vector3(-26.0, 7.65, -50.5), "real"],
 	["main_2f_corridor_c", Vector3(1.0, 7.65, -56.6), "real"],

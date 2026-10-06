@@ -165,7 +165,7 @@ def desk_item(p, u, v, kind):
     elif kind == "bottle":
         p.box("bottle", u + 0.22, v - 0.12, 0.07, 0.07, 0.72, 0.94)
     elif kind == "cushion":
-        p.box("cushion", u, v + 0.45, 0.38, 0.36, 0.45, 0.5)
+        p.box("cushion", u, v + 0.45, 0.38, 0.36, 0.452, 0.5)     # 의자 판 위 (등받이 틀 아래끝 0.45와 면이 겹치지 않게)
     elif kind == "papers":
         p.box("paper", u, v, 0.3, 0.21, 0.72, 0.73)
     elif kind == "workbooks":

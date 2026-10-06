@@ -2,6 +2,7 @@
 """부지 조경·시설 (학교_맵_상세.md 2-1~2-2, 2-6, 2-8 외부 보행로 + 가이드라인 12장 + 레퍼런스 00).
 좌표는 월드 (x = 동, z = 남). 본관 앞뒤는 고지대(y = 3.8), 그 밖은 지면(y = 0).
 화단·수목은 배경 조경, 벤치·운동기구·국기게양대·농구장·관람 스탠드는 접근할 수 있는 생활 시설이다."""
+from school_info import SCHOOL_NAME
 import math
 from props_base import Props, bench, label
 from batch import rows_y
@@ -318,7 +319,7 @@ def stands_and_field(p, sw, parent, ext, tops, geo):
         p.cyl("lamp_post", px + dx, z, 0.14, ph, ph + 2.9)
     p.box("roof_guard", px, pod.cz, pod.w + 0.8, pod.d + 0.8, ph + 2.9, ph + 3.05)
     p.box("emblem", px, pz1 + 0.42, 5.0, 0.04, ph + 2.4, ph + 2.9)
-    wlabel(sw, parent, px, ph + 2.65, pz1 + 0.46, "OO고등학교", 0.008, 64)
+    wlabel(sw, parent, px, ph + 2.65, pz1 + 0.46, SCHOOL_NAME, 0.008, 64)
     p.box("lectern", px, pz1 - 0.9, 0.7, 0.5, ph, ph + 1.1, collide=True)
     p.box("metal_dark", px + 0.7, pz1 - 0.8, 0.03, 0.03, ph, ph + 1.4)
     p.box("speaker", px - 3.2, pod.z0 + 0.9, 0.5, 0.45, ph, ph + 1.0)
@@ -880,7 +881,7 @@ def gate_area(p, sw, parent, ext):
     # 교명석과 문기둥 등
     p.box("stone_dark", 72.6, -16.4, 2.6, 0.7, 0.0, 0.3)
     p.box("stone", 72.6, -16.4, 2.3, 0.5, 0.3, 1.5, collide=True)
-    wlabel(sw, parent, 72.6, 0.95, -16.13, "OO고등학교", 0.0075, 64, (0.12, 0.12, 0.14))
+    wlabel(sw, parent, 72.6, 0.95, -16.13, SCHOOL_NAME, 0.0075, 64, (0.12, 0.12, 0.14))
     for name in ("MainGateNorthPost", "MainGateSouthPost"):
         b = ext[name]
         p.box("lamp_head", (b.min[0] + b.max[0]) / 2, (b.min[2] + b.max[2]) / 2, 0.5, 0.5, b.max[1], b.max[1] + 0.3)

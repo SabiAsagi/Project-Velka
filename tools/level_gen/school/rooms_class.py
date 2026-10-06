@@ -4,8 +4,13 @@
 from props_base import (student_desk, chair, cabinet, shelf_unit, wall_board, plant, bins, curtain, label, facing_rows,
                         desk_item)
 
-ROWS, COLS = 5, 6
-ROW0, ROW_PITCH = 2.3, 0.9
+# 책상 배치: 칠판 쪽부터 ROWS줄 x 창가->복도 COLS열 = 최대 30석. 반마다 학생 수(VARIANTS "students")만큼만 놓는다.
+# 교실은 칠판 쪽 약 7.7m(창가->복도) x 복도 쪽 약 8.8m(칠판->뒷벽)라 열은 5개로 넓게, 줄은 6개로 깊이에 맞춘다.
+ROWS, COLS = 6, 5
+ROW0 = 2.3                      # 첫 줄 책상 중심 (교탁 앞 여유)
+ROW_PITCH_MAX = 1.1
+BACK_CLEAR = 1.62               # 마지막 줄 책상 중심 ~ 뒷벽: 의자 + 사물함 앞 통로 (약 0.5m)
+STUDENTS = 30
 
 
 def front_wall(ctx, board_text="", erased=False, dday=""):
@@ -78,35 +83,55 @@ def teacher_zone(ctx, bu, bw):
 
 
 def desk_cols(W):
-    """책상 열 중심 (창가 -> 복도). 열 사이 0.85m 통로, 창가 0.9m, 복도 쪽은 문 앞 여유"""
+    """책상 열 중심 (창가 -> 복도). 창가 0.9m, 복도 쪽은 문 앞 여유를 두고 남는 폭을 열 사이 통로로 나눈다"""
     pitch = min(1.45, (W - 1.2 - 1.66) / (COLS - 1))
     return [1.2 + pitch * i for i in range(COLS)]
+
+
+def desk_rows(D):
+    """책상 줄 중심 (칠판 -> 뒷벽). 마지막 줄 뒤로 의자와 사물함 앞 통로를 남기고 깊이를 고르게 나눈다"""
+    pitch = min(ROW_PITCH_MAX, (D - BACK_CLEAR - ROW0) / (ROWS - 1))
+    return [ROW0 + pitch * i for i in range(ROWS)]
+
+
+# 마지막 줄이 다 차지 않을 때 앉는 순서 (가운데부터 바깥으로)
+_PARTIAL_ORDER = (2, 1, 3, 0, 4)
+
+
+def seat_layout(students):
+    """학생 수 -> 앉는 자리 [(줄, 열)]: 앞줄부터 채우고 마지막 줄은 가운데부터 앉는다"""
+    students = max(0, min(students, ROWS * COLS))
+    full, rest = divmod(students, COLS)
+    seats = [(r, c) for r in range(full) for c in range(COLS)]
+    seats += [(full, c) for c in sorted(_PARTIAL_ORDER[:rest])]
+    return seats
 
 
 def desks(ctx, variant, W, D):
     p = ctx.p
     cols = desk_cols(W)
+    rows = desk_rows(D)
     items_pool = [("bag",), ("book",), ("pencil",), ("bottle",), ("books", "pencil"), (), (), (), ("book", "bottle"), ()]
     extra = variant.get("items", ())
     count = 0
-    for r in range(ROWS):
-        v = ROW0 + r * ROW_PITCH
-        for c, u in enumerate(cols):
-            if not p.free(u - 0.3, v - 0.25, u + 0.3, v + 0.65):
-                continue
-            yaw = 0.0
-            if variant.get("crooked") and p.rand("crook", r, c) > 0.75:
-                yaw = (p.rand("yaw", r, c) - 0.5) * 22.0
-            items = list(items_pool[int(p.rand("it", r, c) * len(items_pool)) % len(items_pool)])
-            if extra and p.rand("ex", r, c) > 0.45:
-                items += list(extra)
-            student_desk(p, u, v, items, yaw=yaw)
-            pull = 0.12 if p.rand("pull", r, c) > 0.8 else 0.0
-            cyaw = (p.rand("cy", r, c) - 0.5) * 30.0 if p.rand("ang", r, c) > 0.85 else yaw
-            chair(p, u, v + 0.42 + pull, yaw=cyaw)
-            if "cushion" in variant.get("chair_items", ()) and p.rand("cu", r, c) > 0.4:
-                desk_item(p, u, v, "cushion")
-            count += 1
+    for r, c in seat_layout(variant.get("students", STUDENTS)):
+        u, v = cols[c], rows[r]
+        if not p.free(u - 0.3, v - 0.25, u + 0.3, v + 0.65):
+            continue
+        yaw = 0.0
+        if variant.get("crooked") and p.rand("crook", r, c) > 0.75:
+            yaw = (p.rand("yaw", r, c) - 0.5) * 22.0
+        items = list(items_pool[int(p.rand("it", r, c) * len(items_pool)) % len(items_pool)])
+        if extra and p.rand("ex", r, c) > 0.45:
+            # 반 공통 소품(문제집·유인물 등)이 놓이는 책상에는 기본 교과서를 빼 같은 자리에 겹치지 않게 한다
+            items = [k for k in items if k not in ("book", "books")] + list(extra)
+        student_desk(p, u, v, items, yaw=yaw)
+        pull = 0.06 if p.rand("pull", r, c) > 0.8 else 0.0      # 뒤로 뺀 의자 (뒷줄 책상에 닿지 않게)
+        cyaw = (p.rand("cy", r, c) - 0.5) * 20.0 if p.rand("ang", r, c) > 0.85 else yaw   # 비뚤게 놓인 의자 (뒷줄 책상에 닿지 않을 만큼)
+        chair(p, u, v + 0.42 + pull, yaw=cyaw)
+        if "cushion" in variant.get("chair_items", ()) and p.rand("cu", r, c) > 0.4:
+            desk_item(p, u, v, "cushion")
+        count += 1
     return count
 
 
@@ -194,27 +219,28 @@ def window_side(ctx, variant):
                 placed += 1
 
 
+# 반별 설정. students = 학생 수 (기획서: 학급당 정원 약 28명, 전교생 약 500명. 18학급 합계 503명)
 VARIANTS = {
-    "1-1": {"plants": 8, "extra": "watering", "title": "우리 반 식물 관찰"},
-    "1-2": {"papers": 14, "paper_mats": ("art_red", "art_blue", "art_yellow", "art_green", "paper"), "extra": "color_paper",
+    "1-1": {"students": 28, "plants": 8, "extra": "watering", "title": "우리 반 식물 관찰"},
+    "1-2": {"students": 30, "papers": 14, "paper_mats": ("art_red", "art_blue", "art_yellow", "art_green", "paper"), "extra": "color_paper",
             "title": "미술 작품 전시"},
-    "1-3": {"extra": "ball_basket", "title": "체육대회 준비"},
-    "1-4": {"extra": "class_library", "title": "학급문고 대출 안내"},
-    "1-5": {"extra": "decorations", "title": "학급 행사"},
-    "1-6": {"messy_lockers": True, "crooked": True, "title": "1-6 게시판"},
-    "2-1": {"extra": "festival", "papers": 10, "paper_mats": ("art_red", "art_yellow", "paper"), "title": "축제 준비"},
-    "2-2": {"extra": "cheering", "title": "2-2 화이팅!"},
-    "2-3": {"items": ("papers",), "title": "수행평가 일정", "papers": 9},
-    "2-4": {"items": ("papers",), "title": "진로 탐색", "papers": 10, "paper_mats": ("paper_blue", "paper", "paper_yellow")},
-    "2-5": {"items": ("pencil2", "bag"), "chair_items": ("cushion",), "title": "2-5 게시판"},
-    "2-6": {"extra": "extra_desk", "title": "2-6 게시판"},
-    "3-1": {"title": "수시 원서 접수 일정", "papers": 12},
-    "3-2": {"extra": "mock_exam", "items": ("papers",), "title": "모의고사 대비"},
-    "3-3": {"title": "진학 상담 일정", "papers": 8},
-    "3-4": {"items": ("brochure",), "extra": "brochures", "title": "대학 안내"},
-    "3-5": {"items": ("workbooks",), "title": "3-5 게시판"},
-    "3-6": {"dday": "D-45", "erased": True, "title": "수능 D-45"},
-    "2-7": {"extra": "extra_desk", "date": "6월 31일 (화)", "title": "2-7 게시판"},
+    "1-3": {"students": 27, "extra": "ball_basket", "title": "체육대회 준비"},
+    "1-4": {"students": 29, "extra": "class_library", "title": "학급문고 대출 안내"},
+    "1-5": {"students": 26, "extra": "decorations", "title": "학급 행사"},
+    "1-6": {"students": 30, "messy_lockers": True, "crooked": True, "title": "1-6 게시판"},
+    "2-1": {"students": 28, "extra": "festival", "papers": 10, "paper_mats": ("art_red", "art_yellow", "paper"), "title": "축제 준비"},
+    "2-2": {"students": 29, "extra": "cheering", "title": "2-2 화이팅!"},
+    "2-3": {"students": 27, "items": ("papers",), "title": "수행평가 일정", "papers": 9},
+    "2-4": {"students": 30, "items": ("papers",), "title": "진로 탐색", "papers": 10, "paper_mats": ("paper_blue", "paper", "paper_yellow")},
+    "2-5": {"students": 28, "items": ("pencil2", "bag"), "chair_items": ("cushion",), "title": "2-5 게시판"},
+    "2-6": {"students": 25, "extra": "extra_desk", "title": "2-6 게시판"},
+    "3-1": {"students": 27, "title": "수시 원서 접수 일정", "papers": 12},
+    "3-2": {"students": 26, "extra": "mock_exam", "items": ("papers",), "title": "모의고사 대비"},
+    "3-3": {"students": 29, "title": "진학 상담 일정", "papers": 8},
+    "3-4": {"students": 28, "items": ("brochure",), "extra": "brochures", "title": "대학 안내"},
+    "3-5": {"students": 30, "items": ("workbooks",), "title": "3-5 게시판"},
+    "3-6": {"students": 26, "dday": "D-45", "erased": True, "title": "수능 D-45"},
+    "2-7": {"students": 25, "extra": "extra_desk", "date": "6월 31일 (화)", "title": "2-7 게시판"},
 }
 DATE = "6월 3일 (화)"
 
@@ -237,8 +263,8 @@ def classroom(ctx, class_name):
         wv = (wins[len(wins) // 2].a0 + wins[len(wins) // 2].a1) / 2
         ctx.anchor("window", 0.05, wv, 0.8, wv)
     if class_name == "2-1":                  # 이계에서만 보이는 떨어진 필통 (책상 사이 통로 바닥)
-        cols = desk_cols(W)
-        pu, pv = (cols[len(cols) // 2 - 1] + cols[len(cols) // 2]) / 2, ROW0 + ROW_PITCH * (ROWS - 2) + 0.2
+        cols, rows = desk_cols(W), desk_rows(D)
+        pu, pv = (cols[len(cols) // 2 - 1] + cols[len(cols) // 2]) / 2, rows[-3] + 0.5
         ctx.p.box("pencil_case", pu, pv, 0.2, 0.07, 0.0, 0.04, yaw=25.0, groups=("otherworld_only",))
         ctx.anchor("pencilcase", pu, pv, pu, pv + 0.45)
     title = v.get("title", "")
@@ -281,12 +307,13 @@ def classroom(ctx, class_name):
         p.box("frame_alu", W / 2, D - 0.04, 0.6, 0.02, 2.62, 3.02)
         p.box("photo", W / 2, D - 0.055, 0.54, 0.01, 2.65, 2.99)
     elif extra == "extra_desk":
-        # 실제 인원보다 하나 많은 책상: 마지막 줄 뒤 가운데에 고정 (사물함 옆은 통행로로 쓰지 않는다)
-        cols = desk_cols(W)
-        eu = (cols[2] + cols[3]) / 2
-        vv = ROW0 + ROWS * ROW_PITCH - 0.1
+        # 실제 인원보다 하나 많은 책상: 학생들이 다 앉은 뒤 비어 있는 마지막 줄 가운데에 혼자 놓인다
+        # (이 반 학생 수는 25명 = 다섯 줄을 꽉 채워 여섯째 줄이 빈다)
+        cols, rows = desk_cols(W), desk_rows(D)
+        eu, vv = cols[COLS // 2], rows[-1]
+        assert (ROWS - 1, COLS // 2) not in seat_layout(v.get("students", STUDENTS)), "남는 책상 자리에 학생이 앉아 있다"
         student_desk(p, eu, vv, ())
-        chair(p, eu, vv + 0.2)
+        chair(p, eu, vv + 0.42)
         # 사용하지 않는 스피커 (뒷벽 위, 선이 늘어져 있다), 문 한 칸이 열린 빈 사물함
         p.box("speaker", W - 1.0, D - 0.09, 0.4, 0.16, 2.7, 2.98)
         p.box("metal_dark", W - 0.85, D - 0.02, 0.015, 0.015, 2.2, 2.7)
@@ -297,7 +324,7 @@ def classroom(ctx, class_name):
         for i in range(3):
             p.box("file_box", lu0 + 0.3 + 0.45 * i, D - 0.22, 0.38, 0.3, 1.35, 1.62)
         for i in range(4):
-            p.box("paper", bu + 0.25, 1.25, 0.3, 0.21, 1.04 + 0.03 * i, 1.065 + 0.03 * i)
+            p.box("paper", bu + 0.11, 1.14, 0.3, 0.21, 1.04 + 0.03 * i, 1.065 + 0.03 * i)     # 교탁 위 (분필통 옆)
     elif extra == "brochures":
         p.box("shelf_wood", W - 2.2, D - 0.9, 0.9, 0.3, 0.0, 1.2, collide=True)
         for i in range(6):

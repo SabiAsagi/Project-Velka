@@ -2,11 +2,117 @@
 """본관 1층 업무 공간 (학교_맵_상세.md 1층 주요 공간 + 가이드라인 5장). 좌표: 문(복도) 쪽 벽 = 앞(v=0)."""
 from props_base import wall_item, cabinet, shelf_unit, shelf_along, bench, plant, bins, label, facing_rows, wall_board
 from props_more import office_desk, table, sofa, bed, blinds, curtains_full, whiteboard_wall
+from school_info import SCHOOL_NAME
+
+
+def _wall_uv(W, side, off, a):
+    """좌·우 벽(side)에서 off만큼 떨어진, 벽을 따라 a인 점의 방 좌표 (u, v)"""
+    return (off, a) if side == "left" else (W - off, a)
+
+
+def _side_box(p, side, mat, u, v, along, across, h0, h1):
+    """좌·우 벽 앞에 놓는 박스: along = 벽을 따라가는 폭, across = 벽에서 튀어나온 두께"""
+    if side in ("left", "right"):
+        p.box(mat, u, v, across, along, h0, h1)
+    else:
+        p.box(mat, u, v, along, across, h0, h1)
+
+
+def _glass_case(p, W, D, side, a, length, depth, h0, h1, back="velvet"):
+    """벽에 붙은 유리 진열장 틀: 받침장 + 뒤판 + 유리 앞·옆판 + 윗판 (안쪽 바닥 높이 h0, 유리 윗끝 h1)"""
+    wall_item(p, W, D, side, a, length, 0.0, depth, 0.0, h0, "cabinet_wood", collide=True)
+    wall_item(p, W, D, side, a, length - 0.02, 0.0, 0.02, h0, h1, back)
+    wall_item(p, W, D, side, a, length, depth - 0.012, 0.012, h0, h1, "glass")
+    for s in (-1, 1):
+        wall_item(p, W, D, side, a + s * (length / 2 - 0.006), 0.012, 0.02, depth - 0.032, h0, h1, "glass")
+    wall_item(p, W, D, side, a, length + 0.04, 0.0, depth + 0.02, h1, h1 + 0.08, "cabinet_wood")
+
+
+def _trophy(p, u, v, h0, size, mat):
+    """트로피: 나무 받침 + 금속 기둥 + 컵 (size = 전체 높이)"""
+    p.box("wood_dark", u, v, 0.11 * size / 0.3, 0.11 * size / 0.3, h0, h0 + 0.06 * size / 0.3)
+    p.box(mat, u, v, 0.025, 0.025, h0 + 0.06 * size / 0.3, h0 + 0.6 * size)
+    p.cyl(mat, u, v, 0.1 * size / 0.3, h0 + 0.6 * size, h0 + size)
+
+
+def trophy_showcase(ctx, side, a, length):
+    """로비 트로피 진열장: 대회 트로피(금·은·동), 상패, 메달, 우승기, 위쪽에 '영광의 발자취' 글씨"""
+    p, W, D = ctx.p, ctx.W, ctx.D
+    depth, h0, h1 = 0.45, 0.8, 2.0
+    _glass_case(p, W, D, side, a, length, depth, h0, h1)
+    shelves = (h0, 1.22, 1.62)
+    for h in shelves[1:]:
+        wall_item(p, W, D, side, a, length - 0.04, 0.02, depth - 0.05, h - 0.012, h, "glass_frosted")
+    mats = ("trophy", "trophy_silver", "trophy", "trophy_bronze", "trophy", "trophy_silver")
+    for k, h in enumerate(shelves):
+        n = 5 if k == 0 else 6
+        for i in range(n):
+            t_ = (i + 0.5) / n
+            aa = a - length / 2 + 0.12 + (length - 0.24) * t_
+            r = p.rand("tro", k, i)
+            if k == 2 and i % 3 == 1:
+                # 상패: 세운 나무판 + 금속판
+                wall_item(p, W, D, side, aa, 0.2, 0.06, 0.03, h + 0.002, h + 0.28, "frame_wood")
+                wall_item(p, W, D, side, aa, 0.14, 0.055, 0.006, h + 0.07, h + 0.2, "trophy")
+                continue
+            u, v = _wall_uv(W, side, 0.17 + 0.08 * (i % 2), aa)
+            size = (0.42 if k == 0 else 0.3) * (0.75 + 0.4 * r)
+            _trophy(p, u, v, h + 0.002, size, mats[(i + k) % len(mats)])
+    # 맨 위 칸 뒤판에 건 메달 (리본 + 원판)
+    for i in range(4):
+        aa = a - length * 0.3 + length * 0.2 * i
+        wall_item(p, W, D, side, aa, 0.04, 0.02, 0.004, 1.78, 1.95, "ribbon_blue" if i % 2 else "uniform_tie")
+        wall_item(p, W, D, side, aa, 0.07, 0.024, 0.006, 1.71, 1.78, "trophy" if i != 2 else "trophy_silver")
+    # 진열장 옆 우승기 (깃대 + 기)
+    fa = a + length / 2 + 0.2
+    u, v = _wall_uv(W, side, 0.15, fa)
+    p.box("metal_dark", u, v, 0.03, 0.03, 0.0, 2.3)
+    wall_item(p, W, D, side, fa + 0.22, 0.42, 0.13, 0.01, 1.55, 2.2, "flag_school")
+    u, v = _wall_uv(W, side, 0.045, a)
+    label(ctx.sw, ctx.container, _world(ctx, u, v, 2.32), "영광의 발자취", 0.0042, 48, (0.3, 0.22, 0.1),
+          facing_rows(ctx.frame, "left" if side == "right" else "right"), list(ctx.groups) or None)
+
+
+def uniform_showcase(ctx, side, a, length):
+    """교복 진열장: 마네킹 두 벌 (동복: 남색 재킷·넥타이·체크 치마 / 하복: 흰 셔츠·체크 바지) + 학교 이름 글씨"""
+    p, W, D = ctx.p, ctx.W, ctx.D
+    depth, h0, h1 = 0.6, 0.15, 2.0
+    _glass_case(p, W, D, side, a, length, depth, h0, h1, back="paper")
+    for k, s in enumerate((-1, 1)):
+        aa = a + s * length * 0.24
+        u, v = _wall_uv(W, side, depth / 2, aa)
+        _side_box(p, side, "metal_dark", u, v, 0.3, 0.22, h0, h0 + 0.02)      # 받침
+        p.box("metal_dark", u, v, 0.03, 0.03, h0 + 0.02, 0.6)                 # 기둥
+        p.box("mannequin", u, v, 0.07, 0.07, 1.48, 1.58)                       # 목
+        if k == 0:
+            # 동복: 재킷 안 셔츠·넥타이, 체크 치마
+            _side_box(p, side, "uniform_navy", u, v, 0.4, 0.24, 0.98, 1.48)
+            front_off = depth / 2 - 0.125
+            wall_item(p, W, D, side, aa, 0.1, front_off, 0.004, 1.2, 1.47, "uniform_shirt")
+            wall_item(p, W, D, side, aa, 0.035, front_off - 0.004, 0.004, 1.12, 1.44, "uniform_tie")
+            _side_box(p, side, "uniform_check", u, v, 0.36, 0.22, 0.6, 0.98)
+        else:
+            # 하복: 흰 셔츠, 체크 바지 (두 다리)
+            _side_box(p, side, "uniform_shirt", u, v, 0.38, 0.22, 0.98, 1.48)
+            _side_box(p, side, "uniform_check", u, v, 0.36, 0.22, 0.86, 0.98)
+            for d in (-1, 1):
+                ua, va = _wall_uv(W, side, depth / 2, aa + d * 0.09)
+                p.box("uniform_check", ua, va, 0.15, 0.15, 0.6, 0.86)
+    u, v = _wall_uv(W, side, 0.045, a)
+    label(ctx.sw, ctx.container, _world(ctx, u, v, 2.25), SCHOOL_NAME + " 교복", 0.0038, 44, (0.15, 0.17, 0.3),
+          facing_rows(ctx.frame, "left" if side == "right" else "right"), list(ctx.groups) or None)
+
+
+def _world(ctx, u, v, h):
+    """방 좌표 (u, v)와 바닥 위 높이 h -> 월드 좌표"""
+    x, z = ctx.frame.pt(u, v)
+    return (x, ctx.y + h, z)
 
 
 def lobby(ctx):
-    """중앙 현관·로비 (앞 = 현관 유리문 벽): 매트, 우산꽂이, 방문객 기록대, 안내도, 졸업사진, 트로피 진열장(동),
-    연혁·교훈(서), 대기 벤치 2개, AED, 휠체어, 분실물함. 현관에서 복도까지 2.5~3m 직선 동선은 비운다."""
+    """중앙 현관·로비 (앞 = 현관 유리문 벽): 매트, 우산꽂이, 방문객 기록대, 안내도, 연혁·교훈(서),
+    트로피 진열장·우승기·교복 진열장·졸업사진(동), 대기 벤치, AED, 휠체어, 분실물함.
+    현관에서 복도까지 2.5~3m 직선 동선은 비운다."""
     p, W, D = ctx.p, ctx.W, ctx.D
     doors = ctx.doors_on("front")
     dm = doors[0].mid if doors else W / 2
@@ -26,21 +132,19 @@ def lobby(ctx):
     p.box("office_top", u_w, D * 0.18, 0.6, 1.0, 0.95, 1.0, collide=True)
     p.box("office_panel", u_w, D * 0.18, 0.5, 0.9, 0.0, 0.95)
     p.box("paper", u_w, D * 0.18, 0.3, 0.4, 1.0, 1.01)
-    # 동쪽(오른쪽) 벽: 트로피 진열장, 졸업사진, AED, 휠체어, 분실물함
-    wall_item(p, W, D, eside, D * 0.42, 1.6, 0.0, 0.45, 0.0, 1.9, "glass_case", collide=True)
-    for i in range(6):
-        wall_item(p, W, D, eside, D * 0.42 - 0.6 + 0.24 * i, 0.12, 0.15, 0.12, 0.9 + 0.45 * (i % 2), 1.15 + 0.45 * (i % 2), "trophy")
-    for i in range(4):
-        wall_item(p, W, D, eside, D * 0.7 - 0.75 + 0.5 * i, 0.4, 0.0, 0.03, 1.5, 1.8, "photo")
-    wall_item(p, W, D, eside, D * 0.18, 0.4, 0.0, 0.16, 1.1, 1.55, "aed")
-    wall_item(p, W, D, eside, D * 0.86, 0.6, 0.02, 0.45, 0.0, 0.8, "lost_box", collide=True)
-    wheel_u = W - 0.5 if eside == "right" else 0.5
-    p.box("metal_dark", wheel_u, D * 0.27, 0.55, 0.6, 0.45, 0.5)
-    p.box("metal_dark", wheel_u, D * 0.27 + 0.28, 0.5, 0.05, 0.5, 0.95)
-    # 대기 벤치 2개 (양쪽 벽, 가운데 통로는 비움)
-    for side in (wside, eside):
-        u = 0.3 if side == "left" else W - 0.3
-        bench(p, u, D * 0.55 if side == wside else D * 0.62, 1.4, along_u=False)
+    # 동쪽(오른쪽) 벽: AED, 트로피 진열장(+우승기), 교복 진열장, 위쪽 졸업사진, 분실물함
+    wall_item(p, W, D, eside, 0.75, 0.4, 0.0, 0.16, 1.1, 1.55, "aed")
+    trophy_showcase(ctx, eside, 2.35, 2.2)
+    uniform_showcase(ctx, eside, 4.85, 1.5)
+    for i in range(5):
+        wall_item(p, W, D, eside, 1.45 + 0.5 * i, 0.4, 0.0, 0.03, 2.5, 2.8, "photo")
+    wall_item(p, W, D, eside, D - 0.75, 0.6, 0.02, 0.45, 0.0, 0.8, "lost_box", collide=True)
+    # 휠체어는 서쪽 벽 안쪽 (방문객 기록대 반대쪽 끝)
+    wheel_u = 0.5 if wside == "left" else W - 0.5
+    p.box("metal_dark", wheel_u, D - 1.1, 0.55, 0.6, 0.45, 0.5)
+    p.box("metal_dark", wheel_u, D - 1.1 + 0.28, 0.5, 0.05, 0.5, 0.95)
+    # 대기 벤치 (서쪽 벽. 동쪽 벽은 진열장이 차지하고, 가운데 통로는 비움)
+    bench(p, 0.3 if wside == "left" else W - 0.3, D * 0.55, 1.4, along_u=False)
 
 
 def admin(ctx):
