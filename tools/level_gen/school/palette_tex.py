@@ -135,7 +135,8 @@ group("bin_gray bin_blue bin_yellow bin_green bucket_blue bucket_red caf_stool s
       "stall_panel stall_door counter_white tarp_blue", PLASTIC)
 group("whiteboard", dict(PLASTIC, tmix=0.25))
 group("curtain curtain_heavy curtain_light curtain_stage cloth sofa sofa_blue sofa_green cushion bag apron bed pillow sack "
-      "net_white gym_mat gym_mat_green pad_blue vest flag_kr flag_school banner_roll backdrop umbrella mop_head", FABRIC)
+      "net_white gym_mat gym_mat_green pad_blue vest flag_kr flag_school banner_roll backdrop umbrella mop_head "
+      "uniform_navy uniform_shirt uniform_check velvet", FABRIC)
 group("sandbag", dict(FABRIC, tex=("Fabric036", 0.4), stain=0.3))
 group("box file_box pegboard", CARDBOARD)
 group("pallet", dict(tex=("Planks023A", 1.0), chroma=0.4, tmix=0.9, nrm=0.4, obj=1, ivar=0.06))

@@ -2,9 +2,11 @@
 """부지 조경·시설 (학교_맵_상세.md 2-1~2-2, 2-6, 2-8 외부 보행로 + 가이드라인 12장 + 레퍼런스 00).
 좌표는 월드 (x = 동, z = 남). 본관 앞뒤는 고지대(y = 3.8), 그 밖은 지면(y = 0).
 화단·수목은 배경 조경, 벤치·운동기구·국기게양대·농구장·관람 스탠드는 접근할 수 있는 생활 시설이다."""
+from school_info import SCHOOL_NAME
 import math
 from props_base import Props, bench, label
 from batch import rows_y
+from plan import MAIN_FRONT_Z
 
 TOP = 3.8
 PAD = 0.010         # 면 구획(잔디·코트 등) 윗면 높이 (그 바닥 기준)
@@ -218,13 +220,13 @@ def front_plateau(p, sw, parent):
     (건물 벽 옆 나무는 수관이 벽 안으로 들어가지 않게 좁은 상록수만 쓴다)"""
     # 남쪽(정면): 세 출입구(x = -28.04, 2.02, 28.04) 앞 포장은 비운다
     for i, (x0, x1) in enumerate(((-26.2, -3.6), (5.6, 26.2))):
-        strip(p, x0, -44.55, x1, -43.3, "fa%d" % i, 5.6)
+        strip(p, x0, MAIN_FRONT_Z + 0.2, x1, MAIN_FRONT_Z + 1.45, "fa%d" % i, 5.6)
     # 서·동 벽, 북쪽(후문 x = 2.02 앞은 비운다)
     strip(p, -31.5, -62.4, -30.25, -45.6, "mw", 5.6)
     strip(p, 30.25, -62.4, 31.5, -45.6, "me", 5.6)
     strip(p, -29.6, -64.8, 0.1, -63.5, "mn0", 5.9)
     strip(p, 3.9, -64.8, 29.6, -63.5, "mn1", 6.4)
-    for x, z in ((-28.04, -44.2), (2.02, -44.2), (28.04, -44.2), (2.02, -63.85)):
+    for x, z in ((-28.04, MAIN_FRONT_Z + 0.55), (2.02, MAIN_FRONT_Z + 0.55), (28.04, MAIN_FRONT_Z + 0.55), (2.02, -63.85)):
         p.box("mat_dark", x, z, 2.2, 0.9, PAVE, PAVE + 0.012)
     # 스탠드 쪽 화단과 수령 오래된 교목 (좌우 대칭). 가운데 4m 보행축과 양끝 계단 앞은 비운다
     for i, (x0, x1) in enumerate(((-40.5, -3.2), (3.2, 40.5))):
@@ -317,7 +319,7 @@ def stands_and_field(p, sw, parent, ext, tops, geo):
         p.cyl("lamp_post", px + dx, z, 0.14, ph, ph + 2.9)
     p.box("roof_guard", px, pod.cz, pod.w + 0.8, pod.d + 0.8, ph + 2.9, ph + 3.05)
     p.box("emblem", px, pz1 + 0.42, 5.0, 0.04, ph + 2.4, ph + 2.9)
-    wlabel(sw, parent, px, ph + 2.65, pz1 + 0.46, "OO고등학교", 0.008, 64)
+    wlabel(sw, parent, px, ph + 2.65, pz1 + 0.46, SCHOOL_NAME, 0.008, 64)
     p.box("lectern", px, pz1 - 0.9, 0.7, 0.5, ph, ph + 1.1, collide=True)
     p.box("metal_dark", px + 0.7, pz1 - 0.8, 0.03, 0.03, ph, ph + 1.4)
     p.box("speaker", px - 3.2, pod.z0 + 0.9, 0.5, 0.45, ph, ph + 1.0)
@@ -879,7 +881,7 @@ def gate_area(p, sw, parent, ext):
     # 교명석과 문기둥 등
     p.box("stone_dark", 72.6, -16.4, 2.6, 0.7, 0.0, 0.3)
     p.box("stone", 72.6, -16.4, 2.3, 0.5, 0.3, 1.5, collide=True)
-    wlabel(sw, parent, 72.6, 0.95, -16.13, "OO고등학교", 0.0075, 64, (0.12, 0.12, 0.14))
+    wlabel(sw, parent, 72.6, 0.95, -16.13, SCHOOL_NAME, 0.0052, 64, (0.12, 0.12, 0.14))   # 교명석 폭 2.3m 안에 들어가는 크기
     for name in ("MainGateNorthPost", "MainGateSouthPost"):
         b = ext[name]
         p.box("lamp_head", (b.min[0] + b.max[0]) / 2, (b.min[2] + b.max[2]) / 2, 0.5, 0.5, b.max[1], b.max[1] + 0.3)

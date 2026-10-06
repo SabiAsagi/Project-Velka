@@ -2,12 +2,15 @@ extends SceneTree
 
 # 프로젝트 벨카 - 학교 맵 게임 카메라 스크린샷 (확인용)
 # 실행: godot --path . -s res://tools/level_gen/school/shots.gd -- <출력 폴더> [이름 필터 (쉼표로 여러 개)]
+#   [사용감 세기 비교: "이름=더러움,낡음,공포;이름=..."]  예) "약=0.5,0.5,0.5;기본=1,1,1;강=1.6,1.6,1.6"
+#   세기를 주면 장면마다 세기별로 <장면>_<이름>.png를 저장한다 (전역 셰이더 파라미터 wear_*_scale).
 # 챕터 1 씬을 열고 파티를 지정 위치로 옮긴 뒤 실제 쿼터뷰 카메라 화면을 저장한다.
 
 const SHOTS := [
 	["gate", Vector3(70.0, 0.05, -10), "real"],
 	["main_front", Vector3(2.0, 3.85, -41.5), "real"],
 	["main_1f_lobby", Vector3(2.0, 3.85, -50), "real"],
+	["main_1f_lobby_display", Vector3(4.2, 3.85, -50.8), "real"],
 	["main_2f_corridor_w", Vector3(-24.0, 7.65, -56.6), "real"],
 	["main_2f_class_1_1", Vector3(-26.0, 7.65, -50.5), "real"],
 	["main_2f_corridor_c", Vector3(1.0, 7.65, -56.6), "real"],
@@ -34,7 +37,7 @@ const SHOTS := [
 	["roof_ne", Vector3(22.5, 19.05, -55), "real"],
 	["class_1_4", Vector3(9.5, 7.65, -49.5), "real"],
 	["class_1_6", Vector3(26.0, 7.65, -49.5), "real"],
-	["class_2_6_back", Vector3(27.5, 11.45, -47), "real"],
+	["class_2_6_back", Vector3(27.5, 11.45, -48.6), "real"],
 	["class_3_6_front", Vector3(23.5, 15.25, -51), "real"],
 	["corridor_3f", Vector3(-12.0, 11.45, -56.6), "real"],
 	["stair_center_1f", Vector3(2.0, 3.85, -56.4), "real"],
@@ -126,7 +129,7 @@ const SHOTS := [
 	["d_bookwork", Vector3(-65.4, 7.65, 12.4), "real"],
 	["n_corner_sw", Vector3(-57.0, 0.05, -30.9), "real"],
 	["n_corner_se", Vector3(52.6, 0.05, -29.5), "real"],
-	["n_b1_lib_mid", Vector3(-17.0, 0.05, -46.2), "real"],
+	["n_b1_lib_mid", Vector3(-17.0, 0.05, -48.6), "real"],
 	["n_b1_lib_dry", Vector3(-9.0, 0.05, -52.5), "real"],
 	["n_ustair_annex", Vector3(-62.5, 0.05, -24.9), "real"],
 	["n_ustair_annex_s", Vector3(-62.5, 0.05, 21.5), "real"],
@@ -190,6 +193,7 @@ func _run() -> void:
 	var args := OS.get_cmdline_user_args()
 	var out_dir: String = args[0] if args.size() > 0 else "user://shots"
 	var filter: String = args[1] if args.size() > 1 else ""
+	var presets := _parse_presets(args[2] if args.size() > 2 else "")
 	DirAccess.make_dir_recursive_absolute(out_dir)
 	change_scene_to_file("res://scenes/chapters/Chapter1_School.tscn")
 	for i in 10:
@@ -208,12 +212,41 @@ func _run() -> void:
 		party.teleport_party(shot[1])
 		for i in 90:
 			await process_frame
-		await RenderingServer.frame_post_draw
-		var img := root.get_viewport().get_texture().get_image()
-		var path := out_dir.path_join("%s.png" % shot[0])
-		img.save_png(path)
-		print("SHOT ", path)
+		for preset in presets:
+			_set_wear(preset[1])
+			for i in 3:
+				await process_frame
+			await RenderingServer.frame_post_draw
+			var img := root.get_viewport().get_texture().get_image()
+			var file_name: String = shot[0] if preset[0] == "" else "%s_%s" % [shot[0], preset[0]]
+			var path := out_dir.path_join("%s.png" % file_name)
+			img.save_png(path)
+			print("SHOT ", path)
 	quit()
+
+
+## "이름=더러움,낡음,공포;..." -> [[이름, Vector3(세기)], ...]. 비어 있으면 현재 세기로 한 장만 찍는다.
+func _parse_presets(spec: String) -> Array:
+	var out := []
+	for part in spec.split(";", false):
+		var kv := part.split("=", false)
+		var v := kv[1].split(",", false) if kv.size() > 1 else PackedStringArray()
+		if v.size() != 3:
+			push_error("사용감 세기 형식 오류: %s (이름=더러움,낡음,공포)" % part)
+			continue
+		out.append([kv[0].strip_edges(), Vector3(v[0].to_float(), v[1].to_float(), v[2].to_float())])
+	if out.is_empty():
+		out.append(["", Vector3(-1.0, -1.0, -1.0)])
+	return out
+
+
+## 세기(더러움, 낡음, 공포)를 전역 셰이더 파라미터에 넣는다. 음수면 프로젝트 설정값을 그대로 둔다.
+func _set_wear(k: Vector3) -> void:
+	if k.x < 0.0:
+		return
+	RenderingServer.global_shader_parameter_set("wear_dirt_scale", k.x)
+	RenderingServer.global_shader_parameter_set("wear_age_scale", k.y)
+	RenderingServer.global_shader_parameter_set("wear_horror_scale", k.z)
 
 
 ## 이름이 필터(쉼표로 구분한 여러 조각) 가운데 하나를 포함하면 true

@@ -137,7 +137,7 @@ func _run() -> void:
 	_press("interact")
 	await _seconds(0.3)
 	_check(not _fm.is_failing and not screen.is_showing() and not _gm.is_exploration_locked(), "E로 계속하면 실패 화면이 닫힌다")
-	_check(_party.get_active_member().global_position.distance_to(Vector3(11.87, 3.85, -52.2)) < 1.0, "보건실 체크포인트에서 다시 시작한다")
+	_check(_party.get_active_member().global_position.distance_to(Vector3(11.87, 3.85, -53.37)) < 1.0, "보건실 체크포인트에서 다시 시작한다")
 	_check(absf(sabi.vitals.hp - saved_hp) < 1.0, "체력도 체크포인트 시점으로 돌아간다")
 
 	# --- 행동 불능 / 정신 붕괴 ---

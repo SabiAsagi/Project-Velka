@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """부지·건물 외부의 세부 요소 (2차 디테일).
 운동장 수돗가·선수 벤치·체육 용품, 주차장 노면 표시, 분리수거장, 건물 정면 표지와 본관 시계 박공."""
+from school_info import SCHOOL_NAME
 from props_base import Props, bench, label
 from stairs2 import slope_rows
 from site_props import WorldFrame, TOP, PAD, PAVE, fline, wlabel
@@ -123,7 +124,7 @@ def facade_details(sw, batch, plans):
     fp = m1.footprint
     c1 = m1.path + "/Props"
     # 본관 중앙 현관: 차양 위 교명판, 서·동 출입구 표지
-    _plate(batch, sw, c1, m1.y + 3.45, (2.02, fp.z1), "x", 4.4, "OO고등학교", height=0.5, size=0.0052, font=56)
+    _plate(batch, sw, c1, m1.y + 3.45, (2.02, fp.z1), "x", 4.4, SCHOOL_NAME, height=0.5, size=0.0052, font=56)
     _plate(batch, sw, c1, m1.y + 3.43, (-28.04, fp.z1), "x", 2.4, "서측 출입구", size=0.0034, font=44)
     _plate(batch, sw, c1, m1.y + 3.43, (28.04, fp.z1), "x", 2.4, "동측 출입구", size=0.0034, font=44)
     # 옥상 난간 가운데의 시계 박공 (운동장·스탠드에서 올려다보인다)
@@ -143,7 +144,7 @@ def facade_details(sw, batch, plans):
         a = math.radians(theta)
         cxh, cyh = gx + math.sin(a) * length / 2, cy + math.cos(a) * length / 2
         batch.box(cr, "metal_dark", (cxh, cyh, gz + 0.15), (thick, length, 0.014), False, (), "prop", slope_rows("x", -theta))
-    wlabel(sw, cr, gx, gy + 1.0, gz + 0.075, "OO고등학교", 0.0085, 64, (0.24, 0.26, 0.32))
+    wlabel(sw, cr, gx, gy + 1.0, gz + 0.075, SCHOOL_NAME, 0.0085, 64, (0.24, 0.26, 0.32))
     # 별관: 동쪽 외벽의 두 출입문 위
     a1 = plans[("annex", "1F")]
     ca = a1.path + "/Props"
