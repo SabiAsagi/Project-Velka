@@ -85,6 +85,11 @@ global uniform vec3 cutaway_center;
 global uniform float cutaway_radius;
 // 이계 부식도 (WorldPhaseController가 설정, 0 = 현실, 1 = 이계): 얼룩·누수·습기·녹·때가 짙어진다
 global uniform float world_decay;
+// 사용감 전체 세기 (project.godot 전역 셰이더 파라미터, 1.0 = 재질별 기본값 그대로).
+// 재질마다 따로 고치지 않고 맵 전체의 분위기를 한 번에 맞출 때 쓴다.
+global uniform float wear_dirt_scale;   // 더러움: 때·얼룩·벽 밑 때·손때·빗물 자국·바닥 가장자리 먼지·젖은 자국
+global uniform float wear_age_scale;    // 낡은 정도: 모서리 벗겨짐·닳은 도색·녹
+global uniform float wear_horror_scale; // 공포: 누수·습기, 이계 부식도(world_decay)가 더하는 양
 
 varying vec3 v_wp;
 varying vec3 v_lp;
@@ -260,11 +265,15 @@ void fragment() {
 	}
 
 	// 닳은 도색: discard 판정에 쓰는 노이즈는 이 재질에서만 샘플한다 (깊이·그림자 패스 비용)
-	if (paint_wear > 0.0) {
+	float k_dirt = max(wear_dirt_scale, 0.0);
+	float k_age = max(wear_age_scale, 0.0);
+	float k_horror = max(wear_horror_scale, 0.0);
+	float paint_wear_k = paint_wear * k_age;
+	if (paint_wear_k > 0.0) {
 		float pw = (texture(noise_tex, uv / 1.37 + vec2(0.53, 0.11)).g - 0.5) * 0.6
 			+ (texture(noise_tex, uv / 5.3 + vec2(0.21, 0.67)).r - 0.5) * 0.4
 			+ (texture(noise_tex, uv / 0.29 + vec2(0.3, 0.8)).b - 0.5) * 0.5;
-		if (pw > 0.25 - paint_wear * 0.3) {
+		if (pw > 0.25 - paint_wear_k * 0.3) {
 			discard;
 		}
 		col *= 0.88 + 0.12 * smoothstep(0.1, -0.15, pw);
@@ -274,15 +283,22 @@ void fragment() {
 	vec4 nb = texture(noise_tex, uv / 5.3 + vec2(0.21, 0.67));
 	vec4 nf = texture(noise_tex, uv / 1.37 + vec2(0.53, 0.11));
 	float decay = clamp(world_decay, 0.0, 1.0);
-	float stain_k = stain + decay * 0.5;
+	float decay_k = decay * k_horror;
+	float stain_k = stain * k_dirt + decay_k * 0.5;
 	// 누수·습기는 건물(월드 좌표 재질)에만 번진다
 	float arch = 1.0 - step(0.5, object_space);
-	float leak_k = leak + decay * 0.6 * arch;
-	float damp_k = damp + decay * 0.7 * arch;
-	float rust_k = rust > 0.0 ? rust + decay * 0.35 : 0.0;
+	float leak_k = (leak + decay * 0.6 * arch) * k_horror;
+	float damp_k = (damp + decay * 0.7 * arch) * k_horror;
+	float rust_k = rust > 0.0 ? rust * k_age + decay_k * 0.35 : 0.0;
+	float base_dirt_k = base_dirt * k_dirt;
+	float hand_dirt_k = hand_dirt * k_dirt;
+	float streaks_k = streaks * k_dirt;
+	float edge_dirt_k = edge_dirt * k_dirt;
+	float edge_wear_k = edge_wear * k_age;
+	float wet_k = wet * k_dirt;
 	vec3 stain_c = mix(stain_color.rgb, vec3(0.42, 0.2, 0.17), decay * 0.6);
 	if (grime > 0.0) {
-		float gk = grime + decay * 0.12;
+		float gk = grime * k_dirt + decay_k * 0.12;
 		float g = nb.r * 0.55 + nf.g * 0.45;
 		col *= 1.0 - gk + g * gk * 1.4;
 	}
@@ -295,20 +311,20 @@ void fragment() {
 		col *= 1.0 - ring * min(stain_k, 1.2) * 0.3;
 	}
 	if (abs(wn.y) < 0.5) {
-		if (base_dirt > 0.0) {
+		if (base_dirt_k > 0.0) {
 			// 벽 밑: 걸레질·신발에 묻은 때
 			float d = 1.0 - smoothstep(0.0, 0.12 + 0.2 * nf.g, h_ref);
-			col = mix(col, col * vec3(0.6, 0.56, 0.5), d * base_dirt);
+			col = mix(col, col * vec3(0.6, 0.56, 0.5), clamp(d * base_dirt_k, 0.0, 1.0));
 		}
-		if (hand_dirt > 0.0) {
+		if (hand_dirt_k > 0.0) {
 			// 허리~가슴 높이 손때·가방 쓸린 자국
 			float hb = smoothstep(0.7, 0.95, h_lvl) * (1.0 - smoothstep(1.25, 1.6, h_lvl));
-			col *= 1.0 - hb * hand_dirt * smoothstep(0.3, 0.8, nf.b) * 0.22;
+			col *= 1.0 - hb * hand_dirt_k * smoothstep(0.3, 0.8, nf.b) * 0.22;
 		}
-		if (streaks > 0.0) {
+		if (streaks_k > 0.0) {
 			// 빗물 자국: 세로로 길게 늘인 노이즈
 			float sv = texture(noise_tex, vec2(uv.x * 0.9, uv.y * 0.06) + vec2(0.7, 0.2)).g;
-			col *= 1.0 - smoothstep(0.52, 0.78, sv) * (0.4 + 0.6 * nb.r) * streaks * 0.4;
+			col *= 1.0 - smoothstep(0.52, 0.78, sv) * (0.4 + 0.6 * nb.r) * streaks_k * 0.4;
 		}
 		if (damp_k > 0.0) {
 			// 스며 오른 습기: 벽을 따라 들쭉날쭉한 높이까지 누렇게 어둡고, 끝에 마른 물때 선이 남는다
@@ -325,7 +341,7 @@ void fragment() {
 			col = mix(col, col * mix(vec3(0.55, 0.5, 0.42), vec3(0.45, 0.25, 0.2), decay), lk * gate * min(leak_k, 1.0));
 		}
 	}
-	if (shape_round < 0.5 && (edge_wear != 0.0 || edge_dirt > 0.0 || rust_k > 0.0)) {
+	if (shape_round < 0.5 && (edge_wear_k != 0.0 || edge_dirt_k > 0.0 || rust_k > 0.0)) {
 		// 이 면에서 가장 가까운 박스 모서리까지 거리(m). 건물(월드 좌표)은 세로 모서리(벽 귀퉁이·문틀)만 본다
 		vec3 dd = v_half - abs(v_lp);
 		vec3 an = abs(v_ln);
@@ -337,18 +353,18 @@ void fragment() {
 		} else {
 			de = object_space > 0.5 ? min(dd.x, dd.y) : dd.x;
 		}
-		if (edge_wear != 0.0) {
+		if (edge_wear_k != 0.0) {
 			float we = (1.0 - smoothstep(0.003, 0.01 + 0.035 * nf.b, de)) * smoothstep(0.35, 0.65, nf.g + 0.2);
-			if (edge_wear > 0.0) {
-				col = mix(col, wear_color.rgb, we * edge_wear);
+			if (edge_wear_k > 0.0) {
+				col = mix(col, wear_color.rgb, clamp(we * edge_wear_k, 0.0, 1.0));
 			} else {
-				col *= 1.0 + we * edge_wear * 0.6;
+				col *= 1.0 + we * edge_wear_k * 0.6;
 			}
 		}
-		if (edge_dirt > 0.0) {
+		if (edge_dirt_k > 0.0) {
 			// 바닥 판 가장자리(벽 밑)에 먼지·때가 쌓인다. 판은 벽 중심선까지 깔려 있어 0.1m는 벽 아래에 숨는다
 			float dz = 1.0 - smoothstep(0.0, 0.18 + 0.25 * nf.g, de - 0.1);
-			col *= 1.0 - dz * edge_dirt * 0.45;
+			col *= 1.0 - dz * edge_dirt_k * 0.45;
 		}
 		if (rust_k > 0.0) {
 			float bottom = 1.0 - smoothstep(0.0, 0.08 + 0.25 * nf.g, v_lp.y + v_half.y);
@@ -366,8 +382,8 @@ void fragment() {
 	if (surf_scale > 0.0) {
 		rough = clamp(rough * (1.12 - 0.24 * clamp(lum_d, 0.0, 1.5)), 0.04, 1.0);
 	}
-	if (wet > 0.0) {
-		float wm = smoothstep(0.55, 0.7, nb.g * 0.6 + nf.r * 0.4) * wet;
+	if (wet_k > 0.0) {
+		float wm = clamp(smoothstep(0.55, 0.7, nb.g * 0.6 + nf.r * 0.4) * wet_k, 0.0, 1.0);
 		col *= 1.0 - wm * 0.35;
 		rough = mix(rough, 0.1, wm);
 	}
