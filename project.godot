@@ -111,7 +111,7 @@ world_decay={
 }
 wear_dirt_scale={
 "type": "float",
-"value": 1.0
+"value": 1.3
 }
 wear_age_scale={
 "type": "float",

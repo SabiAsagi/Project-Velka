@@ -303,12 +303,19 @@ void fragment() {
 		col *= 1.0 - gk + g * gk * 1.4;
 	}
 	if (stain_k > 0.0) {
-		// 물 얼룩: 안쪽은 누렇게 어둡고, 가장자리에 마른 물때 선이 남는다
-		float s = nb.g;
+		// 물 얼룩: 안쪽은 누렇게 어둡고, 가장자리에 마른 물때 선이 남는다.
+		// 같은 크기 얼룩이 고르게 퍼지면 위장 무늬처럼 보이므로
+		// - 잔 노이즈로 가장자리를 들쭉날쭉하게 하고
+		// - 큰 노이즈(약 19m 주기)로 얼룩이 몰린 곳과 깨끗한 곳을 나누고
+		// - 벽에서는 물이 고이는 아래쪽(벽 밑 ~2m)에 더 짙게 모은다
+		float s = nb.g + (nf.r - 0.5) * 0.14;
+		float cluster = smoothstep(0.3, 0.7, texture(noise_tex, uv / 19.0 + vec2(0.17, 0.83)).g);
+		float low = abs(wn.y) < 0.5 ? mix(0.45, 1.25, 1.0 - smoothstep(0.3, 2.2, h_ref)) : 1.0;
+		float sk = min(stain_k, 1.2) * mix(0.3, 1.25, cluster) * low;
 		float blob = smoothstep(0.6, 0.7, s);
 		float ring = smoothstep(0.57, 0.61, s) * (1.0 - smoothstep(0.61, 0.67, s));
-		col = mix(col, col * stain_c * 1.5, blob * min(stain_k, 1.2) * 0.6);
-		col *= 1.0 - ring * min(stain_k, 1.2) * 0.3;
+		col = mix(col, col * stain_c * 1.5, clamp(blob * sk * 0.6, 0.0, 1.0));
+		col *= 1.0 - ring * sk * 0.3;
 	}
 	if (abs(wn.y) < 0.5) {
 		if (base_dirt_k > 0.0) {
