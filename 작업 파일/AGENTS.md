@@ -13,6 +13,8 @@ Each agent owns a specific domain, enforcing separation of concerns and quality.
 
 ## Project Note
 
+> 저장소 최상위 폴더 규칙(기획서·맵 레퍼런스·캐릭터 원본 자료의 위치)은 상위 폴더의 `../CLAUDE.md`를 따른다.
+
 이 저장소는 이미 진행 중인 프로젝트다 (프로젝트 벨카 — Godot 2.5D 쿼터뷰 미스터리 호러).
 기존 코드는 `src/`가 아니라 `scripts/`, `scenes/`, `resources/`, `data/` 구조를 쓰고,
 기존 설계 문서는 `design/gdd/`가 아니라 `docs/01.기획_및_시스템/` 등 번호 폴더 구조를 쓴다.
