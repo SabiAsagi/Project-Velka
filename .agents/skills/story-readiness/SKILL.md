@@ -58,7 +58,7 @@ Report the scope before proceeding: "Validating [N] story files."
 
 Before checking any stories, load reference documents once (not per-story):
 
-- `design/gdd/systems-index.md` — to know which systems have approved GDDs
+- `기획서/01. 기획 및 시스템/systems-index.md` — to know which systems have approved GDDs
 - `docs/architecture/control-manifest.md` — to know which manifest rules exist
   (if the file does not exist, note it as missing once; do not re-flag per story)
   Also extract the `Manifest Version:` date from the header block if the file exists.

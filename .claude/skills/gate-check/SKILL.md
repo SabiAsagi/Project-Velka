@@ -82,7 +82,7 @@ Note: in `solo` mode, director spawns (CD-PHASE-GATE, TD-PHASE-GATE, PR-PHASE-GA
 ### Gate: Systems Design → Technical Setup
 
 **Required Artifacts:**
-- [ ] Systems index exists at `design/gdd/systems-index.md` with at least MVP systems enumerated
+- [ ] Systems index exists at `기획서/01. 기획 및 시스템/systems-index.md` with at least MVP systems enumerated
 - [ ] All MVP-tier GDDs exist in `design/gdd/` and individually pass `/design-review`
 - [ ] A cross-GDD review report exists in `design/gdd/` (from `/review-all-gdds`)
 

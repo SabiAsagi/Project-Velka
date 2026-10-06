@@ -45,7 +45,7 @@ Then read silently before presenting anything else.
 ### Existence check
 - `production/stage.txt` — if present, read it (authoritative phase)
 - `design/gdd/game-concept.md` — concept exists?
-- `design/gdd/systems-index.md` — systems index exists?
+- `기획서/01. 기획 및 시스템/systems-index.md` — systems index exists?
 - Count GDD files: `design/gdd/*.md` (excluding game-concept.md and systems-index.md)
 - Count ADR files: `docs/architecture/adr-*.md`
 - Count story files: `production/epics/**/*.md` (excluding EPIC.md)
@@ -122,7 +122,7 @@ if the Status section exists.
 
 ### 2c: systems-index.md Format Audit
 
-If `design/gdd/systems-index.md` exists:
+If `기획서/01. 기획 및 시스템/systems-index.md` exists:
 
 1. **Parenthetical status values** — Grep for any Status cell containing
    parentheses: `"Needs Revision ("`, `"In Progress ("`, etc.

@@ -61,7 +61,7 @@ If no engine is configured, stop and prompt:
 Read all approved design documents and extract technical requirements from each:
 
 1. `design/gdd/game-concept.md` — game pillars, genre, core loop
-2. `design/gdd/systems-index.md` — all systems, dependencies, priority tiers
+2. `기획서/01. 기획 및 시스템/systems-index.md` — all systems, dependencies, priority tiers
 3. `.claude/docs/technical-preferences.md` — naming conventions, performance budgets,
    allowed libraries, forbidden patterns
 4. **Every GDD in `design/gdd/`** — for each, extract technical requirements:

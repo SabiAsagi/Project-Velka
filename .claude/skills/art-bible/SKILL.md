@@ -204,7 +204,7 @@ Handle verdict per standard rules in `director-gates.md`. Record the verdict in 
 ## Phase 6: Close
 
 Before presenting next steps, check project state:
-- Does `design/gdd/systems-index.md` exist? → map-systems is done, skip that option
+- Does `기획서/01. 기획 및 시스템/systems-index.md` exist? → map-systems is done, skip that option
 - Does `.claude/docs/technical-preferences.md` contain a configured engine (not `[TO BE CONFIGURED]`)? → setup-engine is done, skip that option
 - Does `design/gdd/` contain any `*.md` files? → design-system has been run, skip that option
 - Does `design/gdd/gdd-cross-review-*.md` exist? → review-all-gdds is done

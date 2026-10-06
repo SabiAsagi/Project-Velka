@@ -67,7 +67,7 @@ Before drafting anything, read the relevant context:
 
 - Search `design/gdd/` for the GDD most relevant to this change. Read the
   sections that this change would affect.
-- Check whether `design/gdd/systems-index.md` exists. If it does, read it to
+- Check whether `기획서/01. 기획 및 시스템/systems-index.md` exists. If it does, read it to
   understand where this system sits in the dependency graph and what tier it
   belongs to. If it does not exist, note "No systems index found — skipping
   dependency tier check." and continue.
@@ -212,7 +212,7 @@ All values must live in `assets/data/[appropriate-file].json`, not hardcoded.
 
 ## Systems Index
 
-This system is not currently in `design/gdd/systems-index.md`.
+This system is not currently in `기획서/01. 기획 및 시스템/systems-index.md`.
 [If it should be added: suggest which layer and priority tier.]
 [If it is too small to track: state "This system is below systems-index
 tracking threshold — quick spec is sufficient."]

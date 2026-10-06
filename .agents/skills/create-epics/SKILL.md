@@ -65,7 +65,7 @@ Using the Step 2a grep results, identify which systems are in scope. Read full d
 
 Read for in-scope systems:
 
-- `design/gdd/systems-index.md` — authoritative system list, layers, priority
+- `기획서/01. 기획 및 시스템/systems-index.md` — authoritative system list, layers, priority
 - In-scope GDDs only (Approved or Designed status, filtered by Step 2a results)
 - `docs/architecture/architecture.md` — module ownership and API boundaries
 - Accepted ADRs **whose domains cover in-scope systems only** — read the "GDD Requirements Addressed", "Decision", and "Engine Compatibility" sections; skip ADRs for unrelated domains

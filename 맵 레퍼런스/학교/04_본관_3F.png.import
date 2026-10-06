@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b82rg4gylwk10"
-path="res://.godot/imported/04_본관_3F.png-20167b90e8c55e786a53a8464b38eca2.ctex"
+path="res://.godot/imported/04_본관_3F.png-f4d549ebb0b64ad5b14b4732ec0fc24d.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://맵 레퍼런스/학교/04_본관_3F.png"
-dest_files=["res://.godot/imported/04_본관_3F.png-20167b90e8c55e786a53a8464b38eca2.ctex"]
+dest_files=["res://.godot/imported/04_본관_3F.png-f4d549ebb0b64ad5b14b4732ec0fc24d.ctex"]
 
 [params]
 

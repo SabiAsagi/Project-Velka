@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://docwbg4o0rtjj"
-path="res://.godot/imported/사비 아사기 - 인게임 모습.png-7fb80dbcec46bee5ae0fed91c76a8620.ctex"
+path="res://.godot/imported/사비 아사기 - 인게임 모습.png-3df04699368bed441bb13905e81f8182.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://캐릭터/사비 아사기 - 인게임 모습.png"
-dest_files=["res://.godot/imported/사비 아사기 - 인게임 모습.png-7fb80dbcec46bee5ae0fed91c76a8620.ctex"]
+dest_files=["res://.godot/imported/사비 아사기 - 인게임 모습.png-3df04699368bed441bb13905e81f8182.ctex"]
 
 [params]
 

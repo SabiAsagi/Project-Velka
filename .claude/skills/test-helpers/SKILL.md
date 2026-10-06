@@ -64,7 +64,7 @@ This ensures generated helpers match the project's existing style, not a
 generic template.
 
 Also read:
-- `design/gdd/systems-index.md` — to know which systems exist
+- `기획서/01. 기획 및 시스템/systems-index.md` — to know which systems exist
 - In-scope GDD(s) — to understand what data types and values need testing
 - `docs/architecture/tr-registry.yaml` — to map requirements to tested systems
 

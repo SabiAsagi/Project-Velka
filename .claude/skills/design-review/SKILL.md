@@ -228,7 +228,7 @@ If the review-log option is selected, append the same format as below. Execute b
 When the verdict is NEEDS REVISION or MAJOR REVISION NEEDED, use separate widgets as before:
 
 Use a second `AskUserQuestion`:
-- Prompt: "May I update `design/gdd/systems-index.md` to mark [system] as [In Review / Approved]?"
+- Prompt: "May I update `기획서/01. 기획 및 시스템/systems-index.md` to mark [system] as [In Review / Approved]?"
 - Options: `[A] Yes — update it` / `[B] No — leave it as-is`
 
 Use a third `AskUserQuestion`:
@@ -252,7 +252,7 @@ Prior verdict resolved: [Yes / No / First review]
 Once the systems-index and review-log widgets are answered, check project state and show one final `AskUserQuestion`:
 
 Before building options, read:
-- `design/gdd/systems-index.md` — find any system with Status: In Review or NEEDS REVISION (other than the one just reviewed)
+- `기획서/01. 기획 및 시스템/systems-index.md` — find any system with Status: In Review or NEEDS REVISION (other than the one just reviewed)
 - Count `.md` files in `design/gdd/` (excluding game-concept.md, systems-index.md) to determine if `/review-all-gdds` is worth offering (≥2 GDDs)
 - Find the next system with Status: Not Started in design order
 

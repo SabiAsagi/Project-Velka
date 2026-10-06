@@ -40,7 +40,7 @@ fi
 # Priority 2: Auto-detect from artifacts
 if [ -z "$stage" ]; then
   concept_file="$cwd/design/gdd/game-concept.md"
-  systems_file="$cwd/design/gdd/systems-index.md"
+  systems_file="$cwd/기획서/01. 기획 및 시스템/systems-index.md"
   tech_prefs="$cwd/.claude/docs/technical-preferences.md"
 
   has_concept=false

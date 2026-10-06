@@ -86,7 +86,7 @@ Full-read the in-scope documents:
 
 1. `design/gdd/game-concept.md` — game vision, core loop, MVP definition
 2. `design/gdd/game-pillars.md` if it exists — design pillars and anti-pillars
-3. `design/gdd/systems-index.md` — authoritative system list, layers, dependencies, status
+3. `기획서/01. 기획 및 시스템/systems-index.md` — authoritative system list, layers, dependencies, status
 4. **Every in-scope system GDD in `design/gdd/`** — read completely (skip
    game-concept.md and systems-index.md — those are read above)
 

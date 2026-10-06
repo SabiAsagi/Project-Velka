@@ -68,7 +68,7 @@ Check in this order:
    - `src/` has 10+ source files → `production`
    - `production/stories/*.md` exists → `pre-production`
    - `docs/architecture/adr-*.md` exists → `technical-setup`
-   - `design/gdd/systems-index.md` exists → `systems-design`
+   - `기획서/01. 기획 및 시스템/systems-index.md` exists → `systems-design`
    - `design/gdd/game-concept.md` exists → `concept`
    - Nothing → `concept` (fresh project)
 

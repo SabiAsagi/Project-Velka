@@ -23,7 +23,7 @@ the game needs visually. Run once before asset spec work begins.
 
 ### Step 1 — Gather from docs
 Read all available source material in parallel:
-- `design/gdd/systems-index.md` — extract every system listed
+- `기획서/01. 기획 및 시스템/systems-index.md` — extract every system listed
 - All GDDs in `design/gdd/` — extract: Visual/Audio Requirements sections, UI elements mentioned, VFX events, any named entities (characters, enemies, buildings, items)
 - `design/art/art-bible.md` — extract: any named visual categories, asset type expectations
 - `design/narrative/` — scan for any character or world entity documents if they exist (optional — not required)

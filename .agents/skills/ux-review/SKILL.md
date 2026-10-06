@@ -178,7 +178,7 @@ Run all checks against a `hud-design.md`-based document.
 
 ### GDD Alignment
 
-- [ ] All systems in `design/gdd/systems-index.md` with UI category have
+- [ ] All systems in `기획서/01. 기획 및 시스템/systems-index.md` with UI category have
   representation in HUD (or justified absence)
 
 ---
