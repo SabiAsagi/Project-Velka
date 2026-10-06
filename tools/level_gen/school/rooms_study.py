@@ -18,48 +18,49 @@ def _common(ctx, notice=True):
 
 
 def study_2f(ctx):
-    """2층: 6인용 긴 책상 4개(앞쪽), 1.5m 분리 통로, 창가 개인석 6개, 그룹 화이트보드, 공용 교과서 책장, 얇은 밝은 커튼"""
+    """2층: 6인용 긴 책상 4개(앞쪽), 분리 통로, 창가 개인석 4개, 그룹 화이트보드, 공용 교과서 책장, 얇은 밝은 커튼
+    (자습실 폭 약 5.9m x 깊이 약 7.7m: 교실을 복도 쪽으로 넓히며 자습실이 좁아졌다)"""
     p, W, D = ctx.p, ctx.W, ctx.D
     _common(ctx)
-    for i, (u, v) in enumerate(((W * 0.3, 2.9), (W * 0.7, 2.9), (W * 0.3, 4.9), (W * 0.7, 4.9))):
+    for i, (u, v) in enumerate(((W / 2 - 1.2, 2.75), (W / 2 + 1.2, 2.75), (W / 2 - 1.2, 4.55), (W / 2 + 1.2, 4.55))):
         table(p, u, v, 1.9, 0.9, 3, along="u", key="s2%d" % i)
         for k in range(2):
             p.box("paper", u - 0.5 + 0.8 * k, v, 0.3, 0.21, 0.75, 0.76)
-    for i in range(6):
-        u = 1.2 + (W - 2.4) * i / 5
+    for i in range(4):
+        u = 1.3 + (W - 2.6) * i / 3
         carrel(p, u, D - 0.62, facing=1, w=0.9, items=("books",) if i % 2 == 0 else (), key="c2%d" % i)
     whiteboard_wall(p, W, D, "right", 3.9, 2.2)
-    shelf_along(p, W, D, "left", 3.9, 2.0, 0.35, 1.2, 3, 0.85, key="tb2")
+    shelf_along(p, W, D, "left", 2.9, 1.6, 0.35, 1.2, 3, 0.85, key="tb2")
     for w in ctx.windows_on("back"):
         pass
     _light_curtains(ctx)
 
 
 def study_3f(ctx):
-    """3층: 4인용 책상 3개 + 낮은 책장 칸막이 + 칸막이 개인석 16개, 진로 서적, 충전함, 복사기, 과제 일정"""
+    """3층: 4인용 책상 2개 + 낮은 책장 칸막이 + 칸막이 개인석 6개, 진로 서적, 충전함, 복사기, 과제 일정"""
     p, W, D = ctx.p, ctx.W, ctx.D
     _common(ctx)
-    for i, u in enumerate((W * 0.25, W * 0.5, W * 0.75)):
+    for i, u in enumerate((W / 2 - 1.2, W / 2 + 1.2)):
         table(p, u, 2.9, 1.3, 0.9, 2, along="u", key="s3%d" % i)
     for u0, u1 in ((0.9, W / 2 - 0.7), (W / 2 + 0.7, W - 0.9)):
         shelf_unit(p, (u0 + u1) / 2, 4.3, u1 - u0, 0.35, 0.95, 2, 0.8, key="d3%d" % int(u0), front=-1)
-    for block, vb in enumerate((5.65, 8.7)):
+    for block, vb in enumerate((5.9,)):
         for row, facing in ((0, -1), (1, 1)):
             # 등을 맞댄 두 줄: 앞판끼리 맞닿고 의자는 바깥쪽
             v = vb + 0.3 if facing < 0 else vb - 0.3
-            for i in range(4):
-                u = W / 2 - 1.8 + 1.2 * i if i < 2 else W / 2 - 1.8 + 1.2 * i + 0.4
+            for i in range(3):
+                u = W / 2 + 1.2 * (i - 1)
                 items = ("books", "bag") if (i + row + block) % 3 == 0 else ("number",)
                 carrel(p, u, v, facing=facing, w=0.85, items=items, key="c3%d%d%d" % (block, row, i))
     shelf_along(p, W, D, "right", 5.8, 2.2, 0.35, 1.9, 5, 0.8, key="car3", book_mats=("book_b", "book_c", "book_a"))
-    wall_item(p, W, D, "right", 8.0, 0.6, 0.0, 0.45, 0.0, 1.2, "charge_box", collide=True)
+    wall_item(p, W, D, "right", 3.2, 0.6, 0.0, 0.45, 0.0, 1.2, "charge_box", collide=True)
     wall_item(p, W, D, "left", 5.0, 1.4, 0.0, 0.02, 1.2, 2.0, "cork")
     wall_item(p, W, D, "left", 5.0, 1.2, 0.02, 0.004, 1.3, 1.9, "paper")
     _light_curtains(ctx)
 
 
 def study_4f(ctx):
-    """4층: 개인 칸막이 24석 (가운데 1.5m 세로 통로, 1.2m 가로 통로), 좌석 번호·스탠드·문제집, 감독석,
+    """4층: 개인 칸막이 16석 (가운데 세로 통로, 1.4m 가로 통로), 좌석 번호·스탠드·문제집, 감독석,
     모의고사 보관함, 휴대전화 보관함, 조용히 안내, 창 블라인드"""
     p, W, D = ctx.p, ctx.W, ctx.D
     _common(ctx, notice=False)
@@ -70,9 +71,9 @@ def study_4f(ctx):
     for qu in (-1, 1):
         for qv in (0, 1):
             for r in range(2):
-                v = (2.4, 3.7, 6.0, 7.3)[qv * 2 + r]
-                for c in range(3):
-                    u = cu + qu * (0.75 + 0.45 + c * 0.95)
+                v = (2.3, 3.5, 4.9, 6.1)[qv * 2 + r]
+                for c in range(2):
+                    u = cu + qu * (0.9 + c * 0.95)
                     carrel(p, u, v, facing=-1, w=0.85, lamp=True,
                            items=("number", "books") if (c + r) % 2 == 0 else ("number",), key="c4%d%d%d%d" % (qu, qv, r, c))
     blinds(ctx, "back", drop=0.6)

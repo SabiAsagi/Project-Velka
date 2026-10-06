@@ -9,7 +9,7 @@ from geometry import Rect, subtract
 from source import load_exterior
 from stairs2 import slope_rows, stair_path, flat_rail, sloped_rail, flight
 from batch import rows_y
-from plan import FOOTPRINTS as _FP, GYM_Z0, GYM_Z1
+from plan import FOOTPRINTS as _FP, GYM_Z0, GYM_Z1, MAIN_FRONT_Z
 from emit import q
 
 MAIN_FOOTPRINT = _FP["main"]
@@ -100,8 +100,8 @@ PATHS_UP = [
     ("Path", 2.8, [(RX, STAIR_TOP), (RX, Z_F - 1.75)], (False, False)),                  # 경사로 위
     ("Path", 4.0, [(0.0, STAND_Z0), (0.0, Z_F)], (False, False)),                        # 조회대 계단 ~ 중앙 보행축
     ("Path", 1.2, [(-STAND_X, -36.0), (STAND_X, -36.0)], (False, False)),                # 스탠드 상단 통로
-    ("Path", 3.0, [(-28.04, -44.74), (-28.04, Z_F)], (False, False)),                    # 서·동 출입구 앞
-    ("Path", 3.0, [(28.04, -44.74), (28.04, Z_F)], (False, False)),
+    ("Path", 3.0, [(-28.04, MAIN_FRONT_Z + 0.01), (-28.04, Z_F)], (False, False)),        # 서·동 출입구 앞
+    ("Path", 3.0, [(28.04, MAIN_FRONT_Z + 0.01), (28.04, Z_F)], (False, False)),
     ("Path", 3.0, [(-33.1, Z_F), (-33.1, -66.7)], (False, False)),                       # 본관 서측 외곽 보행로
     ("Path", 1.5, [(-34.6, -65.95), (41.1, -65.95)], (False, False)),                    # 주차장 남쪽 보도 (서·후문·동 보행로를 잇는다)
     ("Path", 3.0, [(41.1, Z_F), (41.1, -66.7), (46.9, -66.7)], (False, False)),          # 본관 동측 ~ 자전거 거치대
@@ -115,7 +115,7 @@ PLAZAS = [
     (Rect(54.5, -15.0, 75.6, -5.0), False),                   # 정문 진입광장
     (Rect(-STAND_X - 2 * CHEEK - STAIR_W, STAIR_FOOT, -STAND_X, -26.6), False),          # 서측 계단 앞
     (Rect(-75.0, -36.4, -68.6, -32.4), False),                # 분리수거장 바닥
-    (Rect(-3.2, -44.75, 5.2, -42.9), True),                   # 중앙 현관 앞
+    (Rect(-3.2, MAIN_FRONT_Z, 5.2, -42.9), True),             # 중앙 현관 앞
     (Rect(43.22, -73.78, 50.6, -65.19), True),                # 자전거 거치대
 ]
 # 블록아웃에 없는 면 구획 (종류, 이름, 범위, 고지대 위 여부)
@@ -413,7 +413,11 @@ def build_site(sw, batch, parent, zone_cb):
     lists = {False: [], True: []}
     for name, kind in AREA_PADS.items():
         b = ext[name]
-        lists[b.min[1] > 1.0].append((kind, name, Rect(b.min[0], b.min[2], b.max[0], b.max[2])))
+        rect = Rect(b.min[0], b.min[2], b.max[0], b.max[2])
+        if name == "NorthGardenBand":
+            # 본관 앞면을 당기며 생긴 띠(앞면 ~ 보행로 가장자리)를 잔디로 채운다
+            rect = Rect(rect.x0, MAIN_FRONT_Z - 0.3, rect.x1, Z_F - 1.75)
+        lists[b.min[1] > 1.0].append((kind, name, rect))
     for kind, name, rect, high in EXTRA_PADS:
         lists[high].append((kind, name, rect))
     tops = {}
@@ -475,6 +479,7 @@ def build_site(sw, batch, parent, zone_cb):
             ("site_stand", "운동장 스탠드", Rect(-STAND_X, STAND_Z0, STAND_X, -27.2), 0.0, 7.0),
             ("site_gate", "정문 진입광장", Rect(51.4, -20, 83, 0), 0.0, 4.0),
             ("site_front_path", "본관 앞 보행로", Rect(-50, -44.7, 53.4, -35.5), T, 4.0),
+            ("site_main_front", "본관 앞 화단", Rect(-30.0, MAIN_FRONT_Z + 0.05, 30.0, -44.75), T, 4.0),
             ("site_rear", "후문 주차장", Rect(-38, -78, 51, -65), T, 4.0),
             ("site_main_w", "본관 서측 마당", Rect(-56.4, -65.0, -30.1, -44.8), T, 4.0),
             ("site_main_e", "본관 동측 마당", Rect(30.1, -65.0, 53.4, -44.8), T, 4.0),

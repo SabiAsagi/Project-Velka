@@ -68,21 +68,23 @@ def admin(ctx):
 
 
 def staff_office(ctx):
-    """교무실: 교사 책상 16개(4열 4줄, 가운데 1.2~1.5m 주통로), 부장 자리, 끝의 회의 테이블, 공용 책장, 인쇄기,
+    """교무실: 교사 책상 10개(4열 3줄, 셋째 줄 가운데는 회의 테이블, 가운데 1.2~1.5m 주통로), 부장 자리, 공용 책장, 인쇄기,
     머그컵·시험지 묶음·이름표, 열쇠 반납판, 창가 낮은 수납장"""
     p, W, D = ctx.p, ctx.W, ctx.D
     cols = [W * 0.17, W * 0.35, W * 0.65, W * 0.83]
     rows = [2.3, 3.9, 5.5]
+    # 회의 테이블 (안쪽 끝). 교무실 깊이가 약 7.7m라 셋째 줄 가운데 두 책상 자리를 회의 테이블이 쓴다
+    table(p, W * 0.5, D - 2.35, 3.2, 1.1, 4, along="u", key="meet")
     for r, v in enumerate(rows):
         for c, u in enumerate(cols):
             facing = 1 if r % 2 == 0 else -1
+            if r == len(rows) - 1 and c in (1, 2):
+                continue                                   # 회의 테이블 자리
             if p.free(u - 0.65, v - 0.8, u + 0.65, v + 0.8):
                 office_desk(p, u, v, facing=facing, w=1.2, items=("monitor", "papers", "mug", "nameplate") + (("exam",) if (r + c) % 3 == 0 else ()),
                             key="st%d%d" % (r, c))
     # 부장 교사 자리 (앞쪽, 조금 큰 책상)
     office_desk(p, W * 0.5, 1.75, facing=1, w=1.6, items=("monitor", "papers", "mug", "nameplate"), key="head")
-    # 회의 테이블 (안쪽 끝)
-    table(p, W * 0.5, D - 2.35, 3.2, 1.1, 4, along="u", key="meet")
     # 창가 낮은 수납장, 공용 책장, 인쇄기, 열쇠 반납판, 커피 테이블
     wall_item(p, W, D, "back", W * 0.5, W - 2.0, 0.0, 0.45, 0.0, 0.85, "cabinet_wood", collide=True)
     shelf_along(p, W, D, "left", D * 0.45, 2.4, 0.35, 1.9, 5, 0.8, key="stb")

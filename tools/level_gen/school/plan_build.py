@@ -3,7 +3,7 @@
 from geometry import Rect, rect_of_box
 from source import load_buildings, BUILDINGS, FLOOR_H, to_world
 from classify import classify, level_index
-from plan import GYM_Z0, GYM_Z1
+from plan import GYM_Z0, GYM_Z1, MAIN_FRONT_Z, MAIN_FRONT_Z_BLOCKOUT, MAIN_FRONT_SHIFT
 from plan import (LevelPlan, Region, Door, Opening, normalize, Grid, FOOTPRINTS, boundary_type, style_of,
                   PART_T, FACADE_T, INNER_T, WALL_H)
 
@@ -42,6 +42,54 @@ def blockout_plans():
         elif c in ("door", "entrance"):
             lv.markers.append(b)
     return plans
+
+
+# ------------------------------------------------------------------ 본관 남쪽 동 재구획
+
+# 2~4층 교실 줄의 칸 경계 (월드 x). 블록아웃은 교실 약 8.2m x 6 + 자습실 11.0m였다.
+# 교실은 복도 쪽이 길어야 하므로(칠판 벽이 짧은 변) 교실을 9.0m로 넓히고 자습실을 6.0m로 줄인다.
+CLASS_ROW_OLD = (-29.98, -21.85, -13.66, -5.51, 5.51, 13.66, 21.85, 29.98)
+CLASS_ROW_NEW = (-29.98, -21.0, -12.0, -3.0, 3.0, 12.0, 21.0, 29.98)
+CLASS_W = CLASS_ROW_NEW[1] - CLASS_ROW_NEW[0]
+SOUTH_WALL_Z = -55.18          # 복도와 남쪽 동 사이 벽 (블록아웃 기준)
+
+
+def _remap_row(x):
+    """교실 줄 경계 x를 새 경계로 옮긴다 (경계 위의 값만 쓴다)."""
+    for o, n in zip(CLASS_ROW_OLD, CLASS_ROW_NEW):
+        if abs(x - o) < 0.06:
+            return n
+    return x
+
+
+def reshape_main_south(plans):
+    """본관 남쪽 동: 앞면을 MAIN_FRONT_Z로 당기고, 2~4층은 교실 칸을 다시 나눈다.
+    방 사각형은 경계를 옮기고, 문 표식은 가까운 방 모서리에서의 거리를 그대로 유지한다."""
+    for (b, lname), lv in plans.items():
+        if b != "main" or lname == "Roof":
+            continue
+        rows = lname in ("2F", "3F", "4F")
+        old_rooms = [r.rect for r in lv.regions if r.rect.z0 > SOUTH_WALL_Z - 0.2]
+        for r in lv.regions:
+            rr = r.rect
+            if rr.z0 < SOUTH_WALL_Z - 0.2:
+                continue
+            z1 = MAIN_FRONT_Z if abs(rr.z1 - MAIN_FRONT_Z_BLOCKOUT) < 0.1 else rr.z1
+            x0, x1 = (_remap_row(rr.x0), _remap_row(rr.x1)) if rows else (rr.x0, rr.x1)
+            r.rect = Rect(x0, rr.z0, x1, z1)
+        for m in lv.markers:
+            cx, cz = m.center[0], m.center[2]
+            if abs(cz - MAIN_FRONT_Z_BLOCKOUT) < 0.8:
+                m.center[2] = cz + MAIN_FRONT_SHIFT                  # 앞면 출입구
+            elif rows and abs(cz - SOUTH_WALL_Z) < 0.4:
+                old = next((o for o in old_rooms if o.x0 - 0.01 <= cx <= o.x1 + 0.01), None)
+                if old is None:
+                    continue
+                x0n, x1n = _remap_row(old.x0), _remap_row(old.x1)
+                if cx - old.x0 <= old.x1 - cx:
+                    m.center[0] = x0n + (cx - old.x0)                # 앞문: 서쪽 벽에서의 거리 유지
+                else:
+                    m.center[0] = x1n - (old.x1 - cx)                # 뒷문: 동쪽 벽에서의 거리 유지
 
 
 # ------------------------------------------------------------------ 문 표식 -> 문
@@ -151,8 +199,9 @@ def drop_markers(plan, *names):
 
 def main_overrides(plans):
     f1 = plans[("main", "1F")]
-    f1.add(Region("서측 현관 통로", "passage", W("main", -30.0, MAIN_CORR[1], -26.087, 9.25)))
-    f1.add(Region("동측 현관 통로", "passage", W("main", 26.087, MAIN_CORR[1], 30.0, 9.25)))
+    front = 9.25 + MAIN_FRONT_SHIFT                                  # 앞면 (로컬 z)
+    f1.add(Region("서측 현관 통로", "passage", W("main", -30.0, MAIN_CORR[1], -26.087, front)))
+    f1.add(Region("동측 현관 통로", "passage", W("main", 26.087, MAIN_CORR[1], 30.0, front)))
     drop_markers(f1, "InternalSouthDoors/중앙 로비", "NorthRearEntrance")
     f1.special.add("lobby_opening")
     f1.special.add("rear_door")
@@ -191,14 +240,14 @@ def anomaly_extension(f3):
     c = f3.corridor()
     east = f3.footprint.x1
     ext = LevelPlan("main", "3F", f3.index)
-    ext.footprint = Rect(east, c.z0 - 0.175, east + 8.15, f3.footprint.z1)
+    ext.footprint = Rect(east, c.z0 - 0.175, east + CLASS_W, f3.footprint.z1)
     g = ("otherworld_only",)
-    ext.add(Region("복도", "corridor", Rect(east, c.z0 - 0.175, east + 8.15, c.z1), groups=g, tags={"fixed"}))
-    room = ext.add(Region("2-7 교실", "room", Rect(east, c.z1, east + 8.15, f3.footprint.z1), groups=g, tags={"fixed"},
+    ext.add(Region("복도", "corridor", Rect(east, c.z0 - 0.175, east + CLASS_W, c.z1), groups=g, tags={"fixed"}))
+    room = ext.add(Region("2-7 교실", "room", Rect(east, c.z1, east + CLASS_W, f3.footprint.z1), groups=g, tags={"fixed"},
                           display="2-7 교실"))
     ext.openings.append(Opening("z", east, c.z0, c.z1))
     y_face = east + FACADE_T + INNER_T
-    for cx in (y_face + 0.91, east + 8.15 - FACADE_T - INNER_T - 0.75):
+    for cx in (y_face + 0.91, east + CLASS_W - FACADE_T - INNER_T - 0.75):
         ext.doors.append(Door("sliding", "x", c.z1, cx, 1.1, name="Door", room=room.name, plate="2-7", swing_toward=1, groups=g))
     ext.groups = g
     ext.no_window_lines = {("z", round(east, 3))}
@@ -509,6 +558,7 @@ def add_missing_elevator_doors(plan):
 
 def build_plans():
     plans = blockout_plans()
+    reshape_main_south(plans)
     main_overrides(plans)
     annex_overrides(plans)
     gym_plans(plans)

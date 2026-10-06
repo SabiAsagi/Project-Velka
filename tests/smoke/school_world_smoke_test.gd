@@ -44,10 +44,10 @@ func _run() -> void:
 	await _walk([Vector3(80.0, 0.05, -10.0)], 2.0)
 	_check(_member().global_position.x < 76.0, "닫힌 정문 밖으로는 나갈 수 없다")
 	var ok := await _walk([Vector3(62.0, 0.05, -10.0), Vector3(49.4, 0.05, -10.0), Vector3(49.4, 0.05, -26.5),
-		Vector3(49.4, 3.85, -39.0), Vector3(49.4, 3.85, -41.2), Vector3(2.0, 3.85, -41.2), Vector3(2.0, 3.85, -43.4)], 14.0)
+		Vector3(49.4, 3.85, -39.0), Vector3(49.4, 3.85, -41.2), Vector3(2.0, 3.85, -41.2), Vector3(2.0, 3.85, -45.8)], 14.0)
 	_check(ok and _member().global_position.y > 3.6, "동측 경사로로 본관 앞 보행로(고지대)에 오른다")
 	await _open_nearest_door()
-	ok = await _walk([Vector3(2.0, 3.85, -47.0), Vector3(2.0, 3.85, -56.6)])
+	ok = await _walk([Vector3(2.0, 3.85, -49.4), Vector3(2.0, 3.85, -56.6)])
 	_check(ok and String(_hud.zone_label.text).contains("본관 1F"), "중앙 현관으로 본관 1층에 들어간다")
 
 	# --- 중앙 계단: 1층 -> 2층 -> 3층 -> 4층 -> 옥상 ---

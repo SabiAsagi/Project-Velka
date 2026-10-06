@@ -5,6 +5,7 @@
 import math
 from props_base import Props, bench, label
 from batch import rows_y
+from plan import MAIN_FRONT_Z
 
 TOP = 3.8
 PAD = 0.010         # 면 구획(잔디·코트 등) 윗면 높이 (그 바닥 기준)
@@ -218,13 +219,13 @@ def front_plateau(p, sw, parent):
     (건물 벽 옆 나무는 수관이 벽 안으로 들어가지 않게 좁은 상록수만 쓴다)"""
     # 남쪽(정면): 세 출입구(x = -28.04, 2.02, 28.04) 앞 포장은 비운다
     for i, (x0, x1) in enumerate(((-26.2, -3.6), (5.6, 26.2))):
-        strip(p, x0, -44.55, x1, -43.3, "fa%d" % i, 5.6)
+        strip(p, x0, MAIN_FRONT_Z + 0.2, x1, MAIN_FRONT_Z + 1.45, "fa%d" % i, 5.6)
     # 서·동 벽, 북쪽(후문 x = 2.02 앞은 비운다)
     strip(p, -31.5, -62.4, -30.25, -45.6, "mw", 5.6)
     strip(p, 30.25, -62.4, 31.5, -45.6, "me", 5.6)
     strip(p, -29.6, -64.8, 0.1, -63.5, "mn0", 5.9)
     strip(p, 3.9, -64.8, 29.6, -63.5, "mn1", 6.4)
-    for x, z in ((-28.04, -44.2), (2.02, -44.2), (28.04, -44.2), (2.02, -63.85)):
+    for x, z in ((-28.04, MAIN_FRONT_Z + 0.55), (2.02, MAIN_FRONT_Z + 0.55), (28.04, MAIN_FRONT_Z + 0.55), (2.02, -63.85)):
         p.box("mat_dark", x, z, 2.2, 0.9, PAVE, PAVE + 0.012)
     # 스탠드 쪽 화단과 수령 오래된 교목 (좌우 대칭). 가운데 4m 보행축과 양끝 계단 앞은 비운다
     for i, (x0, x1) in enumerate(((-40.5, -3.2), (3.2, 40.5))):
