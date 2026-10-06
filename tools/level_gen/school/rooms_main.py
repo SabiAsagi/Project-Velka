@@ -110,8 +110,8 @@ def _world(ctx, u, v, h):
 
 
 def lobby(ctx):
-    """중앙 현관·로비 (앞 = 현관 유리문 벽): 매트, 우산꽂이, 방문객 기록대, 안내도, 연혁·교훈(서),
-    트로피 진열장·우승기·교복 진열장·졸업사진(동), 대기 벤치, AED, 휠체어, 분실물함.
+    """중앙 현관·로비 (앞 = 현관 유리문 벽): 매트, 우산꽂이, 트로피 진열장·우승기·교복 진열장·졸업사진(서),
+    방문객 기록대·연혁·교훈·안내도(동), 대기 벤치, AED, 휠체어, 분실물함.
     현관에서 복도까지 2.5~3m 직선 동선은 비운다."""
     p, W, D = ctx.p, ctx.W, ctx.D
     doors = ctx.doors_on("front")
@@ -122,29 +122,27 @@ def lobby(ctx):
         p.box("bin_gray", u, 0.45, 0.32, 0.32, 0.0, 0.6)
         for k in range(4):
             p.box("umbrella", u - 0.08 + 0.05 * k, 0.45, 0.035, 0.035, 0.3, 0.9 + 0.04 * k)
-    # 서쪽(왼쪽) 벽: 연혁·교훈 액자와 학교 안내도, 방문객 기록대
     wside, eside = ("left", "right") if ctx.frame.world_side("left") == "x0" else ("right", "left")
-    wall_item(p, W, D, wside, D * 0.35, 1.4, 0.0, 0.04, 1.3, 2.3, "frame_wood")
-    wall_item(p, W, D, wside, D * 0.35, 1.3, 0.04, 0.01, 1.35, 2.25, "paper")
-    wall_item(p, W, D, wside, D * 0.62, 1.8, 0.0, 0.03, 1.0, 2.1, "frame_alu")
-    wall_item(p, W, D, wside, D * 0.62, 1.74, 0.03, 0.01, 1.03, 2.07, "floor_map")
-    u_w = 0.35 if wside == "left" else W - 0.35
-    p.box("office_top", u_w, D * 0.18, 0.6, 1.0, 0.95, 1.0, collide=True)
-    p.box("office_panel", u_w, D * 0.18, 0.5, 0.9, 0.0, 0.95)
-    p.box("paper", u_w, D * 0.18, 0.3, 0.4, 1.0, 1.01)
-    # 동쪽(오른쪽) 벽: AED, 트로피 진열장(+우승기), 교복 진열장, 위쪽 졸업사진, 분실물함
-    wall_item(p, W, D, eside, 0.75, 0.4, 0.0, 0.16, 1.1, 1.55, "aed")
-    trophy_showcase(ctx, eside, 2.35, 2.2)
-    uniform_showcase(ctx, eside, 4.85, 1.5)
+    # 서쪽 벽 (쿼터뷰 카메라가 정면으로 보는 벽): AED, 트로피 진열장(+우승기), 교복 진열장, 위쪽 졸업사진, 분실물함
+    wall_item(p, W, D, wside, 0.75, 0.4, 0.0, 0.16, 1.1, 1.55, "aed")
+    trophy_showcase(ctx, wside, 2.35, 2.2)
+    uniform_showcase(ctx, wside, 4.85, 1.5)
     for i in range(5):
-        wall_item(p, W, D, eside, 1.45 + 0.5 * i, 0.4, 0.0, 0.03, 2.5, 2.8, "photo")
-    wall_item(p, W, D, eside, D - 0.75, 0.6, 0.02, 0.45, 0.0, 0.8, "lost_box", collide=True)
-    # 휠체어는 서쪽 벽 안쪽 (방문객 기록대 반대쪽 끝)
-    wheel_u = 0.5 if wside == "left" else W - 0.5
+        wall_item(p, W, D, wside, 1.45 + 0.5 * i, 0.4, 0.0, 0.03, 2.5, 2.8, "photo")
+    wall_item(p, W, D, wside, D - 0.75, 0.6, 0.02, 0.45, 0.0, 0.8, "lost_box", collide=True)
+    # 동쪽 벽: 방문객 기록대, 연혁·교훈 액자와 학교 안내도, 대기 벤치, 안쪽 끝 휠체어 (가운데 통로는 비움)
+    u_e = W - 0.35 if eside == "right" else 0.35
+    p.box("office_top", u_e, D * 0.18, 0.6, 1.0, 0.95, 1.0, collide=True)
+    p.box("office_panel", u_e, D * 0.18, 0.5, 0.9, 0.0, 0.95)
+    p.box("paper", u_e, D * 0.18, 0.3, 0.4, 1.0, 1.01)
+    wall_item(p, W, D, eside, D * 0.35, 1.4, 0.0, 0.04, 1.3, 2.3, "frame_wood")
+    wall_item(p, W, D, eside, D * 0.35, 1.3, 0.04, 0.01, 1.35, 2.25, "paper")
+    wall_item(p, W, D, eside, D * 0.62, 1.8, 0.0, 0.03, 1.0, 2.1, "frame_alu")
+    wall_item(p, W, D, eside, D * 0.62, 1.74, 0.03, 0.01, 1.03, 2.07, "floor_map")
+    bench(p, W - 0.3 if eside == "right" else 0.3, D * 0.55, 1.4, along_u=False)
+    wheel_u = W - 0.5 if eside == "right" else 0.5
     p.box("metal_dark", wheel_u, D - 1.1, 0.55, 0.6, 0.45, 0.5)
     p.box("metal_dark", wheel_u, D - 1.1 + 0.28, 0.5, 0.05, 0.5, 0.95)
-    # 대기 벤치 (서쪽 벽. 동쪽 벽은 진열장이 차지하고, 가운데 통로는 비움)
-    bench(p, 0.3 if wside == "left" else W - 0.3, D * 0.55, 1.4, along_u=False)
 
 
 def admin(ctx):
