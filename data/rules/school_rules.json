@@ -1,6 +1,6 @@
 {
 	"ruleset_id": "school_rules_ch1",
-	"title": "OO고등학교 안전수칙서",
+	"title": "무진고등학교 안전수칙서",
 	"description": "교내 각 구역에 부착된 안전수칙 및 생존자 행동 지침",
 	"categories": [
 		{ "id": "preamble", "name": "안내문 서두" },
