@@ -881,7 +881,7 @@ def gate_area(p, sw, parent, ext):
     # 교명석과 문기둥 등
     p.box("stone_dark", 72.6, -16.4, 2.6, 0.7, 0.0, 0.3)
     p.box("stone", 72.6, -16.4, 2.3, 0.5, 0.3, 1.5, collide=True)
-    wlabel(sw, parent, 72.6, 0.95, -16.13, SCHOOL_NAME, 0.0075, 64, (0.12, 0.12, 0.14))
+    wlabel(sw, parent, 72.6, 0.95, -16.13, SCHOOL_NAME, 0.0052, 64, (0.12, 0.12, 0.14))   # 교명석 폭 2.3m 안에 들어가는 크기
     for name in ("MainGateNorthPost", "MainGateSouthPost"):
         b = ext[name]
         p.box("lamp_head", (b.min[0] + b.max[0]) / 2, (b.min[2] + b.max[2]) / 2, 0.5, 0.5, b.max[1], b.max[1] + 0.3)
