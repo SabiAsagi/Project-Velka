@@ -1,6 +1,7 @@
-[gd_resource type="SpriteFrames" load_steps=21 format=3]
+[gd_resource type="SpriteFrames" load_steps=30 format=3]
 
 [ext_resource type="Texture2D" path="res://assets/characters/sprites/shamu_walk_side.png" id="tex_side"]
+[ext_resource type="Texture2D" path="res://assets/characters/sprites/shamu_run_side.png" id="tex_run_side"]
 
 [sub_resource type="AtlasTexture" id="Atlas_side_00"]
 atlas = ExtResource("tex_side")
@@ -78,6 +79,38 @@ region = Rect2(4335, 0, 255, 409)
 atlas = ExtResource("tex_side")
 region = Rect2(4590, 0, 255, 409)
 
+[sub_resource type="AtlasTexture" id="Atlas_run_side_00"]
+atlas = ExtResource("tex_run_side")
+region = Rect2(0, 0, 255, 409)
+
+[sub_resource type="AtlasTexture" id="Atlas_run_side_01"]
+atlas = ExtResource("tex_run_side")
+region = Rect2(255, 0, 255, 409)
+
+[sub_resource type="AtlasTexture" id="Atlas_run_side_02"]
+atlas = ExtResource("tex_run_side")
+region = Rect2(510, 0, 255, 409)
+
+[sub_resource type="AtlasTexture" id="Atlas_run_side_03"]
+atlas = ExtResource("tex_run_side")
+region = Rect2(765, 0, 255, 409)
+
+[sub_resource type="AtlasTexture" id="Atlas_run_side_04"]
+atlas = ExtResource("tex_run_side")
+region = Rect2(1020, 0, 255, 409)
+
+[sub_resource type="AtlasTexture" id="Atlas_run_side_05"]
+atlas = ExtResource("tex_run_side")
+region = Rect2(1275, 0, 255, 409)
+
+[sub_resource type="AtlasTexture" id="Atlas_run_side_06"]
+atlas = ExtResource("tex_run_side")
+region = Rect2(1530, 0, 255, 409)
+
+[sub_resource type="AtlasTexture" id="Atlas_run_side_07"]
+atlas = ExtResource("tex_run_side")
+region = Rect2(1785, 0, 255, 409)
+
 [resource]
 animations = [{
 "frames": [{
@@ -149,4 +182,33 @@ animations = [{
 "loop": true,
 "name": &"walk_side",
 "speed": 20.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("Atlas_run_side_00")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_run_side_01")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_run_side_02")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_run_side_03")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_run_side_04")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_run_side_05")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_run_side_06")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_run_side_07")
+}],
+"loop": true,
+"name": &"run_side",
+"speed": 12.0
 }]
