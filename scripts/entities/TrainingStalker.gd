@@ -175,7 +175,8 @@ func _can_see_target(ignore_view_angle: bool = false) -> bool:
 	var to := target_player.global_position + Vector3.UP * 0.9
 	var query := PhysicsRayQueryParameters3D.create(from, to)
 	query.exclude = [get_rid()]
-	query.collision_mask = 1
+	# 레이어 1(벽·가구) + 2(파티원): 파티원은 레이어 2에 있으므로 2를 빼면 대상이 절대 맞지 않는다
+	query.collision_mask = 1 | 2
 	var result := get_world_3d().direct_space_state.intersect_ray(query)
 	return not result.is_empty() and result.get("collider") == target_player
 

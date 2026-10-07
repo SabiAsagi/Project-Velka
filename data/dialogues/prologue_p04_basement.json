@@ -1,0 +1,34 @@
+{
+  "dialogue_id": "prologue_p04_basement",
+  "lines": [
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "surprised",
+      "shamu_emotion": "surprised",
+      "text": "[shake rate=20.0 level=6][color=#ff6050]─── 경보음 ───[/color][/shake]",
+      "shake": true
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "surprised",
+      "shamu_emotion": "serious",
+      "text": "경보가 울렸어. 아래층에서 자료를 지우기 시작했어!"
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "surprised",
+      "shamu_emotion": "serious",
+      "text": "둘 다 막아야 해?"
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "determined",
+      "shamu_emotion": "determined",
+      "text": "응. 나는 경보 장치, 샤무는 파쇄기. 그래야 서버실 문이 풀려."
+    }
+  ]
+}
