@@ -279,6 +279,32 @@ def label(sw, parent, pos, text, size=0.004, font=40, color=(0.12, 0.13, 0.16), 
     sw.node("Label", "Label3D", parent, props, groups=groups)
 
 
+# 게시판 포스터 (Genex로 생성한 그림, assets/textures/school/posters). 제목은 그림 위쪽 빈 띠에 한글 Label3D로 얹는다
+POSTERS = {
+    "violence": ("학교폭력 OUT", (0.55, 0.25, 0.25)),
+    "sports": ("한마음 체육대회", (0.12, 0.25, 0.55)),
+    "festival": ("제27회 무진제", (0.35, 0.18, 0.45)),
+    "nosmoking": ("금연 학교", (0.2, 0.45, 0.22)),
+    "reading": ("10월 독서의 달", (0.2, 0.22, 0.4)),
+    "recycle": ("올바른 분리배출", (0.12, 0.4, 0.3)),
+    "career": ("진로·진학 박람회", (0.12, 0.35, 0.4)),
+    "missing": ("찾습니다", (0.15, 0.15, 0.15)),
+}
+POSTER_W, POSTER_H = 0.45, 0.6           # m (그림 768 x 1024 px)
+
+
+def poster(sw, parent, wall_pt, out_pt, y_center, rot, key, groups=None):
+    """벽 게시판 포스터 한 장: Sprite3D(조명 받음) + 위쪽 띠의 한글 제목.
+    wall_pt / out_pt = 벽면 쪽·한 단계 더 앞쪽의 월드 (x, z): 제목을 그림보다 살짝 앞에 띄워 겹쳐 깜빡이지 않게 한다"""
+    from emit import tf, q
+    tex = sw.ext_res("Texture2D", "res://assets/textures/school/posters/poster_%s.png" % key)
+    props = {"transform": tf((wall_pt[0], y_center, wall_pt[1]), rot), "texture": tex,
+             "pixel_size": "%.6f" % (POSTER_W / 768.0), "shaded": "true", "double_sided": "false"}
+    sw.node("Poster", "Sprite3D", parent, props, groups=groups)
+    title, color = POSTERS[key]
+    label(sw, parent, (out_pt[0], y_center + POSTER_H * 0.405, out_pt[1]), title, 0.0011, 48, color, rot, groups)
+
+
 def facing_rows(frame, toward):
     """방 좌표에서 toward('front','back','left','right') 쪽을 바라보는 글자 회전 (Label3D는 +z가 앞면)"""
     import math
