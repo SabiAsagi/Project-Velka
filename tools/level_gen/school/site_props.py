@@ -303,6 +303,51 @@ def rear_parking(p, sw, parent, tops):
     p.solid((bx0 + bx1) / 2, bz0 + 0.9, bx1 - bx0, 1.9, 0.0, 1.0)
 
 
+GOAL_W, GOAL_H, GOAL_D = 6.0, 2.2, 1.5     # 학교 운동장용 철제 골대 (폭, 높이, 깊이)
+GOAL_POST = 0.1                            # 기둥·가로대 굵기
+NET_GAP = 0.25                             # 그물 눈 간격
+
+
+def soccer_goal(p, gx, s):
+    """상자형 철제 골대: 앞 기둥·가로대, 같은 높이의 뒤 기둥과 지붕 틀, 바닥 틀, 뒤·옆·지붕 그물.
+    gx = 골라인 x, s = 바깥쪽 방향(+1 동쪽 골대, -1 서쪽 골대). 그물 뒤·옆으로는 들어갈 수 없다."""
+    hw, h, d, t = GOAL_W / 2, GOAL_H, GOAL_D, GOAL_POST
+    bx = gx + s * d                                      # 뒤 틀 x
+    mx = gx + s * d / 2
+    for z in (-hw, hw):
+        p.cyl("goal_white", gx, z, t, 0.0, h)            # 앞 기둥
+        p.cyl("goal_white", bx, z, t * 0.7, 0.0, h - t)  # 뒤 기둥
+        p.box("goal_white", mx, z, d, t * 0.7, h - t, h - t * 0.3)        # 지붕 옆 틀
+        p.box("goal_white", mx, z, d, t * 0.6, 0.0, t * 0.6)              # 바닥 옆 틀
+    p.box("goal_white", gx, 0.0, t, GOAL_W + t, h - t * 0.2, h + t * 0.8)  # 가로대
+    p.box("goal_white", bx, 0.0, t * 0.7, GOAL_W, h - t, h - t * 0.3)      # 지붕 뒤 틀
+    p.box("goal_white", bx, 0.0, t * 0.6, GOAL_W, 0.0, t * 0.6)            # 바닥 뒤 틀
+    n = 0.012                                            # 그물 실 굵기
+    rows = int(round((h - t) / NET_GAP))
+    cols = int(round(GOAL_W / NET_GAP))
+    deps = int(round(d / NET_GAP))
+    nx = bx + s * 0.02
+    for k in range(1, cols):                             # 뒤 그물 세로줄
+        p.box("net_white", nx, -hw + GOAL_W * k / cols, n, n, 0.0, h - t)
+    for k in range(1, rows + 1):                         # 뒤·옆 그물 가로줄
+        y = (h - t) * k / rows
+        p.box("net_white", nx, 0.0, n, GOAL_W, y, y + n)
+        for z in (-hw, hw):
+            p.box("net_white", mx, z, d, n, y, y + n)
+    for k in range(1, deps):                             # 옆 그물 세로줄, 지붕 그물 앞뒤줄
+        x = gx + s * d * k / deps
+        p.box("net_white", x, 0.0, n, GOAL_W, h - t * 0.6, h - t * 0.6 + n)
+        for z in (-hw, hw):
+            p.box("net_white", x, z, n, n, 0.0, h - t)
+    for k in range(1, cols):                             # 지붕 그물 좌우줄
+        p.box("net_white", mx, -hw + GOAL_W * k / cols, d, n, h - t * 0.6, h - t * 0.6 + n)
+    # 충돌: 앞 기둥, 뒤·옆 그물면 (골문 안으로는 앞에서만 들어간다)
+    for z in (-hw, hw):
+        p.solid(gx, z, 0.2, 0.2, 0.0, h)
+        p.solid(mx, z, d, 0.1, 0.0, h)
+    p.solid(bx, 0.0, 0.1, GOAL_W, 0.0, h)
+
+
 def stands_and_field(p, sw, parent, ext, tops, geo):
     """조회대(지붕·연설대·하부 창고 문·교명판), 운동장 선·중앙 원·골대·모래판, 투광 조명탑 등기구, 스탠드 번호·화단"""
     # 조회대: 운동장 중앙선·본관 중앙 보행축과 일직선. 하부 창고 문은 운동장 쪽
@@ -340,18 +385,7 @@ def stands_and_field(p, sw, parent, ext, tops, geo):
         fline(p, s * 33, -5.0, s * 29, -5.0, base, 0.1)
         fline(p, s * 33, 5.0, s * 29, 5.0, base, 0.1)
         fline(p, s * 29, -5.0, s * 29, 5.0, base, 0.1)
-        gx = s * 33.0
-        for dz in (-3.0, 3.0):
-            p.cyl("goal_white", gx, dz, 0.12, 0.0, 2.3)
-            p.cyl("goal_white", gx + s * 1.6, dz, 0.07, 0.0, 1.7)
-            p.box("goal_white", gx + s * 0.8, dz, 1.6, 0.05, 2.2, 2.26)
-            p.solid(gx, dz, 0.2, 0.2, 0.0, 2.3)
-        p.box("goal_white", gx, 0.0, 0.12, 6.0, 2.2, 2.32)
-        p.box("goal_white", gx + s * 1.6, 0.0, 0.07, 6.0, 1.66, 1.72)
-        for k in range(13):                                   # 뒤 그물: 가는 살을 엮어 속이 비쳐 보이게
-            p.box("net_white", gx + s * 1.63, -3.0 + 0.5 * k, 0.02, 0.025, 0.0, 1.66)
-        for k in range(1, 4):
-            p.box("net_white", gx + s * 1.63, 0.0, 0.012, 6.0, 0.415 * k, 0.415 * k + 0.02)
+        soccer_goal(p, s * 33.0, s)
     # 멀리뛰기 모래판과 도움닫기 주로 (운동장 남동쪽 가장자리), 철봉 옆 급수대
     p.box("sand", 30.0, 21.75, 6.0, 1.3, base - 0.008, base + 0.02)
     for dz in (-0.72, 0.72):
