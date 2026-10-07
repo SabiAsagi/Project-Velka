@@ -17,6 +17,9 @@ var _school: Node
 var _hud: Node
 
 
+## _walk 제한 시간을 정할 때 기준으로 삼은 걷기 속도 (m/s)
+const TIMEOUT_REF_SPEED := 4.5
+
 func _process(_delta: float) -> bool:
 	if not _started:
 		_started = true
@@ -226,8 +229,10 @@ func _press(action: String) -> void:
 
 
 ## 웨이포인트를 차례로 걸어간다 (카메라 기준 이동 입력을 흉내 낸다). 모두 도착하면 true.
+## timeout_each는 걷기 속도 TIMEOUT_REF_SPEED(m/s) 기준 초 — 실제 걷기 속도에 비례해 늘린다.
 func _walk(points: Array, timeout_each: float = 8.0) -> bool:
 	var member = _member()
+	timeout_each *= TIMEOUT_REF_SPEED / maxf(float(member.speed), 0.1)
 	for point in points:
 		var elapsed := 0.0
 		var arrived := false

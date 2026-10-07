@@ -12,7 +12,8 @@ signal controlled_changed(is_controlled: bool)
 
 @export var character_type: GameManager.CharacterType = GameManager.CharacterType.SABI
 @export var character_name: String = "사비"
-@export var speed: float = 4.5
+## 걷기 속도(m/s). 걷기 시트의 발 보폭에 맞춘 값 (달리기는 vitals.json sprint.speed_mult 배)
+@export var speed: float = 2.2
 @export var acceleration: float = 20.0
 @export var deceleration: float = 28.0
 @export var base_heart_rate: float = 78.0
@@ -69,8 +70,7 @@ var _attack_cooldown: float = 0.0
 
 var is_hidden: bool = false
 var is_threatened: bool = false
-var _facing: String = "front"
-var _facing_right: bool = true
+var _facing_resolver := FacingResolver.new()
 
 var _current_heart_rate: float = 78.0
 var _current_mental_strength: float = 100.0
@@ -155,7 +155,7 @@ func _process_player_input(delta: float) -> void:
 	is_sprinting = direction != Vector3.ZERO and Input.is_action_pressed("sprint") and not GameManager.is_exploration_locked()
 	var mult := vitals.speed_multiplier() if vitals else 1.0
 	if is_sprinting:
-		mult *= float(CharacterVitals.data().get("sprint", {}).get("speed_mult", 1.6))
+		mult *= float(CharacterVitals.data().get("sprint", {}).get("speed_mult", 1.73))
 	var target_velocity := direction * speed * mult
 	var change_rate := acceleration if direction != Vector3.ZERO else deceleration
 
@@ -199,17 +199,17 @@ func face_direction(direction: Vector3) -> void:
 		right_amount = direction.x
 		forward_amount = -direction.z
 
-	if absf(right_amount) > 0.1:
-		_facing_right = right_amount > 0.0
-	if absf(right_amount) > absf(forward_amount):
-		_facing = "right" if right_amount > 0.0 else "left"
-	else:
-		_facing = "front" if forward_amount < 0.0 else "back"
+	var was_moving := Vector2(velocity.x, velocity.z).length() > 0.3
+	_facing_resolver.update(right_amount, -forward_amount, get_physics_process_delta_time(), not was_moving)
 
 
 func _update_animation() -> void:
-	var is_moving := Vector2(velocity.x, velocity.z).length() > 0.3
-	CharacterSpriteAnimator.play(sprite, is_moving, _facing, _facing_right, 1.6 if is_sprinting else 1.0, is_sprinting)
+	var ground_speed := Vector2(velocity.x, velocity.z).length()
+	var is_moving := ground_speed > 0.3
+	# 동행(AI)은 달리기 입력이 없으므로 걷기 속도보다 확실히 빠르면 달리기 시트를 쓴다
+	var is_running := is_sprinting or (not is_controlled and ground_speed > speed * 1.35)
+	CharacterSpriteAnimator.play(sprite, is_moving, _facing_resolver.facing, _facing_resolver.facing_right,
+			1.0, is_running, ground_speed)
 
 
 func set_hidden_state(hidden: bool, target_position: Vector3) -> void:

@@ -95,7 +95,13 @@ def hoop(p, side):
         yaw = math.degrees(math.atan2(sb - sa, ub - ua))
         p.box("hoop_rim", (ua + ub) / 2, (sa + sb) / 2, math.hypot(ub - ua, sb - sa) + 0.02, 0.03, 3.03, 3.06, yaw=yaw)
     p.box("hoop_rim", bu + side * 0.09, CS, 0.18, 0.1, 3.02, 3.06)
-    p.cyl("net_white", ru, CS, 0.38, 2.62, 3.03)
+    # 백보드 테두리 (검은 띠)
+    # 판보다 앞뒤·위아래·좌우로 1cm씩 크게 감싸 판 면과 겹치지 않게 한다
+    for y0, y1 in ((2.89, 2.94), (3.91, 3.96)):
+        p.box("metal_dark", bu - side * 0.025, CS, 0.07, 1.82, y0, y1)
+    for d in (-1, 1):
+        p.box("metal_dark", bu - side * 0.025, CS + d * 0.885, 0.07, 0.05, 2.89, 3.96)
+    hoop_net(p, ru, CS)
     back = bu - side * 0.05
     for h in (3.18, 3.8):
         for d in (-1, 1):
@@ -104,6 +110,24 @@ def hoop(p, side):
             p.box("steel_frame", (ua + ub) / 2, (sa + sb) / 2, math.hypot(ub - ua, sb - sa), 0.06, h, h + 0.06, yaw=yaw)
         p.box("steel_frame", wall + side * 0.03, CS, 0.06, 2.3, h - 0.1, h + 0.16)
     p.box("steel_frame", back - side * 0.03, CS, 0.06, 1.0, 3.1, 3.9)
+
+
+NET_TIERS = [(3.03, 0.225), (2.9, 0.2), (2.76, 0.175), (2.62, 0.15)]   # 농구 그물 단 (높이, 반지름): 아래로 좁아진다
+NET_STRANDS = 12
+
+
+def hoop_net(p, cu, cs):
+    """농구 그물: 단마다 가는 고리 + 단 사이 세로 실 (아래로 갈수록 좁아지는 성긴 그물, 속이 비쳐 보인다)"""
+    for i, (y, r) in enumerate(NET_TIERS):
+        if i > 0:
+            for k in range(NET_STRANDS):
+                a = math.radians(k * 360 / NET_STRANDS + (15 if i % 2 else 0))
+                p.box("net_white", cu + r * math.cos(a), cs + r * math.sin(a), 0.01, 0.01, y, NET_TIERS[i - 1][0])
+            seg = 2 * math.pi * r / NET_STRANDS
+            for k in range(NET_STRANDS):
+                a = math.radians((k + 0.5) * 360 / NET_STRANDS)
+                yaw = math.degrees(a) + 90
+                p.box("net_white", cu + r * math.cos(a), cs + r * math.sin(a), seg + 0.01, 0.01, y, y + 0.01, yaw=yaw)
 
 
 def ball_cart(p, u, s, mat="ball"):

@@ -51,7 +51,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("notebook"):
 		get_viewport().set_input_as_handled()
 		toggle()
-	elif is_open() and event.is_action_pressed("ui_cancel"):
+	elif is_open() and (event.is_action_pressed("ui_cancel") or event.is_action_pressed("pause")):
 		get_viewport().set_input_as_handled()
 		close()
 

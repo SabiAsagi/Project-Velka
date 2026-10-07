@@ -124,7 +124,10 @@ func _process_follow(delta: float) -> void:
 			move_dir.y = 0.0
 			move_dir = move_dir.normalized()
 
-		var move_speed = owner_member.speed * (1.2 if dist > 6.0 else 1.0)
+		# 리더가 달리면 동행도 리더 속도에 맞춰 달린다 (멀면 조금 더 빠르게 따라잡기)
+		var catch_up := 1.2 if dist > 6.0 else 1.0
+		var leader_speed := Vector2(target_leader.velocity.x, target_leader.velocity.z).length()
+		var move_speed: float = maxf(owner_member.speed, leader_speed) * catch_up
 		owner_member.velocity.x = move_toward(owner_member.velocity.x, move_dir.x * move_speed, owner_member.acceleration * delta)
 		owner_member.velocity.z = move_toward(owner_member.velocity.z, move_dir.z * move_speed, owner_member.acceleration * delta)
 		owner_member.face_direction(move_dir)

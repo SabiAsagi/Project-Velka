@@ -72,6 +72,10 @@ def build_gym(sw, batch, plans):
         batch.box(p1, "stair", (lr.cx, REAR / 2 - 0.1, lr.cz), (lr.w, 0.2, lr.d), True, (), "landing")
         flight(batch, p1, "x", X(land_u), X(ub), REAR / 2, REAR, Z(s_toilet), Z(s_mid) - 0.06, "stair", (), ("w1",),
                rail_trim=(1.0, 0.0))
+        # 두 난간 충돌판은 참 쪽 1m를 잘라 두어(판 모서리가 참 위로 튀어나오지 않게) 그 구간 난간선이 비어 있다.
+        # 거기로 몸이 파고들면 잘린 두 판 끝 사이에 끼므로, 보이는 손잡이 아래 같은 구간을 세운 판으로 막는다.
+        gap_x0, gap_x1 = sorted((X(land_u), X(land_u) + 1.0 * (1 if side < 0 else -1)))
+        batch.solid(p1, ((gap_x0 + gap_x1) / 2, REAR / 2 - 0.1, Z(s_mid)), (gap_x1 - gap_x0, 2.2, 0.24), (), "rail")
         u_lo, u_hi = sorted((X(land_u), X(ub)))
         u_lo, u_hi = u_lo + 0.01, u_hi - 0.01
         batch.box(p1, "wall_concrete", ((u_lo + u_hi) / 2, 1.2, (Z(s_toilet) + Z(s_mid) - 0.06) / 2),

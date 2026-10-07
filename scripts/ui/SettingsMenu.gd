@@ -136,6 +136,11 @@ func _cancel_rebind() -> void:
 	_rebinding_button = null
 
 
+## 팝업 닫기 (키 입력 대기 중이면 취소)
+func close() -> void:
+	_on_close_pressed()
+
+
 ## 설정값들 UI에 동기화
 func _refresh_all_values() -> void:
 	var disp = SettingsManager.current_settings["display"]

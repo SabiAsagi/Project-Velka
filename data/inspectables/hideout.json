@@ -1,0 +1,54 @@
+{
+  "hideout_board": {
+    "prompt": "조사 보드 살펴보기",
+    "lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "serious",
+        "shamu_emotion": "neutral",
+        "text": "코르크 보드에 실종자 사진과 메모가 빼곡하다. 붉은 실이 몇 장을 잇고 있다.",
+        "text_sabi": "통화 기록, CCTV 시간, 마지막 접속... 아직 안 이어지는 게 더 많아.",
+        "text_shamu": "의뢰 거절해 놓고 이건 왜 계속 붙이고 있는 건데."
+      }
+    ]
+  },
+  "hideout_monitors": {
+    "prompt": "모니터 확인하기",
+    "lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "모니터 여섯 대에 복원 중인 파일과 지도가 떠 있다. 책상 위에 해킹 패드가 연결되어 있다.",
+        "text_sabi": "삭제된 영상 복원 23퍼센트. 밤새 돌리면 끝나겠다.",
+        "text_shamu": "화면이 여섯 개인데 하나도 못 알아보겠어."
+      }
+    ]
+  },
+  "hideout_client_photos": {
+    "prompt": "테이블 위 사진 보기",
+    "lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "worried",
+        "shamu_emotion": "serious",
+        "text": "의뢰인이 두고 간 실종자 사진이다. 모두 평범한 사람들이다.",
+        "text_sabi": "......방금 이 사람 얼굴, 지지직거린 것 같았는데.",
+        "text_shamu": "찾는 의뢰가 아니라던 그거. 손대지 마."
+      }
+    ]
+  },
+  "hideout_gear_bag": {
+    "prompt": "장비 가방 열어 보기",
+    "lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "샤무의 장비 가방. 정리가 잘 되어 있고, 언제든 바로 들고 나갈 수 있게 꾸려져 있다.",
+        "text_sabi": "샤무 가방은 항상 싸여 있어. 나는 이게 좋아.",
+        "text_shamu": "언제 나가게 될지 모르니까. 특히 너랑 있으면."
+      }
+    ]
+  }
+}
