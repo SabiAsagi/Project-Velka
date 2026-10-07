@@ -71,11 +71,11 @@ func _run() -> void:
 	var notebook = _scene.get_node("RuleNotebook")
 	var known: int = notebook.refresh()
 	_press("notebook")
-	await _frames(2)
+	await _input_frames()
 	_check(notebook.is_open() and _gm.is_exploration_locked(), "R로 규칙 수첩이 열리고 그동안 움직일 수 없다")
 	_check(known == _rm.get_discovered_count() and known > 0, "수첩에 규칙서로 이미 알던 규칙이 기록돼 있다 (%d개)" % known)
 	_press("notebook")
-	await _frames(2)
+	await _input_frames()
 	_check(not notebook.is_open() and not _gm.is_exploration_locked(), "R을 다시 누르면 닫힌다")
 
 	# --- 규칙 발견 (이계 칠판) ---
@@ -186,6 +186,13 @@ func _check(condition: bool, label: String) -> void:
 func _frames(count: int) -> void:
 	for i in count:
 		await physics_frame
+
+
+## Input.parse_input_event로 넣은 입력은 다음 화면(process) 프레임에 처리된다.
+## 물리 프레임은 한 화면 프레임 안에 몰려 돌 수 있으므로, 입력 결과는 화면 프레임을 기다려 확인한다.
+func _input_frames(count: int = 2) -> void:
+	for i in count:
+		await process_frame
 
 
 func _seconds(duration: float) -> void:
