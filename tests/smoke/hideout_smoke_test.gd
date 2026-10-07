@@ -26,10 +26,13 @@ func _process(_delta: float) -> bool:
 
 
 func _run() -> void:
-	change_scene_to_file(SCENE)
+	# 맵 동선만 검사하므로 이야기 진행(run_story)은 끈다 (이야기는 prologue_hideout_story 테스트에서 검사)
+	var scene: Node = (load(SCENE) as PackedScene).instantiate()
+	scene.set("run_story", false)
+	root.add_child(scene)
+	current_scene = scene
 	for i in 6:
 		await physics_frame
-	var scene := current_scene
 	_party = scene.get_node("PlayerParty")
 	_camera = scene.get_node("FollowCamera")
 	_hud = scene.get_node("PrototypeHUD")

@@ -1,0 +1,40 @@
+{
+  "dialogue_id": "prologue_p03_bag",
+  "lines": [
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "샤무가 장비 가방을 꺼내 어깨에 멘다."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "surprised",
+      "shamu_emotion": "neutral",
+      "text": "같이 가게?"
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "surprised",
+      "shamu_emotion": "smug",
+      "text": "너 혼자 보내면 더 큰 사고 치니까."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "gentle_smile",
+      "shamu_emotion": "smug",
+      "text": "고마어."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "gentle_smile",
+      "shamu_emotion": "cheerful_grin",
+      "text": "아직 출발 안 했어, 밥오."
+    }
+  ]
+}

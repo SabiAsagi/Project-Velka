@@ -1,0 +1,41 @@
+{
+  "dialogue_id": "prologue_p02_photo",
+  "lines": [
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "surprised",
+      "shamu_emotion": "neutral",
+      "text": "[shake rate=30.0 level=10][color=#d8e4e8]사진 속 사람의 얼굴 위로 짧은 노이즈가 지나간다.[/color][/shake]",
+      "shake": true
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "surprised",
+      "shamu_emotion": "neutral",
+      "text": "……?"
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "다시 보니 사진은 정상이다. 평범한 얼굴, 평범한 웃음."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "neutral",
+      "text": "왜. 뭐 있어?"
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "neutral",
+      "text": "아냐. 잘못 봤나 봐."
+    }
+  ]
+}

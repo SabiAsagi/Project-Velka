@@ -30,6 +30,8 @@ ROOF_Y = 2 * LEVEL_H
 STAIR_X = (12.6, 13.8)
 STAIR_Z = (8.6, 2.6)       # (아래 끝, 위 끝)
 SPAWN = (10.0, 0.05, 2.2)
+STORY_START = (4.9, F2 + 0.05, 6.2)     # 응접 테이블 북쪽 (소파 사이)
+CLIENT_SEAT = (6.65, F2, 4.4)           # 동쪽 소파
 BUILDING = "hideout"
 FOOTPRINT = Rect(-WALL_T, -WALL_T, W + WALL_T, D + WALL_T)
 
@@ -411,7 +413,20 @@ def main():
                                                  "inspect_id": q(iid), "data_path": q("res://data/inspectables/hideout.json")})
         sw.node("InteractionPoint", "Marker3D", "Inspectables/" + name, {"transform": tf(point)}, unique=False)
 
+    # 의뢰인 (P-02): 소속을 드러내지 않도록 얼굴 없는 어두운 실루엣으로만 보여 준다. 동쪽 소파에 앉아 있다.
+    sil = sw.sub_res("client_mat", "StandardMaterial3D", {
+        "transparency": "1", "shading_mode": "0", "albedo_color": "Color(0.03, 0.03, 0.05, 0.93)"})
+    body = sw.sub_res("client_body", "CapsuleMesh", {"radius": "0.24", "height": "1.05", "material": sil})
+    legs = sw.sub_res("client_legs", "BoxMesh", {"size": "Vector3(0.42, 0.18, 0.5)", "material": sil})
+    head = sw.sub_res("client_head", "SphereMesh", {"radius": "0.13", "height": "0.26", "material": sil})
+    sw.node("Client", "Node3D", ".", {"transform": tf(CLIENT_SEAT)}, groups=["client_silhouette"], unique=False)
+    sw.node("Body", "MeshInstance3D", "Client", {"transform": tf((0.0, 1.0, 0.0)), "mesh": body}, unique=False)
+    sw.node("Legs", "MeshInstance3D", "Client", {"transform": tf((-0.25, 0.55, 0.0)), "mesh": legs}, unique=False)
+    sw.node("Head", "MeshInstance3D", "Client", {"transform": tf((0.0, 1.66, 0.0)), "mesh": head}, unique=False)
+
     sw.node("Spawn", "Marker3D", ".", {"transform": tf(SPAWN)}, unique=False)
+    # 프롤로그 이야기 시작 위치 (2층 응접 공간, 의뢰인 맞은편)
+    sw.node("StoryStart", "Marker3D", ".", {"transform": tf(STORY_START)}, unique=False)
     batch.emit(sw, mats)
     os.makedirs(os.path.join(ROOT, "scenes", "prologue"), exist_ok=True)
     path = os.path.join(ROOT, "scenes", "prologue", "HideoutWorld.tscn")
@@ -425,7 +440,7 @@ def main():
 def write_chapter():
     x, y, z = SPAWN
     lines = [
-        "[gd_scene load_steps=8 format=3]", "",
+        "[gd_scene load_steps=10 format=3]", "",
         '[ext_resource type="Script" path="res://scripts/chapters/PrologueHideout.gd" id="1_script"]',
         '[ext_resource type="PackedScene" path="res://scenes/prologue/HideoutWorld.tscn" id="2_world"]',
         '[ext_resource type="PackedScene" path="res://scenes/characters/PlayerParty.tscn" id="3_party"]',
@@ -433,6 +448,8 @@ def write_chapter():
         '[ext_resource type="PackedScene" path="res://scenes/ui/PrototypeHUD.tscn" id="5_hud"]',
         '[ext_resource type="PackedScene" path="res://scenes/ui/DialogueBox.tscn" id="6_dialogue"]',
         '[ext_resource type="Script" path="res://scripts/ui/VitalsOverlay.gd" id="7_overlay"]',
+        '[ext_resource type="Script" path="res://scripts/ui/AnalysisBoard.gd" id="8_board"]',
+        '[ext_resource type="Script" path="res://scripts/ui/CaptionSequence.gd" id="9_caption"]',
         "",
         '[node name="PrologueHideout" type="Node3D"]', 'script = ExtResource("1_script")', "",
         '[node name="HideoutWorld" parent="." node_paths=PackedStringArray("party", "camera") instance=ExtResource("2_world")]',
@@ -446,6 +463,8 @@ def write_chapter():
         '[node name="DialogueBox" parent="." instance=ExtResource("6_dialogue")]', "",
         '[node name="VitalsOverlay" type="CanvasLayer" parent="." node_paths=PackedStringArray("party")]',
         'script = ExtResource("7_overlay")', 'party = NodePath("../PlayerParty")', "",
+        '[node name="AnalysisBoard" type="CanvasLayer" parent="."]', 'script = ExtResource("8_board")', "",
+        '[node name="CaptionSequence" type="CanvasLayer" parent="."]', 'script = ExtResource("9_caption")', "",
     ]
     path = os.path.join(ROOT, "scenes", "chapters", "Prologue_Hideout.tscn")
     open(path, "w", encoding="utf-8", newline="\n").write("\n".join(lines))
