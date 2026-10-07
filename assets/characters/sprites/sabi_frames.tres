@@ -1,7 +1,8 @@
-[gd_resource type="SpriteFrames" load_steps=47 format=3]
+[gd_resource type="SpriteFrames" load_steps=65 format=3]
 
 [ext_resource type="Texture2D" path="res://assets/characters/sprites/sabi_walk_side.png" id="tex_side"]
 [ext_resource type="Texture2D" path="res://assets/characters/sprites/sabi_walk_back.png" id="tex_back"]
+[ext_resource type="Texture2D" path="res://assets/characters/sprites/sabi_run_side.png" id="tex_run_side"]
 
 [sub_resource type="AtlasTexture" id="Atlas_side_00"]
 atlas = ExtResource("tex_side")
@@ -179,6 +180,74 @@ region = Rect2(4940, 0, 260, 411)
 atlas = ExtResource("tex_back")
 region = Rect2(5200, 0, 260, 411)
 
+[sub_resource type="AtlasTexture" id="Atlas_run_side_00"]
+atlas = ExtResource("tex_run_side")
+region = Rect2(0, 0, 271, 405)
+
+[sub_resource type="AtlasTexture" id="Atlas_run_side_01"]
+atlas = ExtResource("tex_run_side")
+region = Rect2(271, 0, 271, 405)
+
+[sub_resource type="AtlasTexture" id="Atlas_run_side_02"]
+atlas = ExtResource("tex_run_side")
+region = Rect2(542, 0, 271, 405)
+
+[sub_resource type="AtlasTexture" id="Atlas_run_side_03"]
+atlas = ExtResource("tex_run_side")
+region = Rect2(813, 0, 271, 405)
+
+[sub_resource type="AtlasTexture" id="Atlas_run_side_04"]
+atlas = ExtResource("tex_run_side")
+region = Rect2(1084, 0, 271, 405)
+
+[sub_resource type="AtlasTexture" id="Atlas_run_side_05"]
+atlas = ExtResource("tex_run_side")
+region = Rect2(1355, 0, 271, 405)
+
+[sub_resource type="AtlasTexture" id="Atlas_run_side_06"]
+atlas = ExtResource("tex_run_side")
+region = Rect2(1626, 0, 271, 405)
+
+[sub_resource type="AtlasTexture" id="Atlas_run_side_07"]
+atlas = ExtResource("tex_run_side")
+region = Rect2(1897, 0, 271, 405)
+
+[sub_resource type="AtlasTexture" id="Atlas_run_side_08"]
+atlas = ExtResource("tex_run_side")
+region = Rect2(2168, 0, 271, 405)
+
+[sub_resource type="AtlasTexture" id="Atlas_run_side_09"]
+atlas = ExtResource("tex_run_side")
+region = Rect2(2439, 0, 271, 405)
+
+[sub_resource type="AtlasTexture" id="Atlas_run_side_10"]
+atlas = ExtResource("tex_run_side")
+region = Rect2(2710, 0, 271, 405)
+
+[sub_resource type="AtlasTexture" id="Atlas_run_side_11"]
+atlas = ExtResource("tex_run_side")
+region = Rect2(2981, 0, 271, 405)
+
+[sub_resource type="AtlasTexture" id="Atlas_run_side_12"]
+atlas = ExtResource("tex_run_side")
+region = Rect2(3252, 0, 271, 405)
+
+[sub_resource type="AtlasTexture" id="Atlas_run_side_13"]
+atlas = ExtResource("tex_run_side")
+region = Rect2(3523, 0, 271, 405)
+
+[sub_resource type="AtlasTexture" id="Atlas_run_side_14"]
+atlas = ExtResource("tex_run_side")
+region = Rect2(3794, 0, 271, 405)
+
+[sub_resource type="AtlasTexture" id="Atlas_run_side_15"]
+atlas = ExtResource("tex_run_side")
+region = Rect2(4065, 0, 271, 405)
+
+[sub_resource type="AtlasTexture" id="Atlas_run_side_16"]
+atlas = ExtResource("tex_run_side")
+region = Rect2(4336, 0, 271, 405)
+
 [resource]
 animations = [{
 "frames": [{
@@ -338,4 +407,60 @@ animations = [{
 "loop": true,
 "name": &"walk_back",
 "speed": 22.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("Atlas_run_side_00")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_run_side_01")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_run_side_02")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_run_side_03")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_run_side_04")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_run_side_05")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_run_side_06")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_run_side_07")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_run_side_08")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_run_side_09")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_run_side_10")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_run_side_11")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_run_side_12")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_run_side_13")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_run_side_14")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_run_side_15")
+}, {
+"duration": 1.0,
+"texture": SubResource("Atlas_run_side_16")
+}],
+"loop": true,
+"name": &"run_side",
+"speed": 24.0
 }]

@@ -150,7 +150,7 @@ func _facing_from_input(input_dir: Vector2) -> String:
 
 func _update_animation(is_moving: bool, is_sprinting: bool) -> void:
 	var speed_scale := sprint_multiplier if (is_moving and is_sprinting) else 1.0
-	CharacterSpriteAnimator.play(sprite, is_moving, _facing, _facing_right, speed_scale)
+	CharacterSpriteAnimator.play(sprite, is_moving, _facing, _facing_right, speed_scale, is_moving and is_sprinting)
 
 
 func _active_stats() -> Dictionary:
