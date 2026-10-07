@@ -7,13 +7,19 @@ extends RefCounted
 # 이후 walk_front / walk_left 등의 시트가 추가되면 자동으로 그 애니메이션을 우선 사용한다.
 
 const FALLBACK_DIRECTION := "side"
+## 이동 속도에 맞춘 재생 배속의 범위 (출발·정지 순간 너무 느리거나 빠르지 않게)
+const MIN_SPEED_SCALE := 0.35
+const MAX_SPEED_SCALE := 3.5
 
 
 ## facing: "front" | "back" | "left" | "right"
 ## facing_right: 마지막 좌우 방향 (옆/뒤 시트를 뒤집을지 결정)
 ## is_running: 달리기(Shift) 중이면 run_ 애니메이션을 먼저 찾고, 그 방향 run_ 시트가 없으면 walk_를 speed_scale로 빠르게 튼다
+## ground_speed: 실제 수평 이동 속도(m/s). 0 이상이면 SpriteFrames 메타데이터
+##   ground_speed_<애니 이름> (speed_scale 1.0일 때 발이 땅을 미는 속도)에 맞춰 재생 속도를 정해
+##   발이 미끄러지지 않게 한다. 메타데이터가 없으면 speed_scale을 그대로 쓴다.
 static func play(sprite: AnimatedSprite3D, is_moving: bool, facing: String, facing_right: bool, speed_scale: float = 1.0,
-		is_running: bool = false) -> void:
+		is_running: bool = false, ground_speed: float = -1.0) -> void:
 	if sprite == null or sprite.sprite_frames == null:
 		return
 	var anim_name := ""
@@ -31,6 +37,10 @@ static func play(sprite: AnimatedSprite3D, is_moving: bool, facing: String, faci
 			anim_name = state + FALLBACK_DIRECTION
 	# 전용 왼쪽 시트가 있으면 뒤집지 않는다.
 	sprite.flip_h = not facing_right and not anim_name.ends_with("_left")
+	if is_moving and ground_speed >= 0.0:
+		var native := float(sprite.sprite_frames.get_meta("ground_speed_" + anim_name, 0.0))
+		if native > 0.0:
+			speed_scale = clampf(ground_speed / native, MIN_SPEED_SCALE, MAX_SPEED_SCALE)
 	if sprite.animation != anim_name or not sprite.is_playing():
 		sprite.play(anim_name)
 	sprite.speed_scale = speed_scale

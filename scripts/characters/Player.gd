@@ -5,8 +5,8 @@ signal stats_changed(character_type: int, heart_rate: float, mental_strength: fl
 signal hidden_state_changed(is_hidden: bool)
 signal threat_state_changed(is_threatened: bool)
 
-@export var speed: float = 5.0
-@export var sprint_multiplier: float = 1.6
+@export var speed: float = 2.2
+@export var sprint_multiplier: float = 1.73
 @export var acceleration: float = 20.0
 @export var deceleration: float = 28.0
 @export var sabi_frames: SpriteFrames
@@ -16,8 +16,7 @@ signal threat_state_changed(is_threatened: bool)
 @onready var collision_shape: CollisionShape3D = $CollisionShape3D
 @onready var stealth_component: StealthComponent = $StealthComponent
 
-var _facing: String = "front"
-var _facing_right: bool = true
+var _facing_resolver := FacingResolver.new()
 
 var _gravity: float = 9.8
 var is_hidden: bool = false
@@ -80,7 +79,8 @@ func _physics_process(delta: float) -> void:
 		velocity.y -= _gravity * delta
 
 	if input_dir != Vector2.ZERO:
-		_facing = _facing_from_input(input_dir)
+		var was_moving := Vector2(velocity.x, velocity.z).length() > 0.3
+		_facing_resolver.update(input_dir.x, input_dir.y, delta, not was_moving)
 	_update_animation(input_dir != Vector2.ZERO, is_sprinting)
 	stealth_component.noise_level = move_toward(stealth_component.noise_level, 1.0 if direction != Vector3.ZERO else 0.0, delta * 4.0)
 
@@ -135,22 +135,15 @@ func _apply_active_character() -> void:
 		sprite.sprite_frames = sabi_frames
 	sprite.modulate = Color.WHITE
 	sprite.visible = not is_hidden
-	CharacterSpriteAnimator.play(sprite, false, _facing, _facing_right)
+	CharacterSpriteAnimator.play(sprite, false, _facing_resolver.facing, _facing_resolver.facing_right)
 	active_character_changed.emit(GameManager.active_character)
 	_emit_stats_changed()
 
 
-func _facing_from_input(input_dir: Vector2) -> String:
-	if absf(input_dir.x) > 0.1:
-		_facing_right = input_dir.x > 0.0
-	if absf(input_dir.x) > absf(input_dir.y):
-		return "right" if input_dir.x > 0.0 else "left"
-	return "front" if input_dir.y > 0.0 else "back"
-
-
 func _update_animation(is_moving: bool, is_sprinting: bool) -> void:
 	var speed_scale := sprint_multiplier if (is_moving and is_sprinting) else 1.0
-	CharacterSpriteAnimator.play(sprite, is_moving, _facing, _facing_right, speed_scale, is_moving and is_sprinting)
+	CharacterSpriteAnimator.play(sprite, is_moving, _facing_resolver.facing, _facing_resolver.facing_right, speed_scale,
+			is_moving and is_sprinting, Vector2(velocity.x, velocity.z).length())
 
 
 func _active_stats() -> Dictionary:

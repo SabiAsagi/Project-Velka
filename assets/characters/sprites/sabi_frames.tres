@@ -464,3 +464,6 @@ animations = [{
 "name": &"run_side",
 "speed": 24.0
 }]
+metadata/ground_speed_walk_side = 1.18
+metadata/ground_speed_walk_back = 1.08
+metadata/ground_speed_run_side = 1.6

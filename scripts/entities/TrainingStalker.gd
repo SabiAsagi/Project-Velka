@@ -2,8 +2,9 @@ extends AnomalyBase
 
 class_name TrainingStalker
 
-@export var patrol_speed: float = 1.8
-@export var chase_speed: float = 3.8
+## 순찰·추격 속도(m/s). 플레이어 걷기 2.2 / 달리기 3.8 기준
+@export var patrol_speed: float = 0.9
+@export var chase_speed: float = 1.85
 @export var detection_range: float = 8.0
 @export_range(20.0, 180.0, 1.0) var vision_angle: float = 110.0
 @export var lose_sight_delay: float = 1.6

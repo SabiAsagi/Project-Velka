@@ -8,9 +8,10 @@ class_name RegeneratingEntity
 
 signal struck(target: Node3D, damage: float)
 
-@export var base_speed: float = 1.2
-@export var speed_per_hit: float = 0.7
-@export var max_speed: float = 6.5
+## 속도(m/s). 플레이어 걷기 2.2 / 달리기 3.8 기준 (최대여도 달리면 도망칠 수 있다)
+@export var base_speed: float = 0.6
+@export var speed_per_hit: float = 0.35
+@export var max_speed: float = 3.2
 @export var attack_range: float = 1.25
 @export var attack_cooldown: float = 1.2
 @export var attack_damage: float = 12.0
@@ -19,7 +20,7 @@ signal struck(target: Node3D, damage: float)
 
 @onready var sprite: Sprite3D = $Sprite3D
 
-var speed: float = 1.2
+var speed: float = 0.6
 var hits_taken: int = 0
 var chase_target: Node3D = null
 var _attack_left: float = 0.0

@@ -29,6 +29,6 @@
     "downed": {"name": "행동 불능", "speed_mult": 0.0, "duration": -1}
   },
   "bond_link": {"threshold": 30, "heart_per_sec": 6.0, "mental_per_sec": 0.3},
-  "sprint": {"speed_mult": 1.6, "noise_radius": 7.0},
+  "sprint": {"speed_mult": 1.73, "noise_radius": 7.0},
   "shamu_attack": {"range": 1.7, "cooldown": 0.45, "heart_gain": 6.0}
 }

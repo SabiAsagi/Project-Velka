@@ -18,7 +18,7 @@ collision_mask = 3
 script = ExtResource("1_party_member")
 character_type = 1
 character_name = "샤무"
-speed = 4.5
+speed = 2.2
 base_heart_rate = 68.0
 base_mental_strength = 100.0
 
