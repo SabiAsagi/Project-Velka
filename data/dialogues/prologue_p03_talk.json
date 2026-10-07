@@ -1,0 +1,89 @@
+{
+  "dialogue_id": "prologue_p03_talk",
+  "lines": [
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "annoyed",
+      "text": "의뢰 거절했잖아."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "annoyed",
+      "text": "엉."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "근데 이건 뭐야?"
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "gentle_smile",
+      "shamu_emotion": "serious",
+      "text": "그냥 조사."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "gentle_smile",
+      "shamu_emotion": "annoyed",
+      "text": "그걸 일이라고 해."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "serious",
+      "text": "우리 만난 사람들이 계속 사라지잖아."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "serious",
+      "text": "우릴 그쪽으로 끌어들이려는 걸 수도 있어."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "determined",
+      "shamu_emotion": "serious",
+      "text": "그러니까 확인해야지."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "determined",
+      "shamu_emotion": "serious",
+      "text": "내가 가지 말라고 하면?"
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "사비가 대답하지 않는다."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "determined",
+      "shamu_emotion": "annoyed",
+      "text": "그래. 그 표정 나올 줄 알았어."
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "샤무가 계단 쪽으로 걸어간다. 1층 장비 벽에 샤무의 가방이 있다."
+    }
+  ]
+}

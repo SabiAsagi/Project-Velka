@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=10 format=3]
 
 [ext_resource type="Script" path="res://scripts/chapters/PrologueHideout.gd" id="1_script"]
 [ext_resource type="PackedScene" path="res://scenes/prologue/HideoutWorld.tscn" id="2_world"]
@@ -7,6 +7,8 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/PrototypeHUD.tscn" id="5_hud"]
 [ext_resource type="PackedScene" path="res://scenes/ui/DialogueBox.tscn" id="6_dialogue"]
 [ext_resource type="Script" path="res://scripts/ui/VitalsOverlay.gd" id="7_overlay"]
+[ext_resource type="Script" path="res://scripts/ui/AnalysisBoard.gd" id="8_board"]
+[ext_resource type="Script" path="res://scripts/ui/CaptionSequence.gd" id="9_caption"]
 
 [node name="PrologueHideout" type="Node3D"]
 script = ExtResource("1_script")
@@ -31,3 +33,9 @@ school_map = NodePath("../HideoutWorld")
 [node name="VitalsOverlay" type="CanvasLayer" parent="." node_paths=PackedStringArray("party")]
 script = ExtResource("7_overlay")
 party = NodePath("../PlayerParty")
+
+[node name="AnalysisBoard" type="CanvasLayer" parent="."]
+script = ExtResource("8_board")
+
+[node name="CaptionSequence" type="CanvasLayer" parent="."]
+script = ExtResource("9_caption")

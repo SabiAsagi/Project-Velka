@@ -1,0 +1,103 @@
+{
+  "dialogue_id": "prologue_p02_client",
+  "lines": [
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "테이블 위에 실종자 사진 여러 장이 놓여 있다. 맞은편 소파의 남자는 정부와 연계된 비공식 조사 담당자라고만 자신을 소개했다."
+    },
+    {
+      "speaker": "client",
+      "speaker_name": "의뢰인",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "최근 발생한 연쇄 실종 사건을 조사해 주셨으면 합니다."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "경찰이나 정부가 할 일을 왜 우리한테 맡겨?"
+    },
+    {
+      "speaker": "client",
+      "speaker_name": "의뢰인",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "공식적인 방식으로 접근하기 어렵기 때문입니다."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "neutral",
+      "text": "실종자들이 살아 있다고 생각해여?"
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "의뢰인은 바로 대답하지 못한다."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "sad",
+      "shamu_emotion": "neutral",
+      "text": "찾는 의뢰가 아니네."
+    },
+    {
+      "speaker": "client",
+      "speaker_name": "의뢰인",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "실종이 발생하는 원인을 확인해 주시면 됩니다."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "장소는?"
+    },
+    {
+      "speaker": "client",
+      "speaker_name": "의뢰인",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "계약 이후 공개됩니다."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "먼저 들어간 사람은?"
+    },
+    {
+      "speaker": "client",
+      "speaker_name": "의뢰인",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "그 부분도 아직 말씀드릴 수 없습니다."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "annoyed",
+      "text": "그럼 안 해."
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "의뢰인은 높은 보수를 제시하지만, 두 사람은 끝내 거절한다. 의뢰인은 사진을 테이블에 둔 채 아지트를 나간다."
+    }
+  ]
+}
