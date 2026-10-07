@@ -241,10 +241,24 @@ def b1_corridor(ctx):
     for side in ("left", "right"):
         wall_item(p, W, D, side, D / 2, D - 0.2, 0.08, 0.14, 3.18, 3.32, "pipe")
         wall_item(p, W, D, side, D / 2, D - 0.2, 0.3, 0.1, 3.0, 3.1, "pipe_red")
+    # 오래된 게시물 3장 (문·개구부를 피해 빈 벽을 찾는다. 카메라가 보는 벽을 먼저). 가운데는 빛바랜 실종 학생 전단
+    from props_base import poster, facing_rows
+    sides = sorted(("left", "right"), key=lambda s: not ctx.visible_side(s))
     for k in range(3):
-        c = walls["left"].find(D * (k + 1) / 4, 0.6, span=2.0)
-        if c is not None:
-            wall_item(p, W, D, "left", c, 0.5, 0.0, 0.004, 1.3, 1.7, "paper_old")
+        for side in sides:
+            # 실종 전단(가운데)은 카메라가 보는 벽에서 멀리까지 찾는다
+            c = walls[side].find(D * (k + 1) / 4, 0.6, span=D / 2 if k == 1 else 3.0)
+            if c is not None:
+                break
+        if c is None:
+            continue
+        walls[side].block(c - 0.35, c + 0.35)
+        if k == 1:
+            uw, uo = (0.006, 0.012) if side == "left" else (W - 0.006, W - 0.012)
+            poster(ctx.sw, ctx.container, ctx.frame.pt(uw, c), ctx.frame.pt(uo, c), ctx.y + 1.5,
+                   facing_rows(ctx.frame, "right" if side == "left" else "left"), "missing", list(ctx.groups) or None)
+        else:
+            wall_item(p, W, D, side, c, 0.5, 0.0, 0.004, 1.3, 1.7, "paper_old")
     # 구 도서관 문 옆: 침수 때 쌓았던 모래주머니, 문 앞 바닥 배수구, 미끄럼 주의 표지 (벽에 번진 습기는 벽 재질 wall_b1이 그린다)
     for i, d in enumerate([d for d in ctx.doors if d.door.room == "구 도서관"]):
         c = walls[d.side].find(d.a1 + 1.2, 1.7, span=2.5)

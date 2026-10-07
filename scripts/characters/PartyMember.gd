@@ -209,7 +209,7 @@ func face_direction(direction: Vector3) -> void:
 
 func _update_animation() -> void:
 	var is_moving := Vector2(velocity.x, velocity.z).length() > 0.3
-	CharacterSpriteAnimator.play(sprite, is_moving, _facing, _facing_right)
+	CharacterSpriteAnimator.play(sprite, is_moving, _facing, _facing_right, 1.6 if is_sprinting else 1.0, is_sprinting)
 
 
 func set_hidden_state(hidden: bool, target_position: Vector3) -> void:

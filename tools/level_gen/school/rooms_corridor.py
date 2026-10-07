@@ -5,7 +5,7 @@
 - 화장실 구역: 음수대(화장실과 청소도구함 사이 벽), 분리수거함, 청소 점검표, 미끄럼 주의 표지, 벽시계
 - 교실 두 개마다 게시판, 자습실 앞 긴 벤치 2개, 복도 양끝 분리수거함, CCTV, 중앙 계단 부근 행사 게시판, 교실 앞 우산꽂이
 모든 물건은 벽에 붙여 통행 폭을 지킨다."""
-from props_base import wall_item, bench, label, facing_rows
+from props_base import poster, wall_item, bench, label, facing_rows
 
 CLASS_STYLES = ("classroom", "study", "club")
 
@@ -221,6 +221,19 @@ def _class_fronts(ctx, walls, room_of_door):
                 walls[side].block(ua - 0.2, ua + 0.2)
 
 
+_POSTER_ORDER = ("sports", "violence", "reading", "festival", "nosmoking", "recycle", "career")
+
+
+def _posters_for(level_name, n):
+    """층 이름으로 고르는 포스터 조합 (같은 층은 항상 같은 조합). 지하·이계에는 실종 전단을 섞는다"""
+    import zlib
+    start = zlib.crc32(level_name.encode("utf-8")) % len(_POSTER_ORDER)
+    keys = [_POSTER_ORDER[(start + 2 * i) % len(_POSTER_ORDER)] for i in range(n)]
+    if "B1" in level_name:
+        keys[-1] = "missing"
+    return keys
+
+
 def _ends_and_extras(ctx, walls, stairs, level_name, groups):
     """복도 양끝 분리수거함, CCTV, 중앙 계단 맞은편 행사 게시판·층 표시, 복도 끝 창가 화분"""
     p, W, D = ctx.p, ctx.W, ctx.D
@@ -251,10 +264,19 @@ def _ends_and_extras(ctx, walls, stairs, level_name, groups):
         if c is not None:
             ctx.anchor("notice", W - 0.03 if other == "right" else 0.03, c, W - 0.85 if other == "right" else 0.85, c)
             wall_item(p, W, D, other, c, bw, 0.0, 0.02, 1.05, 2.05, "cork")
-            n = max(2, int(bw / 0.38))
-            for k in range(n):
-                m = ("art_red", "paper", "art_blue", "paper_yellow", "art_green")[k % 5]
-                wall_item(p, W, D, other, c - bw / 2 + bw * (k + 0.5) / n, 0.28, 0.02, 0.004, 1.2 + 0.1 * (k % 3), 1.6 + 0.1 * (k % 3), m)
+            # 행사·캠페인 포스터 (층마다 다른 조합) + 남는 자리에 작은 안내문
+            n_post = 3 if bw >= 1.8 else (2 if bw >= 1.3 else 1)
+            keys = _posters_for(level_name, n_post)
+            rot = facing_rows(ctx.frame, "left" if other == "right" else "right")
+            slot = bw / n_post
+            for k, key in enumerate(keys):
+                a = c - bw / 2 + slot * (k + 0.5)
+                du = 0.024 if other == "left" else W - 0.024
+                dv = 0.03 if other == "left" else W - 0.03
+                poster(ctx.sw, ctx.container, ctx.frame.pt(du, a), ctx.frame.pt(dv, a), ctx.y + 1.55 + 0.05 * (k % 2), rot, key,
+                       groups)
+            if n_post == 1 and bw >= 1.0:
+                wall_item(p, W, D, other, c + bw / 2 - 0.2, 0.21, 0.02, 0.004, 1.3, 1.6, "paper_yellow")
             walls[other].block(c - bw / 2 - 0.1, c + bw / 2 + 0.1)
             x, z = ctx.frame.pt(W - 0.03 if other == "right" else 0.03, c)
             label(ctx.sw, ctx.container, (x, ctx.y + 2.45, z), level_name, 0.009, 64, (0.18, 0.32, 0.36),
