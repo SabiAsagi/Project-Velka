@@ -1,0 +1,41 @@
+[gd_scene load_steps=11 format=3]
+
+[ext_resource type="Script" path="res://scripts/chapters/PrologueFactory.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://scenes/prologue/FactoryWorld.tscn" id="2_world"]
+[ext_resource type="PackedScene" path="res://scenes/characters/PlayerParty.tscn" id="3_party"]
+[ext_resource type="PackedScene" path="res://scenes/cameras/FollowCamera.tscn" id="4_camera"]
+[ext_resource type="PackedScene" path="res://scenes/ui/PrototypeHUD.tscn" id="5_hud"]
+[ext_resource type="PackedScene" path="res://scenes/ui/DialogueBox.tscn" id="6_dialogue"]
+[ext_resource type="Script" path="res://scripts/ui/VitalsOverlay.gd" id="7_overlay"]
+[ext_resource type="Script" path="res://scripts/ui/FailureScreen.gd" id="8_failure"]
+[ext_resource type="Script" path="res://scripts/ui/CaptionSequence.gd" id="9_caption"]
+
+[node name="PrologueFactory" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="FactoryWorld" parent="." node_paths=PackedStringArray("party", "camera") instance=ExtResource("2_world")]
+party = NodePath("../PlayerParty")
+camera = NodePath("../FollowCamera")
+
+[node name="PlayerParty" parent="." node_paths=PackedStringArray("camera") instance=ExtResource("3_party")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.0, 0.05, 14.0)
+camera = NodePath("../FollowCamera")
+
+[node name="FollowCamera" parent="." node_paths=PackedStringArray("target") instance=ExtResource("4_camera")]
+target = NodePath("../PlayerParty/Sabi")
+
+[node name="PrototypeHUD" parent="." node_paths=PackedStringArray("party", "school_map") instance=ExtResource("5_hud")]
+party = NodePath("../PlayerParty")
+school_map = NodePath("../FactoryWorld")
+
+[node name="DialogueBox" parent="." instance=ExtResource("6_dialogue")]
+
+[node name="VitalsOverlay" type="CanvasLayer" parent="." node_paths=PackedStringArray("party")]
+script = ExtResource("7_overlay")
+party = NodePath("../PlayerParty")
+
+[node name="FailureScreen" type="CanvasLayer" parent="."]
+script = ExtResource("8_failure")
+
+[node name="CaptionSequence" type="CanvasLayer" parent="."]
+script = ExtResource("9_caption")

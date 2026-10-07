@@ -1,0 +1,19 @@
+{
+  "dialogue_id": "prologue_p04_coop",
+  "lines": [
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "gentle_smile",
+      "shamu_emotion": "neutral",
+      "text": "경보 멈췄고, 파쇄기도 섰어. 서버실 열렸어."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "gentle_smile",
+      "shamu_emotion": "serious",
+      "text": "빨리 찾고 나가자. 여기 공기가 이상해."
+    }
+  ]
+}

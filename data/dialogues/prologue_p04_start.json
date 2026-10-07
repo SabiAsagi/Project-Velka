@@ -1,0 +1,47 @@
+{
+  "dialogue_id": "prologue_p04_start",
+  "lines": [
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "도시 외곽 산업단지 북측 3구역. 간판도, 회사 이름도 지워진 공장이 어둠 속에 서 있다."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "폐쇄됐다더니 불이 켜져 있네. 경비도 있고."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "serious",
+      "text": "폐쇄된 곳을 지키는 사람이 있다는 게 더 이상해."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "determined",
+      "shamu_emotion": "neutral",
+      "text": "옆문은 전자식 잠금. 마당에 있는 보안 단말부터 열게."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "determined",
+      "shamu_emotion": "smug",
+      "text": "들키면 두고 간다."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "gentle_smile",
+      "shamu_emotion": "smug",
+      "text": "거짓말."
+    }
+  ]
+}

@@ -1,0 +1,70 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/entities/Guard.gd" id="1_script"]
+
+[sub_resource type="CapsuleShape3D" id="Shape_guard"]
+radius = 0.4
+height = 1.8
+
+[sub_resource type="StandardMaterial3D" id="Mat_silhouette"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(0.04, 0.04, 0.06, 0.95)
+
+[sub_resource type="CapsuleMesh" id="Mesh_body"]
+material = SubResource("Mat_silhouette")
+radius = 0.26
+height = 1.5
+
+[sub_resource type="SphereMesh" id="Mesh_head"]
+material = SubResource("Mat_silhouette")
+radius = 0.15
+height = 0.3
+
+[sub_resource type="BoxMesh" id="Mesh_cap"]
+material = SubResource("Mat_silhouette")
+size = Vector3(0.34, 0.06, 0.4)
+
+[node name="Guard" type="CharacterBody3D"]
+script = ExtResource("1_script")
+detection_range = 7.0
+vision_angle = 70.0
+patrol_speed = 0.9
+chase_speed = 2.6
+lose_sight_delay = 2.0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+shape = SubResource("Shape_guard")
+
+[node name="Sprite3D" type="Sprite3D" parent="."]
+visible = false
+
+[node name="AlertLight" type="OmniLight3D" parent="."]
+visible = false
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.0, 0)
+light_color = Color(0.95, 0.08, 0.06, 1)
+light_energy = 1.4
+omni_range = 3.0
+
+[node name="Body" type="Node3D" parent="."]
+
+[node name="Torso" type="MeshInstance3D" parent="Body"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+mesh = SubResource("Mesh_body")
+
+[node name="Head" type="MeshInstance3D" parent="Body"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.68, 0)
+mesh = SubResource("Mesh_head")
+
+[node name="Cap" type="MeshInstance3D" parent="Body"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, -0.06)
+mesh = SubResource("Mesh_cap")
+
+[node name="Flashlight" type="SpotLight3D" parent="Body"]
+transform = Transform3D(1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 0.22, 1.2, -0.25)
+light_color = Color(1, 0.95, 0.8, 1)
+light_energy = 3.0
+shadow_enabled = true
+spot_range = 8.0
+spot_angle = 35.0

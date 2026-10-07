@@ -1,0 +1,19 @@
+{
+  "dialogue_id": "prologue_p04_office",
+  "lines": [
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "neutral",
+      "text": "보안실에 한 명 더 있어. 모니터만 보고 있으니까 뒤로 돌아가면 돼."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "determined",
+      "text": "그건 내 일이고."
+    }
+  ]
+}

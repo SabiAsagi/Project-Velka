@@ -27,6 +27,8 @@ const OBJECTIVE_COLOR := Color(0.95, 0.85, 0.45)
 
 ## 끄면 이야기를 진행하지 않고 맵만 돌아다닌다 (맵 확인·테스트용)
 @export var run_story: bool = true
+## 아지트 파트가 끝나면 이어서 여는 씬 (비우면 아지트에 머문다)
+@export_file("*.tscn") var next_scene: String = "res://scenes/chapters/Prologue_Factory.tscn"
 
 var step: Step = Step.CLIENT
 
@@ -111,9 +113,12 @@ func _take_bag() -> void:
 	await _wait_dialogue()
 	await _play_dialogue("prologue_p03_bag")
 	GameManager.set_story_flag("prologue_hideout_done")
-	captions.play(["두 사람은 그날 밤, 외곽 산업단지로 향했다.", "프롤로그 — 다음: 폐쇄 공장"])
+	captions.play(["두 사람은 그날 밤, 외곽 산업단지로 향했다."])
 	await captions.finished
-	_objective("아지트 파트 끝 — 다음: 폐쇄 공장 (제작 예정)")
+	if not next_scene.is_empty():
+		SceneManager.change_scene(next_scene)
+	else:
+		_objective("아지트 파트 끝 — 다음: 폐쇄 공장")
 
 
 func _client_leaves() -> void:

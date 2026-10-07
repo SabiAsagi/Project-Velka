@@ -1,0 +1,33 @@
+{
+  "dialogue_id": "prologue_p04_gate",
+  "lines": [
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "gentle_smile",
+      "shamu_emotion": "neutral",
+      "text": "열어써."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "gentle_smile",
+      "shamu_emotion": "smug",
+      "text": "이번엔 빨랐네."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "neutral",
+      "text": "안에 경비가 둘. 손전등 비추는 쪽이 보는 방향이야. 빛이 지나간 다음에 움직여."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "serious",
+      "text": "사무동까지만 가면 되지?"
+    }
+  ]
+}

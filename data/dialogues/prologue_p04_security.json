@@ -1,0 +1,40 @@
+{
+  "dialogue_id": "prologue_p04_security",
+  "lines": [
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "neutral",
+      "text": "독립형 보안망이야. 외부랑 끊겨 있어서 여기서만 들어갈 수 있어."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "serious",
+      "text": "삭제된 출입 기록 복구… 지하에 서버층이 있어. 실종자들 기록도 거기 있을 거야."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "serious",
+      "text": "계단은?"
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "serious",
+      "text": "계단실 문이 기계식 봉쇄문이야. 해킹으로는 안 열려."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "smug",
+      "text": "그럼 내 차례네."
+    }
+  ]
+}

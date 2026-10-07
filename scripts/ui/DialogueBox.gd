@@ -6,8 +6,10 @@ extends CanvasLayer
 @export var typing_speed: float = 0.03 # 글자당 출력 속도(초)
 
 @onready var root_container: Control = $RootContainer
-@onready var left_portrait: TextureRect = $RootContainer/LeftPortrait
-@onready var right_portrait: TextureRect = $RootContainer/RightPortrait
+@onready var left_frame: PanelContainer = $RootContainer/LeftFrame
+@onready var right_frame: PanelContainer = $RootContainer/RightFrame
+@onready var left_portrait: TextureRect = $RootContainer/LeftFrame/LeftPortrait
+@onready var right_portrait: TextureRect = $RootContainer/RightFrame/RightPortrait
 @onready var text_panel: PanelContainer = $RootContainer/TextPanel
 @onready var speaker_label: Label = $RootContainer/TextPanel/MarginContainer/VBoxContainer/SpeakerHeader/SpeakerLabel
 @onready var dialogue_label: RichTextLabel = $RootContainer/TextPanel/MarginContainer/VBoxContainer/DialogueLabel
@@ -16,6 +18,8 @@ extends CanvasLayer
 
 # 초상화 경로 테이블 (감정 키 -> 파일). 대사 데이터의 sabi_emotion / shamu_emotion 값으로 조회한다.
 const PORTRAIT_DIR := "res://assets/characters/portraits/"
+const COLOR_SABI := Color(0.27, 0.63, 0.71)
+const COLOR_SHAMU := Color(0.85, 0.64, 0.21)
 const PORTRAIT_FILES := {
 	"sabi": {
 		"neutral": "sabi_neutral.png",
@@ -71,6 +75,9 @@ func _ready() -> void:
 		DialogueManager.dialogue_completed.connect(_on_dialogue_completed)
 
 	_setup_indicator_animation()
+	# 두 액자가 같은 StyleBox를 공유하지 않게 따로 복제한다 (말하는 쪽 테두리만 강조)
+	for frame in [left_frame, right_frame]:
+		frame.add_theme_stylebox_override("panel", (frame.get_theme_stylebox("panel") as StyleBoxFlat).duplicate())
 
 
 func _process(delta: float) -> void:
@@ -169,20 +176,16 @@ func _update_portraits(active_speaker: String, sabi_emotion: String, shamu_emoti
 	left_portrait.texture = get_portrait("sabi", sabi_emotion)
 	right_portrait.texture = get_portrait("shamu", shamu_emotion)
 
-	# 활성 화자 하이라이트 연출
-	if active_speaker == "sabi":
-		left_portrait.modulate = Color.WHITE
-		left_portrait.scale = Vector2(1.05, 1.05)
-		right_portrait.modulate = Color(0.4, 0.4, 0.4, 0.8)
-		right_portrait.scale = Vector2(1.0, 1.0)
-	elif active_speaker == "shamu":
-		right_portrait.modulate = Color.WHITE
-		right_portrait.scale = Vector2(1.05, 1.05)
-		left_portrait.modulate = Color(0.4, 0.4, 0.4, 0.8)
-		left_portrait.scale = Vector2(1.0, 1.0)
-	else:
-		left_portrait.modulate = Color(0.5, 0.5, 0.5, 0.8)
-		right_portrait.modulate = Color(0.5, 0.5, 0.5, 0.8)
+	# 활성 화자 하이라이트: 말하는 쪽 액자는 밝게 + 캐릭터 색 테두리, 듣는 쪽은 어둡게
+	_style_frame(left_frame, left_portrait, active_speaker == "sabi", COLOR_SABI)
+	_style_frame(right_frame, right_portrait, active_speaker == "shamu", COLOR_SHAMU)
+
+
+func _style_frame(frame: PanelContainer, portrait: TextureRect, speaking: bool, color: Color) -> void:
+	var style := frame.get_theme_stylebox("panel") as StyleBoxFlat
+	if style:
+		style.border_color = color if speaking else Color(0.3, 0.35, 0.42, 0.8)
+	portrait.modulate = Color.WHITE if speaking else Color(0.45, 0.45, 0.48)
 
 
 ## 캐릭터/감정 키로 초상화 텍스처를 반환한다. 알 수 없는 감정은 neutral로 대체한다.

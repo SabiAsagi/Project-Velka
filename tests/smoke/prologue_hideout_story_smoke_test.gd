@@ -30,6 +30,7 @@ func _run() -> void:
 	change_scene_to_file(SCENE)
 	await _seconds(1.0)
 	_scene = current_scene
+	_scene.set("next_scene", "")   # 끝난 뒤 공장 씬으로 넘어가지 않게 (아지트 안에서 결과를 확인한다)
 	_party = _scene.get_node("PlayerParty")
 	var start: Vector3 = _scene.get_node("HideoutWorld/StoryStart").global_position
 	_check(_member().global_position.distance_to(start) < 0.5, "이야기는 2층 응접 공간에서 시작한다")

@@ -1,0 +1,70 @@
+{
+  "dialogue_id": "prologue_p04_server",
+  "lines": [
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "사비가 서버에서 실종 당시의 영상을 복원한다."
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "영상 속 인물은 평범한 복도에 서 있다."
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "surprised",
+      "shamu_emotion": "surprised",
+      "text": "[shake rate=25.0 level=8]영상이 한 프레임 건너뛴다. 사람만 사라진다.[/shake]",
+      "shake": true
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "다음 영상에서는 같은 복도가 비정상적으로 변질되어 있다."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "serious",
+      "text": "합성이야?"
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "serious",
+      "text": "원본이야."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "surprised",
+      "text": "그럼 이 사람은 어디로 간 건데?"
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "사비가 촬영 정보를 확인하려 한다. 모니터 화면이 멈춘다. 시간 표시가 엉망으로 깨진다."
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "surprised",
+      "shamu_emotion": "surprised",
+      "text": "[shake rate=30.0 level=10][color=#d8e4e8]모든 조명이 꺼진다.[/color][/shake]",
+      "shake": true
+    }
+  ]
+}
