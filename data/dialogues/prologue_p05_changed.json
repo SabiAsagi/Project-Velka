@@ -1,0 +1,54 @@
+{
+  "dialogue_id": "prologue_p05_changed",
+  "lines": [
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "계단을 올라왔는데, 부숴 놓았던 봉쇄문 자리에 매끈한 벽이 서 있다."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "surprised",
+      "text": "구조가 바뀌었어."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "annoyed",
+      "text": "건물 구조가 몇 초 만에 바뀐다고?"
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "sad",
+      "shamu_emotion": "annoyed",
+      "text": "나도 몰라."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "serious",
+      "text": "……아래층 복도에 아까 없던 문이 있었어. 서쪽 벽."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "serious",
+      "text": "그게 출구라는 보장은?"
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "determined",
+      "shamu_emotion": "serious",
+      "text": "없어. 근데 다른 길도 없어."
+    }
+  ]
+}

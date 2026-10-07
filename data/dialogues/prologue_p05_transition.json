@@ -1,0 +1,54 @@
+{
+  "dialogue_id": "prologue_p05_transition",
+  "lines": [
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "serious",
+      "text": "경보음도, 환풍기 소리도 멎었다. 손전등 불빛만 남았다."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "serious",
+      "text": "정전?"
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "serious",
+      "text": "아니."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "surprised",
+      "text": "뭐가 달라졌는데?"
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "사비가 비어 있는 바닥을 가리킨다. 쓰러져 있던 경비원도, 바닥의 발자국도 보이지 않는다."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "surprised",
+      "text": "사람들이 없어."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "determined",
+      "text": "……일단 나가자. 왔던 길로."
+    }
+  ]
+}
