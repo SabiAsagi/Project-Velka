@@ -9,7 +9,8 @@ class_name AnalysisBoard
 #      사비가 증거마다 한마디씩 한다 (펼친 화면 아래, 카드를 고를 때).
 #   2. 살펴본 카드 두 장을 차례로 클릭하면 붉은 실로 잇는다. 맞는 연결이면 단서가 메모에 붙고,
 #      아니면 사비의 힌트 (상관없는 증거면 왜 상관없는지 말해 준다)
-#   막히면 "사비에게 묻기"(H): 같은 연결에 대해 물을수록 힌트가 구체적이 된다 (분류 -> 증거 하나 -> 두 증거)
+#   막히면 "생각 정리"(H): 플레이어(사비)의 생각이 정리된다. 누를수록 구체적 (분류 -> 증거 하나 -> 두 증거)
+#   보드의 문장은 모두 사비 자신의 혼잣말·메모다 (플레이어 = 사비).
 #   3. 연결을 모두 찾으면 지도가 펼쳐지고, 실종자들이 모이는 곳에 핀을 꽂는다 -> 공통 좌표
 # 데이터: data/puzzles/*.json (cards / links / pin). ESC: 펼친 카드 닫기 -> 선택 취소 -> 보드 닫기(진행 유지).
 
@@ -135,12 +136,12 @@ func link(a: String, b: String) -> bool:
 		for pair in l.get("pairs", []):
 			if (pair[0] == a and pair[1] == b) or (pair[0] == b and pair[1] == a):
 				if _found.has(String(l["id"])):
-					_say("사비: 그건 이미 이었어.")
+					_say("그건 이미 이었어.")
 					return false
 				_found.append(String(l["id"]))
 				_strings.add_string(a, b)
 				_add_memo(String(l.get("title", "")), String(l.get("found", "")))
-				_say("사비: " + String(l.get("found", "")), VelkaStyle.GOOD)
+				_say(String(l.get("found", "")), VelkaStyle.GOOD)
 				if _found.size() >= step_count():
 					_pin_stage = true
 					get_tree().create_timer(1.2).timeout.connect(func():
@@ -153,7 +154,7 @@ func link(a: String, b: String) -> bool:
 	var reason := String(_card_data(a).get("decoy_reason", ""))
 	if reason.is_empty():
 		reason = String(_card_data(b).get("decoy_reason", ""))
-	_say("사비: " + reason if not reason.is_empty() else String(_data.get("wrong_hint", "")), VelkaStyle.RED_SOFT)
+	_say(reason if not reason.is_empty() else String(_data.get("wrong_hint", "")), VelkaStyle.RED_SOFT)
 	return false
 
 
@@ -175,14 +176,14 @@ func toggle_mark(card_id: String, index: int) -> void:
 		var tag := String(keywords[index][1])
 		var others := _cards_with_tag(tag, card_id)
 		if others.is_empty():
-			_say("사비: '%s' — 표시해 뒀어." % String(keywords[index][0]), VelkaStyle.INK)
+			_say("'%s' — 표시해 두자." % String(keywords[index][0]), VelkaStyle.INK)
 		else:
 			var names: Array[String] = []
 			for other in others:
 				names.append(String(_card_data(other).get("title", "")))
 				(_cards[other] as Card).glow()
 			card.glow()
-			_say("사비: 어, '%s'… %s에도 비슷한 게 있었어!" % [String(keywords[index][0]), ", ".join(names)], VelkaStyle.GOOD)
+			_say("어, '%s'… %s에도 비슷한 게 있었어." % [String(keywords[index][0]), ", ".join(names)], VelkaStyle.GOOD)
 	if _zoom.visible and _zoom_card == card_id:
 		_show_card_zoom(_card_data(card_id))
 
@@ -191,7 +192,7 @@ func is_marked(card_id: String, index: int) -> bool:
 	return (_marks.get(card_id, {}) as Dictionary).has(index)
 
 
-## 사비에게 묻기: 아직 못 찾은 연결 하나에 대해 점점 구체적인 힌트
+## 생각 정리: 아직 못 찾은 연결 하나에 대해 점점 구체적인 혼잣말 힌트
 func ask_hint() -> String:
 	if _is_solved:
 		return ""
@@ -207,12 +208,12 @@ func ask_hint() -> String:
 		var text := ""
 		match level:
 			0:
-				text = "사비: " + String(l.get("hint", ""))
+				text = String(l.get("hint", ""))
 			1:
-				text = "사비: '%s'부터 다시 보자. 밑줄 친 데를 눌러 봐." % String(_card_data(pair[0]).get("title", ""))
+				text = "'%s'부터 다시 보자. 밑줄 친 데가 수상해." % String(_card_data(pair[0]).get("title", ""))
 				(_cards[pair[0]] as Card).glow()
 			_:
-				text = "사비: '%s'랑 '%s'를 이어 봐." % [String(_card_data(pair[0]).get("title", "")), String(_card_data(pair[1]).get("title", ""))]
+				text = "'%s'랑 '%s'… 이 둘이 이어지는 거 아닐까." % [String(_card_data(pair[0]).get("title", "")), String(_card_data(pair[1]).get("title", ""))]
 				(_cards[pair[0]] as Card).glow()
 				(_cards[pair[1]] as Card).glow()
 		_hint_level[id] = mini(level + 1, 2)
@@ -322,7 +323,7 @@ func _select(card_id: String) -> void:
 		(_cards[card_id] as Card).selected = true
 		(_cards[card_id] as Card).queue_redraw()
 		var comment := String(_card_data(card_id).get("comment", ""))
-		_say("사비: %s  — 이어질 카드를 클릭해 (빈 곳: 취소)" % comment, VelkaStyle.INK)
+		_say("%s  — 이어질 카드를 고르자 (빈 곳: 취소)" % comment, VelkaStyle.INK)
 	_strings.queue_redraw()
 
 
@@ -361,7 +362,7 @@ func _show_card_zoom(card: Dictionary) -> void:
 		_zoom_box.add_child(VelkaStyle.label("밑줄 친 글자를 누르면 단서로 표시한다", VelkaStyle.mono(), 14, Color(0.45, 0.42, 0.38)))
 	var comment := String(card.get("comment", ""))
 	if not comment.is_empty():
-		var c := VelkaStyle.label("사비: " + comment, VelkaStyle.hand(), 27, Color(0.2, 0.36, 0.42))
+		var c := VelkaStyle.label("✎ " + comment, VelkaStyle.hand(), 27, Color(0.2, 0.36, 0.42))
 		c.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		c.custom_minimum_size = Vector2(660, 0)
 		_zoom_box.add_child(c)
@@ -432,7 +433,7 @@ func _show_result() -> void:
 	row.alignment = BoxContainer.ALIGNMENT_END
 	row.add_child(ok)
 	_zoom_box.add_child(row)
-	_say("사비: 전부 거기서 끊겼어.", VelkaStyle.GOOD)
+	_say("전부 거기서 끊겼어.", VelkaStyle.GOOD)
 	_zoom.visible = true
 	ok.grab_focus()
 
@@ -548,7 +549,7 @@ func _build_ui() -> void:
 	var head := VelkaStyle.label(String(_data.get("title", "사건 보드")), VelkaStyle.serif_bold(), 30, VelkaStyle.INK)
 	head.position = Vector2(24, 14)
 	_frame.add_child(head)
-	var help := VelkaStyle.label("클릭: 펼쳐 보기 / 실 잇기   ·   우클릭: 다시 보기   ·   H: 사비에게 묻기   ·   ESC: 닫기",
+	var help := VelkaStyle.label("클릭: 펼쳐 보기 / 실 잇기   ·   우클릭: 다시 보기   ·   H: 생각 정리   ·   ESC: 닫기",
 			VelkaStyle.mono(), 15, VelkaStyle.INK_DIM)
 	help.position = Vector2(DESIGN.x - 900, 30)
 	help.size = Vector2(700, 20)
@@ -556,7 +557,7 @@ func _build_ui() -> void:
 	_frame.add_child(help)
 	var hint_button := Button.new()
 	hint_button.name = "HintButton"
-	hint_button.text = "사비에게 묻기 (H)"
+	hint_button.text = "생각 정리 (H)"
 	VelkaStyle.style_small_button(hint_button, VelkaStyle.SABI)
 	hint_button.position = Vector2(DESIGN.x - 190, 22)
 	hint_button.pressed.connect(func(): ask_hint())
