@@ -1,0 +1,211 @@
+{
+  "dialogue_id": "prologue_p10_president",
+  "lines": [
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "넓은 책상 뒤에 단정한 차림의 여자가 앉아 있다. 유가온이 실종자 명단을 들고 옆에 선다."
+    },
+    {
+      "speaker": "baek",
+      "speaker_name": "백윤서",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "협회장 백윤서입니다. 몸은 어떻습니까."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "인사는 됐고. 여기가 어딘지부터."
+    },
+    {
+      "speaker": "baek",
+      "speaker_name": "백윤서",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "현실세계와 이곳, 괴이세계는 분리되어 있습니다. 현실에서 이곳으로 넘어오는 현상을 '전이'라고 부릅니다."
+    },
+    {
+      "speaker": "baek",
+      "speaker_name": "백윤서",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "전이는 의도적으로 재현할 수 없습니다. 언제, 누가 넘어오는지 우리도 모릅니다."
+    },
+    {
+      "speaker": "baek",
+      "speaker_name": "백윤서",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "이곳은 학교, 아파트, 방송국, 병원 같은 여러 구역이 이어진 거대한 폐쇄 공간입니다."
+    },
+    {
+      "speaker": "baek",
+      "speaker_name": "백윤서",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "협회는 현실 정부의 조직이 아닙니다. 이곳에서 살아남은 사람들이 만든 집단입니다."
+    },
+    {
+      "speaker": "baek",
+      "speaker_name": "백윤서",
+      "sabi_emotion": "surprised",
+      "shamu_emotion": "serious",
+      "text": "그리고 현실로 돌아간 것이 확인된 사례는 없습니다."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "annoyed",
+      "text": "결국 나가는 방법을 모른다는 거네."
+    },
+    {
+      "speaker": "baek",
+      "speaker_name": "백윤서",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "annoyed",
+      "text": "현재까지는 그렇습니다."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "annoyed",
+      "text": "그걸 이렇게 태연하게 말해?"
+    },
+    {
+      "speaker": "baek",
+      "speaker_name": "백윤서",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "annoyed",
+      "text": "태연한 것이 아니라, 거짓말을 하지 않는 겁니다."
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "사비가 유가온이 든 실종자 명단을 바라본다."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "neutral",
+      "text": "현실에서 사라진 사람들, 여기에 있을 수도 있져?"
+    },
+    {
+      "speaker": "baek",
+      "speaker_name": "백윤서",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "neutral",
+      "text": "일부는 확인됐습니다."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "neutral",
+      "text": "우리 찾아온 사람들도?"
+    },
+    {
+      "speaker": "yu",
+      "speaker_name": "유가온",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "neutral",
+      "text": "가능성은 있지만 아직 기록이 없습니다."
+    },
+    {
+      "speaker": "baek",
+      "speaker_name": "백윤서",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "치료와 기본적인 보호는 제공하겠습니다. 그 이후의 선택은 두 사람에게 있습니다."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "밖으로 나가도 막지 않고?"
+    },
+    {
+      "speaker": "baek",
+      "speaker_name": "백윤서",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "막지는 않습니다. 살아남을 가능성이 낮다는 사실은 말씀드리겠지만요."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "determined",
+      "shamu_emotion": "neutral",
+      "text": "우리 자료 줄게여."
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "determined",
+      "shamu_emotion": "annoyed",
+      "text": "샤무가 사비를 바라본다."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "determined",
+      "shamu_emotion": "neutral",
+      "text": "대신 협회 자료도 보여줘여."
+    },
+    {
+      "speaker": "baek",
+      "speaker_name": "백윤서",
+      "sabi_emotion": "determined",
+      "shamu_emotion": "neutral",
+      "text": "정보 교환입니까?"
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "협회에 들어가는 건 아니야. 우린 둘이 움직여."
+    },
+    {
+      "speaker": "baek",
+      "speaker_name": "백윤서",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "정식 소속일 필요는 없습니다. 목적이 같은 사건에서 협력하면 됩니다.",
+      "choices": [
+        {
+          "text": "협회의 정보를 이용한다",
+          "outcome": {
+            "trust_delta": 3.0,
+            "suspicion_delta": -5.0,
+            "flags": {
+              "association_choice": "use"
+            },
+            "next_dialogue": "prologue_p10_use"
+          }
+        },
+        {
+          "text": "협회를 아직 믿지 않는다",
+          "outcome": {
+            "trust_delta": 5.0,
+            "suspicion_delta": 5.0,
+            "flags": {
+              "association_choice": "wary"
+            },
+            "next_dialogue": "prologue_p10_wary"
+          }
+        }
+      ]
+    }
+  ]
+}

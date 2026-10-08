@@ -1,0 +1,26 @@
+{
+  "dialogue_id": "prologue_p09_kwon_call",
+  "lines": [
+    {
+      "speaker": "kwon",
+      "speaker_name": "권지혁",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "다들 만나 봤나. 협회장님이 기다리신다."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "annoyed",
+      "text": "드디어 높은 사람이네."
+    },
+    {
+      "speaker": "kwon",
+      "speaker_name": "권지혁",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "복도 북쪽, 가운데 문이다. 열어 뒀어."
+    }
+  ]
+}

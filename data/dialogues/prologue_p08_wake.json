@@ -1,0 +1,145 @@
+{
+  "dialogue_id": "prologue_p08_wake",
+  "lines": [
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "눈을 뜨자 형광등 불빛이 번진다. 소독약 냄새. 낡은 관공서 같은 방에 침대 두 개가 놓여 있다."
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "[체력: 회복 중]  [심박수: 안정]"
+    },
+    {
+      "speaker": "seo",
+      "speaker_name": "서유림",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "neutral",
+      "text": "움직이지 마세요. 봉합은 끝났지만 상처가 다시 벌어질 수 있습니다."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "neutral",
+      "text": "샤무는여?"
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "neutral",
+      "text": "옆에 있어."
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "옆 침대의 샤무도 붕대를 감고 있다."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "neutral",
+      "text": "갠차나?"
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "annoyed",
+      "text": "그건 내가 물어볼 말이거든."
+    },
+    {
+      "speaker": "seo",
+      "speaker_name": "서유림",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "둘 다 안 괜찮으니까 조용히 누워 있어요."
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "문이 열리고 장비를 갖춘 남자가 들어온다."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "여기가 어디야."
+    },
+    {
+      "speaker": "kwon",
+      "speaker_name": "권지혁",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "괴이저항단체 본부."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "어느 도시."
+    },
+    {
+      "speaker": "kwon",
+      "speaker_name": "권지혁",
+      "sabi_emotion": "surprised",
+      "shamu_emotion": "serious",
+      "text": "너희가 알던 도시가 아니다."
+    },
+    {
+      "speaker": "kwon",
+      "speaker_name": "권지혁",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "serious",
+      "text": "여긴 현실세계가 아니야. 이곳에 있는 비정상적인 존재와 현상을 우리는 '개체'라고 부른다."
+    },
+    {
+      "speaker": "kwon",
+      "speaker_name": "권지혁",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "annoyed",
+      "text": "개체는 보통 싸움으로는 없앨 수 없다. 너희도 봤겠지. 때릴수록 빨라지는 걸."
+    },
+    {
+      "speaker": "kwon",
+      "speaker_name": "권지혁",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "serious",
+      "text": "규칙을 파악하지 못하면 여기선 살아남을 수 없어."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "neutral",
+      "text": "돌아가는 방법은여?"
+    },
+    {
+      "speaker": "kwon",
+      "speaker_name": "권지혁",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "그건 협회장이 설명할 문제다. 몸부터 추스르고, 본부 안은 돌아다녀도 좋아."
+    },
+    {
+      "speaker": "seo",
+      "speaker_name": "서유림",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "멀리는 가지 마세요. 진료 중에 몇 가지 더 확인할 게 있으니까요."
+    }
+  ]
+}

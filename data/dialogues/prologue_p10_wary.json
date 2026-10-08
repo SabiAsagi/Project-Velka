@@ -1,0 +1,47 @@
+{
+  "dialogue_id": "prologue_p10_wary",
+  "lines": [
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "정보는 바꿔 줄게. 딱 거기까지."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "우리 자료는 우리가 필요한 만큼만 줘. 그쪽도 숨기는 거 없이."
+    },
+    {
+      "speaker": "baek",
+      "speaker_name": "백윤서",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "조건부 정보 교환이군요. 받아들이겠습니다."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "serious",
+      "text": "샤무……"
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "serious",
+      "text": "믿는 건 나중에 해도 돼."
+    },
+    {
+      "speaker": "baek",
+      "speaker_name": "백윤서",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "현명한 판단입니다. 오늘은 숙소에서 쉬세요. 내일 아침 브리핑룸에서 뵙겠습니다."
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "dialogue_id": "prologue_p10_use",
+  "lines": [
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "determined",
+      "shamu_emotion": "neutral",
+      "text": "협력할게여. 자료 정리해서 줄게."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "determined",
+      "shamu_emotion": "annoyed",
+      "text": "……하여간 빨라."
+    },
+    {
+      "speaker": "baek",
+      "speaker_name": "백윤서",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "고맙습니다. 유가온 조사원이 정보조사부 기록을 열어 드릴 겁니다."
+    },
+    {
+      "speaker": "yu",
+      "speaker_name": "유가온",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "명단 대조부터 같이 하시죠."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "소속은 아니야. 그건 확실히 해 둬."
+    },
+    {
+      "speaker": "baek",
+      "speaker_name": "백윤서",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "알고 있습니다. 오늘은 숙소에서 쉬세요. 내일 아침 브리핑룸에서 뵙겠습니다."
+    }
+  ]
+}
