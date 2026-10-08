@@ -10,7 +10,7 @@ enum GameMode { SINGLE, LOCAL_COOP }
 var current_game_mode: GameMode = GameMode.SINGLE
 
 # 현재 활성 캐릭터 및 챕터
-## 현재 챕터. 게임은 챕터 1(학교) 정문 앞에서 시작한다.
+## 현재 챕터 (SceneManager.STORY_SCENES 의 키). 새 게임은 프롤로그 아지트에서 시작한다.
 const CHAPTER_SCHOOL := "Chapter1_School"
 var current_chapter: String = CHAPTER_SCHOOL
 var active_character: CharacterType = CharacterType.SABI

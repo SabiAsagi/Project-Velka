@@ -18,6 +18,16 @@ func has_save_file() -> bool:
 	return FileAccess.file_exists(SAVE_PATH)
 
 
+## 저장된 챕터 이름만 읽는다 (게임 상태는 바꾸지 않는다. 없으면 빈 문자열)
+func peek_chapter() -> String:
+	if not has_save_file():
+		return ""
+	var data = JSON.parse_string(FileAccess.get_file_as_string(SAVE_PATH))
+	if data is Dictionary:
+		return String(data.get("chapter", ""))
+	return ""
+
+
 ## 현재 게임 상태 저장
 func save_game() -> bool:
 	var save_data = {
