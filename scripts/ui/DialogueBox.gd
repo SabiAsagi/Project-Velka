@@ -3,7 +3,7 @@ extends CanvasLayer
 # 프로젝트 벨카 - 대화창 (블랙소울 류 고전 RPG 대화창 차용)
 #   - 화면 아래 넓고 어두운 반투명 대화창, 얇은 이중 테두리 + 모서리 장식
 #   - 이름표는 대화창 위에 따로 붙은 작은 상자
-#   - 말하는 인물의 큰 초상화가 왼쪽에서 대화창 위로 올라온다 (아래쪽은 대화창 뒤로 가려진다)
+#   - 말하는 인물의 초상화가 대화창 안쪽 왼쪽에 들어가고, 이름표·대사는 그 오른쪽에서 시작한다 (참고 예시 1번)
 #     사비·샤무는 표정 초상화, 다른 인물은 디자인이 나오기 전까지 색이 다른 실루엣 (NPC_SILHOUETTES)
 #   - 인물 대사는 「」 로 감싸고, 서술(system)은 초상화·이름표 없이 흐린 글씨
 #   - 타자기 효과, 클릭/E 로 넘기기, 화면 흔들림(shake), 선택지, BBCode ([shake] [wave] [color] [b])
@@ -52,8 +52,9 @@ const NAME_COLORS := {"sabi": Color(0.55, 0.85, 0.92), "shamu": Color(0.98, 0.8,
 const BOX_HEIGHT := 250.0
 const SIDE := 40.0
 const BOTTOM := 28.0
-const PORTRAIT_SIZE := 600.0
-const TEXT_LEFT_WITH_PORTRAIT := 520.0
+const PORTRAIT_SIZE := 238.0
+const PORTRAIT_X := 10.0
+const TEXT_LEFT_WITH_PORTRAIT := PORTRAIT_X + PORTRAIT_SIZE + 34.0
 
 var root_container: Control
 var text_panel: Panel
@@ -168,17 +169,13 @@ func _show_speaker(speaker_id: String, emotion: String) -> void:
 		_silhouette.colors = NPC_SILHOUETTES[speaker_id]
 		_silhouette.queue_redraw()
 	_text_margin.add_theme_constant_override("margin_left", int(TEXT_LEFT_WITH_PORTRAIT if any else 56.0))
-	_name_tag.position.x = (TEXT_LEFT_WITH_PORTRAIT - 24.0) if any else SIDE + 24.0
-	# 화자가 바뀌면 살짝 올라오며 나타난다
+	_name_tag.position.x = (SIDE + TEXT_LEFT_WITH_PORTRAIT - 18.0) if any else SIDE + 24.0
+	# 화자가 바뀌면 살짝 떠오르며 나타난다
 	if any and speaker_id != _current_speaker:
 		for n in [_portrait, _silhouette]:
 			var c := n as Control
 			c.modulate.a = 0.0
-			var base_y := c.position.y
-			c.position.y = base_y + 24.0
-			var t := create_tween().set_parallel()
-			t.tween_property(c, "modulate:a", 1.0, 0.18)
-			t.tween_property(c, "position:y", base_y, 0.18).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+			c.create_tween().tween_property(c, "modulate:a", 1.0, 0.2)
 	_current_speaker = speaker_id
 
 
@@ -268,21 +265,6 @@ func _build() -> void:
 	shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root_container.add_child(shade)
 
-	# 초상화 (대화창 뒤, 왼쪽)
-	_portrait = TextureRect.new()
-	_portrait.name = "Portrait"
-	_portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	_portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	_portrait.size = Vector2(PORTRAIT_SIZE, PORTRAIT_SIZE)
-	_portrait.position = Vector2(SIDE - 30.0, 0)
-	_portrait.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	root_container.add_child(_portrait)
-	_silhouette = Silhouette.new()
-	_silhouette.name = "Silhouette"
-	_silhouette.size = Vector2(PORTRAIT_SIZE * 0.8, PORTRAIT_SIZE)
-	_silhouette.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	root_container.add_child(_silhouette)
-
 	# 대화창
 	text_panel = Panel.new()
 	text_panel.name = "TextPanel"
@@ -295,6 +277,22 @@ func _build() -> void:
 	frame.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	text_panel.add_child(frame)
+	# 초상화 (대화창 안쪽 왼쪽, 아래 끝을 대화창 아래에 맞춘다)
+	_portrait = TextureRect.new()
+	_portrait.name = "Portrait"
+	_portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	_portrait.size = Vector2(PORTRAIT_SIZE, PORTRAIT_SIZE)
+	_portrait.position = Vector2(PORTRAIT_X, BOX_HEIGHT - PORTRAIT_SIZE - 6.0)
+	_portrait.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	text_panel.add_child(_portrait)
+	_silhouette = Silhouette.new()
+	_silhouette.name = "Silhouette"
+	_silhouette.size = Vector2(PORTRAIT_SIZE * 0.85, PORTRAIT_SIZE - 10.0)
+	_silhouette.position = Vector2(PORTRAIT_X + PORTRAIT_SIZE * 0.075, BOX_HEIGHT - PORTRAIT_SIZE + 4.0)
+	_silhouette.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	text_panel.add_child(_silhouette)
+
 	_text_margin = MarginContainer.new()
 	_text_margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_text_margin.add_theme_constant_override("margin_left", 56)
@@ -360,9 +358,6 @@ func _layout() -> void:
 	_box_base_y = s.y - BOTTOM - BOX_HEIGHT
 	text_panel.position = Vector2(SIDE, _box_base_y)
 	text_panel.size = Vector2(s.x - SIDE * 2.0, BOX_HEIGHT)
-	# 초상화 아래 끝(가슴에서 잘린 선)은 대화창 아래 끝에 맞춰 가린다
-	_portrait.position = Vector2(SIDE - 30.0, _box_base_y + BOX_HEIGHT - PORTRAIT_SIZE)
-	_silhouette.position = Vector2(SIDE + 40.0, _box_base_y + BOX_HEIGHT - PORTRAIT_SIZE)
 	_name_tag.position = Vector2(_name_tag.position.x if _name_tag.position.x > 0.0 else SIDE + 24.0, _box_base_y - 58.0)
 	choices_container.position = Vector2(s.x - SIDE - 600.0, _box_base_y - 30.0 - 64.0 * 3.0)
 	choices_container.size = Vector2(600, 0)
