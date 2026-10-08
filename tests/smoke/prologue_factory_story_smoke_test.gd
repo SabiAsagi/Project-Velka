@@ -53,8 +53,16 @@ func _run() -> void:
 	_check(not _flag("p04_gate_hacked"), "샤무로 단말을 조사하면 해킹되지 않는다")
 	await _as("sabi")
 	_interact("Interactables/GateTerminal")
-	await _seconds(2.0)
-	_check(_flag("p04_gate_hacked"), "사비로 단말을 해킹하면 옆문 잠금이 풀린다")
+	await process_frame
+	var game = get_first_node_in_group("hack_minigame")
+	_check(game != null and not game.is_solved and _gm.is_exploration_locked(), "사비로 단말을 조사하면 회로 잇기 해킹 화면이 열린다")
+	game.rotate_tile(0)
+	game.cancel()
+	await _seconds(0.3)
+	_check(not _flag("p04_gate_hacked") and not _gm.is_exploration_locked(), "연결을 끊으면 해킹되지 않고 다시 움직일 수 있다")
+	_interact("Interactables/GateTerminal")
+	await _hack()
+	_check(_flag("p04_gate_hacked"), "회로를 이으면 옆문 잠금이 풀린다")
 	await _wait_dialogue("prologue_p04_gate")
 	await _finish_dialogue()
 	await _seconds(0.3)
@@ -75,7 +83,7 @@ func _run() -> void:
 	_check(_objective().contains("보안실 단말"), "경비원을 제압하면 보안실 단말 해킹이 목표가 된다 (%s)" % _objective())
 	await _as("sabi")
 	_interact("Interactables/SecurityTerminal")
-	await _seconds(2.0)
+	await _hack()
 	await _wait_dialogue("prologue_p04_security")
 	await _finish_dialogue()
 	await _seconds(0.3)
@@ -91,7 +99,7 @@ func _run() -> void:
 	_check(_objective().contains("경보") and _objective().contains("파쇄기"), "봉쇄문을 열면 경보·파쇄기 두 가지가 목표가 된다 (%s)" % _objective())
 	await _as("sabi")
 	_interact("Interactables/AlarmPanel")
-	await _seconds(2.0)
+	await _hack()
 	_check(_flag("p04_alarm_off") and not _objective().contains("경보실") and _objective().contains("파쇄기"),
 			"경보를 끄면 파쇄기만 남는다 (%s)" % _objective())
 	await _as("shamu")
@@ -106,7 +114,7 @@ func _run() -> void:
 	# --- 서버 -> 최하층 컷신 -> 끝 ---
 	await _as("sabi")
 	_interact("Interactables/MainServer")
-	await _seconds(2.0)
+	await _hack()
 	await _wait_dialogue("prologue_p04_server")
 	_check(_dm.current_dialogue_id == "prologue_p04_server", "영상을 복원하면 최하층 컷신 대화가 나온다")
 	await _finish_dialogue()
@@ -231,6 +239,15 @@ func _as(who: String) -> void:
 		_party.request_switch()
 		await _seconds(0.2)
 		tries += 1
+
+
+## 열린 해킹 화면을 정답으로 맞추고 접속 완료까지 기다린다
+func _hack() -> void:
+	await process_frame
+	var game = get_first_node_in_group("hack_minigame")
+	if game:
+		game.solve()
+	await _seconds(1.3)
 
 
 func _wait_dialogue(dialogue_id: String, limit: float = 3.0) -> void:

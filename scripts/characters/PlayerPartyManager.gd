@@ -8,6 +8,8 @@ class_name PlayerPartyManager
 signal party_switched(active_member: PartyMember, companion_member: PartyMember)
 signal stats_updated(character_type: int, heart_rate: float, mental_strength: float)
 signal companion_alert(speaker: String, text: String)
+## C 키 명령 결과 ("샤무: 여기서 기다릴게." 등). HUD가 알림으로 보여준다.
+signal companion_command(text: String, waiting: bool)
 
 @export var camera: Camera3D = null
 ## 연속 전환 방지용 최소 간격(초)
@@ -26,6 +28,10 @@ func _ready() -> void:
 	if not sabi or not shamu:
 		push_error("[PlayerPartyManager] Sabi 또는 Shamu 노드를 찾을 수 없습니다.")
 		return
+
+	# 둘은 서로 부딪히지 않는다 (되돌아갈 때 뒤따라오던 동료에게 길이 막히지 않게)
+	sabi.add_collision_exception_with(shamu)
+	shamu.add_collision_exception_with(sabi)
 
 	# 시그널 연결
 	sabi.stats_changed.connect(_on_member_stats_changed)
@@ -78,11 +84,36 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("switch_character") or event.is_action_pressed("ui_focus_next"):
 		get_viewport().set_input_as_handled()
 		request_switch()
+	elif event.is_action_pressed("companion_wait"):
+		get_viewport().set_input_as_handled()
+		toggle_companion_wait()
+
+
+## 동행에게 "여기서 기다려" / "따라와" (C 키). 대화·연출 중이거나 숨어 있으면 무시한다.
+func toggle_companion_wait() -> bool:
+	if GameManager.is_exploration_locked() or companion_member == null or companion_member.companion_ai == null:
+		return false
+	if active_member.is_hidden or companion_member.is_hidden:
+		return false
+	var state: int = companion_member.companion_ai.toggle_wait()
+	var waiting := state == CompanionAI.CompanionState.WAIT
+	var who := "샤무" if companion_member.character_type == GameManager.CharacterType.SHAMU else "사비"
+	companion_command.emit("%s: %s" % [who, "여기서 기다릴게." if waiting else "따라갈게."], waiting)
+	return true
+
+
+## 동행이 기다리는 중이면 true (HUD 표시용)
+func is_companion_waiting() -> bool:
+	return companion_member != null and companion_member.companion_ai != null \
+			and companion_member.companion_ai.current_state == CompanionAI.CompanionState.WAIT
 
 
 ## 조작 캐릭터 전환 요청. 대화·연출 중이거나 쿨타임이면 무시하고 false를 반환한다.
 func request_switch() -> bool:
 	if GameManager.is_exploration_locked() or _switch_cooldown_left > 0.0:
+		return false
+	# 캐비닛에 숨어 있는 동안은 바꿀 수 없다 (나오는 사람이 꼬이지 않게)
+	if active_member and active_member.is_hidden:
 		return false
 	_switch_cooldown_left = switch_cooldown
 	var next_char := GameManager.CharacterType.SHAMU if GameManager.active_character == GameManager.CharacterType.SABI else GameManager.CharacterType.SABI

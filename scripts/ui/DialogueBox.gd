@@ -60,6 +60,10 @@ var _pending_choices: Array = []
 
 func _ready() -> void:
 	layer = 50
+	# 글꼴: 이름은 명조 굵게, 대사는 명조 (VelkaStyle)
+	speaker_label.add_theme_font_override("font", VelkaStyle.serif_bold())
+	dialogue_label.add_theme_font_override("normal_font", VelkaStyle.serif())
+	dialogue_label.add_theme_font_override("bold_font", VelkaStyle.serif_bold())
 	root_container.visible = false
 	choices_container.visible = false
 	next_indicator.visible = false
@@ -240,8 +244,14 @@ func _on_choices_presented(choices: Array) -> void:
 		btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
 		btn.custom_minimum_size = Vector2(400, 48)
 		
-		# 선택지 호러 스타일링
-		btn.add_theme_font_size_override("font_size", 20)
+		# 선택지: 어두운 바탕 + 마우스·포커스 때 붉은 막대
+		VelkaStyle.style_button(btn, VelkaStyle.RED_SOFT, 23)
+		var normal := VelkaStyle.panel_style(VelkaStyle.LINE, Color(0.04, 0.05, 0.07, 0.92), 3)
+		var hot := VelkaStyle.panel_style(VelkaStyle.RED_SOFT, Color(0.16, 0.05, 0.05, 0.95), 3)
+		hot.border_width_left = 4
+		btn.add_theme_stylebox_override("normal", normal)
+		for state in ["hover", "focus", "pressed"]:
+			btn.add_theme_stylebox_override(state, hot)
 		btn.pressed.connect(func(): _on_choice_button_pressed(i))
 		choices_container.add_child(btn)
 

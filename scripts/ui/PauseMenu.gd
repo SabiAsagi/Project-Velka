@@ -128,7 +128,7 @@ func _build_ui() -> void:
 	add_child(_root)
 
 	var dimmer := ColorRect.new()
-	dimmer.color = Color(0, 0, 0, 0.55)
+	dimmer.color = Color(0.01, 0.01, 0.03, 0.72)
 	dimmer.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_root.add_child(dimmer)
 
@@ -137,14 +137,11 @@ func _build_ui() -> void:
 	_root.add_child(center)
 
 	_panel = PanelContainer.new()
-	_panel.custom_minimum_size = Vector2(380, 0)
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.1, 0.11, 0.14, 0.96)
-	style.set_border_width_all(2)
-	style.border_color = Color(0.35, 0.4, 0.48, 0.9)
-	style.set_corner_radius_all(10)
+	_panel.custom_minimum_size = Vector2(440, 0)
+	var style := VelkaStyle.panel_style(VelkaStyle.RED, Color(0.05, 0.06, 0.08, 0.97), 2, 0)
+	style.border_width_left = 4
 	style.shadow_color = Color(0, 0, 0, 0.8)
-	style.shadow_size = 20
+	style.shadow_size = 24
 	_panel.add_theme_stylebox_override("panel", style)
 	center.add_child(_panel)
 
@@ -159,12 +156,15 @@ func _build_ui() -> void:
 	column.add_theme_constant_override("separation", 22)
 	margin.add_child(column)
 
-	var title := Label.new()
-	title.text = "일시정지"
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.add_theme_font_size_override("font_size", 32)
-	title.add_theme_color_override("font_color", Color(0.92, 0.94, 0.96))
-	column.add_child(title)
+	var head := VBoxContainer.new()
+	head.add_theme_constant_override("separation", 2)
+	column.add_child(head)
+	head.add_child(VelkaStyle.label("PAUSED", VelkaStyle.mono(), 16, VelkaStyle.RED_SOFT))
+	head.add_child(VelkaStyle.label("일시정지", VelkaStyle.serif_bold(), 38, VelkaStyle.INK))
+	var line := ColorRect.new()
+	line.color = Color(VelkaStyle.RED, 0.6)
+	line.custom_minimum_size = Vector2(0, 1)
+	head.add_child(line)
 
 	_buttons = VBoxContainer.new()
 	_buttons.add_theme_constant_override("separation", 12)
@@ -178,9 +178,7 @@ func _build_ui() -> void:
 	_confirm_box.add_theme_constant_override("separation", 16)
 	_confirm_box.visible = false
 	column.add_child(_confirm_box)
-	_confirm_label = Label.new()
-	_confirm_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	_confirm_label.add_theme_font_size_override("font_size", 18)
+	_confirm_label = VelkaStyle.label("", VelkaStyle.serif(), 21, VelkaStyle.INK)
 	_confirm_box.add_child(_confirm_label)
 	var row := HBoxContainer.new()
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
@@ -201,8 +199,8 @@ func _add_button(parent: Container, node_name: String, text: String, on_pressed:
 	var button := Button.new()
 	button.name = node_name
 	button.text = text
-	button.custom_minimum_size = Vector2(0, 48)
-	button.add_theme_font_size_override("font_size", 22)
+	button.custom_minimum_size = Vector2(0, 50)
+	VelkaStyle.style_button(button, VelkaStyle.RED_SOFT, 25)
 	button.pressed.connect(on_pressed)
 	parent.add_child(button)
 	return button

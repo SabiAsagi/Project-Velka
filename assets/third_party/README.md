@@ -111,3 +111,12 @@ lower contrast) and `DoorPaint_Color.jpg` (PaintedMetal002 in grayscale, lower c
 The Screaming Brain Studios textures above are now also used by the school shader: `Horror_Floor_01`
 (rooftop waterproof coating), `Horror_Floor_10` (gym exterior steel stair), and `Horror_Wall_02`,
 `Horror_Wall_06`, `Horror_Wall_09` as fine grime overlays on painted walls, facades and concrete.
+
+## Nanum fonts (나눔 글꼴)
+
+- Source: https://github.com/google/fonts (`ofl/nanumpenscript`, `ofl/nanumgothiccoding`, `ofl/nanummyeongjo`)
+- Downloaded: 2026-10-08
+- License: SIL Open Font License 1.1 (`assets/fonts/OFL.txt`)
+- Original author: NAVER Corporation (Sandoll Communication)
+- Included files: `assets/fonts/NanumPenScript-Regular.ttf`, `NanumGothicCoding-Regular.ttf`, `NanumGothicCoding-Bold.ttf`, `NanumMyeongjo-Regular.ttf`, `NanumMyeongjo-Bold.ttf`
+- Usage in Velka: UI titles and documents (명조), handwritten memos on the investigation board (펜), hacking terminal (고딕 코딩)
