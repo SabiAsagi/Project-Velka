@@ -5,7 +5,11 @@ class_name AnalysisBoard
 # 프로젝트 벨카 - 사건 보드 (프롤로그 P-03)
 # 코르크보드 위에 증거 카드(통화 기록, CCTV, 뉴스, 문서, 지도 …)가 핀으로 꽂혀 있다.
 #   1. 카드를 클릭하면 크게 펼쳐 자세히 본다 (처음 한 번은 꼭 봐야 실을 이을 수 있다. 우클릭으로 다시 보기)
-#   2. 살펴본 카드 두 장을 차례로 클릭하면 붉은 실로 잇는다. 맞는 연결이면 단서가 메모에 붙고, 아니면 사비의 힌트
+#      펼친 증거의 밑줄 친 글자(번호·시각·장소)를 누르면 붉게 표시된다. 다른 증거에 같은 단서가 표시돼 있으면 사비가 알려 준다.
+#      사비가 증거마다 한마디씩 한다 (펼친 화면 아래, 카드를 고를 때).
+#   2. 살펴본 카드 두 장을 차례로 클릭하면 붉은 실로 잇는다. 맞는 연결이면 단서가 메모에 붙고,
+#      아니면 사비의 힌트 (상관없는 증거면 왜 상관없는지 말해 준다)
+#   막히면 "사비에게 묻기"(H): 같은 연결에 대해 물을수록 힌트가 구체적이 된다 (분류 -> 증거 하나 -> 두 증거)
 #   3. 연결을 모두 찾으면 지도가 펼쳐지고, 실종자들이 모이는 곳에 핀을 꽂는다 -> 공통 좌표
 # 데이터: data/puzzles/*.json (cards / links / pin). ESC: 펼친 카드 닫기 -> 선택 취소 -> 보드 닫기(진행 유지).
 
@@ -13,11 +17,14 @@ signal solved()
 signal closed()
 
 const LOCK_REASON := "analysis_board"
-const DESIGN := Vector2(1240, 690)
-const CORK_RECT := Rect2(20, 74, 880, 560)
-const CARD_SIZE := Vector2(184, 150)
-const TYPE_NAMES := {"call": "통화 기록", "cctv": "CCTV", "news": "신문 스크랩", "doc": "복원 문서",
-		"screen": "접속 로그", "map": "지도", "namecard": "명함"}
+const DESIGN := Vector2(1420, 790)
+const CORK_RECT := Rect2(20, 74, 1060, 650)
+const CARD_SIZE := Vector2(196, 150)
+const MEMO_X := 1104.0
+const TYPE_NAMES := {"call": "기록", "cctv": "CCTV", "news": "신문 스크랩", "doc": "문서",
+		"screen": "접속 로그", "map": "지도", "namecard": "명함", "photo": "사진"}
+const MARK_COLOR := "#b3201b"
+const KEY_COLOR := "#5a4528"
 
 @export_file("*.json") var data_path: String = "res://data/puzzles/prologue_board.json"
 
@@ -26,6 +33,8 @@ var _cards: Dictionary = {}          # id -> Card
 var _inspected: Dictionary = {}      # id -> true
 var _found: Array[String] = []       # 찾은 link id
 var _selected: String = ""
+var _marks: Dictionary = {}          # card id -> {키워드 index: true}
+var _hint_level: Dictionary = {}     # link id -> 0..2
 var _pin_stage := false
 var _is_solved := false
 
@@ -39,6 +48,7 @@ var _feedback: Label
 var _zoom: Control
 var _zoom_paper: PanelContainer
 var _zoom_box: VBoxContainer
+var _zoom_card := ""
 
 
 func _ready() -> void:
@@ -140,8 +150,96 @@ func link(a: String, b: String) -> bool:
 	_strings.flash_wrong(a, b)
 	(_cards[a] as Card).shake()
 	(_cards[b] as Card).shake()
-	_say(String(_data.get("wrong_hint", "")), VelkaStyle.RED_SOFT)
+	var reason := String(_card_data(a).get("decoy_reason", ""))
+	if reason.is_empty():
+		reason = String(_card_data(b).get("decoy_reason", ""))
+	_say("사비: " + reason if not reason.is_empty() else String(_data.get("wrong_hint", "")), VelkaStyle.RED_SOFT)
 	return false
+
+
+## 증거의 index 번째 키워드를 표시하거나 지운다. 다른 증거에 같은 단서가 표시돼 있으면 사비가 알려 준다.
+func toggle_mark(card_id: String, index: int) -> void:
+	var keywords: Array = _card_data(card_id).get("keywords", [])
+	if index < 0 or index >= keywords.size():
+		return
+	var marks: Dictionary = _marks.get(card_id, {})
+	if marks.has(index):
+		marks.erase(index)
+	else:
+		marks[index] = true
+	_marks[card_id] = marks
+	var card := _cards[card_id] as Card
+	card.marked = _marked_texts(card_id)
+	card.queue_redraw()
+	if marks.has(index):
+		var tag := String(keywords[index][1])
+		var others := _cards_with_tag(tag, card_id)
+		if others.is_empty():
+			_say("사비: '%s' — 표시해 뒀어." % String(keywords[index][0]), VelkaStyle.INK)
+		else:
+			var names: Array[String] = []
+			for other in others:
+				names.append(String(_card_data(other).get("title", "")))
+				(_cards[other] as Card).glow()
+			card.glow()
+			_say("사비: 어, '%s'… %s에도 비슷한 게 있었어!" % [String(keywords[index][0]), ", ".join(names)], VelkaStyle.GOOD)
+	if _zoom.visible and _zoom_card == card_id:
+		_show_card_zoom(_card_data(card_id))
+
+
+func is_marked(card_id: String, index: int) -> bool:
+	return (_marks.get(card_id, {}) as Dictionary).has(index)
+
+
+## 사비에게 묻기: 아직 못 찾은 연결 하나에 대해 점점 구체적인 힌트
+func ask_hint() -> String:
+	if _is_solved:
+		return ""
+	if _pin_stage:
+		_say(String(_data.get("pin", {}).get("prompt", "")), VelkaStyle.INK)
+		return _feedback.text
+	for l in _data.get("links", []):
+		var id := String(l["id"])
+		if _found.has(id):
+			continue
+		var level: int = _hint_level.get(id, 0)
+		var pair: Array = l["pairs"][0]
+		var text := ""
+		match level:
+			0:
+				text = "사비: " + String(l.get("hint", ""))
+			1:
+				text = "사비: '%s'부터 다시 보자. 밑줄 친 데를 눌러 봐." % String(_card_data(pair[0]).get("title", ""))
+				(_cards[pair[0]] as Card).glow()
+			_:
+				text = "사비: '%s'랑 '%s'를 이어 봐." % [String(_card_data(pair[0]).get("title", "")), String(_card_data(pair[1]).get("title", ""))]
+				(_cards[pair[0]] as Card).glow()
+				(_cards[pair[1]] as Card).glow()
+		_hint_level[id] = mini(level + 1, 2)
+		_say(text, Color(0.95, 0.85, 0.5))
+		return text
+	return ""
+
+
+func _cards_with_tag(tag: String, except_id: String) -> Array[String]:
+	var out: Array[String] = []
+	for card_id in _marks:
+		if card_id == except_id:
+			continue
+		var keywords: Array = _card_data(card_id).get("keywords", [])
+		for index in _marks[card_id]:
+			if String(keywords[index][1]) == tag:
+				out.append(card_id)
+				break
+	return out
+
+
+func _marked_texts(card_id: String) -> Array[String]:
+	var out: Array[String] = []
+	var keywords: Array = _card_data(card_id).get("keywords", [])
+	for index in _marks.get(card_id, {}):
+		out.append(String(keywords[index][0]))
+	return out
 
 
 ## 마지막 단계: 지도에 핀을 꽂는다. 맞으면 true.
@@ -169,6 +267,10 @@ func confirm_result() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not is_open():
+		return
+	if event is InputEventKey and event.pressed and not event.echo and (event as InputEventKey).keycode == KEY_H:
+		get_viewport().set_input_as_handled()
+		ask_hint()
 		return
 	if event.is_action_pressed("pause") or event.is_action_pressed("ui_cancel"):
 		get_viewport().set_input_as_handled()
@@ -219,7 +321,8 @@ func _select(card_id: String) -> void:
 	if not card_id.is_empty():
 		(_cards[card_id] as Card).selected = true
 		(_cards[card_id] as Card).queue_redraw()
-		_say("사비: 이 카드에서 실을 잇자. 이어질 카드를 클릭해. (빈 곳 클릭: 취소)", VelkaStyle.INK)
+		var comment := String(_card_data(card_id).get("comment", ""))
+		_say("사비: %s  — 이어질 카드를 클릭해 (빈 곳: 취소)" % comment, VelkaStyle.INK)
 	_strings.queue_redraw()
 
 
@@ -236,13 +339,58 @@ func _show_card_zoom(card: Dictionary) -> void:
 		map.custom_minimum_size = Vector2(620, 250)
 		map.spots = _data.get("pin", {}).get("spots", [])
 		_zoom_box.add_child(map)
-	var body := VelkaStyle.label(String(card.get("detail", "")),
-			VelkaStyle.mono() if bool(card.get("mono", false)) else VelkaStyle.serif(), 19, VelkaStyle.PAPER_INK)
-	body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	body.custom_minimum_size = Vector2(620, 0)
+	var card_id := String(card.get("id", ""))
+	_zoom_card = card_id
+	var body := RichTextLabel.new()
+	body.bbcode_enabled = true
+	body.fit_content = true
+	body.scroll_active = false
+	body.custom_minimum_size = Vector2(660, 0)
+	body.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	var f := VelkaStyle.mono() if bool(card.get("mono", false)) else VelkaStyle.serif()
+	body.add_theme_font_override("normal_font", f)
+	body.add_theme_font_override("bold_font", VelkaStyle.mono_bold() if bool(card.get("mono", false)) else VelkaStyle.serif_bold())
+	body.add_theme_font_size_override("normal_font_size", 20)
+	body.add_theme_font_size_override("bold_font_size", 20)
+	body.add_theme_color_override("default_color", VelkaStyle.PAPER_INK)
+	body.text = _detail_bbcode(card)
+	body.meta_clicked.connect(func(meta): toggle_mark(card_id, int(str(meta))))
 	_zoom_box.add_child(body)
+	var keywords: Array = card.get("keywords", [])
+	if not keywords.is_empty():
+		_zoom_box.add_child(VelkaStyle.label("밑줄 친 글자를 누르면 단서로 표시한다", VelkaStyle.mono(), 14, Color(0.45, 0.42, 0.38)))
+	var comment := String(card.get("comment", ""))
+	if not comment.is_empty():
+		var c := VelkaStyle.label("사비: " + comment, VelkaStyle.hand(), 27, Color(0.2, 0.36, 0.42))
+		c.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		c.custom_minimum_size = Vector2(660, 0)
+		_zoom_box.add_child(c)
 	_zoom_box.add_child(_zoom_footer("닫기  (ESC · 바깥 클릭)", _close_zoom))
 	_zoom.visible = true
+
+
+## 증거 본문: 키워드는 밑줄(누를 수 있음), 표시한 키워드는 붉은 굵은 글씨
+func _detail_bbcode(card: Dictionary) -> String:
+	var text := String(card.get("detail", "")).replace("[", "［").replace("]", "］")
+	var keywords: Array = card.get("keywords", [])
+	var card_id := String(card.get("id", ""))
+	# 긴 키워드부터 바꿔야 짧은 키워드가 긴 키워드 안을 건드리지 않는다
+	var order: Array = range(keywords.size())
+	order.sort_custom(func(x, y): return String(keywords[x][0]).length() > String(keywords[y][0]).length())
+	var tokens := {}
+	for index in order:
+		var kw := String(keywords[index][0])
+		var token := "\u0001%d\u0001" % index
+		var pos := text.find(kw)
+		if pos < 0:
+			continue
+		text = text.substr(0, pos) + token + text.substr(pos + kw.length())
+		var style := "[b][color=%s][u]%s[/u][/color][/b]" % [MARK_COLOR, kw] if is_marked(card_id, index) \
+				else "[color=%s][u]%s[/u][/color]" % [KEY_COLOR, kw]
+		tokens[token] = "[url=%d]%s[/url]" % [index, style]
+	for token in tokens:
+		text = text.replace(token, tokens[token])
+	return text
 
 
 func _show_map_pin() -> void:
@@ -400,12 +548,19 @@ func _build_ui() -> void:
 	var head := VelkaStyle.label(String(_data.get("title", "사건 보드")), VelkaStyle.serif_bold(), 30, VelkaStyle.INK)
 	head.position = Vector2(24, 14)
 	_frame.add_child(head)
-	var help := VelkaStyle.label("클릭: 자세히 보기 / 실 잇기   ·   우클릭: 다시 보기   ·   ESC: 닫기",
-			VelkaStyle.mono(), 14, VelkaStyle.INK_DIM)
-	help.position = Vector2(DESIGN.x - 620, 24)
-	help.size = Vector2(600, 20)
+	var help := VelkaStyle.label("클릭: 펼쳐 보기 / 실 잇기   ·   우클릭: 다시 보기   ·   H: 사비에게 묻기   ·   ESC: 닫기",
+			VelkaStyle.mono(), 15, VelkaStyle.INK_DIM)
+	help.position = Vector2(DESIGN.x - 900, 30)
+	help.size = Vector2(700, 20)
 	help.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	_frame.add_child(help)
+	var hint_button := Button.new()
+	hint_button.name = "HintButton"
+	hint_button.text = "사비에게 묻기 (H)"
+	VelkaStyle.style_small_button(hint_button, VelkaStyle.SABI)
+	hint_button.position = Vector2(DESIGN.x - 190, 22)
+	hint_button.pressed.connect(func(): ask_hint())
+	_frame.add_child(hint_button)
 
 	# 나무 액자 + 코르크
 	var wood := Panel.new()
@@ -451,14 +606,14 @@ func _build_ui() -> void:
 
 	# 오른쪽: 메모
 	var memo_head := VelkaStyle.label("메모", VelkaStyle.serif_bold(), 24, VelkaStyle.INK)
-	memo_head.position = Vector2(930, 66)
+	memo_head.position = Vector2(MEMO_X + 6, 66)
 	_frame.add_child(memo_head)
 	_memo_count = VelkaStyle.label("찾은 연결  0 / %d" % step_count(), VelkaStyle.mono(), 15, VelkaStyle.INK_DIM)
-	_memo_count.position = Vector2(1000, 74)
+	_memo_count.position = Vector2(MEMO_X + 76, 74)
 	_frame.add_child(_memo_count)
 	var scroll := ScrollContainer.new()
-	scroll.position = Vector2(924, 108)
-	scroll.size = Vector2(300, 530)
+	scroll.position = Vector2(MEMO_X, 108)
+	scroll.size = Vector2(DESIGN.x - MEMO_X - 10, 616)
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	_frame.add_child(scroll)
 	_memo_list = VBoxContainer.new()
@@ -468,8 +623,8 @@ func _build_ui() -> void:
 
 	# 아래: 사비 한마디
 	_feedback = VelkaStyle.label("", VelkaStyle.hand(), 30, VelkaStyle.INK)
-	_feedback.position = Vector2(24, 648)
-	_feedback.size = Vector2(1190, 40)
+	_feedback.position = Vector2(24, 738)
+	_feedback.size = Vector2(DESIGN.x - 48, 46)
 	_feedback.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_frame.add_child(_feedback)
 
@@ -538,6 +693,8 @@ class Card extends Control:
 	var spots: Array = []
 	var inspected := false
 	var selected := false
+	var marked: Array[String] = []
+	var _glow_t := 0.0
 	var _hover := false
 	var _shake_t := 0.0
 
@@ -553,7 +710,13 @@ class Card extends Control:
 	func shake() -> void:
 		_shake_t = 0.4
 
+	func glow() -> void:
+		_glow_t = 2.2
+
 	func _process(delta: float) -> void:
+		if _glow_t > 0.0:
+			_glow_t -= delta
+			queue_redraw()
 		if _shake_t > 0.0:
 			_shake_t -= delta
 			pivot_offset = size * 0.5 + Vector2(sin(_shake_t * 60.0) * 3.0, 0)
@@ -575,6 +738,16 @@ class Card extends Control:
 			draw_string(VelkaStyle.mono(), Vector2(size.x - 52, 18), "확인함", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color(0.2, 0.45, 0.3))
 		else:
 			draw_string(VelkaStyle.mono(), Vector2(size.x - 64, 18), "살펴보기", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color(0.6, 0.25, 0.2))
+		# 표시한 단서: 카드 아래쪽에 붉은 쪽지
+		var y := size.y - 44.0
+		for i in mini(marked.size(), 2):
+			var t := marked[i]
+			var w := minf(size.x - 16.0, VelkaStyle.mono().get_string_size(t, HORIZONTAL_ALIGNMENT_LEFT, -1, 11).x + 10.0)
+			draw_rect(Rect2(8, y - 12 - i * 15, w, 14), Color(0.75, 0.12, 0.1, 0.92))
+			draw_string(VelkaStyle.mono(), Vector2(13, y - 1 - i * 15), t, HORIZONTAL_ALIGNMENT_LEFT, w - 8, 11, Color(1, 0.95, 0.9))
+		if _glow_t > 0.0:
+			var a := 0.5 + 0.5 * sin(_glow_t * 9.0)
+			draw_rect(r.grow(5), Color(1.0, 0.85, 0.3, a), false, 4.0)
 		if selected:
 			draw_rect(r.grow(3), VelkaStyle.RED, false, 3.0)
 		elif _hover:
@@ -622,6 +795,14 @@ class Card extends Control:
 					draw_rect(Rect2(Vector2(a.position.x + 6, yy), Vector2(wid, 5 if redact else 2)), Color(0.05, 0.05, 0.05) if redact else Color(0.55, 0.55, 0.55))
 			"map":
 				MapArt.draw_map(self, a, spots, false, "")
+			"photo":
+				draw_rect(a, Color(0.2, 0.19, 0.18))
+				var inner := a.grow(-6)
+				draw_rect(inner, Color(0.42, 0.38, 0.33))
+				for k in 3:
+					var cx := inner.position.x + inner.size.x * (0.25 + 0.25 * k)
+					draw_circle(Vector2(cx, inner.position.y + inner.size.y * 0.38), 6.0 - k, Color(0.16, 0.14, 0.13))
+					draw_rect(Rect2(Vector2(cx - 7 + k, inner.position.y + inner.size.y * 0.5), Vector2(14 - 2 * k, inner.size.y * 0.5)), Color(0.16, 0.14, 0.13))
 			"namecard":
 				var c := Rect2(a.position + Vector2(a.size.x * 0.12, a.size.y * 0.15), Vector2(a.size.x * 0.76, a.size.y * 0.7))
 				draw_rect(c, Color(1, 1, 1))
