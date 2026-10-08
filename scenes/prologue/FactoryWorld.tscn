@@ -7396,19 +7396,25 @@ adjustment_contrast = 1.08
 background_mode = 1
 background_color = Color(0, 0, 0, 1)
 ambient_light_source = 2
-ambient_light_color = Color(0.42, 0.3, 0.36, 1)
-ambient_light_energy = 0.65
+ambient_light_color = Color(0.34, 0.24, 0.3, 1)
+ambient_light_energy = 0.45
 fog_enabled = true
-fog_light_color = Color(0.08, 0.03, 0.04, 1)
-fog_density = 0.03
+fog_light_color = Color(0.06, 0.015, 0.02, 1)
+fog_density = 0.05
+fog_sky_affect = 0.0
+glow_enabled = true
+glow_intensity = 1.1
+glow_bloom = 0.15
+glow_hdr_threshold = 0.8
 ssao_enabled = true
-ssao_radius = 1.4
-ssao_intensity = 3.0
-ssao_power = 1.8
-ssao_light_affect = 0.3
+ssao_radius = 1.6
+ssao_intensity = 3.6
+ssao_power = 2.0
+ssao_light_affect = 0.4
 adjustment_enabled = true
-adjustment_saturation = 0.7
-adjustment_contrast = 1.1
+adjustment_saturation = 0.45
+adjustment_contrast = 1.22
+adjustment_brightness = 0.92
 
 [sub_resource type="BoxShape3D" id="s397"]
 size = Vector3(9.8, 3, 25.8)
@@ -8561,6 +8567,7 @@ terminal_id = "gate"
 done_flag = "p04_gate_hacked"
 requires_flag = ""
 hack_prompt = "외부 보안 단말 해킹"
+requires_line = ""
 marker_height = 1.90
 
 [node name="InteractionPoint" type="Marker3D" parent="Interactables/GateTerminal"]
@@ -8571,8 +8578,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 0, 0.7)
 script = ExtResource("e5")
 terminal_id = "security"
 done_flag = "p04_security_hacked"
-requires_flag = ""
+requires_flag = "guard_down_security"
 hack_prompt = "보안망 접속·삭제 자료 복구"
+requires_line = "경비원이 모니터 앞을 지키고 있어. 샤무가 뒤에서 조용히 처리해 줘야 단말에 손댈 수 있어."
 marker_height = 1.80
 
 [node name="InteractionPoint" type="Marker3D" parent="Interactables/SecurityTerminal"]
@@ -8585,6 +8593,7 @@ terminal_id = "alarm"
 done_flag = "p04_alarm_off"
 requires_flag = ""
 hack_prompt = "경보 장치 해제"
+requires_line = ""
 marker_height = 1.80
 
 [node name="InteractionPoint" type="Marker3D" parent="Interactables/AlarmPanel"]
@@ -8597,6 +8606,7 @@ terminal_id = "server"
 done_flag = "p04_footage_restored"
 requires_flag = "p04_server_open"
 hack_prompt = "서버에서 영상 복원"
+requires_line = "경보랑 파쇄기가 돌아가는 동안엔 서버가 잠겨 있어."
 marker_height = 1.80
 
 [node name="InteractionPoint" type="Marker3D" parent="Interactables/MainServer"]
@@ -8609,6 +8619,8 @@ obstacle_id = "basement_door"
 break_prompt = "봉쇄문 강제로 열기"
 sabi_blocked_line = "봉쇄문이 기계식으로 잠겨 있어… 샤무 힘이면 열 수 있을 거야."
 marker_height = 1.6
+requires_flag = "p04_security_hacked"
+requires_line = "봉쇄문에 경보 센서가 붙어 있어. 보안망이 살아 있으면 건드리는 순간 다 몰려와. 사비가 보안실 단말부터 처리해야 해."
 
 [node name="Piece" type="CSGBox3D" parent="Interactables/BlastDoor"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.15, 0)
@@ -8626,6 +8638,8 @@ obstacle_id = "data_shredder"
 break_prompt = "파쇄기 부수기"
 sabi_blocked_line = "자료가 계속 갈려 나가고 있어. 내 힘으로는 못 멈춰… 샤무!"
 marker_height = 1.6
+requires_flag = ""
+requires_line = ""
 
 [node name="Piece" type="CSGBox3D" parent="Interactables/Shredder"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, 0)
@@ -8651,16 +8665,19 @@ transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 11, 0, 21)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 0.05, 11)
 guard_id = "hall"
 patrol_span = Vector3(14.00, 0.00, 0.00)
+nav_bounds = Rect2(-10.5, -0.5, 45, 23)
 
 [node name="GuardEast" parent="Guards" instance=ExtResource("e11")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.4, 0.05, 19.5)
 guard_id = "east"
 patrol_span = Vector3(0.00, 0.00, -16.00)
+nav_bounds = Rect2(-10.5, -0.5, 45, 23)
 
 [node name="GuardSecurity" parent="Guards" instance=ExtResource("e11")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 0.05, 3.2)
 guard_id = "security"
 patrol_span = Vector3(0.00, 0.00, -0.01)
+nav_bounds = Rect2(-10.5, -0.5, 45, 23)
 
 [node name="Checkpoints" type="Node3D" parent="."]
 
@@ -8693,38 +8710,38 @@ shape = SubResource("s411")
 
 [node name="Light_5" type="OmniLight3D" parent="Buildings/factory/B1/Lights" groups=["otherworld_light"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27, -1, 18.5)
-light_color = Color(0.75, 0.16, 0.14, 1)
-light_energy = 1.00
+light_color = Color(0.80, 0.12, 0.10, 1)
+light_energy = 1.30
 omni_range = 6.00
 
 [node name="Light_9" type="OmniLight3D" parent="Buildings/factory/1F/Lights" groups=["otherworld_light"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.8, 2.6, 13.4)
-light_color = Color(0.75, 0.16, 0.14, 1)
-light_energy = 1.00
+light_color = Color(0.80, 0.12, 0.10, 1)
+light_energy = 1.30
 omni_range = 4.00
 
 [node name="Light_6" type="OmniLight3D" parent="Buildings/factory/B1/Lights" groups=["otherworld_light"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19, -1.2, 17.8)
-light_color = Color(0.75, 0.16, 0.14, 1)
-light_energy = 1.00
+light_color = Color(0.80, 0.12, 0.10, 1)
+light_energy = 1.30
 omni_range = 5.00
 
 [node name="Light_7" type="OmniLight3D" parent="Buildings/factory/B1/Lights" groups=["otherworld_light"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, -1.2, 17.8)
-light_color = Color(0.75, 0.16, 0.14, 1)
-light_energy = 1.00
+light_color = Color(0.80, 0.12, 0.10, 1)
+light_energy = 1.30
 omni_range = 5.00
 
 [node name="Light_8" type="OmniLight3D" parent="Buildings/factory/B1/Lights" groups=["otherworld_light"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, -1.2, 17.8)
-light_color = Color(0.75, 0.16, 0.14, 1)
-light_energy = 1.00
+light_color = Color(0.80, 0.12, 0.10, 1)
+light_energy = 1.30
 omni_range = 5.00
 
 [node name="Light_9" type="OmniLight3D" parent="Buildings/factory/B1/Lights" groups=["otherworld_light"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, -1.2, 4)
-light_color = Color(0.75, 0.16, 0.14, 1)
-light_energy = 1.00
+light_color = Color(0.80, 0.12, 0.10, 1)
+light_energy = 1.30
 omni_range = 5.00
 
 [node name="FirstEncounter" type="Node3D" parent="."]

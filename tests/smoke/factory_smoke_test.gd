@@ -114,7 +114,15 @@ func _run() -> void:
 	_party.teleport_party(here)
 	_party.get_companion_member().process_mode = Node.PROCESS_MODE_DISABLED
 	_party.get_companion_member().global_position = Vector3(-8.0, 0.05, 20.0)
-	_world.get_node("Interactables/BlastDoor").interact(_member())
+	var blast = _world.get_node("Interactables/BlastDoor")
+	blast.interact(_member())
+	await _seconds(0.3)
+	_check(not blast.is_broken, "보안실 단말을 해킹하기 전에는 봉쇄문을 부술 수 없다 (경보 센서)")
+	var dm := root.get_node("/root/DialogueManager")
+	if dm.is_dialogue_active:
+		dm.finish_dialogue()
+	_gm.set_story_flag("p04_security_hacked", true)
+	blast.interact(_member())
 	await _seconds(0.6)
 	ok = await _walk([Vector3(31.8, 0.05, 11.0), Vector3(31.8, 0.05, 13.4), Vector3(31.8, 0.05, 14.1), Vector3(31.8, B1, 21.1)])
 	_check(ok and _member().global_position.y < -3.0, "샤무가 봉쇄문을 부수면 계단으로 지하에 내려간다 (y=%.2f)" % _member().global_position.y)

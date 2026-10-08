@@ -12,6 +12,10 @@ signal broken(obstacle_id: String, breaker: Node3D)
 @export var break_prompt: String = "부수기"
 @export var blocked_prompt: String = "막혀 있다"
 @export_multiline var sabi_blocked_line: String = "내 힘으로는 못 치워… 샤무라면 부술 수 있을 텐데. 대신 소리가 크게 날 거야."
+## 이 플래그가 켜져야 부술 수 있다 (비우면 처음부터 가능)
+@export var requires_flag: String = ""
+## requires_flag 가 아직일 때 조사하면 나오는 대사
+@export_multiline var requires_line: String = ""
 
 const BREAK_COLOR := Color(0.95, 0.72, 0.25)
 
@@ -37,6 +41,16 @@ func get_interaction_prompt(player: Node3D) -> String:
 
 
 func _on_interact(player: Node3D) -> void:
+	if not requires_flag.is_empty() and not GameManager.get_story_flag(requires_flag, false):
+		was_used = false
+		if not requires_line.is_empty():
+			var shamu := _is_shamu(player)
+			DialogueManager.start_dialogue_data("requires_" + obstacle_id, [{
+				"speaker": "shamu" if shamu else "sabi",
+				"speaker_name": "카즈네 샤무" if shamu else "사비 아사기",
+				"sabi_emotion": "serious", "shamu_emotion": "serious", "text": requires_line,
+			}])
+		return
 	if not _is_shamu(player):
 		was_used = false
 		DialogueManager.start_dialogue_data("blocked_" + obstacle_id, [{
@@ -57,6 +71,8 @@ func _on_interact(player: Node3D) -> void:
 	if not obstacle_id.is_empty():
 		GameManager.set_story_flag("broken_" + obstacle_id, true)
 	_set_broken_state(true, float(config.get("break_seconds", 0.45)))
+	SfxBank.play_at(self, origin, "crash", 0.0, 0.9, 30.0)
+	NavGrid.invalidate()
 	broken.emit(obstacle_id, player)
 
 

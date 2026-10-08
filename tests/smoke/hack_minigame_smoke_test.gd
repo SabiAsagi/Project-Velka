@@ -66,6 +66,74 @@ func _run() -> void:
 	var gm := root.get_node("/root/GameManager")
 	_check(not gm.is_exploration_locked(), "끝나면 탐색 입력 잠금이 풀린다")
 
+	# --- 암호 해독 (보안 컴퓨터) ---
+	var code_script: GDScript = load("res://scripts/ui/HackCodeBreaker.gd")
+	var cb = code_script.new()
+	root.add_child(cb)
+	cb.start("보안", Vector2i(8, 0), 7)
+	var wrong: Array = []
+	for d in 10:
+		if not cb.code.has(d) and wrong.size() < 4:
+			wrong.append(d)
+	for d in wrong:
+		cb.press_digit(d)
+	var r: Array = cb.submit()
+	_check(r == [0, 0] and not cb.is_solved, "암호: 하나도 안 맞으면 ●○ 없음")
+	var swapped: Array = [cb.code[1], cb.code[0], cb.code[2], cb.code[3]]
+	for d in swapped:
+		cb.press_digit(d)
+	r = cb.submit()
+	_check(r == [2, 2], "암호: 두 자리를 바꿔 넣으면 ●●○○")
+	result[0] = null
+	cb.finished.connect(func(ok): result[0] = ok)
+	cb.solve()
+	await create_timer(1.0).timeout
+	_check(result[0] == true, "암호를 맞히면 접속 완료")
+	var cb2 = code_script.new()
+	root.add_child(cb2)
+	cb2.start("보안", Vector2i(2, 0), 7)
+	result[0] = null
+	var traced := [false]
+	cb2.finished.connect(func(ok):
+		result[0] = ok
+		traced[0] = cb2.traced)
+	for t in 2:
+		for d in wrong:
+			cb2.press_digit(d)
+		cb2.submit()
+	await process_frame
+	_check(result[0] == false and traced[0], "시도를 다 쓰면 잠기고 역추적 당한다")
+
+	# --- 영상 프레임 복원 (서버) ---
+	var fr_script: GDScript = load("res://scripts/ui/HackFrames.gd")
+	var fr = fr_script.new()
+	root.add_child(fr)
+	fr.start("서버", Vector2i(6, 0), 11)
+	_check(not fr._is_ordered(), "프레임은 처음에 섞여 있다")
+	result[0] = null
+	fr.finished.connect(func(ok): result[0] = ok)
+	# 자리 바꾸기만으로 정렬한다 (선택 정렬)
+	for i in fr.frame_count:
+		var j: int = fr.slots.find(i)
+		if j != i:
+			fr.click_slot(i)
+			fr.click_slot(j)
+	await create_timer(1.0).timeout
+	_check(result[0] == true, "프레임 순서를 맞추면 영상이 복원된다")
+
+	# --- 역추적 게이지 ---
+	var tr = script.new()
+	root.add_child(tr)
+	tr.start("게이트", Vector2i(4, 3), 3, 0.5)
+	result[0] = null
+	traced[0] = false
+	tr.finished.connect(func(ok):
+		result[0] = ok
+		traced[0] = tr.traced)
+	await create_timer(0.9).timeout
+	_check(result[0] == false and traced[0], "역추적 게이지가 다 차면 들켜서 끊긴다")
+	_check(not gm.is_exploration_locked(), "끝나면 탐색 입력 잠금이 풀린다 (모든 퍼즐)")
+
 	print("")
 	print("RESULT passed=%d failed=%d" % [_passes, _failures.size()])
 	for f in _failures:

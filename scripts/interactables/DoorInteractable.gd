@@ -90,3 +90,4 @@ func _on_interact(_player: Node3D) -> void:
 	if not is_open:
 		collision_shape.set_deferred("disabled", false)
 	_is_animating = false
+	NavGrid.invalidate()

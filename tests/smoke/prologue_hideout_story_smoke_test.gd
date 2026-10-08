@@ -83,6 +83,17 @@ func _run() -> void:
 		board.inspect(String(c["id"]))
 	_check(board.is_zoom_open() and board.is_inspected("map"), "카드를 클릭하면 크게 펼쳐 볼 수 있다")
 	_check(not board.link("card_b", "cctv") and board.current_step() == 0, "틀린 연결은 단서가 되지 않는다")
+	_check(not board.link("parcel", "call_c") and board._feedback.text.contains("택배 기사"),
+			"헷갈리는 증거를 이으면 왜 상관없는지 떠오른다 (%s)" % board._feedback.text)
+	board.toggle_mark("call_a", 0)
+	board.toggle_mark("call_c", 0)
+	_check(board.is_marked("call_c", 0) and board._feedback.text.contains("의뢰인 A 통화 기록"),
+			"두 증거에 같은 단서를 표시하면 알아챈다 (%s)" % board._feedback.text)
+	var h1: String = board.ask_hint()
+	var h2: String = board.ask_hint()
+	var h3: String = board.ask_hint()
+	_check(not h1.is_empty() and h1 != h2 and h3.contains("의뢰인 A 통화 기록") and h3.contains("의뢰인 C 통화 기록"),
+			"생각을 정리할수록 힌트가 구체적이 된다 (%s)" % h3)
 	for l in links:
 		var pair: Array = l["pairs"][0]
 		board.link(pair[0], pair[1])

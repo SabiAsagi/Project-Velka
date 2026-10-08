@@ -171,9 +171,9 @@ func _give_flashlights() -> void:
 			continue
 		var light := OmniLight3D.new()
 		light.name = "Flashlight"
-		light.light_color = Color(1.0, 0.95, 0.85)
-		light.light_energy = 0.9
-		light.omni_range = 4.5
+		light.light_color = Color(0.92, 0.95, 1.0)
+		light.light_energy = 1.6
+		light.omni_range = 6.0
 		light.position = Vector3(0.0, 1.4, 0.0)
 		member.add_child(light)
 

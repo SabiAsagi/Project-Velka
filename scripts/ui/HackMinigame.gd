@@ -1,17 +1,14 @@
-extends CanvasLayer
+extends HackBase
 
 class_name HackMinigame
 
-# 프로젝트 벨카 - 사비의 해킹 미니게임 (회로 잇기)
+# 프로젝트 벨카 - 사비의 해킹 미니게임 (회로 잇기) — 문·패널용
 # 격자 위 회로 조각을 클릭해 90도씩 돌려 왼쪽 IN 에서 오른쪽 OUT 까지 신호를 잇는다.
 # 신호가 닿은 조각은 초록으로 빛난다. OUT 에 닿으면 접속 완료 -> finished(true).
-# ESC 로 연결을 끊으면 finished(false) (다시 시도할 수 있다). 키보드: 방향키 이동, Space/E 회전.
-# 퍼즐은 seed 로 만들기 때문에 같은 단말은 매번 같은 회로가 나온다.
+# 역추적 게이지가 다 차기 전에 이어야 한다 (HackBase). ESC 로 연결을 끊으면 finished(false).
+# 키보드: 방향키 이동, Space/E 회전. 퍼즐은 seed 로 만들기 때문에 같은 단말은 매번 같은 회로가 나온다.
 
-signal finished(success: bool)
-
-const LOCK_REASON := "hack_minigame"
-const TILE := 92.0
+const TILE := 104.0
 # 연결 비트: 위 1, 오른쪽 2, 아래 4, 왼쪽 8
 const N := 1
 const E := 2
@@ -27,34 +24,21 @@ var out_row := 0
 var masks: Array[int] = []           # 지금 회전 상태
 var solution: Dictionary = {}        # 길 위 칸 index -> 정답 mask
 var powered: Dictionary = {}         # index -> true
-var is_solved := false
 
-var _title := ""
 var _cursor := Vector2i.ZERO
 var _grid: GridArt
-var _log: Label
-var _status: Label
-var _log_lines: Array[String] = []
-var _done := false
 
 
-func _ready() -> void:
-	layer = 70
-	add_to_group("hack_minigame")
-
-
-## 퍼즐을 만들고 화면을 연다
-func start(title: String, size: Vector2i, seed_value: int) -> void:
-	_title = title
+## 퍼즐을 만들고 화면을 연다 (trace: 역추적 게이지가 다 차는 시간, 0이면 없음)
+func start(title: String, size: Vector2i, seed_value: int, trace: float = 0.0) -> void:
 	cols = maxi(3, size.x)
 	rows = maxi(2, size.y)
 	_generate(seed_value)
-	_build_ui()
-	_update_power()
-	GameManager.set_exploration_lock(LOCK_REASON, true)
 	_push_log("> 해킹 패드 연결 … ok")
 	_push_log("> 보안 회로 우회 경로 탐색")
 	_push_log("> 회로를 돌려 IN → OUT 을 이어")
+	_open(title, trace)
+	_update_power()
 
 
 ## 칸 하나를 시계 방향으로 90도 돌린다
@@ -73,20 +57,7 @@ func solve() -> void:
 	_update_power()
 
 
-func cancel() -> void:
-	if _done:
-		return
-	_push_log("> 연결 끊김")
-	_finish(false)
-
-
-func _unhandled_input(event: InputEvent) -> void:
-	if _done:
-		return
-	if event.is_action_pressed("pause") or event.is_action_pressed("ui_cancel"):
-		get_viewport().set_input_as_handled()
-		cancel()
-		return
+func _handle_key(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
 		var k := (event as InputEventKey).keycode
 		var moves := {KEY_LEFT: Vector2i(-1, 0), KEY_RIGHT: Vector2i(1, 0), KEY_UP: Vector2i(0, -1), KEY_DOWN: Vector2i(0, 1),
@@ -205,96 +176,21 @@ func _update_power() -> void:
 	is_solved = powered.has(out_index) and bool(masks[out_index] & E)
 	if _grid:
 		_grid.queue_redraw()
-	if _status:
-		_status.text = "신호  %d / %d 칸" % [powered.size(), cols * rows]
+	_set_status("신호  %d / %d 칸" % [powered.size(), cols * rows])
 	if is_solved and not was and _grid:
-		_on_solved()
+		is_solved = false
+		_on_solved("경로 확보 … 접속 완료")
 
 
-func _on_solved() -> void:
-	_push_log("> 경로 확보 … 접속 완료")
-	_status.text = "ACCESS GRANTED"
-	_status.add_theme_color_override("font_color", VelkaStyle.TERMINAL)
-	await get_tree().create_timer(0.7).timeout
-	_finish(true)
+func _help_text() -> String:
+	return "클릭: 회로 돌리기   ·   방향키 + Space: 키보드   ·   ESC: 연결 끊기"
 
 
-func _finish(success: bool) -> void:
-	if _done:
-		return
-	_done = true
-	GameManager.set_exploration_lock(LOCK_REASON, false)
-	finished.emit(success)
-	queue_free()
-
-
-func _push_log(line: String) -> void:
-	_log_lines.append(line)
-	while _log_lines.size() > 9:
-		_log_lines.pop_front()
-	if _log:
-		_log.text = "\n".join(_log_lines)
-
-
-# --- 화면 ---
-
-func _build_ui() -> void:
-	var root := Control.new()
-	root.set_anchors_preset(Control.PRESET_FULL_RECT)
-	add_child(root)
-	var dim := ColorRect.new()
-	dim.color = Color(0, 0.01, 0.02, 0.78)
-	dim.set_anchors_preset(Control.PRESET_FULL_RECT)
-	root.add_child(dim)
-	var center := CenterContainer.new()
-	center.set_anchors_preset(Control.PRESET_FULL_RECT)
-	root.add_child(center)
-
-	var panel := PanelContainer.new()
-	var ps := VelkaStyle.panel_style(Color(0.2, 0.5, 0.35), Color(0.02, 0.05, 0.04, 0.97), 6, 2)
-	ps.content_margin_left = 26
-	ps.content_margin_right = 26
-	ps.content_margin_top = 18
-	ps.content_margin_bottom = 18
-	panel.add_theme_stylebox_override("panel", ps)
-	center.add_child(panel)
-	var col := VBoxContainer.new()
-	col.add_theme_constant_override("separation", 12)
-	panel.add_child(col)
-
-	var head := HBoxContainer.new()
-	head.add_theme_constant_override("separation", 16)
-	col.add_child(head)
-	head.add_child(VelkaStyle.label("SABI//BREACH", VelkaStyle.mono_bold(), 26, VelkaStyle.TERMINAL))
-	var t := VelkaStyle.label(_title, VelkaStyle.mono(), 21, VelkaStyle.INK)
-	t.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	head.add_child(t)
-	_status = VelkaStyle.label("", VelkaStyle.mono(), 16, VelkaStyle.INK_DIM)
-	head.add_child(_status)
-
-	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 22)
-	col.add_child(row)
+func _build_body(parent: Container) -> void:
 	_grid = GridArt.new()
 	_grid.game = self
-	_grid.custom_minimum_size = Vector2(cols * TILE + 80, rows * TILE + 20)
-	row.add_child(_grid)
-	_log = VelkaStyle.label("", VelkaStyle.mono(), 16, Color(0.4, 0.75, 0.55))
-	_log.custom_minimum_size = Vector2(280, 0)
-	_log.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
-	_log.size_flags_vertical = Control.SIZE_FILL
-	row.add_child(_log)
-
-	var foot := HBoxContainer.new()
-	col.add_child(foot)
-	var help := VelkaStyle.label("클릭: 회로 돌리기   ·   방향키 + Space: 키보드   ·   ESC: 연결 끊기", VelkaStyle.mono(), 14, VelkaStyle.INK_DIM)
-	help.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	foot.add_child(help)
-	var quit := Button.new()
-	quit.text = "연결 끊기"
-	VelkaStyle.style_small_button(quit, VelkaStyle.RED_SOFT)
-	quit.pressed.connect(cancel)
-	foot.add_child(quit)
+	_grid.custom_minimum_size = Vector2(cols * TILE + 100, rows * TILE + 24)
+	parent.add_child(_grid)
 
 
 ## 회로 격자 그림
@@ -349,12 +245,12 @@ class GridArt extends Control:
 		var in_lit := game.powered.has(game.in_row * game.cols)
 		draw_rect(Rect2(Vector2(2, in_y - 14), Vector2(34, 28)), Color(0.05, 0.2, 0.12))
 		draw_line(Vector2(36, in_y), Vector2(o.x, in_y), on, 8.0)
-		draw_string(VelkaStyle.mono_bold(), Vector2(5, in_y + 6), "IN", HORIZONTAL_ALIGNMENT_LEFT, -1, 15, on)
+		draw_string(VelkaStyle.mono_bold(), Vector2(5, in_y + 6), "IN", HORIZONTAL_ALIGNMENT_LEFT, -1, 18, on)
 		var ox := o.x + game.cols * HackMinigame.TILE
 		var out_lit := game.is_solved
 		draw_line(Vector2(ox, out_y), Vector2(ox + 6, out_y), on if out_lit else off, 8.0)
 		draw_rect(Rect2(Vector2(ox + 6, out_y - 14), Vector2(36, 28)), Color(0.05, 0.2, 0.12) if out_lit else Color(0.18, 0.06, 0.06))
-		draw_string(VelkaStyle.mono_bold(), Vector2(ox + 8, out_y + 6), "OUT", HORIZONTAL_ALIGNMENT_LEFT, -1, 14, on if out_lit else VelkaStyle.RED_SOFT)
+		draw_string(VelkaStyle.mono_bold(), Vector2(ox + 8, out_y + 6), "OUT", HORIZONTAL_ALIGNMENT_LEFT, -1, 16, on if out_lit else VelkaStyle.RED_SOFT)
 		for i in game.masks.size():
 			var cell := Vector2(i % game.cols, i / game.cols)
 			var r := Rect2(o + cell * HackMinigame.TILE, Vector2(HackMinigame.TILE, HackMinigame.TILE))
