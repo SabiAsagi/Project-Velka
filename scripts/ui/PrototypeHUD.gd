@@ -4,6 +4,8 @@ extends CanvasLayer
 ## 파티 구조(사비·샤무 개별 개체)에서는 player 대신 이것을 지정한다. 조작 캐릭터가 바뀌면 자동으로 따라간다.
 @export var party: PlayerPartyManager
 @export var school_map: Node
+## 디버그 빌드에서 이 키로 신뢰도 라벨을 켜고 끈다. 신뢰도는 정식 UI에 표시하지 않는다(공식_설정.md 5-1).
+@export var debug_trust_toggle_key: Key = KEY_F9
 
 @onready var zone_label: Label = $MarginContainer/PanelContainer/VBoxContainer/ZoneLabel
 @onready var character_label: Label = $MarginContainer/PanelContainer/VBoxContainer/CharacterLabel
@@ -37,7 +39,8 @@ func _ready() -> void:
 			school_map.connect("zone_changed", _on_zone_changed)
 		_on_zone_changed(String(school_map.get("current_zone_name")))
 
-	# 사비-샤무 신뢰도 시그널 연결
+	# 사비-샤무 신뢰도 시그널 연결 (라벨은 디버그 전용, 기본 숨김)
+	trust_label.visible = false
 	if not GameManager.trust_changed.is_connected(_on_trust_changed):
 		GameManager.trust_changed.connect(_on_trust_changed)
 	_update_trust_display(GameManager.sabi_shamu_trust)
@@ -243,6 +246,14 @@ func _update_ability_display() -> void:
 		ability_label.modulate = Color(0.55, 0.58, 0.62)
 
 
+func _unhandled_input(event: InputEvent) -> void:
+	if not OS.is_debug_build():
+		return
+	if event is InputEventKey and event.pressed and not event.echo and event.keycode == debug_trust_toggle_key:
+		trust_label.visible = not trust_label.visible
+		get_viewport().set_input_as_handled()
+
+
 func _on_trust_changed(new_trust: float, delta: float) -> void:
 	_update_trust_display(new_trust)
 	# 신뢰도 변동 시 시각 피드백 (Tween)
@@ -253,7 +264,7 @@ func _on_trust_changed(new_trust: float, delta: float) -> void:
 
 
 func _update_trust_display(trust_val: float) -> void:
-	trust_label.text = "유대 신뢰도  %d%%" % roundi(trust_val)
+	trust_label.text = "[DEBUG] 유대 신뢰도  %d%%" % roundi(trust_val)
 
 
 func _on_stats_changed(character_type: int, heart_rate: float, mental_strength: float) -> void:
