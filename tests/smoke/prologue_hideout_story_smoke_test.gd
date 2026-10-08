@@ -74,14 +74,21 @@ func _run() -> void:
 	await _seconds(0.2)
 	_check(board.is_open() and _gm.is_exploration_locked(), "사비로 조사하면 분석 화면이 열린다")
 
-	# 틀린 답 -> 힌트, 진행 안 됨
+	# 사건 보드: 살펴보지 않은 카드는 이을 수 없고, 틀린 연결은 진행되지 않는다
 	var data: Dictionary = JSON.parse_string(FileAccess.get_file_as_string("res://data/puzzles/prologue_board.json"))
-	var steps: Array = data["steps"]
-	var wrong := (int(steps[0]["answer"]) + 1) % (steps[0]["options"] as Array).size()
-	_check(not board.choose(wrong) and board.current_step() == 0, "틀린 자료를 고르면 다음 단계로 넘어가지 않는다")
-	for s in steps:
-		board.choose(int(s["answer"]))
-	_check(board.is_solved(), "다섯 단계를 모두 맞히면 공통 좌표가 나온다")
+	var links: Array = data["links"]
+	var first_pair: Array = links[0]["pairs"][0]
+	_check(not board.link(first_pair[0], first_pair[1]) and board.current_step() == 0, "살펴보지 않은 카드는 실로 이을 수 없다")
+	for c in data["cards"]:
+		board.inspect(String(c["id"]))
+	_check(board.is_zoom_open() and board.is_inspected("map"), "카드를 클릭하면 크게 펼쳐 볼 수 있다")
+	_check(not board.link("card_b", "cctv") and board.current_step() == 0, "틀린 연결은 단서가 되지 않는다")
+	for l in links:
+		var pair: Array = l["pairs"][0]
+		board.link(pair[0], pair[1])
+	_check(board.current_step() == links.size() and board.is_pin_stage(), "다섯 연결을 모두 찾으면 지도에 핀을 꽂는 단계가 된다")
+	_check(not board.pin_location("plaza") and not board.is_solved(), "사람 많은 곳에 핀을 꽂으면 아니라고 한다")
+	_check(board.pin_location(String(data["pin"]["answer"])) and board.is_solved(), "산업단지 북측에 핀을 꽂으면 공통 좌표가 나온다")
 	board.confirm_result()
 	await _seconds(0.3)
 	_check(_dm.current_dialogue_id == "prologue_p03_talk", "좌표를 확인하면 두 사람 대화가 이어진다")
