@@ -1,20 +1,41 @@
 extends Node
 
 # 프로젝트 벨카 - 나폴리탄 규칙서 관리 싱글톤 (Autoload: RuleManager)
-# 교내/지역별 안전수칙서 데이터 관리, 상태 판정(확인/추측/괴이/오류), 규칙 발견 및 캐릭터별 분석 메모 해금 관리
+# 교내/지역별 안전수칙서 데이터 관리, 규칙 상태 3축 판정, 규칙 발견 및 캐릭터별 분석 메모 해금 관리
+#
+# 규칙 상태는 서로 독립된 세 축으로 관리한다 (기획서/02. 세계관 및 설정/공식_설정.md 6장).
+#   1) 조사 진행 (progress): 미확인 → 추정 → 확정. 플레이어가 그 규칙을 어디까지 검증했는가.
+#   2) 진위 태그 (veracity): 정상 / 조건부 / 오염. 조사 진행이 확정일 때만 붙고, 그 전에는 NONE(―).
+#   3) 위반 결과 (grade): 안전 / 주의 / 위험 / 금지 / 판정 보류. danger_level 또는 violation_grade로 정한다.
 
-enum RuleStatus {
-	UNKNOWN = 0,    # 미확인 (아직 검증되지 않음)
-	CONFIRMED = 1,  # 확인됨 (정상적으로 기능하는 유효 수칙)
-	GUESSED = 2,    # 추측됨 (플레이어가 유추한 비공식 수칙)
-	ANOMALY = 3,    # 괴이 수칙 (이상 개체가 조작/오염시킨 위험 수칙)
-	ERROR = 4       # 모순/오류 (다른 수칙과 상충하거나 왜곡된 수칙)
+## 조사 진행 축
+enum RuleProgress {
+	UNKNOWN = 0,    # 미확인
+	GUESSED = 1,    # 추정
+	CONFIRMED = 2,  # 확정
 }
+
+## 진위 태그 축. 조사 진행이 CONFIRMED일 때만 NONE 이외의 값을 가진다.
+enum RuleVeracity {
+	NONE = 0,         # ― (아직 판정 전)
+	NORMAL = 1,       # 정상: 조건 없이 그대로 작동
+	CONDITIONAL = 2,  # 조건부: 시간·행동·개체 상태에 따라 효과가 달라짐 (구 '변칙')
+	CORRUPTED = 3,    # 오염: 개체나 공간에 의해 변조된 거짓 규칙 (구 '오류')
+}
+
+const PROGRESS_LABELS := {RuleProgress.UNKNOWN: "미확인", RuleProgress.GUESSED: "추정", RuleProgress.CONFIRMED: "확정"}
+const VERACITY_LABELS := {RuleVeracity.NONE: "―", RuleVeracity.NORMAL: "정상", RuleVeracity.CONDITIONAL: "조건부", RuleVeracity.CORRUPTED: "오염"}
 
 const DEFAULT_RULES_PATH = "res://data/rules/school_rules.json"
 
 ## 규칙서 메인 저장소 (Key: rule_id, Value: Dictionary)
-var rule_book: Dictionary = {}
+## 세이브 파일처럼 밖에서 통째로 넣어도 구버전 "status" 값과 JSON 실수형 값을 3축 정수로 정리한다.
+var rule_book: Dictionary = {}:
+	set(value):
+		rule_book = value
+		for id in rule_book:
+			if rule_book[id] is Dictionary:
+				_normalize_state(rule_book[id])
 
 ## 규칙 카테고리 목록
 var categories: Array = []
@@ -24,11 +45,12 @@ var current_ruleset_id: String = ""
 var ruleset_title: String = ""
 var ruleset_description: String = ""
 
-signal rule_updated(rule_id: String, new_status: int)
+## 조사 진행 또는 진위 태그가 바뀌었을 때
+signal rule_state_changed(rule_id: String, progress: int, veracity: int)
 signal rule_discovered(rule_id: String)
 signal memo_unlocked(rule_id: String, character: String)
 signal rules_loaded(total_count: int)
-## 규칙 위반: grade는 safe/caution/danger/forbidden, strikes는 해당 규칙 누적 위반 횟수
+## 규칙 위반: grade는 safe/caution/danger/forbidden/pending, strikes는 해당 규칙 누적 위반 횟수
 signal rule_violated(rule_id: String, grade: String, strikes: int, penalty: bool)
 
 const GRADES_PATH := "res://data/rules/violation_grades.json"
@@ -83,9 +105,6 @@ func load_rules_from_file(file_path: String) -> bool:
 		if r_id.is_empty():
 			continue
 		
-		# 상태 문자열을 enum 값으로 변환
-		var status_val = _parse_status(r.get("status", "UNKNOWN"))
-		
 		var rule_entry = {
 			"id": r_id,
 			"category": r.get("category", "common"),
@@ -93,7 +112,9 @@ func load_rules_from_file(file_path: String) -> bool:
 			"number": int(r.get("number", 0)),
 			"title": r.get("title", ""),
 			"text": r.get("text", ""),
-			"status": status_val,
+			"progress": RuleProgress.UNKNOWN,
+			"veracity": RuleVeracity.NONE,
+			"violation_grade": String(r.get("violation_grade", "")),
 			"discovered": bool(r.get("discovered", false)),
 			"danger_level": int(r.get("danger_level", 1)),
 			"sabi_memo": r.get("sabi_memo", ""),
@@ -103,6 +124,7 @@ func load_rules_from_file(file_path: String) -> bool:
 			"strikes": 0,
 			"source": "rulebook" if bool(r.get("discovered", false)) else "",
 		}
+		_apply_state_fields(rule_entry, r)
 		rule_book[r_id] = rule_entry
 	
 	print("[RuleManager] 규칙 로드 완료: 총 %d개 수칙 (%s)" % [rule_book.size(), ruleset_title])
@@ -110,21 +132,72 @@ func load_rules_from_file(file_path: String) -> bool:
 	return true
 
 
-## 규칙 상태 문자열을 RuleStatus 정수로 파싱
-func _parse_status(status_str: Variant) -> int:
-	if status_str is int:
-		return status_str
-	match str(status_str).to_upper():
+## 데이터(JSON·세이브)의 상태 필드를 3축 값으로 읽어 entry에 넣는다.
+## 새 형식은 "progress"/"veracity", 구 형식은 "status" 하나를 쓴다.
+func _apply_state_fields(entry: Dictionary, data: Dictionary) -> void:
+	if data.has("progress"):
+		entry["progress"] = _parse_progress(data["progress"])
+		entry["veracity"] = _parse_veracity(data.get("veracity", RuleVeracity.NONE))
+	elif data.has("status"):
+		var axes := _legacy_status_to_axes(data["status"])
+		entry["progress"] = axes[0]
+		entry["veracity"] = axes[1]
+	_enforce_veracity_rule(entry)
+
+
+## 이미 rule_book에 들어 있는 entry를 정리한다 (세이브 로드, 체크포인트 복원 후).
+func _normalize_state(entry: Dictionary) -> void:
+	_apply_state_fields(entry, entry.duplicate())
+	entry.erase("status")
+
+
+## 진위 태그는 조사 진행이 확정일 때만 붙는다.
+func _enforce_veracity_rule(entry: Dictionary) -> void:
+	if int(entry.get("progress", RuleProgress.UNKNOWN)) != RuleProgress.CONFIRMED:
+		entry["veracity"] = RuleVeracity.NONE
+
+
+func _parse_progress(value: Variant) -> int:
+	if value is int or value is float:
+		return clampi(int(value), RuleProgress.UNKNOWN, RuleProgress.CONFIRMED)
+	match str(value).to_upper():
 		"CONFIRMED":
-			return RuleStatus.CONFIRMED
+			return RuleProgress.CONFIRMED
 		"GUESSED":
-			return RuleStatus.GUESSED
-		"ANOMALY":
-			return RuleStatus.ANOMALY
-		"ERROR":
-			return RuleStatus.ERROR
+			return RuleProgress.GUESSED
 		_:
-			return RuleStatus.UNKNOWN
+			return RuleProgress.UNKNOWN
+
+
+func _parse_veracity(value: Variant) -> int:
+	if value is int or value is float:
+		return clampi(int(value), RuleVeracity.NONE, RuleVeracity.CORRUPTED)
+	match str(value).to_upper():
+		"NORMAL":
+			return RuleVeracity.NORMAL
+		"CONDITIONAL":
+			return RuleVeracity.CONDITIONAL
+		"CORRUPTED":
+			return RuleVeracity.CORRUPTED
+		_:
+			return RuleVeracity.NONE
+
+
+## 구버전 단일 상태(UNKNOWN/CONFIRMED/GUESSED/ANOMALY/ERROR, 또는 그 정수 0~4)를 [progress, veracity]로 바꾼다.
+## ANOMALY(괴이 오염)와 ERROR(모순/오류)는 모두 확정·오염에 해당한다.
+func _legacy_status_to_axes(value: Variant) -> Array:
+	var key := str(value).to_upper()
+	if value is int or value is float:
+		key = ["UNKNOWN", "CONFIRMED", "GUESSED", "ANOMALY", "ERROR"][clampi(int(value), 0, 4)]
+	match key:
+		"CONFIRMED":
+			return [RuleProgress.CONFIRMED, RuleVeracity.NORMAL]
+		"GUESSED":
+			return [RuleProgress.GUESSED, RuleVeracity.NONE]
+		"ANOMALY", "ERROR":
+			return [RuleProgress.CONFIRMED, RuleVeracity.CORRUPTED]
+		_:
+			return [RuleProgress.UNKNOWN, RuleVeracity.NONE]
 
 
 ## 규칙 단건 조회
@@ -139,20 +212,59 @@ func has_rule(rule_id: String) -> bool:
 	return rule_book.has(rule_id)
 
 
-## 규칙 상태 갱신 (CONFIRMED, ANOMALY 등)
-func update_rule(rule_id: String, new_status: int) -> bool:
-	return update_rule_status(rule_id, new_status)
-
-
-func update_rule_status(rule_id: String, new_status: int) -> bool:
+## 규칙 상태를 3축 중 조사 진행·진위 태그 두 축으로 갱신한다.
+## 조사 진행이 확정이 아니면 진위 태그는 NONE으로 고정된다. 확정 전에 진위 태그를 지정하면 거부한다.
+func set_rule_state(rule_id: String, progress: int, veracity: int = RuleVeracity.NONE) -> bool:
 	if not rule_book.has(rule_id):
 		push_warning("[RuleManager] 존재하지 않는 규칙 ID: %s" % rule_id)
 		return false
-	
-	rule_book[rule_id]["status"] = new_status
-	rule_updated.emit(rule_id, new_status)
-	print("[RuleManager] 규칙 상태 갱신: %s -> %d" % [rule_id, new_status])
+	if progress != RuleProgress.CONFIRMED and veracity != RuleVeracity.NONE:
+		push_warning("[RuleManager] 확정 전인 규칙에는 진위 태그를 붙일 수 없습니다: %s" % rule_id)
+		return false
+	var entry: Dictionary = rule_book[rule_id]
+	entry["progress"] = _parse_progress(progress)
+	entry["veracity"] = _parse_veracity(veracity)
+	_enforce_veracity_rule(entry)
+	rule_state_changed.emit(rule_id, entry["progress"], entry["veracity"])
+	print("[RuleManager] 규칙 상태 갱신: %s -> %s" % [rule_id, format_state_tag(rule_id)])
 	return true
+
+
+## 조사 진행만 바꾼다. 확정에서 내려가면 진위 태그는 지워진다.
+func update_rule_progress(rule_id: String, progress: int) -> bool:
+	if not rule_book.has(rule_id):
+		push_warning("[RuleManager] 존재하지 않는 규칙 ID: %s" % rule_id)
+		return false
+	var veracity := RuleVeracity.NONE
+	if progress == RuleProgress.CONFIRMED:
+		veracity = int(rule_book[rule_id].get("veracity", RuleVeracity.NONE))
+	return set_rule_state(rule_id, progress, veracity)
+
+
+## 확정된 규칙의 진위 태그만 바꾼다.
+func update_rule_veracity(rule_id: String, veracity: int) -> bool:
+	if not rule_book.has(rule_id):
+		push_warning("[RuleManager] 존재하지 않는 규칙 ID: %s" % rule_id)
+		return false
+	return set_rule_state(rule_id, int(rule_book[rule_id].get("progress", RuleProgress.UNKNOWN)), veracity)
+
+
+func get_progress(rule_id: String) -> int:
+	return int(rule_book.get(rule_id, {}).get("progress", RuleProgress.UNKNOWN))
+
+
+func get_veracity(rule_id: String) -> int:
+	return int(rule_book.get(rule_id, {}).get("veracity", RuleVeracity.NONE))
+
+
+## "[확정·정상·주의]" 형식의 상태 표기를 만든다.
+func format_state_tag(rule_id: String) -> String:
+	if not rule_book.has(rule_id):
+		return ""
+	return "[%s·%s·%s]" % [
+		PROGRESS_LABELS.get(get_progress(rule_id), "?"),
+		VERACITY_LABELS.get(get_veracity(rule_id), "?"),
+		String(grade_info(grade_of(rule_id)).get("name", "?"))]
 
 
 ## 새로운 규칙 발견 처리. source: "inspect"/"violation"/"spy_vision" 등, character: 발견한 캐릭터 ("sabi"/"shamu")
@@ -192,8 +304,11 @@ func unlock_memo(rule_id: String, character: String) -> bool:
 	return unlocked
 
 
-## 규칙 위반의 결과 등급 (danger_level 기준)
+## 규칙 위반의 결과 등급. 규칙에 violation_grade(예: "pending" = 판정 보류)가 있으면 그것을, 없으면 danger_level로 정한다.
 func grade_of(rule_id: String) -> String:
+	var override := String(rule_book.get(rule_id, {}).get("violation_grade", ""))
+	if not override.is_empty() and _grades.get("grades", {}).has(override):
+		return override
 	var level := str(int(rule_book.get(rule_id, {}).get("danger_level", 1)))
 	return String(_grades.get("by_danger_level", {}).get(level, "safe"))
 
@@ -250,7 +365,7 @@ func snapshot() -> Dictionary:
 	var snap := {}
 	for id in rule_book:
 		var r: Dictionary = rule_book[id]
-		snap[id] = {"discovered": r["discovered"], "status": r["status"], "strikes": r.get("strikes", 0),
+		snap[id] = {"discovered": r["discovered"], "progress": r["progress"], "veracity": r["veracity"], "strikes": r.get("strikes", 0),
 			"memo_unlocked_sabi": r["memo_unlocked_sabi"], "memo_unlocked_shamu": r["memo_unlocked_shamu"], "source": r.get("source", "")}
 	return snap
 
@@ -260,6 +375,7 @@ func restore(snap: Dictionary) -> void:
 		if rule_book.has(id):
 			for key in snap[id]:
 				rule_book[id][key] = snap[id][key]
+			_normalize_state(rule_book[id])
 
 
 ## 전체 규칙 배열 반환
@@ -281,13 +397,21 @@ func get_rules_by_category(category_id: String, only_discovered: bool = false) -
 	return list
 
 
-## 상태별 규칙 목록 조회 (예: ANOMALY인 규칙들만 수집)
-func get_rules_by_status(status_filter: int) -> Array:
+## 조사 진행별 규칙 목록 조회
+func get_rules_by_progress(progress: int) -> Array:
 	var list = []
 	for k in rule_book.keys():
-		var r = rule_book[k]
-		if int(r.get("status", 0)) == status_filter:
-			list.append(r)
+		if int(rule_book[k].get("progress", 0)) == progress:
+			list.append(rule_book[k])
+	return list
+
+
+## 진위 태그별 규칙 목록 조회 (예: 오염된 규칙만 수집)
+func get_rules_by_veracity(veracity: int) -> Array:
+	var list = []
+	for k in rule_book.keys():
+		if int(rule_book[k].get("veracity", 0)) == veracity:
+			list.append(rule_book[k])
 	return list
 
 

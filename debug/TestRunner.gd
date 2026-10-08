@@ -151,15 +151,16 @@ func _ready() -> void:
 		printerr("❌ [테스트 12 실패] 수칙 로드 개수 부족: ", total_rules)
 		fail_count += 1
 
-	# 11. RuleManager 규칙 상태 변경, 발견 및 메모 해금 검증
+	# 11. RuleManager 규칙 상태(3축) 변경, 발견 및 메모 해금 검증
 	var target_rule_id = "RULE_CAFETERIA_02"
 	RuleManager.discover_rule(target_rule_id)
-	RuleManager.update_rule_status(target_rule_id, RuleManager.RuleStatus.ANOMALY)
+	RuleManager.set_rule_state(target_rule_id, RuleManager.RuleProgress.CONFIRMED, RuleManager.RuleVeracity.CORRUPTED)
 	RuleManager.unlock_memo(target_rule_id, "sabi")
 	
 	var rule_data = RuleManager.get_rule(target_rule_id)
-	if rule_data.get("discovered") == true and rule_data.get("status") == RuleManager.RuleStatus.ANOMALY and rule_data.get("memo_unlocked_sabi") == true:
-		print("✅ [테스트 13 통과] RuleManager 수칙 발견/괴이상태(ANOMALY) 변경/사비 메모 해금 정상 동작!")
+	if rule_data.get("discovered") == true and RuleManager.get_progress(target_rule_id) == RuleManager.RuleProgress.CONFIRMED \
+			and RuleManager.get_veracity(target_rule_id) == RuleManager.RuleVeracity.CORRUPTED and rule_data.get("memo_unlocked_sabi") == true:
+		print("✅ [테스트 13 통과] RuleManager 수칙 발견/3축 상태(%s) 변경/사비 메모 해금 정상 동작!" % RuleManager.format_state_tag(target_rule_id))
 		pass_count += 1
 	else:
 		printerr("❌ [테스트 13 실패] RuleManager 상태 갱신 실패: ", rule_data)
@@ -169,19 +170,54 @@ func _ready() -> void:
 	SaveManager.save_game()
 	# 룰북 리셋 후 복원 검증
 	RuleManager.reset_to_default()
-	var reset_rule = RuleManager.get_rule(target_rule_id)
-	var was_reset = (reset_rule.get("status") == RuleManager.RuleStatus.UNKNOWN)
+	var was_reset = (RuleManager.get_progress(target_rule_id) == RuleManager.RuleProgress.UNKNOWN \
+			and RuleManager.get_veracity(target_rule_id) == RuleManager.RuleVeracity.NONE)
 	
 	SaveManager.load_game()
-	var restored_rule = RuleManager.get_rule(target_rule_id)
-	var was_restored = (restored_rule.get("status") == RuleManager.RuleStatus.ANOMALY)
+	var was_restored = (RuleManager.get_progress(target_rule_id) == RuleManager.RuleProgress.CONFIRMED \
+			and RuleManager.get_veracity(target_rule_id) == RuleManager.RuleVeracity.CORRUPTED)
 
 	if was_reset and was_restored:
-		print("✅ [테스트 14 통과] SaveManager를 통한 RuleManager 룰북 상태(ANOMALY 복구) 완벽 보존/로드 성공!")
+		print("✅ [테스트 14 통과] SaveManager를 통한 RuleManager 룰북 3축 상태(확정·오염) 보존/로드 성공!")
 		pass_count += 1
 	else:
 		printerr("❌ [테스트 14 실패] RuleManager 세이브 복원 실패: reset=%s, restored=%s" % [was_reset, was_restored])
 		fail_count += 1
+
+	# 14-1. 진위 태그는 확정된 규칙에만 붙는다
+	RuleManager.reset_to_default()
+	var guard_rule_id = "RULE_CAFETERIA_02"
+	var rejected = not RuleManager.set_rule_state(guard_rule_id, RuleManager.RuleProgress.GUESSED, RuleManager.RuleVeracity.NORMAL)
+	RuleManager.set_rule_state(guard_rule_id, RuleManager.RuleProgress.CONFIRMED, RuleManager.RuleVeracity.CONDITIONAL)
+	RuleManager.update_rule_progress(guard_rule_id, RuleManager.RuleProgress.GUESSED)
+	var cleared = RuleManager.get_veracity(guard_rule_id) == RuleManager.RuleVeracity.NONE
+	if rejected and cleared:
+		print("✅ [테스트 14-1 통과] 확정 전 진위 태그 거부, 확정 해제 시 진위 태그 초기화 확인!")
+		pass_count += 1
+	else:
+		printerr("❌ [테스트 14-1 실패] 진위 태그 규칙 위반: rejected=%s, cleared=%s" % [rejected, cleared])
+		fail_count += 1
+
+	# 14-2. 구버전 세이브의 단일 status 값을 3축으로 변환
+	var legacy_book: Dictionary = RuleManager.rule_book.duplicate(true)
+	for id in legacy_book:
+		legacy_book[id].erase("progress")
+		legacy_book[id].erase("veracity")
+		legacy_book[id]["status"] = 0
+	legacy_book["RULE_CAFETERIA_02"]["status"] = 3.0  # ANOMALY (JSON 로드 시 실수형)
+	legacy_book["RULE_COMMON_01"]["status"] = "GUESSED"
+	RuleManager.rule_book = legacy_book
+	var legacy_ok = RuleManager.get_progress("RULE_CAFETERIA_02") == RuleManager.RuleProgress.CONFIRMED \
+			and RuleManager.get_veracity("RULE_CAFETERIA_02") == RuleManager.RuleVeracity.CORRUPTED \
+			and RuleManager.get_progress("RULE_COMMON_01") == RuleManager.RuleProgress.GUESSED \
+			and not RuleManager.get_rule("RULE_COMMON_01").has("status")
+	if legacy_ok:
+		print("✅ [테스트 14-2 통과] 구버전 status(ANOMALY/GUESSED) → 3축 변환 확인!")
+		pass_count += 1
+	else:
+		printerr("❌ [테스트 14-2 실패] 구버전 status 변환 오류")
+		fail_count += 1
+	RuleManager.reset_to_default()
 
 	# 15. PlayerParty 씬 인스턴스화 및 2인 공존 검증
 	var companion_ai_script = preload("res://scripts/characters/CompanionAI.gd")

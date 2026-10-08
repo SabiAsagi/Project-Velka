@@ -1,11 +1,12 @@
 {
-  "_source": "기획서/01. 기획 및 시스템/규칙서.md 6·9장, 밸런스_기획서.md 7장. danger_level(1~5) -> 위반 결과 등급",
+  "_source": "기획서/01. 기획 및 시스템/규칙서.md 6·9장, 밸런스_기획서.md 7장, 공식_설정.md 6장. danger_level(1~5) -> 위반 결과 등급. 규칙의 violation_grade가 있으면 그것을 우선(pending = 판정 보류: 사례가 부족해 결과를 정하지 못한 규칙, 위반은 안전 등급과 같은 누적형으로 처리)",
   "by_danger_level": {"1": "safe", "2": "safe", "3": "caution", "4": "danger", "5": "forbidden"},
   "grades": {
     "safe": {"name": "안전", "type": "accumulate", "heart": 10, "mental": -2, "strike_limit": 3},
     "caution": {"name": "주의", "type": "accumulate", "heart": 18, "mental": -5, "strike_limit": 3},
     "danger": {"name": "위험", "type": "immediate", "heart": 35, "mental": -10, "damage": 25, "injuries": ["injured"], "noise_radius": 14},
-    "forbidden": {"name": "금지", "type": "fail", "heart": 50, "mental": -20}
+    "forbidden": {"name": "금지", "type": "fail", "heart": 50, "mental": -20},
+    "pending": {"name": "판정 보류", "type": "accumulate", "heart": 10, "mental": -2, "strike_limit": 3}
   },
   "strike_penalty": {"mental": -15, "status": "fear", "noise_radius": 16, "heart": 20}
 }

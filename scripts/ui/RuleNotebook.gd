@@ -3,12 +3,22 @@ extends CanvasLayer
 class_name RuleNotebook
 
 # 프로젝트 벨카 - 규칙 수첩 (R)
-# 발견한 규칙을 구역별로 보여 준다: 확인 상태, 위반 결과 등급, 누적 위반, 사비 메모 / 샤무 코멘트.
+# 발견한 규칙을 구역별로 보여 준다: 상태 3축 표기 [조사 진행·진위 태그·위반 결과], 누적 위반, 사비 메모 / 샤무 코멘트.
 # 열려 있는 동안에는 탐색 입력이 잠긴다.
 
 const LOCK_REASON := "notebook"
-const STATUS_TEXT := {0: "미확인", 1: "확인됨", 2: "추측", 3: "괴이 수칙", 4: "모순"}
-const STATUS_COLOR := {0: "#a0a8b0", 1: "#7fe0a0", 2: "#e0d070", 3: "#ff6a60", 4: "#c090ff"}
+const PROGRESS_COLOR := {
+	RuleManager.RuleProgress.UNKNOWN: "#a0a8b0",
+	RuleManager.RuleProgress.GUESSED: "#e0d070",
+	RuleManager.RuleProgress.CONFIRMED: "#7fe0a0",
+}
+const VERACITY_COLOR := {
+	RuleManager.RuleVeracity.NONE: "#a0a8b0",
+	RuleManager.RuleVeracity.NORMAL: "#7fe0a0",
+	RuleManager.RuleVeracity.CONDITIONAL: "#c090ff",
+	RuleManager.RuleVeracity.CORRUPTED: "#ff6a60",
+}
+const GRADE_COLOR := "#ff8a70"
 
 var _panel: PanelContainer
 var _header: Label
@@ -75,10 +85,7 @@ func refresh() -> int:
 		text += "[color=#e8c060][b]%s[/b][/color]\n" % String(rules[0].get("category_name", cat))
 		for r in rules:
 			shown += 1
-			var status := int(r["status"])
-			var grade := RuleManager.grade_info(RuleManager.grade_of(r["id"]))
-			text += "[b]%d. %s[/b]  [color=%s][%s][/color]  [color=#ff8a70]위반 결과: %s[/color]" % [
-				int(r["number"]), r["title"], STATUS_COLOR.get(status, "#ffffff"), STATUS_TEXT.get(status, "?"), grade.get("name", "?")]
+			text += "[b]%d. %s[/b]  %s" % [int(r["number"]), r["title"], _state_tag_bbcode(r)]
 			if int(r.get("strikes", 0)) > 0:
 				text += "  [color=#ff5050]위반 %d회[/color]" % int(r["strikes"])
 			text += "\n  %s\n" % r["text"]
@@ -92,6 +99,17 @@ func refresh() -> int:
 	_header.text = "%s   —   기록 %d / %d   (R / Esc 닫기)" % [RuleManager.ruleset_title, RuleManager.get_discovered_count(), RuleManager.get_total_count()]
 	_body.text = text
 	return shown
+
+
+## [확정·정상·주의]를 축마다 다른 색으로 그린다.
+func _state_tag_bbcode(r: Dictionary) -> String:
+	var progress := int(r.get("progress", 0))
+	var veracity := int(r.get("veracity", 0))
+	var grade := RuleManager.grade_info(RuleManager.grade_of(r["id"]))
+	return "[[color=%s]%s[/color]·[color=%s]%s[/color]·[color=%s]%s[/color]]" % [
+		PROGRESS_COLOR.get(progress, "#ffffff"), RuleManager.PROGRESS_LABELS.get(progress, "?"),
+		VERACITY_COLOR.get(veracity, "#ffffff"), RuleManager.VERACITY_LABELS.get(veracity, "?"),
+		GRADE_COLOR, String(grade.get("name", "?"))]
 
 
 func _build() -> void:
