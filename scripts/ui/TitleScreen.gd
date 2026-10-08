@@ -1,7 +1,7 @@
 extends Control
 
 # 프로젝트 벨카 - 타이틀 화면 컨트롤러
-# 새 게임, 이어하기, 환경 설정, 게임 종료를 제어합니다.
+# 새 게임(프롤로그 아지트부터), 이어하기(저장된 챕터의 처음부터), 환경 설정, 게임 종료를 제어합니다.
 
 @onready var new_game_btn: Button = $MenuContainer/VBoxContainer/NewGameButton
 @onready var continue_btn: Button = $MenuContainer/VBoxContainer/ContinueButton
@@ -18,6 +18,10 @@ func _ready() -> void:
 	continue_btn.disabled = not has_save
 	if not has_save:
 		continue_btn.modulate = Color(0.6, 0.6, 0.6, 0.5)
+	else:
+		var chapter := SaveManager.peek_chapter()
+		if not chapter.is_empty():
+			continue_btn.text = "이어하기 — %s" % SceneManager.chapter_title(chapter)
 
 	# 버튼 시그널 연결
 	new_game_btn.pressed.connect(_on_new_game_pressed)
