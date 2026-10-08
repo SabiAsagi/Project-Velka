@@ -1,0 +1,576 @@
+{
+  "dialogue_id": "prologue_p12_briefing",
+  "lines": [
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "정보조사부 브리핑룸. 탁자 위에 학교 구역의 배치도, 본관·별관·강당 평면도, 사고 기록, 안전수칙서가 펼쳐져 있다."
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "다른 구역보다 학교 서류가 유난히 많다. 사진 속 학교는 폐허가 아니다. 학생들이 운동장을 걷고, 교실에서는 수업이 진행되고 있다."
+    },
+    {
+      "speaker": "baek",
+      "speaker_name": "백윤서",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "두 사람에게 첫 번째 협력 조사를 제안하려 합니다."
+    },
+    {
+      "speaker": "baek",
+      "speaker_name": "백윤서",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "학교 구역입니다."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "처음 보내는 곳치고 사람이 너무 많은데."
+    },
+    {
+      "speaker": "yu",
+      "speaker_name": "유가온",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "학교는 협회가 현재까지 가장 많이 조사한 구역입니다."
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "화면에 조사 기록 목록이 뜬다. 마지막 공개 기록: 27차 조사."
+    },
+    {
+      "speaker": "yu",
+      "speaker_name": "유가온",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "공개된 조사만 스물일곱 차례입니다. 주요 건물 구조, 개체의 출현 위치, 반복되는 규칙과 현장 이탈 조건도 다른 구역보다 많이 확인됐습니다."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "그래서 첫 번째로 가는 거예여?"
+    },
+    {
+      "speaker": "baek",
+      "speaker_name": "백윤서",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "그렇습니다."
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "화면에 다른 구역 자료가 짧게 스친다.\n아파트 — 내부 구조 미파악 · 방송국 — 기록 계속 변동 · 병원 — 이탈 조건 미확정 · 호텔 — 퇴실 조건 불명"
+    },
+    {
+      "speaker": "yu",
+      "speaker_name": "유가온",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "다른 구역은 진입 경로조차 매번 달라지거나, 현장 이탈 조건이 아직 확정되지 않은 경우가 많습니다."
+    },
+    {
+      "speaker": "yu",
+      "speaker_name": "유가온",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "학교는 출석부의 오류를 바로잡고, 세 번째 종이 울린 뒤 올바른 정문을 통과하는 것이 기본 이탈 절차입니다."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "조건만 지키면 나올 수 있다는 거네."
+    },
+    {
+      "speaker": "kwon",
+      "speaker_name": "권지혁",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "다른 곳에 비해서는."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "annoyed",
+      "text": "그 말 별로 안심 안 되는데."
+    },
+    {
+      "speaker": "kwon",
+      "speaker_name": "권지혁",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "annoyed",
+      "text": "안심시키려는 말이 아니니까."
+    },
+    {
+      "speaker": "baek",
+      "speaker_name": "백윤서",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "학교는 협회가 파악한 구역 중 현장 이탈 성공률이 가장 높습니다. 위험이 발생해도 확인된 절차에 따라 후퇴할 수 있습니다."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "제일 안전한 곳?"
+    },
+    {
+      "speaker": "baek",
+      "speaker_name": "백윤서",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "가장 안전한 곳이 아니라, 가장 많이 알고 있는 곳입니다."
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "학교 사진이 확대된다. 여러 교실에 동시에 앉아 있는 같은 학생. 같은 동작을 반복하는 복도 학생. 모두 같은 시간을 가리키는 시계."
+    },
+    {
+      "speaker": "yu",
+      "speaker_name": "유가온",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "학교는 정상적으로 운영되는 것처럼 보입니다."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "학생도 전부 사람처럼 보이는데."
+    },
+    {
+      "speaker": "yu",
+      "speaker_name": "유가온",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "그래서 판별이 필요합니다. 실제 전이자가 학생들 사이에 섞여 있어도 육안만으로는 구분할 수 없습니다."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "neutral",
+      "text": "사람을 구하려면 먼저 진짜 사람인지 확인해야 하네."
+    },
+    {
+      "speaker": "yu",
+      "speaker_name": "유가온",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "neutral",
+      "text": "맞습니다."
+    },
+    {
+      "speaker": "baek",
+      "speaker_name": "백윤서",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "또한 조사 기록이 많다고 해서 규칙이 완전히 고정된 것은 아닙니다. 기존 규칙이 변하거나, 안내문이 오염되는 사례가 확인되고 있습니다."
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "[주요 임무]\n협회 학교 규칙 재확인 · 생존자용 안전수칙서 배치 · 신규 전이자 수색 · 변질된 규칙 기록 · 세 번째 종 이후 정문으로 이탈"
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "[선택 임무] 이전 조사 인원의 흔적 회수 · 변질된 안내문 확보 · 미확인 교실과 지하 구 도서관 조사\n[긴급 이탈] 체력 또는 정신력이 위험 수준이거나 출석부 등록을 해제할 수 없으면 조사를 중단한다."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "임무는 조사하고, 사람 있으면 찾고, 위험하면 바로 나온다."
+    },
+    {
+      "speaker": "baek",
+      "speaker_name": "백윤서",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "맞습니다. 학교는 다른 구역보다 다시 진입하기 쉽습니다. 한 번에 모든 것을 확인할 필요는 없습니다."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "neutral",
+      "text": "사람을 발견해도 무리해서 따라가면 안 되고?"
+    },
+    {
+      "speaker": "kwon",
+      "speaker_name": "권지혁",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "neutral",
+      "text": "확실한 생존자인지 먼저 판별한다. 구출할 수 없는 상황이면 위치만 기록하고 후퇴해."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "들었지?"
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "엉."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "annoyed",
+      "text": "진짜 들었어?"
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "determined",
+      "shamu_emotion": "annoyed",
+      "text": "사람인지 확인하고 구하래."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "determined",
+      "shamu_emotion": "annoyed",
+      "text": "무리하지 말라는 부분은 어디 갔는데."
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "백윤서가 학교 안전수칙서처럼 보이는 문서를 두 사람에게 건넨다."
+    },
+    {
+      "speaker": "baek",
+      "speaker_name": "백윤서",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "학교 내부에서는 이 생존자용 안내문을 사용합니다. 협회나 개체에 관한 표현은 넣지 않았습니다."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "학교 안내문처럼 만들었네."
+    },
+    {
+      "speaker": "yu",
+      "speaker_name": "유가온",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "학교 안의 존재들에게 조사 인원으로 인식되지 않게 하기 위한 위장입니다."
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "붉은 분필로 적힌 이름은 접촉하지 마십시오.",
+      "shake": true,
+      "noise": true,
+      "text_sabi": "붉은 분필로 적힌 이름은 건드리지 마십시오.",
+      "text_shamu": "붉은 분필로 적힌 이름은 즉시 지우십시오."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "surprised",
+      "shamu_emotion": "neutral",
+      "text": "샤무, 여기 뭐라고 보여?"
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "surprised",
+      "shamu_emotion": "serious",
+      "text": "붉은 이름은 지우라고."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "surprised",
+      "text": "나는 건드리지 말라고 보여."
+    },
+    {
+      "speaker": "han",
+      "speaker_name": "한재윤",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "surprised",
+      "text": "장비 오류는 아니다. 문서 자체가 두 사람에게 다르게 인식되는 거야."
+    },
+    {
+      "speaker": "baek",
+      "speaker_name": "백윤서",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "serious",
+      "text": "학교의 기존 규칙과 충돌합니다."
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "[협회 원본 기록]\n붉은 분필로 적힌 이름은 접촉하지 않는다."
+    },
+    {
+      "speaker": "baek",
+      "speaker_name": "백윤서",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "이런 변화를 확인하는 것도 이번 임무의 목적입니다."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "그러니까 쉬운 곳이라 보내는 게 아니라, 비교할 자료가 많아서 보내는 거네."
+    },
+    {
+      "speaker": "baek",
+      "speaker_name": "백윤서",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "surprised",
+      "text": "둘 다입니다."
+    },
+    {
+      "speaker": "baek",
+      "speaker_name": "백윤서",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "학교는 다른 구역보다 현장 이탈이 쉽습니다. 동시에 과거 기록이 충분하기 때문에 무엇이 달라졌는지도 판별할 수 있습니다."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "determined",
+      "shamu_emotion": "neutral",
+      "text": "괴이세계 기본을 배우면서, 이상한 부분도 찾을 수 있는 곳."
+    },
+    {
+      "speaker": "yu",
+      "speaker_name": "유가온",
+      "sabi_emotion": "determined",
+      "shamu_emotion": "neutral",
+      "text": "정확합니다."
+    },
+    {
+      "speaker": "kwon",
+      "speaker_name": "권지혁",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "단, 쉽다는 말만 믿고 방심하지 마. 학교에서 실종된 조사 인원도 적지 않다."
+    },
+    {
+      "speaker": "seo",
+      "speaker_name": "서유림",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "두 사람 모두 아직 완전히 회복된 상태가 아닙니다. 신체 상태와 정신력이 위험 단계에 들어가면 즉시 복귀하세요."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "smug",
+      "text": "사비부터 잘 감시할게."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "embarrassed",
+      "shamu_emotion": "smug",
+      "text": "왜 나만?"
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "embarrassed",
+      "shamu_emotion": "smug",
+      "text": "누가 사람 보이면 제일 먼저 따라갈 것 같은데?"
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "smug",
+      "text": "샤무."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "난 잡으러 가는 거고, 넌 구하러 가는 거잖아."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "gentle_smile",
+      "shamu_emotion": "neutral",
+      "text": "둘 다 따라가는 거네."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "gentle_smile",
+      "shamu_emotion": "neutral",
+      "text": "……그런가?"
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "[첫 번째 구역: 학교]\n협회의 기존 조사 기록과 현장을 대조하십시오. 생존자를 판별하고 안전수칙서를 배치하십시오.\n위험 발생 시 세 번째 종 이후 정문으로 현장을 이탈하십시오."
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "사비와 샤무가 학교 배치도를 함께 확인한다."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "길도 다 표시돼 있고 나오는 방법도 안다니까, 이번에는 얌전히 조사만 하자."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "엉."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "annoyed",
+      "text": "안 믿겨."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "gentle_smile",
+      "shamu_emotion": "annoyed",
+      "text": "나도 샤무 안 믿겨."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "gentle_smile",
+      "shamu_emotion": "annoyed",
+      "text": "나는 왜?"
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "gentle_smile",
+      "shamu_emotion": "annoyed",
+      "text": "괴이 보면 또 때릴 것 같아서."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "gentle_smile",
+      "shamu_emotion": "serious",
+      "text": "먼저 때리면 안 된다는 건 이제 알아."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "gentle_smile",
+      "shamu_emotion": "serious",
+      "text": "자래써."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "gentle_smile",
+      "shamu_emotion": "annoyed",
+      "text": "그 말투 진짜 얄미워."
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "사비가 규칙서를 접어 장비 가방에 넣는다."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "gentle_smile",
+      "shamu_emotion": "neutral",
+      "text": "학교 다녀오겠슴니다."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "gentle_smile",
+      "shamu_emotion": "annoyed",
+      "text": "등교하는 거 아니거든."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "gentle_smile",
+      "shamu_emotion": "annoyed",
+      "text": "지각하면 안 되잖아."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "gentle_smile",
+      "shamu_emotion": "annoyed",
+      "text": "정신력 검사 다시 받아."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "embarrassed",
+      "shamu_emotion": "cheerful_grin",
+      "text": "느에엥."
+    }
+  ]
+}

@@ -1,0 +1,269 @@
+{
+  "npc_seo": {
+    "prompt": "서유림과 이야기하기",
+    "lines": [
+      {
+        "speaker": "seo",
+        "speaker_name": "서유림",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "의무 담당 서유림입니다. 몇 가지 물어볼게요. 이름이 뭐죠?"
+      },
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "",
+        "text_sabi": "사비 아사기.",
+        "text_shamu": "카즈네 샤무."
+      },
+      {
+        "speaker": "seo",
+        "speaker_name": "서유림",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "여기 오기 직전에 마지막으로 본 건요?"
+      },
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "",
+        "text_sabi": "공장 지하. 영상 속에서 사람이 사라지는 거.",
+        "text_shamu": "벽에서 기어 나오던 그거."
+      },
+      {
+        "speaker": "seo",
+        "speaker_name": "서유림",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "좋아요. 그럼 다시 한 번. 이름이 뭐죠?"
+      },
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "",
+        "text_sabi": "……방금 말했는데여?",
+        "text_shamu": "방금 말했잖아."
+      },
+      {
+        "speaker": "seo",
+        "speaker_name": "서유림",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "같은 질문을 반복하는 건 기억이 바뀌었는지 보려는 거예요. 여기서는 기억이 먼저 망가지는 사람이 많거든요."
+      },
+      {
+        "speaker": "seo",
+        "speaker_name": "서유림",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "지금은 괜찮습니다. 이상한 기억이 생기면 바로 와요."
+      }
+    ],
+    "repeat_lines": [
+      {
+        "speaker": "seo",
+        "speaker_name": "서유림",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "이름은요?"
+      },
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "",
+        "text_sabi": "사비 아사기. 아직 그대로예여.",
+        "text_shamu": "카즈네 샤무. 몇 번을 물어."
+      },
+      {
+        "speaker": "seo",
+        "speaker_name": "서유림",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "좋아요. 그 대답이 바뀌면 바로 알려 주세요."
+      }
+    ]
+  },
+  "npc_kwon": {
+    "prompt": "권지혁과 이야기하기",
+    "lines": [
+      {
+        "speaker": "kwon",
+        "speaker_name": "권지혁",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "현장대응부 권지혁이다. 너희를 공장에서 데려온 게 우리 팀이야."
+      },
+      {
+        "speaker": "kwon",
+        "speaker_name": "권지혁",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "개체한테 덤비는 건 이번이 마지막이었으면 좋겠군."
+      }
+    ],
+    "repeat_lines": [
+      {
+        "speaker": "kwon",
+        "speaker_name": "권지혁",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "궁금한 건 협회장님께. 난 현장 담당이야."
+      }
+    ]
+  },
+  "npc_han": {
+    "prompt": "한재윤과 이야기하기",
+    "lines": [
+      {
+        "speaker": "han",
+        "speaker_name": "한재윤",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "기술지원 한재윤. 너희 장비, 좀 봤어."
+      },
+      {
+        "speaker": "system",
+        "speaker_name": "",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "작업대 위에 사비의 해킹 패드와 샤무의 무기가 나란히 놓여 있다."
+      },
+      {
+        "speaker": "han",
+        "speaker_name": "한재윤",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "총도 칼도 멀쩡해. 문제는 무기가 아니야."
+      },
+      {
+        "speaker": "shamu",
+        "speaker_name": "카즈네 샤무",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "serious",
+        "text": "그럼?"
+      },
+      {
+        "speaker": "han",
+        "speaker_name": "한재윤",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "serious",
+        "text": "상대가 그걸 무기로 취급하지 않는 거지."
+      },
+      {
+        "speaker": "han",
+        "speaker_name": "한재윤",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "해킹 패드는 신호를 잡긴 해. 근데 여기 신호는 시간 표시가 엉망이야. 기록할 땐 조심해."
+      }
+    ],
+    "repeat_lines": [
+      {
+        "speaker": "han",
+        "speaker_name": "한재윤",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "장비는 다 돌려줄게. 고장 난 게 아니니까 고칠 것도 없어."
+      }
+    ]
+  },
+  "npc_yu": {
+    "prompt": "유가온과 이야기하기",
+    "lines": [
+      {
+        "speaker": "yu",
+        "speaker_name": "유가온",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "정보조사부 유가온입니다. 두 분이 가져온 실종 사건 자료, 대조해 봤습니다."
+      },
+      {
+        "speaker": "yu",
+        "speaker_name": "유가온",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "현실의 실종자 명단 일부가 협회의 구조·목격 기록과 겹칩니다."
+      },
+      {
+        "speaker": "yu",
+        "speaker_name": "유가온",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "이 사람은 세 달 전에 아파트 구역에서 목격됐습니다."
+      },
+      {
+        "speaker": "sabi",
+        "speaker_name": "사비 아사기",
+        "sabi_emotion": "surprised",
+        "shamu_emotion": "neutral",
+        "text": "현실에서는 지난주에 사라졌어."
+      },
+      {
+        "speaker": "yu",
+        "speaker_name": "유가온",
+        "sabi_emotion": "surprised",
+        "shamu_emotion": "neutral",
+        "text": "여기와 현실의 시간이 같은 방식으로 흐르지 않을 가능성도 있습니다."
+      },
+      {
+        "speaker": "system",
+        "speaker_name": "",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "[조사 가설] 괴이세계와 현실의 시간 흐름이 다를 수 있다. (확정 정보 아님)"
+      }
+    ],
+    "repeat_lines": [
+      {
+        "speaker": "yu",
+        "speaker_name": "유가온",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "시간 가설은 아직 가설입니다. 기록이 더 필요해요."
+      }
+    ]
+  },
+  "npc_baek": {
+    "prompt": "백윤서와 이야기하기",
+    "lines": [
+      {
+        "speaker": "baek",
+        "speaker_name": "백윤서",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "할 말은 다 드렸습니다. 쉬어 두세요."
+      }
+    ]
+  },
+  "sh_notice_board": {
+    "prompt": "게시판 보기",
+    "lines": [
+      {
+        "speaker": "system",
+        "speaker_name": "",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "빛바랜 구청 공고 위에 협회 메모가 덧붙어 있다."
+      },
+      {
+        "speaker": "system",
+        "speaker_name": "",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "· 외출 시 2인 이상, 귀환 시각 기록 필수\n· 기록실 자료 반출 금지\n· 시계가 맞지 않으면 의무실로"
+      },
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "",
+        "text_sabi": "시계가 맞지 않으면…… 여기선 흔한 일인가 봐.",
+        "text_shamu": "정문은 판자로 막고, 공지는 꼬박꼬박 붙이네."
+      }
+    ]
+  }
+}

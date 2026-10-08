@@ -13,7 +13,7 @@ extends Node3D
 #   8. p05_started            : 괴이세계로 전이 (경비원·조명 사라짐, 붉은 비상등, 통신 두절). 목표: 왔던 길로 돌아가기
 #   9. p05_structure_seen     : 계단을 올라가 보면 봉쇄문 자리가 벽 -> "구조가 바뀌었어". 지하 서쪽에 없던 통로가 생겨 있다
 #  10. prologue_p06_done      : 통로에서 재생하는 개체와 조우 (DefeatTutorial 재사용, 패배 확정) -> 협회 구조 암시
-#  11. prologue_factory_done  : 프롤로그 공장 파트 끝 (다음: 협회 세이프 하우스)
+#  11. prologue_factory_done  : 프롤로그 공장 파트 끝 -> 협회 세이프 하우스(next_scene)
 # 설계: 기획서/04. 맵 및 환경/폐쇄공장_맵_상세.md
 
 signal objective_changed(text: String)
@@ -23,6 +23,8 @@ const DONE_FLAG := "prologue_factory_p04_done"
 
 ## 끄면 이야기 없이 맵만 돌아다닌다 (맵 확인·테스트용)
 @export var run_story: bool = true
+## 공장 파트가 끝나면 이어서 여는 씬 (비우면 공장에 머문다)
+@export_file("*.tscn") var next_scene: String = "res://scenes/chapters/Prologue_Safehouse.tscn"
 
 var objective: String = ""
 
@@ -99,7 +101,7 @@ func _on_flag_set(flag_name: String, _value: Variant) -> void:
 ## 지금 플래그로 다음 목표를 정한다
 func current_objective() -> String:
 	if _flag("prologue_factory_done"):
-		return "프롤로그 공장 파트 끝 — 다음: 협회 세이프 하우스 (제작 예정)"
+		return "프롤로그 공장 파트 끝 — 다음: 협회 세이프 하우스"
 	if _flag("p05_structure_seen"):
 		return "지하 복도 서쪽 벽에 생긴 통로로 가자"
 	if _flag("p05_started"):
@@ -196,6 +198,8 @@ func _rescue() -> void:
 	GameManager.set_story_flag("prologue_factory_done", true)
 	_busy = false
 	_refresh_objective()
+	if not next_scene.is_empty():
+		SceneManager.change_scene(next_scene)
 
 
 ## 같은 대화는 한 번만 (플래그 dlg_<id>)

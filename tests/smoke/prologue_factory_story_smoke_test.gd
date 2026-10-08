@@ -33,6 +33,7 @@ func _run() -> void:
 	change_scene_to_file(SCENE)
 	await _seconds(1.2)
 	_scene = current_scene
+	_scene.set("next_scene", "")   # 끝난 뒤 세이프 하우스로 넘어가지 않게 (공장 안에서 결과를 확인한다)
 	_world = _scene.get_node("FactoryWorld")
 	_party = _scene.get_node("PlayerParty")
 	for g in _world.get_node("Guards").get_children():
