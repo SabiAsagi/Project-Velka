@@ -181,6 +181,15 @@ func _can_see_target(ignore_view_angle: bool = false) -> bool:
 	return not result.is_empty() and result.get("collider") == target_player
 
 
+## 긴장 연출용 경계 단계: 0 평소, 1 확인 중, 2 추격
+func alert_level() -> int:
+	if current_state == AnomalyState.CHASE:
+		return 2
+	if current_state == AnomalyState.OBSERVE:
+		return 1
+	return 0
+
+
 func _update_visual_state() -> void:
 	var chasing := current_state == AnomalyState.CHASE
 	var investigating := current_state == AnomalyState.OBSERVE

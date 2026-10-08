@@ -17,6 +17,8 @@ const HACK_COLOR := Color(0.27, 0.63, 0.71)
 ## 이 플래그가 켜져야 해킹할 수 있다 (비우면 처음부터 가능)
 @export var requires_flag: String = ""
 @export var hack_prompt: String = "해킹 패드 연결"
+## requires_flag 가 아직일 때 조사하면 나오는 대사 (비우면 상호작용 자체가 안 된다)
+@export_multiline var requires_line: String = ""
 @export var done_prompt: String = "해킹 완료"
 ## 회로 격자 크기 (열, 행). 0 이면 terminal_id 별 기본 크기 (CIRCUIT_SIZES)
 @export var circuit_size: Vector2i = Vector2i.ZERO
@@ -33,6 +35,10 @@ func is_done() -> bool:
 func can_interact(player: Node3D) -> bool:
 	if not super.can_interact(player) or is_hacking or is_done():
 		return false
+	return _requirement_met() or not requires_line.is_empty()
+
+
+func _requirement_met() -> bool:
 	return requires_flag.is_empty() or bool(GameManager.get_story_flag(requires_flag, false))
 
 
@@ -43,6 +49,13 @@ func get_interaction_prompt(player: Node3D) -> String:
 
 
 func _on_interact(player: Node3D) -> void:
+	if not _requirement_met():
+		was_used = false
+		DialogueManager.start_dialogue_data("hack_requires_" + terminal_id, [{
+			"speaker": "sabi", "speaker_name": "사비 아사기",
+			"sabi_emotion": "serious", "shamu_emotion": "neutral", "text": requires_line,
+		}])
+		return
 	if not _is_sabi(player):
 		was_used = false
 		DialogueManager.start_dialogue_data("hack_shamu_" + terminal_id, [{

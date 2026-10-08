@@ -27,6 +27,8 @@ var _warning_tween: Tween
 var overlay: Control
 
 const HudOverlay := preload("res://scripts/ui/HudOverlay.gd")
+const TensionFx := preload("res://scripts/ui/TensionFx.gd")
+var tension: Control
 const KEYS_TEXT := "WASD 이동   Shift 달리기   E 조사   F 능력   Space 공격   R 수첩   Q 전환   C 기다려/따라와   ESC 메뉴"
 
 
@@ -36,6 +38,9 @@ func _ready() -> void:
 	overlay = HudOverlay.new()
 	add_child(overlay)
 	move_child(overlay, 0)
+	tension = TensionFx.new()
+	add_child(tension)
+	move_child(tension, 0)
 	$MarginContainer.visible = false
 	interaction_panel.visible = false
 	overlay.set_keys(KEYS_TEXT)

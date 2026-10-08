@@ -272,10 +272,11 @@ def main():
         "adjustment_enabled": "true", "adjustment_saturation": "0.85", "adjustment_contrast": "1.08"})
     env_other = sw.sub_res("env_factory_other", "Environment", {
         "background_mode": "1", "background_color": "Color(0, 0, 0, 1)", "ambient_light_source": "2",
-        "ambient_light_color": "Color(0.42, 0.3, 0.36, 1)", "ambient_light_energy": "0.65", "fog_enabled": "true",
-        "fog_light_color": "Color(0.08, 0.03, 0.04, 1)", "fog_density": "0.03",
-        "ssao_enabled": "true", "ssao_radius": "1.4", "ssao_intensity": "3.0", "ssao_power": "1.8", "ssao_light_affect": "0.3",
-        "adjustment_enabled": "true", "adjustment_saturation": "0.7", "adjustment_contrast": "1.1"})
+        "ambient_light_color": "Color(0.34, 0.24, 0.3, 1)", "ambient_light_energy": "0.45", "fog_enabled": "true",
+        "fog_light_color": "Color(0.06, 0.015, 0.02, 1)", "fog_density": "0.05", "fog_sky_affect": "0.0",
+        "glow_enabled": "true", "glow_intensity": "1.1", "glow_bloom": "0.15", "glow_hdr_threshold": "0.8",
+        "ssao_enabled": "true", "ssao_radius": "1.6", "ssao_intensity": "3.6", "ssao_power": "2.0", "ssao_light_affect": "0.4",
+        "adjustment_enabled": "true", "adjustment_saturation": "0.45", "adjustment_contrast": "1.22", "adjustment_brightness": "0.92"})
     sw.node("FactoryWorld", "Node3D", None, {"script": res["controller"], "real_environment": env, "otherworld_environment": env_other,
                                              "world_environment": 'NodePath("WorldEnvironment")', "ambient": 'NodePath("Ambient")'},
             node_paths=["world_environment", "ambient"])
@@ -334,27 +335,32 @@ def main():
         emit_zone(sw, "Zones", res["zone"], r, y0, 3.0, zid, name, BUILDING, idx)
 
     # 해킹 단말 (사비)
+    HACK_REQUIRES_LINES = {"security": "경비원이 모니터 앞을 지키고 있어. 샤무가 뒤에서 조용히 처리해 줘야 단말에 손댈 수 있어.",
+                           "server": "경보랑 파쇄기가 돌아가는 동안엔 서버가 잠겨 있어."}
     sw.node("Interactables", "Node3D", ".", {}, unique=False)
     for name, pos, point, tid, done, req, prompt, marker in (
             ("GateTerminal", (-3.0, 0.0, 6.0), (0.9, 1.1, 0.0), "gate", "p04_gate_hacked", "", "외부 보안 단말 해킹", 1.9),
-            ("SecurityTerminal", (28.0, 0.0, 0.7), (0.0, 1.1, 1.2), "security", "p04_security_hacked", "", "보안망 접속·삭제 자료 복구", 1.8),
+            ("SecurityTerminal", (28.0, 0.0, 0.7), (0.0, 1.1, 1.2), "security", "p04_security_hacked", "guard_down_security", "보안망 접속·삭제 자료 복구", 1.8),
             ("AlarmPanel", (23.6, B1, 8.0), (0.0, 1.1, 1.1), "alarm", "p04_alarm_off", "", "경보 장치 해제", 1.8),
             ("MainServer", (28.0, B1, 0.6), (0.0, 1.1, 1.3), "server", "p04_footage_restored", "p04_server_open", "서버에서 영상 복원", 1.8)):
         sw.node(name, "Node3D", "Interactables", {"transform": tf(pos), "script": res["hack"], "terminal_id": q(tid),
                                                   "done_flag": q(done), "requires_flag": q(req), "hack_prompt": q(prompt),
+                                                  "requires_line": q(HACK_REQUIRES_LINES.get(tid, "")),
                                                   "marker_height": "%.2f" % marker})
         sw.node("InteractionPoint", "Marker3D", "Interactables/" + name, {"transform": tf(point)}, unique=False)
 
     # 부술 수 있는 것 (샤무): 계단실 봉쇄문, 자료 파쇄기
     blast = sw.sub_res("blast_mat", "StandardMaterial3D", {"albedo_color": "Color(0.42, 0.4, 0.3, 1)", "metallic": "0.5"})
     shred = sw.sub_res("shred_mat", "StandardMaterial3D", {"albedo_color": "Color(0.25, 0.28, 0.3, 1)", "metallic": "0.4"})
-    for name, pos, size, mat, oid, prompt, line, point in (
+    for name, pos, size, mat, oid, prompt, line, point, req_flag, req_line in (
             ("BlastDoor", (31.8, 0.0, 12.5), (1.4, 2.3, 0.2), blast, "basement_door", "봉쇄문 강제로 열기",
-             "봉쇄문이 기계식으로 잠겨 있어… 샤무 힘이면 열 수 있을 거야.", (0.0, 1.1, -0.8)),
+             "봉쇄문이 기계식으로 잠겨 있어… 샤무 힘이면 열 수 있을 거야.", (0.0, 1.1, -0.8), "p04_security_hacked",
+             "봉쇄문에 경보 센서가 붙어 있어. 보안망이 살아 있으면 건드리는 순간 다 몰려와. 사비가 보안실 단말부터 처리해야 해."),
             ("Shredder", (31.0, B1, 9.0), (1.8, 1.3, 1.0), shred, "data_shredder", "파쇄기 부수기",
-             "자료가 계속 갈려 나가고 있어. 내 힘으로는 못 멈춰… 샤무!", (0.0, 1.1, 1.0))):
+             "자료가 계속 갈려 나가고 있어. 내 힘으로는 못 멈춰… 샤무!", (0.0, 1.1, 1.0), "", "")):
         sw.node(name, "Node3D", "Interactables", {"transform": tf(pos), "script": res["breakable"], "obstacle_id": q(oid),
-                                                  "break_prompt": q(prompt), "sabi_blocked_line": q(line), "marker_height": "1.6"})
+                                                  "break_prompt": q(prompt), "sabi_blocked_line": q(line), "marker_height": "1.6",
+                                                  "requires_flag": q(req_flag), "requires_line": q(req_line)})
         sw.node("Piece", "CSGBox3D", "Interactables/" + name, {"transform": tf((0.0, size[1] / 2, 0.0)), "use_collision": "true",
                                                                "size": "Vector3(%.2f, %.2f, %.2f)" % size, "material": mat}, unique=False)
         sw.node("InteractionPoint", "Marker3D", "Interactables/" + name, {"transform": tf(point)}, unique=False)
@@ -371,7 +377,8 @@ def main():
                                  ("GuardEast", (20.4, 0.05, 19.5), (0.0, 0.0, -16.0), "east"),
                                  ("GuardSecurity", (28.0, 0.05, 3.2), (0.0, 0.0, -0.01), "security")):
         sw.node(name, None, "Guards", {"transform": tf(pos), "guard_id": q(gid),
-                                       "patrol_span": "Vector3(%.2f, %.2f, %.2f)" % span}, instance=res["guard"])
+                                       "patrol_span": "Vector3(%.2f, %.2f, %.2f)" % span,
+                                       "nav_bounds": "Rect2(-10.5, -0.5, 45, 23)"}, instance=res["guard"])
 
     # 체크포인트
     sw.node("Checkpoints", "Node3D", ".", {}, unique=False)
@@ -385,7 +392,7 @@ def main():
     # 전이 뒤 조명: 붉고 희미한 비상등만 (otherworld_light)
     for pos, rng in (((27.0, B1 + 2.8, 18.5), 6.0), ((31.8, 2.6, 13.4), 4.0), ((19.0, B1 + 2.6, 17.8), 5.0),
                      ((12.0, B1 + 2.6, 17.8), 5.0), ((6.0, B1 + 2.6, 17.8), 5.0), ((28.0, B1 + 2.6, 4.0), 5.0)):
-        emit_light(sw, lv("B1" if pos[1] < 0 else "1F", "Lights"), pos, rng, "otherworld_light", (0.75, 0.16, 0.14), 1.0)
+        emit_light(sw, lv("B1" if pos[1] < 0 else "1F", "Lights"), pos, rng, "otherworld_light", (0.8, 0.12, 0.1), 1.3)
 
     # P-06 첫 개체 조우 (DefeatTutorial 재사용): 통로 가운데를 지나면 시작
     r = OW_CORRIDOR
