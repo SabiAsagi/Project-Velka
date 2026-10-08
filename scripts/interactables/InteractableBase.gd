@@ -121,12 +121,19 @@ func _update_marker() -> void:
 		_marker.outline_size = 8
 		_marker.outline_modulate = Color(0, 0, 0, 0.7)
 		add_child(_marker)
+		# 표식이 살짝 위아래로 떠 있게
+		var bob := _marker.create_tween().set_loops()
+		bob.tween_property(_marker, "offset:y", 9.0, 0.7).set_trans(Tween.TRANS_SINE)
+		bob.tween_property(_marker, "offset:y", 0.0, 0.7).set_trans(Tween.TRANS_SINE)
 	_marker.global_position = get_interaction_position() + Vector3.UP * marker_height
 	_marker.visible = true
 	var color := MARKER_COLOR_INSPECTED if was_used else _highlight_color
+	# 가까운 대상은 속이 빈 작은 표식, 지금 E 로 조사할 대상은 꽉 찬 큰 표식
 	if _highlight_level == HighlightLevel.FOCUSED:
+		_marker.text = "◆"
 		_marker.modulate = Color(color, 1.0)
-		_marker.font_size = 40
+		_marker.font_size = 44
 	else:
-		_marker.modulate = Color(color, 0.55)
-		_marker.font_size = 28
+		_marker.text = "◇"
+		_marker.modulate = Color(color, 0.7)
+		_marker.font_size = 30
