@@ -146,8 +146,8 @@ func _physics_process(delta: float) -> void:
 
 func _process_player_input(delta: float) -> void:
 	if is_hidden:
+		# 숨어 있는 동안은 충돌판이 꺼져 있으므로 중력도 주지 않는다 (바닥 아래로 떨어지지 않게)
 		velocity = Vector3.ZERO
-		apply_gravity_and_slide(delta)
 		return
 
 	var input_dir := _get_movement_input()

@@ -67,6 +67,12 @@ func _scan_for_interactable() -> void:
 		# 현재 세계 상태에 존재하지 않는(숨겨진) 대상은 제외
 		if not interactable.is_visible_in_tree() or not interactable.can_interact(player):
 			continue
+		# 숨어 있는 은신처는 항상 바로 나올 수 있다 (은신처 안에서는 시야 검사가 막힐 수 있다)
+		if interactable.get("occupant") == player:
+			nearest = interactable
+			nearest_distance = 0.0
+			nearby.append(interactable)
+			continue
 		var distance := player.global_position.distance_to(interactable.get_interaction_position())
 		if distance > highlight_range:
 			continue

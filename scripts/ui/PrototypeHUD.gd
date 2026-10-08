@@ -44,6 +44,8 @@ func _ready() -> void:
 
 	if party:
 		party.party_switched.connect(_on_party_switched)
+		if party.has_signal("companion_command"):
+			party.companion_command.connect(func(text: String, _waiting: bool): show_notice(text, Color(0.8, 0.88, 0.95), 2.5))
 		if party.get_active_member():
 			_bind_player(party.get_active_member())
 	elif player:
@@ -118,6 +120,8 @@ func _update_vitals_display() -> void:
 	if pv:
 		var pname := "샤무" if partner.character_type == GameManager.CharacterType.SHAMU else "사비"
 		var ptext := "동료 %s  체력 %d / %d" % [pname, ceili(pv.hp), roundi(pv.max_hp)]
+		if party.has_method("is_companion_waiting") and party.is_companion_waiting():
+			ptext += "  (대기 중 — C: 따라와)"
 		var pstatus: Array = pv.status_names()
 		if not pstatus.is_empty():
 			ptext += "  " + "·".join(pstatus)
@@ -195,7 +199,7 @@ func _build_survival_ui() -> void:
 	effects_label.modulate = Color(1.0, 0.55, 0.45)
 	vbox.add_child(effects_label)
 	vbox.move_child(effects_label, status_label.get_index() + 1)
-	hint_label.text = "이동 WASD  달리기 Shift  조사 E  능력 F  공격 Space  수첩 R  전환 Q"
+	hint_label.text = "이동 WASD  달리기 Shift  조사 E  능력 F  공격 Space  수첩 R  전환 Q  대기/따라와 C"
 	_notice_box = VBoxContainer.new()
 	_notice_box.name = "NoticeBox"
 	_notice_box.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
