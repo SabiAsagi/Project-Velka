@@ -40,6 +40,9 @@ LEVELS = [("B1", B1), ("1F", 0.0), ("Roof", ROOF_Y)]
 STAIR_X = (31.2, 32.4)
 STAIR_Z = (14.5, 20.5)
 START = (-7.0, 0.05, 14.0)
+# 전이(P-05) 뒤에만 있는 지하 통로: 생산동 아래로 서쪽으로 뻗는다 (P-06 첫 개체 조우 장소)
+OW_DOOR = (17.0, 18.6)
+OW_CORRIDOR = Rect(4.0, 16.4, HALL_X - WT, 19.2)
 
 EXTRA_MATS = {
     "fac_wall_out": ((0.36, 0.37, 0.36), {}),
@@ -88,7 +91,9 @@ def structure(B, sw, res):
 
     # 지하 벽
     wb = "wall_b1"
-    B.wall(ab, wb, "z", HALL_X - WT / 2, -WT, D + WT, B1, -SLAB)
+    # 서쪽 벽 z 17~18.6: 현실에서는 막혀 있고(real_only 채움벽), 전이 뒤에는 없던 통로가 열린다
+    B.wall(ab, wb, "z", HALL_X - WT / 2, -WT, D + WT, B1, -SLAB, [(OW_DOOR[0], OW_DOOR[1], B1, B1 + 2.4)])
+    B.box(ab, wb, HALL_X - WT, HALL_X, B1, B1 + 2.4, OW_DOOR[0], OW_DOOR[1], True, ("real_only",), "wall")
     B.wall(ab, wb, "z", W + WT / 2, -WT, D + WT, B1, -SLAB)
     B.wall(ab, wb, "x", -WT / 2, HALL_X - WT, W + WT, B1, -SLAB)
     B.wall(ab, wb, "x", D + WT / 2, HALL_X - WT, W + WT, B1, -SLAB)
@@ -223,6 +228,23 @@ def basement(B):
     B.box(p, "pipe", 22.1, 30.6, y + 3.2, y + 3.4, 21.4, 21.6, tag="pipe")
 
 
+# ---------------------------------------------------------------- 전이 뒤 (otherworld_only)
+
+def otherworld(B):
+    """P-05 전이 뒤의 변화: 계단 위 봉쇄문 자리가 벽으로 막히고, 지하 서쪽에 없던 통로가 생긴다."""
+    g = ("otherworld_only",)
+    a1, ab = lv("1F", "Arch"), lv("B1", "Arch")
+    B.box(a1, "wall_b1_flood", 31.1, 32.5, 0.0, 2.3, 12.45, 12.55, True, g, "wall")
+    r = OW_CORRIDOR
+    B.box(ab, "floor_b1_old", r.x0, r.x1, B1 - SLAB, B1, r.z0, r.z1, True, g, "floor")
+    for z0, z1 in ((r.z0 - WT, r.z0), (r.z1, r.z1 + WT)):
+        B.box(ab, "wall_b1_flood", r.x0 - WT, r.x1, B1, -SLAB, z0, z1, True, g, "wall")
+    B.box(ab, "wall_b1_flood", r.x0 - WT, r.x0, B1, -SLAB, r.z0, r.z1, True, g, "wall")
+    # 바닥에 고인 물, 벽을 따라 늘어진 배관
+    B.box(ab, "water", 7.0, 12.0, B1, B1 + 0.01, r.z0 + 0.4, r.z1 - 0.6, False, g, "puddle")
+    B.box(ab, "pipe", r.x0, r.x1, B1 + 2.9, B1 + 3.1, r.z1 - 0.3, r.z1 - 0.1, False, g, "pipe")
+
+
 # ---------------------------------------------------------------- 씬
 
 def main():
@@ -237,6 +259,7 @@ def main():
         "hack": sw.ext_res("Script", "res://scripts/interactables/HackTerminal.gd"),
         "breakable": sw.ext_res("Script", "res://scripts/interactables/BreakableObstacle.gd"),
         "checkpoint": sw.ext_res("Script", "res://scripts/world/Checkpoint.gd"),
+        "defeat": sw.ext_res("Script", "res://scripts/encounters/DefeatTutorial.gd"),
         "door": sw.ext_res("PackedScene", "res://scenes/interactables/DoorInteractable.tscn"),
         "locker": sw.ext_res("PackedScene", "res://scenes/interactables/LockerHidingSpot.tscn"),
         "guard": sw.ext_res("PackedScene", "res://scenes/entities/Guard.tscn"),
@@ -247,13 +270,19 @@ def main():
         "ambient_light_color": "Color(0.45, 0.5, 0.62, 1)", "ambient_light_energy": "0.5",
         "ssao_enabled": "true", "ssao_radius": "1.2", "ssao_intensity": "2.2", "ssao_power": "1.6", "ssao_light_affect": "0.2",
         "adjustment_enabled": "true", "adjustment_saturation": "0.85", "adjustment_contrast": "1.08"})
-    sw.node("FactoryWorld", "Node3D", None, {"script": res["controller"], "real_environment": env, "otherworld_environment": env,
+    env_other = sw.sub_res("env_factory_other", "Environment", {
+        "background_mode": "1", "background_color": "Color(0, 0, 0, 1)", "ambient_light_source": "2",
+        "ambient_light_color": "Color(0.42, 0.3, 0.36, 1)", "ambient_light_energy": "0.65", "fog_enabled": "true",
+        "fog_light_color": "Color(0.08, 0.03, 0.04, 1)", "fog_density": "0.03",
+        "ssao_enabled": "true", "ssao_radius": "1.4", "ssao_intensity": "3.0", "ssao_power": "1.8", "ssao_light_affect": "0.3",
+        "adjustment_enabled": "true", "adjustment_saturation": "0.7", "adjustment_contrast": "1.1"})
+    sw.node("FactoryWorld", "Node3D", None, {"script": res["controller"], "real_environment": env, "otherworld_environment": env_other,
                                              "world_environment": 'NodePath("WorldEnvironment")', "ambient": 'NodePath("Ambient")'},
             node_paths=["world_environment", "ambient"])
     sw.node("WorldEnvironment", "WorldEnvironment", ".", {"environment": env}, unique=False)
     moon_tf = "Transform3D(0.707107, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707107, -0.5, 0.5, 0, 30, 0)"
     sw.node("Moon", "DirectionalLight3D", ".", {"transform": moon_tf, "light_energy": "0.18", "light_color": "Color(0.6, 0.7, 1, 1)",
-                                                "shadow_enabled": "true"}, unique=False)
+                                                "shadow_enabled": "true"}, groups=["real_light"], unique=False)
     sw.node("Ambient", "AudioStreamPlayer", ".", {"script": res["ambient"]}, unique=False)
     sw.node("Zones", "Node3D", ".", {}, unique=False)
     sw.node("Site", "Node3D", ".", {}, unique=False)
@@ -276,6 +305,7 @@ def main():
     hall(B)
     offices(B)
     basement(B)
+    otherworld(B)
 
     # 조명: 마당 가로등, 생산동 나트륨등(드문드문), 사무동 형광등, 지하 비상등
     emit_light(sw, "Site", (-9.0, 3.8, 11.0), 9.0, "real_light", (1.0, 0.75, 0.45), 1.2)
@@ -299,7 +329,8 @@ def main():
             ("fac_b1_corridor", "지하 복도", Rect(HALL_X, 14.0, W, D), B1, 0),
             ("fac_b1_alarm", "경보실", Rect(HALL_X, 7.5, 27.2, 14.0), B1, 0),
             ("fac_b1_shred", "자료 폐기실", Rect(28.8, 7.5, W, 14.0), B1, 0),
-            ("fac_b1_server", "서버실", Rect(HALL_X, 0, W, 7.5), B1, 0)):
+            ("fac_b1_server", "서버실", Rect(HALL_X, 0, W, 7.5), B1, 0),
+            ("fac_ow_corridor", "변질된 복도", OW_CORRIDOR, B1, 0)):
         emit_zone(sw, "Zones", res["zone"], r, y0, 3.0, zid, name, BUILDING, idx)
 
     # 해킹 단말 (사비)
@@ -335,7 +366,7 @@ def main():
                 instance=res["locker"])
 
     # 경비원: 생산동 2명(순찰), 보안실 1명(모니터를 보고 서 있음 - 샤무가 뒤에서 제압)
-    sw.node("Guards", "Node3D", ".", {}, unique=False)
+    sw.node("Guards", "Node3D", ".", {}, groups=["real_only"], unique=False)
     for name, pos, span, gid in (("GuardHall", (5.0, 0.05, 11.0), (14.0, 0.0, 0.0), "hall"),
                                  ("GuardEast", (20.4, 0.05, 19.5), (0.0, 0.0, -16.0), "east"),
                                  ("GuardSecurity", (28.0, 0.05, 3.2), (0.0, 0.0, -0.01), "security")):
@@ -350,6 +381,26 @@ def main():
         n = sw.node("Checkpoint_" + cid, "Area3D", "Checkpoints", {"transform": tf(center), "script": res["checkpoint"],
                                                                    "checkpoint_id": q(cid), "display_name": q(name)}, unique=False)
         sw.node("Shape", "CollisionShape3D", "Checkpoints/" + n, {"shape": sw.box_shape(size)}, unique=False)
+
+    # 전이 뒤 조명: 붉고 희미한 비상등만 (otherworld_light)
+    for pos, rng in (((27.0, B1 + 2.8, 18.5), 6.0), ((31.8, 2.6, 13.4), 4.0), ((19.0, B1 + 2.6, 17.8), 5.0),
+                     ((12.0, B1 + 2.6, 17.8), 5.0), ((6.0, B1 + 2.6, 17.8), 5.0), ((28.0, B1 + 2.6, 4.0), 5.0)):
+        emit_light(sw, lv("B1" if pos[1] < 0 else "1F", "Lights"), pos, rng, "otherworld_light", (0.75, 0.16, 0.14), 1.0)
+
+    # P-06 첫 개체 조우 (DefeatTutorial 재사용): 통로 가운데를 지나면 시작
+    r = OW_CORRIDOR
+    sw.node("FirstEncounter", "Node3D", ".", {"script": res["defeat"], "done_flag": q("prologue_p06_done"),
+                                              "encounter_dialogue": q("prologue_p06_encounter"),
+                                              "sabi_hurt_dialogue": q("prologue_p06_sabi_hurt"),
+                                              "overwhelm_dialogue": q("prologue_p06_overwhelm"),
+                                              "aftermath_dialogue": q(""),
+                                              "defeat_title": q("패배"), "defeat_body": q("이길 수 없는 상대였다."),
+                                              "defeat_hint": q("공격은 먹히지 않았다. 칠수록 더 빨라졌다.\n의식이 멀어지기 직전, 어디선가 금속 소리가 들렸다.")})
+    n = sw.node("Trigger", "Area3D", "FirstEncounter", {"transform": tf((15.0, B1 + 1.0, r.cz))}, unique=False)
+    sw.node("Shape", "CollisionShape3D", "FirstEncounter/" + n, {"shape": sw.box_shape((1.0, 2.5, r.d))}, unique=False)
+    for name, pos in (("EntitySpawn", (6.0, B1 + 0.05, r.cz)), ("ExtraSpawnA", (5.0, B1 + 0.05, r.z0 + 0.7)),
+                      ("ExtraSpawnB", (20.5, B1 + 0.05, r.cz))):
+        sw.node(name, "Marker3D", "FirstEncounter", {"transform": tf(pos)}, unique=False)
 
     sw.node("Spawn", "Marker3D", ".", {"transform": tf(START)}, unique=False)
     batch.emit(sw, mats)

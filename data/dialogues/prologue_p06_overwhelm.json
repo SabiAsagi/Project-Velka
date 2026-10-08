@@ -1,0 +1,33 @@
+{
+  "dialogue_id": "prologue_p06_overwhelm",
+  "lines": [
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "surprised",
+      "shamu_emotion": "surprised",
+      "text": "[color=#ff4040]어둠 속에서 발소리가 늘어난다.[/color]"
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "sad",
+      "shamu_emotion": "sad",
+      "text": "샤무…… 미안."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "sad",
+      "shamu_emotion": "determined",
+      "text": "그런 말 하지 마."
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "샤무가 마지막까지 사비 앞을 막아선다. 개체들이 동시에 달려든다."
+    }
+  ]
+}
