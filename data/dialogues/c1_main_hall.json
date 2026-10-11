@@ -1,0 +1,52 @@
+{
+  "dialogue_id": "c1_main_hall",
+  "lines": [
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "text": "중앙 현관을 지나자 복도가 학생들로 붐빈다. 실내화가 바닥을 끄는 소리, 사물함 닫히는 소리, 어디선가 들려오는 웃음."
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "text": "그런데 누구의 얼굴도 보이지 않는다. 얼굴이 있어야 할 자리가 하얗게 비어 있다.",
+      "noise": true
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "text": "……얼굴이 없어.",
+      "shamu_emotion": "serious"
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "text": "브리핑 사진에서는 다 사람처럼 보였는데."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "text": "사진에는 그렇게 찍히나 보지."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "text": "그럼 진짜 사람이 섞여 있으면…… 그 사람은 얼굴이 보이려나."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "text": "가까이 가 봐야 알겠지. 가까이 가고 싶진 않지만."
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "text": "벽을 보고 선 학생 하나가 똑같은 박자로 고개를 끄덕이고 있다. 멈추지 않는다."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "text": "수칙서부터. 교무실 앞 게시판."
+    }
+  ]
+}

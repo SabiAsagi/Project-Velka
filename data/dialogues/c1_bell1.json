@@ -1,0 +1,56 @@
+{
+  "dialogue_id": "c1_bell1",
+  "lines": [
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "text": "종이 울린다. 딩— 동— 댕— 동—"
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "text": "정문 앞의 학생들이 동시에 고개를 든다. 그리고 같은 속도로, 같은 방향으로 걷기 시작한다. 본관 쪽으로."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "text": "첫 번째 종.",
+      "sabi_emotion": "serious"
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "text": "세 번 울려야 나갈 수 있다고 했지."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "text": "엉. 그러니까 지금은 못 나가."
+    },
+    {
+      "speaker": "gatekeeper",
+      "speaker_name": "수위",
+      "text": "아직 종이 덜 울렸다."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "text": "알—"
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "text": "샤무."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "text": "……안 했어. 안 했다고."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "text": "학생들 따라가 보자. 수업하는 학교면 본관 1층 게시판에 수칙서를 붙일 수 있을 거야."
+    }
+  ]
+}

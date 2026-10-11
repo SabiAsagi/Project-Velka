@@ -10,6 +10,7 @@ extends RefCounted
 #   crash     : 부서지는 굉음
 #   static    : 지직거리는 잡음
 #   whisper   : 괴이세계의 숨소리 같은 잡음
+#   bell      : 학교 종 (딩-동-댕-동)
 
 const RATE := 22050
 
@@ -116,6 +117,21 @@ static func _make(sfx_name: String) -> AudioStreamWAV:
 				bp = lerpf(bp, lp, 0.3)
 				var env := sin(PI * t / 2.4) * (0.6 + 0.4 * sin(t * 9.0))
 				s[i] = (lp - bp) * 3.0 * env * 0.6
+		"bell":
+			# 학교 종 (딩-동-댕-동). 음이 아주 조금 어긋나 있다.
+			s = _buffer(4.2)
+			var notes := [659.25, 523.25, 587.33, 392.0]
+			for i in s.size():
+				var t := float(i) / RATE
+				var v := 0.0
+				for n in notes.size():
+					var u := t - n * 0.62
+					if u < 0.0:
+						continue
+					var f: float = notes[n] * (1.0 - 0.006 * n)
+					var env := minf(1.0, u * 300.0) * exp(-u * 1.5)
+					v += (sin(TAU * f * u) + 0.4 * sin(TAU * f * 2.76 * u) * exp(-u * 4.0) + 0.25 * sin(TAU * f * 5.4 * u) * exp(-u * 9.0)) * env
+				s[i] = clampf(v * 0.32, -1.0, 1.0)
 		"drone":
 			# 쫓길 때 깔리는 낮은 웅웅거림 (반복 재생용, 4초)
 			s = _buffer(4.0)
