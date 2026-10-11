@@ -30,7 +30,7 @@ func _process(_delta: float) -> bool:
 func _run() -> void:
 	_dm = root.get_node("/root/DialogueManager")
 	_gm = root.get_node("/root/GameManager")
-	change_scene_to_file(CHAPTER)
+	_open_chapter()
 	for i in 5:
 		await physics_frame
 	var scene := current_scene
@@ -284,3 +284,14 @@ func _frames(count: int) -> void:
 
 func _seconds(duration: float) -> void:
 	await create_timer(duration).timeout
+
+
+## 학교 챕터를 이야기 없이(run_story=false) 연다 — 도입 연출 없이 맵만 검사한다
+func _open_chapter() -> void:
+	var old := current_scene
+	var scene: Node = (load(CHAPTER) as PackedScene).instantiate()
+	scene.set("run_story", false)
+	root.add_child(scene)
+	current_scene = scene
+	if old:
+		old.queue_free()

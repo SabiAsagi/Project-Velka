@@ -33,7 +33,7 @@ func _run() -> void:
 	_check(not _pause.is_open() and not paused, "타이틀 화면에서는 ESC로 일시정지 메뉴가 열리지 않는다")
 
 	# --- 게임 중 열기/닫기 ---
-	change_scene_to_file(CHAPTER)
+	_open_chapter()
 	for i in 6:
 		await physics_frame
 	_press("pause")
@@ -147,3 +147,14 @@ func _input_frames(count: int = 2) -> void:
 
 func _seconds(duration: float) -> void:
 	await create_timer(duration, true).timeout
+
+
+## 학교 챕터를 이야기 없이(run_story=false) 연다 — 도입 연출 없이 맵만 검사한다
+func _open_chapter() -> void:
+	var old := current_scene
+	var scene: Node = (load(CHAPTER) as PackedScene).instantiate()
+	scene.set("run_story", false)
+	root.add_child(scene)
+	current_scene = scene
+	if old:
+		old.queue_free()

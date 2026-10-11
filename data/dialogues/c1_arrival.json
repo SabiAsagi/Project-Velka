@@ -1,0 +1,88 @@
+{
+  "dialogue_id": "c1_arrival",
+  "lines": [
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "text": "계단을 올라오자 아침 햇살 아래 학교가 보인다. 열려 있던 정문을 지나 안으로 들어서는 순간—"
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "text": "등 뒤에서 철문이 저절로 닫힌다.",
+      "shake": true
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "text": "……자동문이었나.",
+      "shamu_emotion": "serious"
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "text": "아까는 열려 있었는데."
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "text": "운동장 쪽에서 아이들 웃음소리가 들린다. 정문 앞을 오가는 학생들, 화단에 물을 뿌리는 스프링클러. 아주 평범한 등굣길이다."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "text": "폐허가 아니야. 브리핑 사진이랑 똑같아."
+    },
+    {
+      "speaker": "kwon",
+      "speaker_name": "권지혁 (무전)",
+      "text": "……들……나? 신호가…… 약……",
+      "noise": true
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "text": "……무전 끊겼다."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "text": "완전히 끊긴 건 아니야. 잡음은 들려."
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "text": "사비가 접어 두었던 안전수칙서를 펼친다. 정문 수칙이 맨 위에 있다."
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "text": "[정문 수칙]\n종이 세 번 울리기 전까지 정문을 넘지 마십시오.\n정문 앞 수위 선생님이 같은 말을 반복한다면 대답하지 말고 한 걸음 뒤로 물러나십시오."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "text": "수위라면…… 저기 서 있는 사람?"
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "text": "정문 옆, 낡은 수위복을 입은 노인이 이쪽에 등을 돌린 채 서 있다."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "text": "말 걸면 안 되는 사람."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "text": "말 걸 생각 없었어."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "text": "그럼 다행이고. 먼저 정문 주변부터 보자. 뭐가 이상한지."
+    }
+  ]
+}

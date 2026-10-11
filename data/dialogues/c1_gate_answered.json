@@ -1,0 +1,33 @@
+{
+  "dialogue_id": "c1_gate_answered",
+  "lines": [
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "text": "노인이 처음으로 고개를 든다. 모자 그늘 아래, 얼굴이 있어야 할 자리가 비어 있다.",
+      "shake": true,
+      "noise": true
+    },
+    {
+      "speaker": "gatekeeper",
+      "speaker_name": "수위",
+      "text": "[shake]아직. 종이. 덜. 울렸다.[/shake]",
+      "shake": true
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "text": "귀가 찢어질 듯한 이명. 정문 철살에 긁힌 것처럼 손등에 피가 맺힌다."
+    },
+    {
+      "speaker": "inspector",
+      "speaker_name": "",
+      "text": "……대답하면 안 됐어. 수칙서에 그대로 적혀 있었는데."
+    },
+    {
+      "speaker": "inspector",
+      "speaker_name": "",
+      "text": "다음엔 입 다물고 한 걸음 뒤로. 그것만 하면 돼."
+    }
+  ]
+}

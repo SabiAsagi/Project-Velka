@@ -47,6 +47,7 @@ const NPC_SILHOUETTES := {
 	"yu": [Color(0.14, 0.2, 0.34), Color(0.55, 0.65, 0.85)],
 	"baek": [Color(0.09, 0.08, 0.09), Color(0.62, 0.6, 0.62)],
 	"client": [Color(0.06, 0.06, 0.07), Color(0.4, 0.4, 0.44)],
+	"gatekeeper": [Color(0.17, 0.18, 0.14), Color(0.48, 0.48, 0.42)],
 }
 const NAME_COLORS := {"sabi": Color(0.55, 0.85, 0.92), "shamu": Color(0.98, 0.8, 0.42)}
 const BOX_HEIGHT := 250.0

@@ -1,0 +1,61 @@
+{
+  "c1_gate_board": {
+    "prompt": "교문 안내판 보기",
+    "lines": [
+      {"speaker": "system", "text": "[무진고등학교 등교 안내]\n오늘: 11월 31일 (금)  ·  정상 등교  ·  1교시 08:50"},
+      {"speaker": "inspector", "text": "11월 31일.", "sabi_emotion": "serious", "shamu_emotion": "serious"},
+      {"speaker": "inspector", "text": "11월은 30일까지야. 없는 날짜인데, 안내판은 아무렇지 않게 '오늘'이라고 적어 놨어."},
+      {"speaker": "system", "text": "안내판 아래 시계는 08:41에서 멈춰 있다. 초침만 제자리에서 떨린다."},
+      {"speaker": "inspector", "text": "학교 안 시간은 바깥이랑 따로 흐른다. 날짜를 믿으면 안 되겠네."}
+    ],
+    "repeat_lines": [
+      {"speaker": "system", "text": "오늘: 11월 31일 (금). 시계는 여전히 08:41."}
+    ]
+  },
+  "c1_gate_count": {
+    "prompt": "등교하는 학생들 지켜보기",
+    "lines": [
+      {"speaker": "system", "text": "학생들이 둘씩, 셋씩 정문 쪽에서 걸어 들어온다. 웃음소리, 가방 끈이 스치는 소리."},
+      {"speaker": "inspector", "text": "……스물둘, 스물셋, 스물넷."},
+      {"speaker": "system", "text": "잠깐 끊겼던 행렬이 다시 이어진다."},
+      {"speaker": "inspector", "text": "……스물넷. 이번에도 스물넷이야.", "sabi_emotion": "serious", "shamu_emotion": "serious"},
+      {"speaker": "inspector", "text": "그리고 정문은 닫혀 있어. 아무도 문을 열지 않았는데, 다들 그냥 지나서 들어와."},
+      {"speaker": "inspector", "text": "가까이서 보면 얼굴이 안 보여. 그늘 때문인 줄 알았는데…… 아니야."}
+    ],
+    "repeat_lines": [
+      {"speaker": "inspector", "text": "……스물넷. 몇 번을 세어도 똑같아."}
+    ]
+  },
+  "c1_gatekeeper": {
+    "prompt": "수위에게 다가가기",
+    "lines": [
+      {"speaker": "system", "text": "낡은 수위복을 입은 노인이 정문 앞을 지키고 서 있다. 모자 그늘 아래 얼굴이 보이지 않는다."},
+      {"speaker": "gatekeeper", "speaker_name": "수위", "text": "아직 종이 덜 울렸다."},
+      {"speaker": "gatekeeper", "speaker_name": "수위", "text": "아직 종이 덜 울렸다."},
+      {"speaker": "gatekeeper", "speaker_name": "수위", "text": "[shake]아직 종이 덜 울렸다.[/shake]", "shake": true,
+        "choices": [
+          {"text": "「……종이요? 몇 번 울려야 하는데요?」 (대답한다)", "outcome": {"flags": {"c1_gate_answered": true}}},
+          {"text": "대답하지 않고 한 걸음 뒤로 물러난다", "outcome": {"flags": {"c1_gate_stepped_back": true}}}
+        ]}
+    ],
+    "repeat_lines": [
+      {"speaker": "gatekeeper", "speaker_name": "수위", "text": "아직 종이 덜 울렸다.",
+        "choices": [
+          {"text": "「……알아요.」 (대답한다)", "outcome": {"flags": {"c1_gate_answered": true}}},
+          {"text": "대답하지 않고 한 걸음 뒤로 물러난다", "outcome": {"flags": {"c1_gate_stepped_back": true}}}
+        ]}
+    ]
+  },
+  "c1_rulebook_spot": {
+    "prompt": "안전수칙서 붙이기",
+    "lines": [
+      {"speaker": "system", "text": "기존 안내문 옆 빈자리에 협회가 만든 생존자용 안전수칙서를 펴서 댄다."},
+      {"speaker": "system", "text": "압정을 누르자 종이 귀퉁이가 저절로 한 번 말려 올라갔다가, 천천히 다시 펴진다."},
+      {"speaker": "inspector", "text": "……붙었다."}
+    ],
+    "repeat_lines": [
+      {"speaker": "system", "text": "[무진고등학교 안전수칙서]\n학생 여러분의 안전한 학교생활을 위해 아래 수칙을 반드시 지켜 주십시오."},
+      {"speaker": "inspector", "text": "제대로 붙어 있어. 누가 읽어 주기만 하면 돼."}
+    ]
+  }
+}

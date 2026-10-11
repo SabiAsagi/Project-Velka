@@ -1,0 +1,20 @@
+{
+  "dialogue_id": "c1_gate_back",
+  "lines": [
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "text": "한 걸음 물러나자 노인은 다시 정문 쪽으로 몸을 돌린다. 더는 이쪽을 보지 않는다."
+    },
+    {
+      "speaker": "inspector",
+      "speaker_name": "",
+      "text": "대답하지 않고, 한 걸음 뒤로. 수칙서대로야."
+    },
+    {
+      "speaker": "inspector",
+      "speaker_name": "",
+      "text": "종이 세 번 울리기 전까지는 저 문으로 못 나가."
+    }
+  ]
+}
