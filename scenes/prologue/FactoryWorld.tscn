@@ -1,4 +1,4 @@
-[gd_scene load_steps=683 format=3]
+[gd_scene load_steps=689 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/WorldPhaseController.gd" id="e1"]
 [ext_resource type="Script" path="res://scripts/world/ZoneArea.gd" id="e2"]
@@ -7359,25 +7359,59 @@ shader_parameter/grime = 0.050
 shader_parameter/noise_tex = ExtResource("e18")
 shader_parameter/leak_tex = ExtResource("e19")
 
-[sub_resource type="StandardMaterial3D" id="s392"]
+[sub_resource type="ShaderMaterial" id="s392"]
+render_priority = 0
+shader = ExtResource("e12")
+shader_parameter/albedo = Color(0.600, 0.630, 0.620, 1.000)
+shader_parameter/roughness = 0.85
+shader_parameter/metallic = 0.30
+shader_parameter/grime = 0.050
+shader_parameter/cutaway_affected = 0.0
+shader_parameter/noise_tex = ExtResource("e18")
+shader_parameter/leak_tex = ExtResource("e19")
+
+[sub_resource type="ShaderMaterial" id="s393"]
+render_priority = 0
+shader = ExtResource("e12")
+shader_parameter/albedo = Color(0.250, 0.260, 0.280, 1.000)
+shader_parameter/roughness = 0.85
+shader_parameter/metallic = 0.40
+shader_parameter/grime = 0.050
+shader_parameter/cutaway_affected = 0.0
+shader_parameter/noise_tex = ExtResource("e18")
+shader_parameter/leak_tex = ExtResource("e19")
+
+[sub_resource type="ShaderMaterial" id="s394"]
+render_priority = 0
+shader = ExtResource("e12")
+shader_parameter/albedo = Color(0.350, 0.950, 0.600, 1.000)
+shader_parameter/roughness = 0.85
+shader_parameter/metallic = 0.00
+shader_parameter/grime = 0.000
+shader_parameter/cutaway_affected = 0.0
+shader_parameter/emission_energy = 1.20
+shader_parameter/noise_tex = ExtResource("e18")
+shader_parameter/leak_tex = ExtResource("e19")
+
+[sub_resource type="StandardMaterial3D" id="s395"]
 transparency = 1
 albedo_color = Color(0.580, 0.720, 0.800, 0.400)
 roughness = 0.08
 metallic = 0.3
 
-[sub_resource type="StandardMaterial3D" id="s393"]
+[sub_resource type="StandardMaterial3D" id="s396"]
 transparency = 1
 albedo_color = Color(0.820, 0.860, 0.880, 0.800)
 roughness = 0.08
 metallic = 0.3
 
-[sub_resource type="StandardMaterial3D" id="s394"]
+[sub_resource type="StandardMaterial3D" id="s397"]
 transparency = 1
 albedo_color = Color(0.120, 0.170, 0.200, 0.500)
 roughness = 0.08
 metallic = 0.3
 
-[sub_resource type="Environment" id="s395"]
+[sub_resource type="Environment" id="s398"]
 background_mode = 1
 background_color = Color(0.02, 0.02, 0.04, 1)
 ambient_light_source = 2
@@ -7392,7 +7426,7 @@ adjustment_enabled = true
 adjustment_saturation = 0.85
 adjustment_contrast = 1.08
 
-[sub_resource type="Environment" id="s396"]
+[sub_resource type="Environment" id="s399"]
 background_mode = 1
 background_color = Color(0, 0, 0, 1)
 ambient_light_source = 2
@@ -7416,523 +7450,537 @@ adjustment_saturation = 0.45
 adjustment_contrast = 1.22
 adjustment_brightness = 0.92
 
-[sub_resource type="BoxShape3D" id="s397"]
+[sub_resource type="BoxShape3D" id="s400"]
 size = Vector3(9.8, 3, 25.8)
 
-[sub_resource type="BoxShape3D" id="s398"]
+[sub_resource type="BoxShape3D" id="s401"]
 size = Vector3(21.8, 3, 21.8)
 
-[sub_resource type="BoxShape3D" id="s399"]
+[sub_resource type="BoxShape3D" id="s402"]
 size = Vector3(11.8, 3, 2.8)
 
-[sub_resource type="BoxShape3D" id="s400"]
+[sub_resource type="BoxShape3D" id="s403"]
 size = Vector3(11.8, 3, 9.3)
 
-[sub_resource type="BoxShape3D" id="s401"]
+[sub_resource type="BoxShape3D" id="s404"]
 size = Vector3(7.8, 3, 9.3)
 
-[sub_resource type="BoxShape3D" id="s402"]
+[sub_resource type="BoxShape3D" id="s405"]
 size = Vector3(3.8, 3, 9.3)
 
-[sub_resource type="BoxShape3D" id="s403"]
+[sub_resource type="BoxShape3D" id="s406"]
 size = Vector3(11.8, 3, 7.8)
 
-[sub_resource type="BoxShape3D" id="s404"]
+[sub_resource type="BoxShape3D" id="s407"]
 size = Vector3(5, 3, 6.3)
 
-[sub_resource type="BoxShape3D" id="s405"]
+[sub_resource type="BoxShape3D" id="s408"]
 size = Vector3(11.8, 3, 7.3)
 
-[sub_resource type="BoxShape3D" id="s406"]
+[sub_resource type="BoxShape3D" id="s409"]
 size = Vector3(17.6, 3, 2.6)
 
-[sub_resource type="StandardMaterial3D" id="s407"]
+[sub_resource type="StandardMaterial3D" id="s410"]
 albedo_color = Color(0.42, 0.4, 0.3, 1)
 metallic = 0.5
 
-[sub_resource type="StandardMaterial3D" id="s408"]
+[sub_resource type="StandardMaterial3D" id="s411"]
 albedo_color = Color(0.25, 0.28, 0.3, 1)
 metallic = 0.4
 
-[sub_resource type="BoxShape3D" id="s409"]
+[sub_resource type="BoxShape3D" id="s412"]
 size = Vector3(6, 3, 6)
 
-[sub_resource type="BoxShape3D" id="s410"]
+[sub_resource type="BoxShape3D" id="s413"]
 size = Vector3(2, 3, 2.6)
 
-[sub_resource type="BoxShape3D" id="s411"]
+[sub_resource type="BoxShape3D" id="s414"]
 size = Vector3(5, 3, 5)
 
-[sub_resource type="BoxShape3D" id="s412"]
+[sub_resource type="BoxShape3D" id="s415"]
 size = Vector3(1, 2.5, 2.8)
 
-[sub_resource type="BoxMesh" id="s413"]
+[sub_resource type="BoxMesh" id="s416"]
 material = SubResource("s385")
 size = Vector3(1, 1, 1)
-
-[sub_resource type="MultiMesh" id="s414"]
-transform_format = 1
-instance_count = 1
-mesh = SubResource("s413")
-buffer = PackedFloat32Array(22, 0, 0, 11, 0, 0.2, 0, -0.1, 0, 0, 22, 11)
-
-[sub_resource type="BoxMesh" id="s415"]
-material = SubResource("s391")
-size = Vector3(1, 1, 1)
-
-[sub_resource type="MultiMesh" id="s416"]
-transform_format = 1
-instance_count = 4
-mesh = SubResource("s415")
-buffer = PackedFloat32Array(9.2, 0, 0, 26.6, 0, 0.2, 0, -0.1, 0, 0, 22, 11, 1.6, 0, 0, 33.2, 0, 0.2, 0, -0.1, 0, 0, 22, 11, 1.2, 0, 0, 31.8, 0, 0.2, 0, -0.1, 0, 0, 14.5, 7.25, 1.2, 0, 0, 31.8, 0, 0.2, 0, -0.1, 0, 0, 1.5, 21.25)
 
 [sub_resource type="MultiMesh" id="s417"]
 transform_format = 1
 instance_count = 1
-mesh = SubResource("s413")
-buffer = PackedFloat32Array(12, 0, 0, 28, 0, 0.2, 0, -3.9, 0, 0, 22, 11)
+mesh = SubResource("s416")
+buffer = PackedFloat32Array(22, 0, 0, 11, 0, 0.2, 0, -0.1, 0, 0, 22, 11)
 
 [sub_resource type="BoxMesh" id="s418"]
-material = SubResource("s38")
+material = SubResource("s391")
 size = Vector3(1, 1, 1)
 
 [sub_resource type="MultiMesh" id="s419"]
 transform_format = 1
-instance_count = 1
+instance_count = 4
 mesh = SubResource("s418")
+buffer = PackedFloat32Array(9.2, 0, 0, 26.6, 0, 0.2, 0, -0.1, 0, 0, 22, 11, 1.6, 0, 0, 33.2, 0, 0.2, 0, -0.1, 0, 0, 22, 11, 1.2, 0, 0, 31.8, 0, 0.2, 0, -0.1, 0, 0, 14.5, 7.25, 1.2, 0, 0, 31.8, 0, 0.2, 0, -0.1, 0, 0, 1.5, 21.25)
+
+[sub_resource type="MultiMesh" id="s420"]
+transform_format = 1
+instance_count = 1
+mesh = SubResource("s416")
+buffer = PackedFloat32Array(12, 0, 0, 28, 0, 0.2, 0, -3.9, 0, 0, 22, 11)
+
+[sub_resource type="BoxMesh" id="s421"]
+material = SubResource("s38")
+size = Vector3(1, 1, 1)
+
+[sub_resource type="MultiMesh" id="s422"]
+transform_format = 1
+instance_count = 1
+mesh = SubResource("s421")
 buffer = PackedFloat32Array(35, 0, 0, 17, 0, 0.2, 0, 4.7, 0, 0, 23, 11)
 
-[sub_resource type="BoxMesh" id="s420"]
+[sub_resource type="BoxMesh" id="s423"]
 material = SubResource("s383")
 size = Vector3(1, 1, 1)
 
-[sub_resource type="MultiMesh" id="s421"]
+[sub_resource type="MultiMesh" id="s424"]
 transform_format = 1
 instance_count = 21
-mesh = SubResource("s420")
+mesh = SubResource("s423")
 buffer = PackedFloat32Array(0.2, 0, 0, -0.1, 0, 4.6, 0, 2.3, 0, 0, 10.2, 4.9, 0.2, 0, 0, -0.1, 0, 2.2, 0, 3.5, 0, 0, 1.4, 10.7, 0.2, 0, 0, -0.1, 0, 4.6, 0, 2.3, 0, 0, 10.8, 16.8, 0.2, 0, 0, 34.1, 0, 4.6, 0, 2.3, 0, 0, 22.4, 11, 4, 0, 0, 2, 0, 4.6, 0, 2.3, 0, 0, 0.2, -0.1, 3, 0, 0, 5.5, 0, 3, 0, 1.5, 0, 0, 0.2, -0.1, 3, 0, 0, 5.5, 0, 0.6, 0, 4.3, 0, 0, 0.2, -0.1, 4, 0, 0, 9, 0, 4.6, 0, 2.3, 0, 0, 0.2, -0.1, 3, 0, 0, 12.5, 0, 3, 0, 1.5, 0, 0, 0.2, -0.1, 3, 0, 0, 12.5, 0, 0.6, 0, 4.3, 0, 0, 0.2, -0.1, 11, 0, 0, 19.5, 0, 4.6, 0, 2.3, 0, 0, 0.2, -0.1, 3, 0, 0, 26.5, 0, 2.6, 0, 1.3, 0, 0, 0.2, -0.1, 3, 0, 0, 26.5, 0, 1, 0, 4.1, 0, 0, 0.2, -0.1, 6, 0, 0, 31, 0, 4.6, 0, 2.3, 0, 0, 0.2, -0.1, 4, 0, 0, 2, 0, 4.6, 0, 2.3, 0, 0, 0.2, 22.1, 3, 0, 0, 5.5, 0, 3, 0, 1.5, 0, 0, 0.2, 22.1, 3, 0, 0, 5.5, 0, 0.6, 0, 4.3, 0, 0, 0.2, 22.1, 4, 0, 0, 9, 0, 4.6, 0, 2.3, 0, 0, 0.2, 22.1, 3, 0, 0, 12.5, 0, 3, 0, 1.5, 0, 0, 0.2, 22.1, 3, 0, 0, 12.5, 0, 0.6, 0, 4.3, 0, 0, 0.2, 22.1, 20, 0, 0, 24, 0, 4.6, 0, 2.3, 0, 0, 0.2, 22.1)
 
-[sub_resource type="BoxMesh" id="s422"]
+[sub_resource type="BoxMesh" id="s425"]
 material = SubResource("s384")
 size = Vector3(1, 1, 1)
 
-[sub_resource type="MultiMesh" id="s423"]
+[sub_resource type="MultiMesh" id="s426"]
 transform_format = 1
 instance_count = 12
-mesh = SubResource("s422")
+mesh = SubResource("s425")
 buffer = PackedFloat32Array(0.2, 0, 0, 22, 0, 4.6, 0, 2.3, 0, 0, 10, 5, 0.2, 0, 0, 22, 0, 2.2, 0, 3.5, 0, 0, 1.4, 10.7, 0.2, 0, 0, 22, 0, 4.6, 0, 2.3, 0, 0, 10.6, 16.7, 5, 0, 0, 24.5, 0, 4.6, 0, 2.3, 0, 0, 0.14, 9.5, 1.4, 0, 0, 27.7, 0, 2.3, 0, 3.45, 0, 0, 0.14, 9.5, 5.6, 0, 0, 31.2, 0, 4.6, 0, 2.3, 0, 0, 0.14, 9.5, 3, 0, 0, 23.5, 0, 4.6, 0, 2.3, 0, 0, 0.14, 12.5, 1.4, 0, 0, 25.7, 0, 2.3, 0, 3.45, 0, 0, 0.14, 12.5, 4.7, 0, 0, 28.75, 0, 4.6, 0, 2.3, 0, 0, 0.14, 12.5, 1.4, 0, 0, 31.8, 0, 2.3, 0, 3.45, 0, 0, 0.14, 12.5, 1.5, 0, 0, 33.25, 0, 4.6, 0, 2.3, 0, 0, 0.14, 12.5, 0.14, 0, 0, 30, 0, 4.6, 0, 2.3, 0, 0, 9.5, 17.25)
 
-[sub_resource type="BoxMesh" id="s424"]
+[sub_resource type="BoxMesh" id="s427"]
 material = SubResource("s44")
 size = Vector3(1, 1, 1)
 
-[sub_resource type="MultiMesh" id="s425"]
-transform_format = 1
-instance_count = 16
-mesh = SubResource("s424")
-buffer = PackedFloat32Array(0.05, 0, 0, 31.16, 0, 0.05, 0, 1.05, 0, 0, 6, 17.5, 0.04, 0, 0, 31.16, 0, 1.04, 0, 0.52, 0, 0, 0.04, 14.545, 0.04, 0, 0, 31.16, 0, 1.04, 0, 0.52, 0, 0, 0.04, 15.5, 0.04, 0, 0, 31.16, 0, 1.04, 0, 0.52, 0, 0, 0.04, 16.5, 0.04, 0, 0, 31.16, 0, 1.04, 0, 0.52, 0, 0, 0.04, 17.5, 0.04, 0, 0, 31.16, 0, 1.04, 0, 0.52, 0, 0, 0.04, 18.5, 0.04, 0, 0, 31.16, 0, 1.04, 0, 0.52, 0, 0, 0.04, 19.5, 0.04, 0, 0, 31.16, 0, 1.04, 0, 0.52, 0, 0, 0.04, 20.455, 0.05, 0, 0, 32.44, 0, 0.05, 0, 1.05, 0, 0, 6, 17.5, 0.04, 0, 0, 32.44, 0, 1.04, 0, 0.52, 0, 0, 0.04, 14.545, 0.04, 0, 0, 32.44, 0, 1.04, 0, 0.52, 0, 0, 0.04, 15.5, 0.04, 0, 0, 32.44, 0, 1.04, 0, 0.52, 0, 0, 0.04, 16.5, 0.04, 0, 0, 32.44, 0, 1.04, 0, 0.52, 0, 0, 0.04, 17.5, 0.04, 0, 0, 32.44, 0, 1.04, 0, 0.52, 0, 0, 0.04, 18.5, 0.04, 0, 0, 32.44, 0, 1.04, 0, 0.52, 0, 0, 0.04, 19.5, 0.04, 0, 0, 32.44, 0, 1.04, 0, 0.52, 0, 0, 0.04, 20.455)
-
-[sub_resource type="BoxMesh" id="s426"]
-material = SubResource("s15")
-size = Vector3(1, 1, 1)
-
-[sub_resource type="MultiMesh" id="s427"]
-transform_format = 1
-instance_count = 21
-mesh = SubResource("s426")
-buffer = PackedFloat32Array(0.2, 0, 0, 21.9, 0, 3.6, 0, -2, 0, 0, 17.2, 8.4, 0.2, 0, 0, 21.9, 0, 1.2, 0, -0.8, 0, 0, 1.6, 17.8, 0.2, 0, 0, 21.9, 0, 3.6, 0, -2, 0, 0, 3.6, 20.4, 0.2, 0, 0, 34.1, 0, 3.6, 0, -2, 0, 0, 22.4, 11, 12.4, 0, 0, 28, 0, 3.6, 0, -2, 0, 0, 0.2, -0.1, 12.4, 0, 0, 28, 0, 3.6, 0, -2, 0, 0, 0.2, 22.1, 0.14, 0, 0, 30.7, 0, 3.6, 0, -2, 0, 0, 6.5, 17.25, 1.5, 0, 0, 33.25, 0, 3.6, 0, -2, 0, 0, 6.5, 17.25, 2, 0, 0, 23, 0, 3.6, 0, -2, 0, 0, 0.14, 14, 1.4, 0, 0, 24.7, 0, 1.3, 0, -0.85, 0, 0, 0.14, 14, 1.8, 0, 0, 26.3, 0, 3.6, 0, -2, 0, 0, 0.14, 14, 1.6, 0, 0, 28, 0, 1.3, 0, -0.85, 0, 0, 0.14, 14, 1.9, 0, 0, 29.75, 0, 3.6, 0, -2, 0, 0, 0.14, 14, 3.3, 0, 0, 32.35, 0, 3.6, 0, -2, 0, 0, 0.14, 14, 0.14, 0, 0, 27.2, 0, 3.6, 0, -2, 0, 0, 6.5, 10.75, 0.14, 0, 0, 28.8, 0, 3.6, 0, -2, 0, 0, 2.5, 8.75, 0.14, 0, 0, 28.8, 0, 1.3, 0, -0.85, 0, 0, 1.4, 10.7, 0.14, 0, 0, 28.8, 0, 3.6, 0, -2, 0, 0, 2.6, 12.7, 5.2, 0, 0, 24.6, 0, 3.6, 0, -2, 0, 0, 0.14, 7.5, 1.6, 0, 0, 28, 0, 1.2, 0, -0.8, 0, 0, 0.14, 7.5, 5.2, 0, 0, 31.4, 0, 3.6, 0, -2, 0, 0, 0.14, 7.5)
-
 [sub_resource type="MultiMesh" id="s428"]
 transform_format = 1
-instance_count = 1
-mesh = SubResource("s426")
-buffer = PackedFloat32Array(0.2, 0, 0, 21.9, 0, 2.4, 0, -2.6, 0, 0, 1.6, 17.8)
+instance_count = 16
+mesh = SubResource("s427")
+buffer = PackedFloat32Array(0.05, 0, 0, 31.16, 0, 0.05, 0, 1.05, 0, 0, 6, 17.5, 0.04, 0, 0, 31.16, 0, 1.04, 0, 0.52, 0, 0, 0.04, 14.545, 0.04, 0, 0, 31.16, 0, 1.04, 0, 0.52, 0, 0, 0.04, 15.5, 0.04, 0, 0, 31.16, 0, 1.04, 0, 0.52, 0, 0, 0.04, 16.5, 0.04, 0, 0, 31.16, 0, 1.04, 0, 0.52, 0, 0, 0.04, 17.5, 0.04, 0, 0, 31.16, 0, 1.04, 0, 0.52, 0, 0, 0.04, 18.5, 0.04, 0, 0, 31.16, 0, 1.04, 0, 0.52, 0, 0, 0.04, 19.5, 0.04, 0, 0, 31.16, 0, 1.04, 0, 0.52, 0, 0, 0.04, 20.455, 0.05, 0, 0, 32.44, 0, 0.05, 0, 1.05, 0, 0, 6, 17.5, 0.04, 0, 0, 32.44, 0, 1.04, 0, 0.52, 0, 0, 0.04, 14.545, 0.04, 0, 0, 32.44, 0, 1.04, 0, 0.52, 0, 0, 0.04, 15.5, 0.04, 0, 0, 32.44, 0, 1.04, 0, 0.52, 0, 0, 0.04, 16.5, 0.04, 0, 0, 32.44, 0, 1.04, 0, 0.52, 0, 0, 0.04, 17.5, 0.04, 0, 0, 32.44, 0, 1.04, 0, 0.52, 0, 0, 0.04, 18.5, 0.04, 0, 0, 32.44, 0, 1.04, 0, 0.52, 0, 0, 0.04, 19.5, 0.04, 0, 0, 32.44, 0, 1.04, 0, 0.52, 0, 0, 0.04, 20.455)
 
 [sub_resource type="BoxMesh" id="s429"]
-material = SubResource("s52")
+material = SubResource("s15")
 size = Vector3(1, 1, 1)
 
 [sub_resource type="MultiMesh" id="s430"]
 transform_format = 1
-instance_count = 22
+instance_count = 21
 mesh = SubResource("s429")
-buffer = PackedFloat32Array(1.2, 0, 0, 31.8, 0, 0.1707, 0, -3.7126, 0, 0, 0.2727, 20.3636, 1.2, 0, 0, 31.8, 0, 0.3435, 0, -3.6263, 0, 0, 0.2727, 20.0909, 1.2, 0, 0, 31.8, 0, 0.3527, 0, -3.4582, 0, 0, 0.2727, 19.8182, 1.2, 0, 0, 31.8, 0, 0.3527, 0, -3.2855, 0, 0, 0.2727, 19.5455, 1.2, 0, 0, 31.8, 0, 0.3527, 0, -3.1127, 0, 0, 0.2727, 19.2727, 1.2, 0, 0, 31.8, 0, 0.3527, 0, -2.94, 0, 0, 0.2727, 19, 1.2, 0, 0, 31.8, 0, 0.3527, 0, -2.7673, 0, 0, 0.2727, 18.7273, 1.2, 0, 0, 31.8, 0, 0.3527, 0, -2.5945, 0, 0, 0.2727, 18.4545, 1.2, 0, 0, 31.8, 0, 0.3527, 0, -2.4218, 0, 0, 0.2727, 18.1818, 1.2, 0, 0, 31.8, 0, 0.3527, 0, -2.2491, 0, 0, 0.2727, 17.9091, 1.2, 0, 0, 31.8, 0, 0.3527, 0, -2.0764, 0, 0, 0.2727, 17.6364, 1.2, 0, 0, 31.8, 0, 0.3527, 0, -1.9036, 0, 0, 0.2727, 17.3636, 1.2, 0, 0, 31.8, 0, 0.3527, 0, -1.7309, 0, 0, 0.2727, 17.0909, 1.2, 0, 0, 31.8, 0, 0.3527, 0, -1.5582, 0, 0, 0.2727, 16.8182, 1.2, 0, 0, 31.8, 0, 0.3527, 0, -1.3855, 0, 0, 0.2727, 16.5455, 1.2, 0, 0, 31.8, 0, 0.3527, 0, -1.2127, 0, 0, 0.2727, 16.2727, 1.2, 0, 0, 31.8, 0, 0.3527, 0, -1.04, 0, 0, 0.2727, 16, 1.2, 0, 0, 31.8, 0, 0.3527, 0, -0.8673, 0, 0, 0.2727, 15.7273, 1.2, 0, 0, 31.8, 0, 0.3527, 0, -0.6945, 0, 0, 0.2727, 15.4545, 1.2, 0, 0, 31.8, 0, 0.3527, 0, -0.5218, 0, 0, 0.2727, 15.1818, 1.2, 0, 0, 31.8, 0, 0.3527, 0, -0.3491, 0, 0, 0.2727, 14.9091, 1.2, 0, 0, 31.8, 0, 0.3527, 0, -0.1764, 0, 0, 0.2727, 14.6364)
+buffer = PackedFloat32Array(0.2, 0, 0, 21.9, 0, 3.6, 0, -2, 0, 0, 17.2, 8.4, 0.2, 0, 0, 21.9, 0, 1.2, 0, -0.8, 0, 0, 1.6, 17.8, 0.2, 0, 0, 21.9, 0, 3.6, 0, -2, 0, 0, 3.6, 20.4, 0.2, 0, 0, 34.1, 0, 3.6, 0, -2, 0, 0, 22.4, 11, 12.4, 0, 0, 28, 0, 3.6, 0, -2, 0, 0, 0.2, -0.1, 12.4, 0, 0, 28, 0, 3.6, 0, -2, 0, 0, 0.2, 22.1, 0.14, 0, 0, 30.7, 0, 3.6, 0, -2, 0, 0, 6.5, 17.25, 1.5, 0, 0, 33.25, 0, 3.6, 0, -2, 0, 0, 6.5, 17.25, 2, 0, 0, 23, 0, 3.6, 0, -2, 0, 0, 0.14, 14, 1.4, 0, 0, 24.7, 0, 1.3, 0, -0.85, 0, 0, 0.14, 14, 1.8, 0, 0, 26.3, 0, 3.6, 0, -2, 0, 0, 0.14, 14, 1.6, 0, 0, 28, 0, 1.3, 0, -0.85, 0, 0, 0.14, 14, 1.9, 0, 0, 29.75, 0, 3.6, 0, -2, 0, 0, 0.14, 14, 3.3, 0, 0, 32.35, 0, 3.6, 0, -2, 0, 0, 0.14, 14, 0.14, 0, 0, 27.2, 0, 3.6, 0, -2, 0, 0, 6.5, 10.75, 0.14, 0, 0, 28.8, 0, 3.6, 0, -2, 0, 0, 2.5, 8.75, 0.14, 0, 0, 28.8, 0, 1.3, 0, -0.85, 0, 0, 1.4, 10.7, 0.14, 0, 0, 28.8, 0, 3.6, 0, -2, 0, 0, 2.6, 12.7, 5.2, 0, 0, 24.6, 0, 3.6, 0, -2, 0, 0, 0.14, 7.5, 1.6, 0, 0, 28, 0, 1.2, 0, -0.8, 0, 0, 0.14, 7.5, 5.2, 0, 0, 31.4, 0, 3.6, 0, -2, 0, 0, 0.14, 7.5)
 
 [sub_resource type="MultiMesh" id="s431"]
 transform_format = 1
-instance_count = 8
-mesh = SubResource("s424")
-buffer = PackedFloat32Array(0.04, 0, 0, 31.23, 0, 0.9, 0, -3.2636, 0, 0, 0.04, 20.47, 0.04, 0, 0, 31.23, 0, 0.9, 0, -2.6303, 0, 0, 0.04, 19.5, 0.04, 0, 0, 31.23, 0, 0.9, 0, -1.997, 0, 0, 0.04, 18.5, 0.04, 0, 0, 31.23, 0, 0.9, 0, -1.3636, 0, 0, 0.04, 17.5, 0.04, 0, 0, 31.23, 0, 0.9, 0, -0.7303, 0, 0, 0.04, 16.5, 0.04, 0, 0, 31.23, 0, 0.9, 0, -0.097, 0, 0, 0.04, 15.5, 0.04, 0, 0, 31.23, 0, 0.9, 0, 0.5364, 0, 0, 0.04, 14.53, 0.05, 0, 0, 31.23, 0, 0.0422, -3.8, -0.8936, 0, 0.0268, 6, 17.5)
+instance_count = 1
+mesh = SubResource("s429")
+buffer = PackedFloat32Array(0.2, 0, 0, 21.9, 0, 2.4, 0, -2.6, 0, 0, 1.6, 17.8)
 
 [sub_resource type="BoxMesh" id="s432"]
-material = SubResource("s53")
+material = SubResource("s52")
 size = Vector3(1, 1, 1)
 
 [sub_resource type="MultiMesh" id="s433"]
 transform_format = 1
-instance_count = 4
+instance_count = 22
 mesh = SubResource("s432")
+buffer = PackedFloat32Array(1.2, 0, 0, 31.8, 0, 0.1707, 0, -3.7126, 0, 0, 0.2727, 20.3636, 1.2, 0, 0, 31.8, 0, 0.3435, 0, -3.6263, 0, 0, 0.2727, 20.0909, 1.2, 0, 0, 31.8, 0, 0.3527, 0, -3.4582, 0, 0, 0.2727, 19.8182, 1.2, 0, 0, 31.8, 0, 0.3527, 0, -3.2855, 0, 0, 0.2727, 19.5455, 1.2, 0, 0, 31.8, 0, 0.3527, 0, -3.1127, 0, 0, 0.2727, 19.2727, 1.2, 0, 0, 31.8, 0, 0.3527, 0, -2.94, 0, 0, 0.2727, 19, 1.2, 0, 0, 31.8, 0, 0.3527, 0, -2.7673, 0, 0, 0.2727, 18.7273, 1.2, 0, 0, 31.8, 0, 0.3527, 0, -2.5945, 0, 0, 0.2727, 18.4545, 1.2, 0, 0, 31.8, 0, 0.3527, 0, -2.4218, 0, 0, 0.2727, 18.1818, 1.2, 0, 0, 31.8, 0, 0.3527, 0, -2.2491, 0, 0, 0.2727, 17.9091, 1.2, 0, 0, 31.8, 0, 0.3527, 0, -2.0764, 0, 0, 0.2727, 17.6364, 1.2, 0, 0, 31.8, 0, 0.3527, 0, -1.9036, 0, 0, 0.2727, 17.3636, 1.2, 0, 0, 31.8, 0, 0.3527, 0, -1.7309, 0, 0, 0.2727, 17.0909, 1.2, 0, 0, 31.8, 0, 0.3527, 0, -1.5582, 0, 0, 0.2727, 16.8182, 1.2, 0, 0, 31.8, 0, 0.3527, 0, -1.3855, 0, 0, 0.2727, 16.5455, 1.2, 0, 0, 31.8, 0, 0.3527, 0, -1.2127, 0, 0, 0.2727, 16.2727, 1.2, 0, 0, 31.8, 0, 0.3527, 0, -1.04, 0, 0, 0.2727, 16, 1.2, 0, 0, 31.8, 0, 0.3527, 0, -0.8673, 0, 0, 0.2727, 15.7273, 1.2, 0, 0, 31.8, 0, 0.3527, 0, -0.6945, 0, 0, 0.2727, 15.4545, 1.2, 0, 0, 31.8, 0, 0.3527, 0, -0.5218, 0, 0, 0.2727, 15.1818, 1.2, 0, 0, 31.8, 0, 0.3527, 0, -0.3491, 0, 0, 0.2727, 14.9091, 1.2, 0, 0, 31.8, 0, 0.3527, 0, -0.1764, 0, 0, 0.2727, 14.6364)
+
+[sub_resource type="MultiMesh" id="s434"]
+transform_format = 1
+instance_count = 8
+mesh = SubResource("s427")
+buffer = PackedFloat32Array(0.04, 0, 0, 31.23, 0, 0.9, 0, -3.2636, 0, 0, 0.04, 20.47, 0.04, 0, 0, 31.23, 0, 0.9, 0, -2.6303, 0, 0, 0.04, 19.5, 0.04, 0, 0, 31.23, 0, 0.9, 0, -1.997, 0, 0, 0.04, 18.5, 0.04, 0, 0, 31.23, 0, 0.9, 0, -1.3636, 0, 0, 0.04, 17.5, 0.04, 0, 0, 31.23, 0, 0.9, 0, -0.7303, 0, 0, 0.04, 16.5, 0.04, 0, 0, 31.23, 0, 0.9, 0, -0.097, 0, 0, 0.04, 15.5, 0.04, 0, 0, 31.23, 0, 0.9, 0, 0.5364, 0, 0, 0.04, 14.53, 0.05, 0, 0, 31.23, 0, 0.0422, -3.8, -0.8936, 0, 0.0268, 6, 17.5)
+
+[sub_resource type="BoxMesh" id="s435"]
+material = SubResource("s53")
+size = Vector3(1, 1, 1)
+
+[sub_resource type="MultiMesh" id="s436"]
+transform_format = 1
+instance_count = 4
+mesh = SubResource("s435")
 buffer = PackedFloat32Array(58, 0, 0, 13, 0, 0.23, 0, -0.135, 0, 0, 7.8, -4.1, 58, 0, 0, 13, 0, 0.23, 0, -0.135, 0, 0, 7.8, 26.1, 15.8, 0, 0, -8.1, 0, 0.23, 0, -0.135, 0, 0, 22.4, 11, 7.8, 0, 0, 38.1, 0, 0.23, 0, -0.135, 0, 0, 22.4, 11)
 
-[sub_resource type="BoxMesh" id="s434"]
+[sub_resource type="BoxMesh" id="s437"]
 material = SubResource("s59")
 size = Vector3(1, 1, 1)
 
-[sub_resource type="MultiMesh" id="s435"]
+[sub_resource type="MultiMesh" id="s438"]
 transform_format = 1
 instance_count = 1
-mesh = SubResource("s434")
+mesh = SubResource("s437")
 buffer = PackedFloat32Array(9.8, 0, 0, -5.1, 0, 0.02, 0, -0.01, 0, 0, 26, 11)
 
-[sub_resource type="BoxMesh" id="s436"]
+[sub_resource type="BoxMesh" id="s439"]
 material = SubResource("s71")
 size = Vector3(1, 1, 1)
 
-[sub_resource type="MultiMesh" id="s437"]
+[sub_resource type="MultiMesh" id="s440"]
 transform_format = 1
 instance_count = 3
-mesh = SubResource("s436")
+mesh = SubResource("s439")
 buffer = PackedFloat32Array(0.2, 0, 0, -10.1, 0, 2.2, 0, 1.1, 0, 0, 26, 11, 9.8, 0, 0, -5.1, 0, 2.2, 0, 1.1, 0, 0, 0.2, -2, 9.8, 0, 0, -5.1, 0, 2.2, 0, 1.1, 0, 0, 0.2, 24)
 
-[sub_resource type="BoxMesh" id="s438"]
-material = SubResource("s102")
+[sub_resource type="BoxMesh" id="s441"]
+material = SubResource("s393")
 size = Vector3(1, 1, 1)
 
-[sub_resource type="MultiMesh" id="s439"]
+[sub_resource type="MultiMesh" id="s442"]
 transform_format = 1
 instance_count = 1
-mesh = SubResource("s438")
+mesh = SubResource("s441")
 buffer = PackedFloat32Array(0.3, 0, 0, -3, 0, 1, 0, 0.5, 0, 0, 0.3, 6)
 
-[sub_resource type="BoxMesh" id="s440"]
-material = SubResource("s272")
+[sub_resource type="BoxMesh" id="s443"]
+material = SubResource("s392")
 size = Vector3(1, 1, 1)
 
-[sub_resource type="MultiMesh" id="s441"]
+[sub_resource type="MultiMesh" id="s444"]
 transform_format = 1
 instance_count = 1
-mesh = SubResource("s440")
-buffer = PackedFloat32Array(0.6, 0, 0, -3, 0, 0.6, 0, 1.3, 0, 0, 0.4, 6)
+mesh = SubResource("s443")
+buffer = PackedFloat32Array(0.6, 0, 0, -3, 0, 0.6, 0, 1.3, 0, 0, 0.5, 6)
 
-[sub_resource type="BoxMesh" id="s442"]
+[sub_resource type="BoxMesh" id="s445"]
+material = SubResource("s394")
+size = Vector3(1, 1, 1)
+
+[sub_resource type="MultiMesh" id="s446"]
+transform_format = 1
+instance_count = 1
+mesh = SubResource("s445")
+buffer = PackedFloat32Array(0.02, 0, 0, -2.69, 0, 0.3, 0, 1.27, 0, 0, 0.29, 5.975)
+
+[sub_resource type="BoxMesh" id="s447"]
 material = SubResource("s335")
 size = Vector3(1, 1, 1)
 
-[sub_resource type="MultiMesh" id="s443"]
+[sub_resource type="MultiMesh" id="s448"]
 transform_format = 1
 instance_count = 1
-mesh = SubResource("s442")
-buffer = PackedFloat32Array(0.01, 0, 0, -2.685, 0, 0.05, 0, 1.425, 0, 0, 0.1, 6)
+mesh = SubResource("s447")
+buffer = PackedFloat32Array(0.02, 0, 0, -2.68, 0, 0.05, 0, 1.505, 0, 0, 0.05, 6.175)
 
-[sub_resource type="BoxMesh" id="s444"]
+[sub_resource type="BoxMesh" id="s449"]
 material = SubResource("s264")
 size = Vector3(1, 1, 1)
 
-[sub_resource type="MultiMesh" id="s445"]
+[sub_resource type="MultiMesh" id="s450"]
 transform_format = 1
 instance_count = 2
-mesh = SubResource("s444")
+mesh = SubResource("s449")
 buffer = PackedFloat32Array(1.2, 0, 0, -5.4, 0, 0.15, 0, 0.075, 0, 0, 1, 3.5, 1.2, 0, 0, -3.9, 0, 0.15, 0, 0.075, 0, 0, 1, 19)
 
-[sub_resource type="BoxMesh" id="s446"]
+[sub_resource type="BoxMesh" id="s451"]
 material = SubResource("s386")
 size = Vector3(1, 1, 1)
 
-[sub_resource type="MultiMesh" id="s447"]
-transform_format = 1
-instance_count = 5
-mesh = SubResource("s446")
-buffer = PackedFloat32Array(14, 0, 0, 10, 0, 0.9, 0, 0.45, 0, 0, 1.2, 5.6, 14, 0, 0, 12, 0, 0.9, 0, 0.45, 0, 0, 1.2, 16.4, 2.2, 0, 0, 5.1, 0, 2.6, 0, 1.5, 0, 0, 2, 9, 2.4, 0, 0, 13.2, 0, 3, 0, 1.7, 0, 0, 2.2, 13.1, 2, 0, 0, 17.5, 0, 2.4, 0, 1.4, 0, 0, 2.4, 8.7)
-
-[sub_resource type="BoxMesh" id="s448"]
-material = SubResource("s388")
-size = Vector3(1, 1, 1)
-
-[sub_resource type="MultiMesh" id="s449"]
-transform_format = 1
-instance_count = 2
-mesh = SubResource("s448")
-buffer = PackedFloat32Array(14, 0, 0, 10, 0, 0.3, 0, 1.05, 0, 0, 1, 5.6, 14, 0, 0, 12, 0, 0.3, 0, 1.05, 0, 0, 1, 16.4)
-
-[sub_resource type="BoxMesh" id="s450"]
-material = SubResource("s387")
-size = Vector3(1, 1, 1)
-
-[sub_resource type="MultiMesh" id="s451"]
-transform_format = 1
-instance_count = 15
-mesh = SubResource("s450")
-buffer = PackedFloat32Array(0.1, 0, 0, 4.05, 0, 0.35, 0, 1.075, 0, 0, 0.02, 4.99, 0.1, 0, 0, 7.05, 0, 0.35, 0, 1.075, 0, 0, 0.02, 4.99, 0.1, 0, 0, 10.05, 0, 0.35, 0, 1.075, 0, 0, 0.02, 4.99, 0.1, 0, 0, 13.05, 0, 0.35, 0, 1.075, 0, 0, 0.02, 4.99, 0.1, 0, 0, 16.05, 0, 0.35, 0, 1.075, 0, 0, 0.02, 4.99, 0.1, 0, 0, 6.05, 0, 0.35, 0, 1.075, 0, 0, 0.02, 15.79, 0.1, 0, 0, 9.05, 0, 0.35, 0, 1.075, 0, 0, 0.02, 15.79, 0.1, 0, 0, 12.05, 0, 0.35, 0, 1.075, 0, 0, 0.02, 15.79, 0.1, 0, 0, 15.05, 0, 0.35, 0, 1.075, 0, 0, 0.02, 15.79, 0.1, 0, 0, 18.05, 0, 0.35, 0, 1.075, 0, 0, 0.02, 15.79, 2.24, 0, 0, 5.1, 0, 0.2, 0, 0.1, 0, 0, 2.04, 9, 2.44, 0, 0, 13.2, 0, 0.2, 0, 0.1, 0, 0, 2.24, 13.1, 2.04, 0, 0, 17.5, 0, 0.2, 0, 0.1, 0, 0, 2.44, 8.7, 20, 0, 0, 11, 0, 0.006, 0, 0.003, 0, 0, 0.1, 3.45, 20, 0, 0, 11, 0, 0.006, 0, 0.003, 0, 0, 0.1, 18.65)
-
 [sub_resource type="MultiMesh" id="s452"]
 transform_format = 1
-instance_count = 3
-mesh = SubResource("s440")
-buffer = PackedFloat32Array(0.6, 0, 0, 4.6, 0, 0.5, 0, 1.35, 0, 0, 0.04, 10.02, 0.6, 0, 0, 12.6, 0, 0.5, 0, 1.35, 0, 0, 0.04, 14.22, 0.6, 0, 0, 17.1, 0, 0.5, 0, 1.35, 0, 0, 0.04, 9.92)
+instance_count = 5
+mesh = SubResource("s451")
+buffer = PackedFloat32Array(14, 0, 0, 10, 0, 0.9, 0, 0.45, 0, 0, 1.2, 5.6, 14, 0, 0, 12, 0, 0.9, 0, 0.45, 0, 0, 1.2, 16.4, 2.2, 0, 0, 5.1, 0, 2.6, 0, 1.5, 0, 0, 2, 9, 2.4, 0, 0, 13.2, 0, 3, 0, 1.7, 0, 0, 2.2, 13.1, 2, 0, 0, 17.5, 0, 2.4, 0, 1.4, 0, 0, 2.4, 8.7)
 
 [sub_resource type="BoxMesh" id="s453"]
-material = SubResource("s389")
+material = SubResource("s388")
 size = Vector3(1, 1, 1)
 
 [sub_resource type="MultiMesh" id="s454"]
 transform_format = 1
-instance_count = 10
+instance_count = 2
 mesh = SubResource("s453")
-buffer = PackedFloat32Array(1.4, 0, 0, 8.7, 0, 1.6, 0, 0.8, 0, 0, 1.4, 12.7, 1, 0, 0, 8.7, 0, 0.6, 0, 1.9, 0, 0, 1, 12.7, 1.4, 0, 0, 15.7, 0, 1.4, 0, 0.7, 0, 0, 1.4, 2.7, 1, 0, 0, 15.7, 0, 0.6, 0, 1.7, 0, 0, 1, 2.7, 1.4, 0, 0, 2.7, 0, 1.8, 0, 0.9, 0, 0, 1.4, 13.7, 1, 0, 0, 2.7, 0, 0.6, 0, 2.1, 0, 0, 1, 13.7, 1.4, 0, 0, 10.2, 0, 1.2, 0, 0.6, 0, 0, 1.4, 20.2, 1, 0, 0, 10.2, 0, 0.6, 0, 1.5, 0, 0, 1, 20.2, 1.4, 0, 0, 19.7, 0, 1.6, 0, 0.8, 0, 0, 1.4, 14.2, 1, 0, 0, 19.7, 0, 0.6, 0, 1.9, 0, 0, 1, 14.2)
+buffer = PackedFloat32Array(14, 0, 0, 10, 0, 0.3, 0, 1.05, 0, 0, 1, 5.6, 14, 0, 0, 12, 0, 0.3, 0, 1.05, 0, 0, 1, 16.4)
 
 [sub_resource type="BoxMesh" id="s455"]
-material = SubResource("s331")
+material = SubResource("s387")
 size = Vector3(1, 1, 1)
 
 [sub_resource type="MultiMesh" id="s456"]
 transform_format = 1
-instance_count = 1
+instance_count = 15
 mesh = SubResource("s455")
-buffer = PackedFloat32Array(3, 0, 0, 7.5, 0, 2, 0, 1, 0, 0, 0.5, 0.25)
+buffer = PackedFloat32Array(0.1, 0, 0, 4.05, 0, 0.35, 0, 1.075, 0, 0, 0.02, 4.99, 0.1, 0, 0, 7.05, 0, 0.35, 0, 1.075, 0, 0, 0.02, 4.99, 0.1, 0, 0, 10.05, 0, 0.35, 0, 1.075, 0, 0, 0.02, 4.99, 0.1, 0, 0, 13.05, 0, 0.35, 0, 1.075, 0, 0, 0.02, 4.99, 0.1, 0, 0, 16.05, 0, 0.35, 0, 1.075, 0, 0, 0.02, 4.99, 0.1, 0, 0, 6.05, 0, 0.35, 0, 1.075, 0, 0, 0.02, 15.79, 0.1, 0, 0, 9.05, 0, 0.35, 0, 1.075, 0, 0, 0.02, 15.79, 0.1, 0, 0, 12.05, 0, 0.35, 0, 1.075, 0, 0, 0.02, 15.79, 0.1, 0, 0, 15.05, 0, 0.35, 0, 1.075, 0, 0, 0.02, 15.79, 0.1, 0, 0, 18.05, 0, 0.35, 0, 1.075, 0, 0, 0.02, 15.79, 2.24, 0, 0, 5.1, 0, 0.2, 0, 0.1, 0, 0, 2.04, 9, 2.44, 0, 0, 13.2, 0, 0.2, 0, 0.1, 0, 0, 2.24, 13.1, 2.04, 0, 0, 17.5, 0, 0.2, 0, 0.1, 0, 0, 2.44, 8.7, 20, 0, 0, 11, 0, 0.006, 0, 0.003, 0, 0, 0.1, 3.45, 20, 0, 0, 11, 0, 0.006, 0, 0.003, 0, 0, 0.1, 18.65)
 
 [sub_resource type="BoxMesh" id="s457"]
-material = SubResource("s49")
+material = SubResource("s272")
 size = Vector3(1, 1, 1)
 
 [sub_resource type="MultiMesh" id="s458"]
 transform_format = 1
-instance_count = 2
+instance_count = 3
 mesh = SubResource("s457")
-buffer = PackedFloat32Array(22, 0, 0, 11, 0, 0.2, 0, 4.1, 0, 0, 0.2, 4.1, 22, 0, 0, 11, 0, 0.2, 0, 4.1, 0, 0, 0.2, 18.1)
+buffer = PackedFloat32Array(0.6, 0, 0, 4.6, 0, 0.5, 0, 1.35, 0, 0, 0.04, 10.02, 0.6, 0, 0, 12.6, 0, 0.5, 0, 1.35, 0, 0, 0.04, 14.22, 0.6, 0, 0, 17.1, 0, 0.5, 0, 1.35, 0, 0, 0.04, 9.92)
 
 [sub_resource type="BoxMesh" id="s459"]
-material = SubResource("s84")
+material = SubResource("s389")
 size = Vector3(1, 1, 1)
 
 [sub_resource type="MultiMesh" id="s460"]
 transform_format = 1
-instance_count = 1
+instance_count = 10
 mesh = SubResource("s459")
-buffer = PackedFloat32Array(7, 0, 0, 28, 0, 0.04, 0, 0.74, 0, 0, 0.9, 0.65)
+buffer = PackedFloat32Array(1.4, 0, 0, 8.7, 0, 1.6, 0, 0.8, 0, 0, 1.4, 12.7, 1, 0, 0, 8.7, 0, 0.6, 0, 1.9, 0, 0, 1, 12.7, 1.4, 0, 0, 15.7, 0, 1.4, 0, 0.7, 0, 0, 1.4, 2.7, 1, 0, 0, 15.7, 0, 0.6, 0, 1.7, 0, 0, 1, 2.7, 1.4, 0, 0, 2.7, 0, 1.8, 0, 0.9, 0, 0, 1.4, 13.7, 1, 0, 0, 2.7, 0, 0.6, 0, 2.1, 0, 0, 1, 13.7, 1.4, 0, 0, 10.2, 0, 1.2, 0, 0.6, 0, 0, 1.4, 20.2, 1, 0, 0, 10.2, 0, 0.6, 0, 1.5, 0, 0, 1, 20.2, 1.4, 0, 0, 19.7, 0, 1.6, 0, 0.8, 0, 0, 1.4, 14.2, 1, 0, 0, 19.7, 0, 0.6, 0, 1.9, 0, 0, 1, 14.2)
 
 [sub_resource type="BoxMesh" id="s461"]
-material = SubResource("s86")
+material = SubResource("s331")
 size = Vector3(1, 1, 1)
 
 [sub_resource type="MultiMesh" id="s462"]
 transform_format = 1
-instance_count = 2
+instance_count = 1
 mesh = SubResource("s461")
-buffer = PackedFloat32Array(0.05, 0, 0, 24.625, 0, 0.72, 0, 0.36, 0, 0, 0.8, 0.65, 0.05, 0, 0, 31.375, 0, 0.72, 0, 0.36, 0, 0, 0.8, 0.65)
+buffer = PackedFloat32Array(3, 0, 0, 7.5, 0, 2, 0, 1, 0, 0, 0.5, 0.25)
 
 [sub_resource type="BoxMesh" id="s463"]
-material = SubResource("s129")
+material = SubResource("s49")
 size = Vector3(1, 1, 1)
 
 [sub_resource type="MultiMesh" id="s464"]
 transform_format = 1
-instance_count = 12
+instance_count = 2
 mesh = SubResource("s463")
-buffer = PackedFloat32Array(1, 0, 0, 25.3, 0, 0.6, 0, 1.25, 0, 0, 0.07, 0.085, 1, 0, 0, 25.3, 0, 0.6, 0, 1.95, 0, 0, 0.07, 0.085, 1, 0, 0, 26.4, 0, 0.6, 0, 1.25, 0, 0, 0.07, 0.085, 1, 0, 0, 26.4, 0, 0.6, 0, 1.95, 0, 0, 0.07, 0.085, 1, 0, 0, 27.5, 0, 0.6, 0, 1.25, 0, 0, 0.07, 0.085, 1, 0, 0, 27.5, 0, 0.6, 0, 1.95, 0, 0, 0.07, 0.085, 1, 0, 0, 28.6, 0, 0.6, 0, 1.25, 0, 0, 0.07, 0.085, 1, 0, 0, 28.6, 0, 0.6, 0, 1.95, 0, 0, 0.07, 0.085, 1, 0, 0, 29.7, 0, 0.6, 0, 1.25, 0, 0, 0.07, 0.085, 1, 0, 0, 29.7, 0, 0.6, 0, 1.95, 0, 0, 0.07, 0.085, 1, 0, 0, 30.8, 0, 0.6, 0, 1.25, 0, 0, 0.07, 0.085, 1, 0, 0, 30.8, 0, 0.6, 0, 1.95, 0, 0, 0.07, 0.085)
+buffer = PackedFloat32Array(22, 0, 0, 11, 0, 0.2, 0, 4.1, 0, 0, 0.2, 4.1, 22, 0, 0, 11, 0, 0.2, 0, 4.1, 0, 0, 0.2, 18.1)
 
 [sub_resource type="BoxMesh" id="s465"]
-material = SubResource("s318")
+material = SubResource("s84")
 size = Vector3(1, 1, 1)
 
 [sub_resource type="MultiMesh" id="s466"]
 transform_format = 1
-instance_count = 12
+instance_count = 1
 mesh = SubResource("s465")
-buffer = PackedFloat32Array(0.9, 0, 0, 25.3, 0, 0.5, 0, 1.25, 0, 0, 0.005, 0.1225, 0.9, 0, 0, 25.3, 0, 0.5, 0, 1.95, 0, 0, 0.005, 0.1225, 0.9, 0, 0, 26.4, 0, 0.5, 0, 1.25, 0, 0, 0.005, 0.1225, 0.9, 0, 0, 26.4, 0, 0.5, 0, 1.95, 0, 0, 0.005, 0.1225, 0.9, 0, 0, 27.5, 0, 0.5, 0, 1.25, 0, 0, 0.005, 0.1225, 0.9, 0, 0, 27.5, 0, 0.5, 0, 1.95, 0, 0, 0.005, 0.1225, 0.9, 0, 0, 28.6, 0, 0.5, 0, 1.25, 0, 0, 0.005, 0.1225, 0.9, 0, 0, 28.6, 0, 0.5, 0, 1.95, 0, 0, 0.005, 0.1225, 0.9, 0, 0, 29.7, 0, 0.5, 0, 1.25, 0, 0, 0.005, 0.1225, 0.9, 0, 0, 29.7, 0, 0.5, 0, 1.95, 0, 0, 0.005, 0.1225, 0.9, 0, 0, 30.8, 0, 0.5, 0, 1.25, 0, 0, 0.005, 0.1225, 0.9, 0, 0, 30.8, 0, 0.5, 0, 1.95, 0, 0, 0.005, 0.1225)
+buffer = PackedFloat32Array(7, 0, 0, 28, 0, 0.04, 0, 0.74, 0, 0, 0.9, 0.65)
 
 [sub_resource type="BoxMesh" id="s467"]
-material = SubResource("s171")
+material = SubResource("s86")
 size = Vector3(1, 1, 1)
 
 [sub_resource type="MultiMesh" id="s468"]
 transform_format = 1
-instance_count = 1
+instance_count = 2
 mesh = SubResource("s467")
-buffer = PackedFloat32Array(0.6, 0, 0, 27.8, 0, 1.1, 0, 0.55, 0, 0, 0.6, 1.8)
+buffer = PackedFloat32Array(0.05, 0, 0, 24.625, 0, 0.72, 0, 0.36, 0, 0, 0.8, 0.65, 0.05, 0, 0, 31.375, 0, 0.72, 0, 0.36, 0, 0, 0.8, 0.65)
 
 [sub_resource type="BoxMesh" id="s469"]
-material = SubResource("s145")
+material = SubResource("s129")
 size = Vector3(1, 1, 1)
 
 [sub_resource type="MultiMesh" id="s470"]
 transform_format = 1
-instance_count = 1
+instance_count = 12
 mesh = SubResource("s469")
-buffer = PackedFloat32Array(1.2, 0, 0, 33, 0, 1.8, 0, 0.9, 0, 0, 2, 2)
+buffer = PackedFloat32Array(1, 0, 0, 25.3, 0, 0.6, 0, 1.25, 0, 0, 0.07, 0.085, 1, 0, 0, 25.3, 0, 0.6, 0, 1.95, 0, 0, 0.07, 0.085, 1, 0, 0, 26.4, 0, 0.6, 0, 1.25, 0, 0, 0.07, 0.085, 1, 0, 0, 26.4, 0, 0.6, 0, 1.95, 0, 0, 0.07, 0.085, 1, 0, 0, 27.5, 0, 0.6, 0, 1.25, 0, 0, 0.07, 0.085, 1, 0, 0, 27.5, 0, 0.6, 0, 1.95, 0, 0, 0.07, 0.085, 1, 0, 0, 28.6, 0, 0.6, 0, 1.25, 0, 0, 0.07, 0.085, 1, 0, 0, 28.6, 0, 0.6, 0, 1.95, 0, 0, 0.07, 0.085, 1, 0, 0, 29.7, 0, 0.6, 0, 1.25, 0, 0, 0.07, 0.085, 1, 0, 0, 29.7, 0, 0.6, 0, 1.95, 0, 0, 0.07, 0.085, 1, 0, 0, 30.8, 0, 0.6, 0, 1.25, 0, 0, 0.07, 0.085, 1, 0, 0, 30.8, 0, 0.6, 0, 1.95, 0, 0, 0.07, 0.085)
 
 [sub_resource type="BoxMesh" id="s471"]
-material = SubResource("s178")
+material = SubResource("s318")
 size = Vector3(1, 1, 1)
 
 [sub_resource type="MultiMesh" id="s472"]
 transform_format = 1
-instance_count = 1
+instance_count = 12
 mesh = SubResource("s471")
-buffer = PackedFloat32Array(2, 0, 0, 24.5, 0, 0.04, 0, 0.74, 0, 0, 1.2, 16.6)
+buffer = PackedFloat32Array(0.9, 0, 0, 25.3, 0, 0.5, 0, 1.25, 0, 0, 0.005, 0.1225, 0.9, 0, 0, 25.3, 0, 0.5, 0, 1.95, 0, 0, 0.005, 0.1225, 0.9, 0, 0, 26.4, 0, 0.5, 0, 1.25, 0, 0, 0.005, 0.1225, 0.9, 0, 0, 26.4, 0, 0.5, 0, 1.95, 0, 0, 0.005, 0.1225, 0.9, 0, 0, 27.5, 0, 0.5, 0, 1.25, 0, 0, 0.005, 0.1225, 0.9, 0, 0, 27.5, 0, 0.5, 0, 1.95, 0, 0, 0.005, 0.1225, 0.9, 0, 0, 28.6, 0, 0.5, 0, 1.25, 0, 0, 0.005, 0.1225, 0.9, 0, 0, 28.6, 0, 0.5, 0, 1.95, 0, 0, 0.005, 0.1225, 0.9, 0, 0, 29.7, 0, 0.5, 0, 1.25, 0, 0, 0.005, 0.1225, 0.9, 0, 0, 29.7, 0, 0.5, 0, 1.95, 0, 0, 0.005, 0.1225, 0.9, 0, 0, 30.8, 0, 0.5, 0, 1.25, 0, 0, 0.005, 0.1225, 0.9, 0, 0, 30.8, 0, 0.5, 0, 1.95, 0, 0, 0.005, 0.1225)
 
 [sub_resource type="BoxMesh" id="s473"]
-material = SubResource("s289")
+material = SubResource("s171")
 size = Vector3(1, 1, 1)
 
 [sub_resource type="MultiMesh" id="s474"]
 transform_format = 1
 instance_count = 1
 mesh = SubResource("s473")
-buffer = PackedFloat32Array(1, 0, 0, 29.3, 0, 1.9, 0, 0.95, 0, 0, 0.9, 21.35)
+buffer = PackedFloat32Array(0.6, 0, 0, 27.8, 0, 1.1, 0, 0.55, 0, 0, 0.6, 1.8)
 
 [sub_resource type="BoxMesh" id="s475"]
-material = SubResource("s181")
+material = SubResource("s145")
 size = Vector3(1, 1, 1)
 
 [sub_resource type="MultiMesh" id="s476"]
 transform_format = 1
 instance_count = 1
 mesh = SubResource("s475")
-buffer = PackedFloat32Array(0.8, 0, 0, 22.7, 0, 0.8, 0, 0.4, 0, 0, 2.5, 19.75)
+buffer = PackedFloat32Array(1.2, 0, 0, 33, 0, 1.8, 0, 0.9, 0, 0, 2, 2)
 
 [sub_resource type="BoxMesh" id="s477"]
-material = SubResource("s270")
+material = SubResource("s178")
 size = Vector3(1, 1, 1)
 
 [sub_resource type="MultiMesh" id="s478"]
 transform_format = 1
 instance_count = 1
 mesh = SubResource("s477")
-buffer = PackedFloat32Array(2, 0, 0, 23.6, 0, 1.4, 0, -3.1, 0, 0, 0.7, 7.95)
+buffer = PackedFloat32Array(2, 0, 0, 24.5, 0, 0.04, 0, 0.74, 0, 0, 1.2, 16.6)
 
 [sub_resource type="BoxMesh" id="s479"]
-material = SubResource("s225")
+material = SubResource("s289")
 size = Vector3(1, 1, 1)
 
 [sub_resource type="MultiMesh" id="s480"]
 transform_format = 1
 instance_count = 1
 mesh = SubResource("s479")
-buffer = PackedFloat32Array(0.5, 0, 0, 23.35, 0, 0.3, 0, -2.15, 0, 0, 0.06, 7.63)
+buffer = PackedFloat32Array(1, 0, 0, 29.3, 0, 1.9, 0, 0.95, 0, 0, 0.9, 21.35)
 
 [sub_resource type="BoxMesh" id="s481"]
-material = SubResource("s273")
+material = SubResource("s181")
 size = Vector3(1, 1, 1)
 
 [sub_resource type="MultiMesh" id="s482"]
 transform_format = 1
 instance_count = 1
 mesh = SubResource("s481")
-buffer = PackedFloat32Array(4.9, 0, 0, 24.55, 0, 0.1, 0, -0.75, 0, 0, 0.3, 7.75)
+buffer = PackedFloat32Array(0.8, 0, 0, 22.7, 0, 0.8, 0, 0.4, 0, 0, 2.5, 19.75)
 
-[sub_resource type="MultiMesh" id="s483"]
-transform_format = 1
-instance_count = 2
-mesh = SubResource("s469")
-buffer = PackedFloat32Array(1.1, 0, 0, 30.55, 0, 0.8, 0, -3.4, 0, 0, 1, 13.1, 1.1, 0, 0, 31.95, 0, 0.8, 0, -3.4, 0, 0, 1, 13.1)
-
-[sub_resource type="BoxMesh" id="s484"]
-material = SubResource("s97")
+[sub_resource type="BoxMesh" id="s483"]
+material = SubResource("s270")
 size = Vector3(1, 1, 1)
 
-[sub_resource type="MultiMesh" id="s485"]
+[sub_resource type="MultiMesh" id="s484"]
 transform_format = 1
 instance_count = 1
-mesh = SubResource("s484")
-buffer = PackedFloat32Array(4.4, 0, 0, 31.4, 0, 0.01, 0, -3.795, 0, 0, 4, 10)
+mesh = SubResource("s483")
+buffer = PackedFloat32Array(2, 0, 0, 23.6, 0, 1.4, 0, -3.1, 0, 0, 0.7, 7.95)
 
-[sub_resource type="BoxMesh" id="s486"]
-material = SubResource("s390")
+[sub_resource type="BoxMesh" id="s485"]
+material = SubResource("s225")
 size = Vector3(1, 1, 1)
 
-[sub_resource type="MultiMesh" id="s487"]
+[sub_resource type="MultiMesh" id="s486"]
 transform_format = 1
-instance_count = 4
-mesh = SubResource("s486")
-buffer = PackedFloat32Array(1, 0, 0, 23.5, 0, 2.2, 0, -2.7, 0, 0, 4, 3.5, 1, 0, 0, 26.1, 0, 2.2, 0, -2.7, 0, 0, 4, 3.5, 1, 0, 0, 30.5, 0, 2.2, 0, -2.7, 0, 0, 4, 3.5, 1, 0, 0, 33.1, 0, 2.2, 0, -2.7, 0, 0, 4, 3.5)
+instance_count = 1
+mesh = SubResource("s485")
+buffer = PackedFloat32Array(0.5, 0, 0, 23.35, 0, 0.3, 0, -2.15, 0, 0, 0.06, 7.63)
+
+[sub_resource type="BoxMesh" id="s487"]
+material = SubResource("s273")
+size = Vector3(1, 1, 1)
 
 [sub_resource type="MultiMesh" id="s488"]
 transform_format = 1
-instance_count = 12
-mesh = SubResource("s442")
-buffer = PackedFloat32Array(0.01, 0, 0, 24.005, 0, 0.03, 0, -3.485, 0, 0, 3, 3.5, 0.01, 0, 0, 24.005, 0, 0.03, 0, -2.825, 0, 0, 3, 3.5, 0.01, 0, 0, 24.005, 0, 0.03, 0, -2.165, 0, 0, 3, 3.5, 0.01, 0, 0, 26.605, 0, 0.03, 0, -3.485, 0, 0, 3, 3.5, 0.01, 0, 0, 26.605, 0, 0.03, 0, -2.825, 0, 0, 3, 3.5, 0.01, 0, 0, 26.605, 0, 0.03, 0, -2.165, 0, 0, 3, 3.5, 0.01, 0, 0, 31.005, 0, 0.03, 0, -3.485, 0, 0, 3, 3.5, 0.01, 0, 0, 31.005, 0, 0.03, 0, -2.825, 0, 0, 3, 3.5, 0.01, 0, 0, 31.005, 0, 0.03, 0, -2.165, 0, 0, 3, 3.5, 0.01, 0, 0, 33.605, 0, 0.03, 0, -3.485, 0, 0, 3, 3.5, 0.01, 0, 0, 33.605, 0, 0.03, 0, -2.825, 0, 0, 3, 3.5, 0.01, 0, 0, 33.605, 0, 0.03, 0, -2.165, 0, 0, 3, 3.5)
+instance_count = 1
+mesh = SubResource("s487")
+buffer = PackedFloat32Array(4.9, 0, 0, 24.55, 0, 0.1, 0, -0.75, 0, 0, 0.3, 7.75)
 
-[sub_resource type="BoxMesh" id="s489"]
-material = SubResource("s317")
-size = Vector3(1, 1, 1)
-
-[sub_resource type="MultiMesh" id="s490"]
+[sub_resource type="MultiMesh" id="s489"]
 transform_format = 1
-instance_count = 20
-mesh = SubResource("s489")
-buffer = PackedFloat32Array(0.01, 0, 0, 24.005, 0, 0.03, 0, -3.265, 0, 0, 3, 3.5, 0.01, 0, 0, 24.005, 0, 0.03, 0, -3.045, 0, 0, 3, 3.5, 0.01, 0, 0, 24.005, 0, 0.03, 0, -2.605, 0, 0, 3, 3.5, 0.01, 0, 0, 24.005, 0, 0.03, 0, -2.385, 0, 0, 3, 3.5, 0.01, 0, 0, 24.005, 0, 0.03, 0, -1.945, 0, 0, 3, 3.5, 0.01, 0, 0, 26.605, 0, 0.03, 0, -3.265, 0, 0, 3, 3.5, 0.01, 0, 0, 26.605, 0, 0.03, 0, -3.045, 0, 0, 3, 3.5, 0.01, 0, 0, 26.605, 0, 0.03, 0, -2.605, 0, 0, 3, 3.5, 0.01, 0, 0, 26.605, 0, 0.03, 0, -2.385, 0, 0, 3, 3.5, 0.01, 0, 0, 26.605, 0, 0.03, 0, -1.945, 0, 0, 3, 3.5, 0.01, 0, 0, 31.005, 0, 0.03, 0, -3.265, 0, 0, 3, 3.5, 0.01, 0, 0, 31.005, 0, 0.03, 0, -3.045, 0, 0, 3, 3.5, 0.01, 0, 0, 31.005, 0, 0.03, 0, -2.605, 0, 0, 3, 3.5, 0.01, 0, 0, 31.005, 0, 0.03, 0, -2.385, 0, 0, 3, 3.5, 0.01, 0, 0, 31.005, 0, 0.03, 0, -1.945, 0, 0, 3, 3.5, 0.01, 0, 0, 33.605, 0, 0.03, 0, -3.265, 0, 0, 3, 3.5, 0.01, 0, 0, 33.605, 0, 0.03, 0, -3.045, 0, 0, 3, 3.5, 0.01, 0, 0, 33.605, 0, 0.03, 0, -2.605, 0, 0, 3, 3.5, 0.01, 0, 0, 33.605, 0, 0.03, 0, -2.385, 0, 0, 3, 3.5, 0.01, 0, 0, 33.605, 0, 0.03, 0, -1.945, 0, 0, 3, 3.5)
+instance_count = 2
+mesh = SubResource("s475")
+buffer = PackedFloat32Array(1.1, 0, 0, 30.55, 0, 0.8, 0, -3.4, 0, 0, 1, 13.1, 1.1, 0, 0, 31.95, 0, 0.8, 0, -3.4, 0, 0, 1, 13.1)
+
+[sub_resource type="BoxMesh" id="s490"]
+material = SubResource("s97")
+size = Vector3(1, 1, 1)
 
 [sub_resource type="MultiMesh" id="s491"]
 transform_format = 1
 instance_count = 1
-mesh = SubResource("s459")
-buffer = PackedFloat32Array(2.4, 0, 0, 28, 0, 0.04, 0, -3.06, 0, 0, 0.8, 0.6)
+mesh = SubResource("s490")
+buffer = PackedFloat32Array(4.4, 0, 0, 31.4, 0, 0.01, 0, -3.795, 0, 0, 4, 10)
 
-[sub_resource type="MultiMesh" id="s492"]
-transform_format = 1
-instance_count = 1
-mesh = SubResource("s463")
-buffer = PackedFloat32Array(1.2, 0, 0, 28, 0, 0.7, 0, -2.65, 0, 0, 0.07, 0.285)
+[sub_resource type="BoxMesh" id="s492"]
+material = SubResource("s390")
+size = Vector3(1, 1, 1)
 
 [sub_resource type="MultiMesh" id="s493"]
 transform_format = 1
-instance_count = 1
-mesh = SubResource("s465")
-buffer = PackedFloat32Array(1.1, 0, 0, 28, 0, 0.6, 0, -2.65, 0, 0, 0.005, 0.3225)
+instance_count = 4
+mesh = SubResource("s492")
+buffer = PackedFloat32Array(1, 0, 0, 23.5, 0, 2.2, 0, -2.7, 0, 0, 4, 3.5, 1, 0, 0, 26.1, 0, 2.2, 0, -2.7, 0, 0, 4, 3.5, 1, 0, 0, 30.5, 0, 2.2, 0, -2.7, 0, 0, 4, 3.5, 1, 0, 0, 33.1, 0, 2.2, 0, -2.7, 0, 0, 4, 3.5)
 
-[sub_resource type="BoxMesh" id="s494"]
-material = SubResource("s247")
-size = Vector3(1, 1, 1)
-
-[sub_resource type="MultiMesh" id="s495"]
+[sub_resource type="MultiMesh" id="s494"]
 transform_format = 1
-instance_count = 1
-mesh = SubResource("s494")
-buffer = PackedFloat32Array(8.5, 0, 0, 26.35, 0, 0.2, 0, -0.5, 0, 0, 0.2, 21.5)
+instance_count = 12
+mesh = SubResource("s447")
+buffer = PackedFloat32Array(0.01, 0, 0, 24.005, 0, 0.03, 0, -3.485, 0, 0, 3, 3.5, 0.01, 0, 0, 24.005, 0, 0.03, 0, -2.825, 0, 0, 3, 3.5, 0.01, 0, 0, 24.005, 0, 0.03, 0, -2.165, 0, 0, 3, 3.5, 0.01, 0, 0, 26.605, 0, 0.03, 0, -3.485, 0, 0, 3, 3.5, 0.01, 0, 0, 26.605, 0, 0.03, 0, -2.825, 0, 0, 3, 3.5, 0.01, 0, 0, 26.605, 0, 0.03, 0, -2.165, 0, 0, 3, 3.5, 0.01, 0, 0, 31.005, 0, 0.03, 0, -3.485, 0, 0, 3, 3.5, 0.01, 0, 0, 31.005, 0, 0.03, 0, -2.825, 0, 0, 3, 3.5, 0.01, 0, 0, 31.005, 0, 0.03, 0, -2.165, 0, 0, 3, 3.5, 0.01, 0, 0, 33.605, 0, 0.03, 0, -3.485, 0, 0, 3, 3.5, 0.01, 0, 0, 33.605, 0, 0.03, 0, -2.825, 0, 0, 3, 3.5, 0.01, 0, 0, 33.605, 0, 0.03, 0, -2.165, 0, 0, 3, 3.5)
 
-[sub_resource type="BoxMesh" id="s496"]
-material = SubResource("s16")
+[sub_resource type="BoxMesh" id="s495"]
+material = SubResource("s317")
 size = Vector3(1, 1, 1)
+
+[sub_resource type="MultiMesh" id="s496"]
+transform_format = 1
+instance_count = 20
+mesh = SubResource("s495")
+buffer = PackedFloat32Array(0.01, 0, 0, 24.005, 0, 0.03, 0, -3.265, 0, 0, 3, 3.5, 0.01, 0, 0, 24.005, 0, 0.03, 0, -3.045, 0, 0, 3, 3.5, 0.01, 0, 0, 24.005, 0, 0.03, 0, -2.605, 0, 0, 3, 3.5, 0.01, 0, 0, 24.005, 0, 0.03, 0, -2.385, 0, 0, 3, 3.5, 0.01, 0, 0, 24.005, 0, 0.03, 0, -1.945, 0, 0, 3, 3.5, 0.01, 0, 0, 26.605, 0, 0.03, 0, -3.265, 0, 0, 3, 3.5, 0.01, 0, 0, 26.605, 0, 0.03, 0, -3.045, 0, 0, 3, 3.5, 0.01, 0, 0, 26.605, 0, 0.03, 0, -2.605, 0, 0, 3, 3.5, 0.01, 0, 0, 26.605, 0, 0.03, 0, -2.385, 0, 0, 3, 3.5, 0.01, 0, 0, 26.605, 0, 0.03, 0, -1.945, 0, 0, 3, 3.5, 0.01, 0, 0, 31.005, 0, 0.03, 0, -3.265, 0, 0, 3, 3.5, 0.01, 0, 0, 31.005, 0, 0.03, 0, -3.045, 0, 0, 3, 3.5, 0.01, 0, 0, 31.005, 0, 0.03, 0, -2.605, 0, 0, 3, 3.5, 0.01, 0, 0, 31.005, 0, 0.03, 0, -2.385, 0, 0, 3, 3.5, 0.01, 0, 0, 31.005, 0, 0.03, 0, -1.945, 0, 0, 3, 3.5, 0.01, 0, 0, 33.605, 0, 0.03, 0, -3.265, 0, 0, 3, 3.5, 0.01, 0, 0, 33.605, 0, 0.03, 0, -3.045, 0, 0, 3, 3.5, 0.01, 0, 0, 33.605, 0, 0.03, 0, -2.605, 0, 0, 3, 3.5, 0.01, 0, 0, 33.605, 0, 0.03, 0, -2.385, 0, 0, 3, 3.5, 0.01, 0, 0, 33.605, 0, 0.03, 0, -1.945, 0, 0, 3, 3.5)
 
 [sub_resource type="MultiMesh" id="s497"]
 transform_format = 1
 instance_count = 1
-mesh = SubResource("s496")
-buffer = PackedFloat32Array(1.4, 0, 0, 31.8, 0, 2.3, 0, 1.15, 0, 0, 0.1, 12.5)
+mesh = SubResource("s465")
+buffer = PackedFloat32Array(2.4, 0, 0, 28, 0, 0.04, 0, -3.06, 0, 0, 0.8, 0.6)
 
-[sub_resource type="BoxMesh" id="s498"]
-material = SubResource("s34")
-size = Vector3(1, 1, 1)
+[sub_resource type="MultiMesh" id="s498"]
+transform_format = 1
+instance_count = 1
+mesh = SubResource("s469")
+buffer = PackedFloat32Array(1.2, 0, 0, 28, 0, 0.7, 0, -2.65, 0, 0, 0.07, 0.285)
 
 [sub_resource type="MultiMesh" id="s499"]
 transform_format = 1
 instance_count = 1
-mesh = SubResource("s498")
-buffer = PackedFloat32Array(17.8, 0, 0, 12.9, 0, 0.2, 0, -3.9, 0, 0, 2.8, 17.8)
+mesh = SubResource("s471")
+buffer = PackedFloat32Array(1.1, 0, 0, 28, 0, 0.6, 0, -2.65, 0, 0, 0.005, 0.3225)
 
-[sub_resource type="MultiMesh" id="s500"]
-transform_format = 1
-instance_count = 3
-mesh = SubResource("s496")
-buffer = PackedFloat32Array(18, 0, 0, 12.8, 0, 3.6, 0, -2, 0, 0, 0.2, 16.3, 18, 0, 0, 12.8, 0, 3.6, 0, -2, 0, 0, 0.2, 19.3, 0.2, 0, 0, 3.9, 0, 3.6, 0, -2, 0, 0, 2.8, 17.8)
-
-[sub_resource type="BoxMesh" id="s501"]
-material = SubResource("s394")
+[sub_resource type="BoxMesh" id="s500"]
+material = SubResource("s247")
 size = Vector3(1, 1, 1)
 
-[sub_resource type="MultiMesh" id="s502"]
+[sub_resource type="MultiMesh" id="s501"]
 transform_format = 1
 instance_count = 1
-mesh = SubResource("s501")
-buffer = PackedFloat32Array(5, 0, 0, 9.5, 0, 0.01, 0, -3.795, 0, 0, 1.8, 17.7)
+mesh = SubResource("s500")
+buffer = PackedFloat32Array(8.5, 0, 0, 26.35, 0, 0.2, 0, -0.5, 0, 0, 0.2, 21.5)
+
+[sub_resource type="BoxMesh" id="s502"]
+material = SubResource("s16")
+size = Vector3(1, 1, 1)
 
 [sub_resource type="MultiMesh" id="s503"]
 transform_format = 1
 instance_count = 1
-mesh = SubResource("s494")
+mesh = SubResource("s502")
+buffer = PackedFloat32Array(1.4, 0, 0, 31.8, 0, 2.3, 0, 1.15, 0, 0, 0.1, 12.5)
+
+[sub_resource type="BoxMesh" id="s504"]
+material = SubResource("s34")
+size = Vector3(1, 1, 1)
+
+[sub_resource type="MultiMesh" id="s505"]
+transform_format = 1
+instance_count = 1
+mesh = SubResource("s504")
+buffer = PackedFloat32Array(17.8, 0, 0, 12.9, 0, 0.2, 0, -3.9, 0, 0, 2.8, 17.8)
+
+[sub_resource type="MultiMesh" id="s506"]
+transform_format = 1
+instance_count = 3
+mesh = SubResource("s502")
+buffer = PackedFloat32Array(18, 0, 0, 12.8, 0, 3.6, 0, -2, 0, 0, 0.2, 16.3, 18, 0, 0, 12.8, 0, 3.6, 0, -2, 0, 0, 0.2, 19.3, 0.2, 0, 0, 3.9, 0, 3.6, 0, -2, 0, 0, 2.8, 17.8)
+
+[sub_resource type="BoxMesh" id="s507"]
+material = SubResource("s397")
+size = Vector3(1, 1, 1)
+
+[sub_resource type="MultiMesh" id="s508"]
+transform_format = 1
+instance_count = 1
+mesh = SubResource("s507")
+buffer = PackedFloat32Array(5, 0, 0, 9.5, 0, 0.01, 0, -3.795, 0, 0, 1.8, 17.7)
+
+[sub_resource type="MultiMesh" id="s509"]
+transform_format = 1
+instance_count = 1
+mesh = SubResource("s500")
 buffer = PackedFloat32Array(17.8, 0, 0, 12.9, 0, 0.2, 0, -0.8, 0, 0, 0.2, 19)
 
-[sub_resource type="ShaderMaterial" id="s504"]
+[sub_resource type="ShaderMaterial" id="s510"]
 render_priority = 0
 shader = ExtResource("e12")
 shader_parameter/albedo = Color(0.600, 0.200, 0.170, 1.000)
@@ -7957,21 +8005,21 @@ shader_parameter/inst_var = 0.040
 shader_parameter/wear_color = Color(0.550, 0.550, 0.560, 1.000)
 shader_parameter/shape_round = 1.0
 
-[sub_resource type="CylinderMesh" id="s505"]
-material = SubResource("s504")
+[sub_resource type="CylinderMesh" id="s511"]
+material = SubResource("s510")
 top_radius = 0.50
 bottom_radius = 0.5
 height = 1.0
 radial_segments = 20
 rings = 1
 
-[sub_resource type="MultiMesh" id="s506"]
+[sub_resource type="MultiMesh" id="s512"]
 transform_format = 1
 instance_count = 3
-mesh = SubResource("s505")
+mesh = SubResource("s511")
 buffer = PackedFloat32Array(0.58, 0, 0, -8.5, 0, 0.88, 0, 0.44, 0, 0, 0.58, 8, 0.58, 0, 0, -8, 0, 0.88, 0, 0.44, 0, 0, 0.58, 8.6, 0.58, 0, 0, -2, 0, 0.88, 0, 0.44, 0, 0, 0.58, 19.5)
 
-[sub_resource type="ShaderMaterial" id="s507"]
+[sub_resource type="ShaderMaterial" id="s513"]
 render_priority = 0
 shader = ExtResource("e12")
 shader_parameter/albedo = Color(0.200, 0.220, 0.240, 1.000)
@@ -7996,287 +8044,287 @@ shader_parameter/inst_var = 0.040
 shader_parameter/wear_color = Color(0.550, 0.550, 0.560, 1.000)
 shader_parameter/shape_round = 1.0
 
-[sub_resource type="CylinderMesh" id="s508"]
-material = SubResource("s507")
+[sub_resource type="CylinderMesh" id="s514"]
+material = SubResource("s513")
 top_radius = 0.50
 bottom_radius = 0.5
 height = 1.0
 radial_segments = 20
 rings = 1
 
-[sub_resource type="MultiMesh" id="s509"]
+[sub_resource type="MultiMesh" id="s515"]
 transform_format = 1
 instance_count = 1
-mesh = SubResource("s508")
+mesh = SubResource("s514")
 buffer = PackedFloat32Array(0.12, 0, 0, -9.4, 0, 4, 0, 2, 0, 0, 0.12, 11)
 
-[sub_resource type="BoxShape3D" id="s510"]
+[sub_resource type="BoxShape3D" id="s516"]
 size = Vector3(22, 0.2, 22)
 
-[sub_resource type="BoxShape3D" id="s511"]
+[sub_resource type="BoxShape3D" id="s517"]
 size = Vector3(9.2, 0.2, 22)
 
-[sub_resource type="BoxShape3D" id="s512"]
+[sub_resource type="BoxShape3D" id="s518"]
 size = Vector3(1.6, 0.2, 22)
 
-[sub_resource type="BoxShape3D" id="s513"]
+[sub_resource type="BoxShape3D" id="s519"]
 size = Vector3(1.2, 0.2, 14.5)
 
-[sub_resource type="BoxShape3D" id="s514"]
+[sub_resource type="BoxShape3D" id="s520"]
 size = Vector3(1.2, 0.2, 1.5)
 
-[sub_resource type="BoxShape3D" id="s515"]
+[sub_resource type="BoxShape3D" id="s521"]
 size = Vector3(0.2, 4.6, 10.2)
 
-[sub_resource type="BoxShape3D" id="s516"]
+[sub_resource type="BoxShape3D" id="s522"]
 size = Vector3(0.2, 2.2, 1.4)
 
-[sub_resource type="BoxShape3D" id="s517"]
+[sub_resource type="BoxShape3D" id="s523"]
 size = Vector3(0.2, 4.6, 10.8)
 
-[sub_resource type="BoxShape3D" id="s518"]
+[sub_resource type="BoxShape3D" id="s524"]
 size = Vector3(0.2, 4.6, 22.4)
 
-[sub_resource type="BoxShape3D" id="s519"]
+[sub_resource type="BoxShape3D" id="s525"]
 size = Vector3(4, 4.6, 0.2)
 
-[sub_resource type="BoxShape3D" id="s520"]
+[sub_resource type="BoxShape3D" id="s526"]
 size = Vector3(3, 3, 0.2)
 
-[sub_resource type="BoxShape3D" id="s521"]
+[sub_resource type="BoxShape3D" id="s527"]
 size = Vector3(3, 0.6, 0.2)
 
-[sub_resource type="BoxShape3D" id="s522"]
+[sub_resource type="BoxShape3D" id="s528"]
 size = Vector3(11, 4.6, 0.2)
 
-[sub_resource type="BoxShape3D" id="s523"]
+[sub_resource type="BoxShape3D" id="s529"]
 size = Vector3(3, 2.6, 0.2)
 
-[sub_resource type="BoxShape3D" id="s524"]
+[sub_resource type="BoxShape3D" id="s530"]
 size = Vector3(3, 1, 0.2)
 
-[sub_resource type="BoxShape3D" id="s525"]
+[sub_resource type="BoxShape3D" id="s531"]
 size = Vector3(6, 4.6, 0.2)
 
-[sub_resource type="BoxShape3D" id="s526"]
+[sub_resource type="BoxShape3D" id="s532"]
 size = Vector3(20, 4.6, 0.2)
 
-[sub_resource type="BoxShape3D" id="s527"]
+[sub_resource type="BoxShape3D" id="s533"]
 size = Vector3(0.2, 4.6, 10)
 
-[sub_resource type="BoxShape3D" id="s528"]
+[sub_resource type="BoxShape3D" id="s534"]
 size = Vector3(0.2, 4.6, 10.6)
 
-[sub_resource type="BoxShape3D" id="s529"]
+[sub_resource type="BoxShape3D" id="s535"]
 size = Vector3(5, 4.6, 0.14)
 
-[sub_resource type="BoxShape3D" id="s530"]
+[sub_resource type="BoxShape3D" id="s536"]
 size = Vector3(1.4, 2.3, 0.14)
 
-[sub_resource type="BoxShape3D" id="s531"]
+[sub_resource type="BoxShape3D" id="s537"]
 size = Vector3(5.6, 4.6, 0.14)
 
-[sub_resource type="BoxShape3D" id="s532"]
+[sub_resource type="BoxShape3D" id="s538"]
 size = Vector3(3, 4.6, 0.14)
 
-[sub_resource type="BoxShape3D" id="s533"]
+[sub_resource type="BoxShape3D" id="s539"]
 size = Vector3(4.7, 4.6, 0.14)
 
-[sub_resource type="BoxShape3D" id="s534"]
+[sub_resource type="BoxShape3D" id="s540"]
 size = Vector3(1.5, 4.6, 0.14)
 
-[sub_resource type="BoxShape3D" id="s535"]
+[sub_resource type="BoxShape3D" id="s541"]
 size = Vector3(0.14, 4.6, 9.5)
 
-[sub_resource type="BoxShape3D" id="s536"]
+[sub_resource type="BoxShape3D" id="s542"]
 size = Vector3(0.06, 1.1, 6)
 
-[sub_resource type="BoxShape3D" id="s537"]
+[sub_resource type="BoxShape3D" id="s543"]
 size = Vector3(12, 0.2, 22)
 
-[sub_resource type="BoxShape3D" id="s538"]
+[sub_resource type="BoxShape3D" id="s544"]
 size = Vector3(0.2, 3.6, 17.2)
 
-[sub_resource type="BoxShape3D" id="s539"]
+[sub_resource type="BoxShape3D" id="s545"]
 size = Vector3(0.2, 1.2, 1.6)
 
-[sub_resource type="BoxShape3D" id="s540"]
+[sub_resource type="BoxShape3D" id="s546"]
 size = Vector3(0.2, 3.6, 3.6)
 
-[sub_resource type="BoxShape3D" id="s541"]
+[sub_resource type="BoxShape3D" id="s547"]
 size = Vector3(0.2, 3.6, 22.4)
 
-[sub_resource type="BoxShape3D" id="s542"]
+[sub_resource type="BoxShape3D" id="s548"]
 size = Vector3(12.4, 3.6, 0.2)
 
-[sub_resource type="BoxShape3D" id="s543"]
+[sub_resource type="BoxShape3D" id="s549"]
 size = Vector3(0.14, 3.6, 6.5)
 
-[sub_resource type="BoxShape3D" id="s544"]
+[sub_resource type="BoxShape3D" id="s550"]
 size = Vector3(1.5, 3.6, 6.5)
 
-[sub_resource type="BoxShape3D" id="s545"]
+[sub_resource type="BoxShape3D" id="s551"]
 size = Vector3(2, 3.6, 0.14)
 
-[sub_resource type="BoxShape3D" id="s546"]
+[sub_resource type="BoxShape3D" id="s552"]
 size = Vector3(1.4, 1.3, 0.14)
 
-[sub_resource type="BoxShape3D" id="s547"]
+[sub_resource type="BoxShape3D" id="s553"]
 size = Vector3(1.8, 3.6, 0.14)
 
-[sub_resource type="BoxShape3D" id="s548"]
+[sub_resource type="BoxShape3D" id="s554"]
 size = Vector3(1.6, 1.3, 0.14)
 
-[sub_resource type="BoxShape3D" id="s549"]
+[sub_resource type="BoxShape3D" id="s555"]
 size = Vector3(1.9, 3.6, 0.14)
 
-[sub_resource type="BoxShape3D" id="s550"]
+[sub_resource type="BoxShape3D" id="s556"]
 size = Vector3(3.3, 3.6, 0.14)
 
-[sub_resource type="BoxShape3D" id="s551"]
+[sub_resource type="BoxShape3D" id="s557"]
 size = Vector3(0.14, 3.6, 2.5)
 
-[sub_resource type="BoxShape3D" id="s552"]
+[sub_resource type="BoxShape3D" id="s558"]
 size = Vector3(0.14, 1.3, 1.4)
 
-[sub_resource type="BoxShape3D" id="s553"]
+[sub_resource type="BoxShape3D" id="s559"]
 size = Vector3(0.14, 3.6, 2.6)
 
-[sub_resource type="BoxShape3D" id="s554"]
+[sub_resource type="BoxShape3D" id="s560"]
 size = Vector3(5.2, 3.6, 0.14)
 
-[sub_resource type="BoxShape3D" id="s555"]
+[sub_resource type="BoxShape3D" id="s561"]
 size = Vector3(1.6, 1.2, 0.14)
 
-[sub_resource type="BoxShape3D" id="s556"]
+[sub_resource type="BoxShape3D" id="s562"]
 size = Vector3(35, 0.2, 23)
 
-[sub_resource type="BoxShape3D" id="s557"]
+[sub_resource type="BoxShape3D" id="s563"]
 size = Vector3(0.2, 2.4, 1.6)
 
-[sub_resource type="BoxShape3D" id="s558"]
+[sub_resource type="BoxShape3D" id="s564"]
 size = Vector3(1.2, 0.25, 7.4572)
 
-[sub_resource type="BoxShape3D" id="s559"]
+[sub_resource type="BoxShape3D" id="s565"]
 size = Vector3(0.06, 1, 6.1552)
 
-[sub_resource type="BoxShape3D" id="s560"]
+[sub_resource type="BoxShape3D" id="s566"]
 size = Vector3(58, 0.23, 7.8)
 
-[sub_resource type="BoxShape3D" id="s561"]
+[sub_resource type="BoxShape3D" id="s567"]
 size = Vector3(15.8, 0.23, 22.4)
 
-[sub_resource type="BoxShape3D" id="s562"]
+[sub_resource type="BoxShape3D" id="s568"]
 size = Vector3(7.8, 0.23, 22.4)
 
-[sub_resource type="BoxShape3D" id="s563"]
+[sub_resource type="BoxShape3D" id="s569"]
 size = Vector3(0.2, 2.2, 26)
 
-[sub_resource type="BoxShape3D" id="s564"]
+[sub_resource type="BoxShape3D" id="s570"]
 size = Vector3(9.8, 2.2, 0.2)
 
-[sub_resource type="BoxShape3D" id="s565"]
+[sub_resource type="BoxShape3D" id="s571"]
 size = Vector3(0.3, 1, 0.3)
 
-[sub_resource type="BoxShape3D" id="s566"]
+[sub_resource type="BoxShape3D" id="s572"]
 size = Vector3(1.2, 0.15, 1)
 
-[sub_resource type="BoxShape3D" id="s567"]
+[sub_resource type="BoxShape3D" id="s573"]
 size = Vector3(0.58, 0.88, 0.58)
 
-[sub_resource type="BoxShape3D" id="s568"]
+[sub_resource type="BoxShape3D" id="s574"]
 size = Vector3(14, 0.9, 1.2)
 
-[sub_resource type="BoxShape3D" id="s569"]
+[sub_resource type="BoxShape3D" id="s575"]
 size = Vector3(14, 0.3, 1)
 
-[sub_resource type="BoxShape3D" id="s570"]
+[sub_resource type="BoxShape3D" id="s576"]
 size = Vector3(2.2, 2.6, 2)
 
-[sub_resource type="BoxShape3D" id="s571"]
+[sub_resource type="BoxShape3D" id="s577"]
 size = Vector3(2.24, 0.2, 2.04)
 
-[sub_resource type="BoxShape3D" id="s572"]
+[sub_resource type="BoxShape3D" id="s578"]
 size = Vector3(2.4, 3, 2.2)
 
-[sub_resource type="BoxShape3D" id="s573"]
+[sub_resource type="BoxShape3D" id="s579"]
 size = Vector3(2.44, 0.2, 2.24)
 
-[sub_resource type="BoxShape3D" id="s574"]
+[sub_resource type="BoxShape3D" id="s580"]
 size = Vector3(2, 2.4, 2.4)
 
-[sub_resource type="BoxShape3D" id="s575"]
+[sub_resource type="BoxShape3D" id="s581"]
 size = Vector3(2.04, 0.2, 2.44)
 
-[sub_resource type="BoxShape3D" id="s576"]
+[sub_resource type="BoxShape3D" id="s582"]
 size = Vector3(1.4, 1.6, 1.4)
 
-[sub_resource type="BoxShape3D" id="s577"]
+[sub_resource type="BoxShape3D" id="s583"]
 size = Vector3(1, 0.6, 1)
 
-[sub_resource type="BoxShape3D" id="s578"]
+[sub_resource type="BoxShape3D" id="s584"]
 size = Vector3(1.4, 1.4, 1.4)
 
-[sub_resource type="BoxShape3D" id="s579"]
+[sub_resource type="BoxShape3D" id="s585"]
 size = Vector3(1.4, 1.8, 1.4)
 
-[sub_resource type="BoxShape3D" id="s580"]
+[sub_resource type="BoxShape3D" id="s586"]
 size = Vector3(1.4, 1.2, 1.4)
 
-[sub_resource type="BoxShape3D" id="s581"]
+[sub_resource type="BoxShape3D" id="s587"]
 size = Vector3(3, 2, 0.5)
 
-[sub_resource type="BoxShape3D" id="s582"]
+[sub_resource type="BoxShape3D" id="s588"]
 size = Vector3(7, 0.04, 0.9)
 
-[sub_resource type="BoxShape3D" id="s583"]
+[sub_resource type="BoxShape3D" id="s589"]
 size = Vector3(0.6, 1.1, 0.6)
 
-[sub_resource type="BoxShape3D" id="s584"]
+[sub_resource type="BoxShape3D" id="s590"]
 size = Vector3(1.2, 1.8, 2)
 
-[sub_resource type="BoxShape3D" id="s585"]
+[sub_resource type="BoxShape3D" id="s591"]
 size = Vector3(2, 0.04, 1.2)
 
-[sub_resource type="BoxShape3D" id="s586"]
+[sub_resource type="BoxShape3D" id="s592"]
 size = Vector3(1, 1.9, 0.9)
 
-[sub_resource type="BoxShape3D" id="s587"]
+[sub_resource type="BoxShape3D" id="s593"]
 size = Vector3(0.8, 0.8, 2.5)
 
-[sub_resource type="BoxShape3D" id="s588"]
+[sub_resource type="BoxShape3D" id="s594"]
 size = Vector3(2, 1.4, 0.7)
 
-[sub_resource type="BoxShape3D" id="s589"]
+[sub_resource type="BoxShape3D" id="s595"]
 size = Vector3(1.1, 0.8, 1)
 
-[sub_resource type="BoxShape3D" id="s590"]
+[sub_resource type="BoxShape3D" id="s596"]
 size = Vector3(1, 2.2, 4)
 
-[sub_resource type="BoxShape3D" id="s591"]
+[sub_resource type="BoxShape3D" id="s597"]
 size = Vector3(2.4, 0.04, 0.8)
 
-[sub_resource type="BoxShape3D" id="s592"]
+[sub_resource type="BoxShape3D" id="s598"]
 size = Vector3(1.4, 2.3, 0.1)
 
-[sub_resource type="BoxShape3D" id="s593"]
+[sub_resource type="BoxShape3D" id="s599"]
 size = Vector3(17.8, 0.2, 2.8)
 
-[sub_resource type="BoxShape3D" id="s594"]
+[sub_resource type="BoxShape3D" id="s600"]
 size = Vector3(18, 3.6, 0.2)
 
-[sub_resource type="BoxShape3D" id="s595"]
+[sub_resource type="BoxShape3D" id="s601"]
 size = Vector3(0.2, 3.6, 2.8)
 
 [node name="FactoryWorld" type="Node3D" node_paths=PackedStringArray("world_environment", "ambient")]
 script = ExtResource("e1")
-real_environment = SubResource("s395")
-otherworld_environment = SubResource("s396")
+real_environment = SubResource("s398")
+otherworld_environment = SubResource("s399")
 world_environment = NodePath("WorldEnvironment")
 ambient = NodePath("Ambient")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("s395")
+environment = SubResource("s398")
 
 [node name="Moon" type="DirectionalLight3D" parent="." groups=["real_light"]]
 transform = Transform3D(0.707107, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707107, -0.5, 0.5, 0, 30, 0)
@@ -8365,6 +8413,12 @@ light_color = Color(1.00, 0.75, 0.45, 1)
 light_energy = 1.20
 omni_range = 9.00
 
+[node name="Light_2" type="OmniLight3D" parent="Site" groups=["real_light"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.3, 1.5, 6)
+light_color = Color(0.40, 1.00, 0.65, 1)
+light_energy = 0.70
+omni_range = 2.60
+
 [node name="Light" type="OmniLight3D" parent="Buildings/factory/1F/Lights" groups=["real_light"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 4, 4)
 light_color = Color(1.00, 0.72, 0.42, 1)
@@ -8446,7 +8500,7 @@ building = "factory"
 level_index = 1
 
 [node name="Shape" type="CollisionShape3D" parent="Zones/Zone"]
-shape = SubResource("s397")
+shape = SubResource("s400")
 
 [node name="Zone_2" type="Area3D" parent="Zones"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 1.5, 11)
@@ -8457,7 +8511,7 @@ building = "factory"
 level_index = 1
 
 [node name="Shape" type="CollisionShape3D" parent="Zones/Zone_2"]
-shape = SubResource("s398")
+shape = SubResource("s401")
 
 [node name="Zone_3" type="Area3D" parent="Zones"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 1.5, 11)
@@ -8468,7 +8522,7 @@ building = "factory"
 level_index = 1
 
 [node name="Shape" type="CollisionShape3D" parent="Zones/Zone_3"]
-shape = SubResource("s399")
+shape = SubResource("s402")
 
 [node name="Zone_4" type="Area3D" parent="Zones"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 1.5, 4.75)
@@ -8479,7 +8533,7 @@ building = "factory"
 level_index = 1
 
 [node name="Shape" type="CollisionShape3D" parent="Zones/Zone_4"]
-shape = SubResource("s400")
+shape = SubResource("s403")
 
 [node name="Zone_5" type="Area3D" parent="Zones"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26, 1.5, 17.25)
@@ -8490,7 +8544,7 @@ building = "factory"
 level_index = 1
 
 [node name="Shape" type="CollisionShape3D" parent="Zones/Zone_5"]
-shape = SubResource("s401")
+shape = SubResource("s404")
 
 [node name="Zone_6" type="Area3D" parent="Zones"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 32, 1.5, 17.25)
@@ -8501,7 +8555,7 @@ building = "factory"
 level_index = 1
 
 [node name="Shape" type="CollisionShape3D" parent="Zones/Zone_6"]
-shape = SubResource("s402")
+shape = SubResource("s405")
 
 [node name="Zone_7" type="Area3D" parent="Zones"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, -2.3, 18)
@@ -8512,7 +8566,7 @@ building = "factory"
 level_index = 0
 
 [node name="Shape" type="CollisionShape3D" parent="Zones/Zone_7"]
-shape = SubResource("s403")
+shape = SubResource("s406")
 
 [node name="Zone_8" type="Area3D" parent="Zones"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.6, -2.3, 10.75)
@@ -8523,7 +8577,7 @@ building = "factory"
 level_index = 0
 
 [node name="Shape" type="CollisionShape3D" parent="Zones/Zone_8"]
-shape = SubResource("s404")
+shape = SubResource("s407")
 
 [node name="Zone_9" type="Area3D" parent="Zones"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.4, -2.3, 10.75)
@@ -8534,7 +8588,7 @@ building = "factory"
 level_index = 0
 
 [node name="Shape" type="CollisionShape3D" parent="Zones/Zone_9"]
-shape = SubResource("s404")
+shape = SubResource("s407")
 
 [node name="Zone_10" type="Area3D" parent="Zones"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, -2.3, 3.75)
@@ -8545,7 +8599,7 @@ building = "factory"
 level_index = 0
 
 [node name="Shape" type="CollisionShape3D" parent="Zones/Zone_10"]
-shape = SubResource("s405")
+shape = SubResource("s408")
 
 [node name="Zone_11" type="Area3D" parent="Zones"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.9, -2.3, 17.8)
@@ -8556,7 +8610,7 @@ building = "factory"
 level_index = 0
 
 [node name="Shape" type="CollisionShape3D" parent="Zones/Zone_11"]
-shape = SubResource("s406")
+shape = SubResource("s409")
 
 [node name="Interactables" type="Node3D" parent="."]
 
@@ -8626,7 +8680,7 @@ requires_line = "봉쇄문에 경보 센서가 붙어 있어. 보안망이 살�
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.15, 0)
 use_collision = true
 size = Vector3(1.40, 2.30, 0.20)
-material = SubResource("s407")
+material = SubResource("s410")
 
 [node name="InteractionPoint" type="Marker3D" parent="Interactables/BlastDoor"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, -0.8)
@@ -8645,7 +8699,7 @@ requires_line = ""
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.65, 0)
 use_collision = true
 size = Vector3(1.80, 1.30, 1.00)
-material = SubResource("s408")
+material = SubResource("s411")
 
 [node name="InteractionPoint" type="Marker3D" parent="Interactables/Shredder"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 1)
@@ -8688,7 +8742,7 @@ checkpoint_id = "yard"
 display_name = "공장 서쪽 마당"
 
 [node name="Shape" type="CollisionShape3D" parent="Checkpoints/Checkpoint_yard"]
-shape = SubResource("s409")
+shape = SubResource("s412")
 
 [node name="Checkpoint_corridor" type="Area3D" parent="Checkpoints"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.4, 1, 11)
@@ -8697,7 +8751,7 @@ checkpoint_id = "corridor"
 display_name = "사무동 복도"
 
 [node name="Shape" type="CollisionShape3D" parent="Checkpoints/Checkpoint_corridor"]
-shape = SubResource("s410")
+shape = SubResource("s413")
 
 [node name="Checkpoint_basement" type="Area3D" parent="Checkpoints"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27, -2.8, 18)
@@ -8706,7 +8760,7 @@ checkpoint_id = "basement"
 display_name = "지하 복도"
 
 [node name="Shape" type="CollisionShape3D" parent="Checkpoints/Checkpoint_basement"]
-shape = SubResource("s411")
+shape = SubResource("s414")
 
 [node name="Light_5" type="OmniLight3D" parent="Buildings/factory/B1/Lights" groups=["otherworld_light"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27, -1, 18.5)
@@ -8760,7 +8814,7 @@ defeat_hint = "공격은 먹히지 않았다. 칠수록 더 빨라졌다.
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, -2.8, 17.8)
 
 [node name="Shape" type="CollisionShape3D" parent="FirstEncounter/Trigger"]
-shape = SubResource("s412")
+shape = SubResource("s415")
 
 [node name="EntitySpawn" type="Marker3D" parent="FirstEncounter"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, -3.75, 17.8)
@@ -8775,656 +8829,659 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.5, -3.75, 17.8)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 0.05, 14)
 
 [node name="MM_fac_floor" type="MultiMeshInstance3D" parent="Buildings/factory/1F/Arch"]
-multimesh = SubResource("s414")
-
-[node name="MM_fac_office_floor" type="MultiMeshInstance3D" parent="Buildings/factory/1F/Arch"]
-multimesh = SubResource("s416")
-
-[node name="MM_fac_floor" type="MultiMeshInstance3D" parent="Buildings/factory/B1/Arch"]
 multimesh = SubResource("s417")
 
-[node name="MM_roof_metal" type="MultiMeshInstance3D" parent="Buildings/factory/Roof/Arch"]
+[node name="MM_fac_office_floor" type="MultiMeshInstance3D" parent="Buildings/factory/1F/Arch"]
 multimesh = SubResource("s419")
 
+[node name="MM_fac_floor" type="MultiMeshInstance3D" parent="Buildings/factory/B1/Arch"]
+multimesh = SubResource("s420")
+
+[node name="MM_roof_metal" type="MultiMeshInstance3D" parent="Buildings/factory/Roof/Arch"]
+multimesh = SubResource("s422")
+
 [node name="MM_fac_wall_out" type="MultiMeshInstance3D" parent="Buildings/factory/1F/Arch"]
-multimesh = SubResource("s421")
+multimesh = SubResource("s424")
 
 [node name="MM_fac_wall_in" type="MultiMeshInstance3D" parent="Buildings/factory/1F/Arch"]
-multimesh = SubResource("s423")
+multimesh = SubResource("s426")
 
 [node name="MM_rail_metal" type="MultiMeshInstance3D" parent="Buildings/factory/1F/Arch"]
-multimesh = SubResource("s425")
-
-[node name="MM_wall_b1" type="MultiMeshInstance3D" parent="Buildings/factory/B1/Arch"]
-multimesh = SubResource("s427")
-
-[node name="MM_wall_b1_2" type="MultiMeshInstance3D" parent="Buildings/factory/B1/Arch" groups=["real_only"]]
 multimesh = SubResource("s428")
 
-[node name="MM_metal_grate" type="MultiMeshInstance3D" parent="Buildings/factory/1F/Stairs"]
+[node name="MM_wall_b1" type="MultiMeshInstance3D" parent="Buildings/factory/B1/Arch"]
 multimesh = SubResource("s430")
 
-[node name="MM_rail_metal" type="MultiMeshInstance3D" parent="Buildings/factory/1F/Stairs"]
+[node name="MM_wall_b1_2" type="MultiMeshInstance3D" parent="Buildings/factory/B1/Arch" groups=["real_only"]]
 multimesh = SubResource("s431")
 
-[node name="MM_ground" type="MultiMeshInstance3D" parent="Site"]
+[node name="MM_metal_grate" type="MultiMeshInstance3D" parent="Buildings/factory/1F/Stairs"]
 multimesh = SubResource("s433")
 
+[node name="MM_rail_metal" type="MultiMeshInstance3D" parent="Buildings/factory/1F/Stairs"]
+multimesh = SubResource("s434")
+
+[node name="MM_ground" type="MultiMeshInstance3D" parent="Site"]
+multimesh = SubResource("s436")
+
 [node name="MM_silt" type="MultiMeshInstance3D" parent="Site"]
-multimesh = SubResource("s435")
+multimesh = SubResource("s438")
 
 [node name="MM_fence" type="MultiMeshInstance3D" parent="Site"]
-multimesh = SubResource("s437")
+multimesh = SubResource("s440")
 
-[node name="MM_metal_dark" type="MultiMeshInstance3D" parent="Site"]
-multimesh = SubResource("s439")
+[node name="MM_fac_terminal_post" type="MultiMeshInstance3D" parent="Site"]
+multimesh = SubResource("s442")
 
-[node name="MM_panel_gray" type="MultiMeshInstance3D" parent="Site"]
-multimesh = SubResource("s441")
+[node name="MM_fac_terminal" type="MultiMeshInstance3D" parent="Site"]
+multimesh = SubResource("s444")
+
+[node name="MM_fac_terminal_screen" type="MultiMeshInstance3D" parent="Site"]
+multimesh = SubResource("s446")
 
 [node name="MM_led_red" type="MultiMeshInstance3D" parent="Site"]
-multimesh = SubResource("s443")
+multimesh = SubResource("s448")
 
 [node name="MM_pallet" type="MultiMeshInstance3D" parent="Site"]
-multimesh = SubResource("s445")
+multimesh = SubResource("s450")
 
 [node name="MM_fac_machine" type="MultiMeshInstance3D" parent="Buildings/factory/1F/Props"]
-multimesh = SubResource("s447")
-
-[node name="MM_fac_belt" type="MultiMeshInstance3D" parent="Buildings/factory/1F/Props"]
-multimesh = SubResource("s449")
-
-[node name="MM_fac_yellow" type="MultiMeshInstance3D" parent="Buildings/factory/1F/Props"]
-multimesh = SubResource("s451")
-
-[node name="MM_panel_gray" type="MultiMeshInstance3D" parent="Buildings/factory/1F/Props"]
 multimesh = SubResource("s452")
 
-[node name="MM_fac_crate" type="MultiMeshInstance3D" parent="Buildings/factory/1F/Props"]
+[node name="MM_fac_belt" type="MultiMeshInstance3D" parent="Buildings/factory/1F/Props"]
 multimesh = SubResource("s454")
 
-[node name="MM_locker_gray" type="MultiMeshInstance3D" parent="Buildings/factory/1F/Props"]
+[node name="MM_fac_yellow" type="MultiMeshInstance3D" parent="Buildings/factory/1F/Props"]
 multimesh = SubResource("s456")
 
-[node name="MM_steel_frame" type="MultiMeshInstance3D" parent="Buildings/factory/1F/Props"]
+[node name="MM_panel_gray" type="MultiMeshInstance3D" parent="Buildings/factory/1F/Props"]
 multimesh = SubResource("s458")
 
-[node name="MM_desk_top" type="MultiMeshInstance3D" parent="Buildings/factory/1F/Props"]
+[node name="MM_fac_crate" type="MultiMeshInstance3D" parent="Buildings/factory/1F/Props"]
 multimesh = SubResource("s460")
 
-[node name="MM_desk_frame" type="MultiMeshInstance3D" parent="Buildings/factory/1F/Props"]
+[node name="MM_locker_gray" type="MultiMeshInstance3D" parent="Buildings/factory/1F/Props"]
 multimesh = SubResource("s462")
 
-[node name="MM_monitor" type="MultiMeshInstance3D" parent="Buildings/factory/1F/Props"]
+[node name="MM_steel_frame" type="MultiMeshInstance3D" parent="Buildings/factory/1F/Props"]
 multimesh = SubResource("s464")
 
-[node name="MM_screen_on" type="MultiMeshInstance3D" parent="Buildings/factory/1F/Props"]
+[node name="MM_desk_top" type="MultiMeshInstance3D" parent="Buildings/factory/1F/Props"]
 multimesh = SubResource("s466")
 
-[node name="MM_chair_office" type="MultiMeshInstance3D" parent="Buildings/factory/1F/Props"]
+[node name="MM_desk_frame" type="MultiMeshInstance3D" parent="Buildings/factory/1F/Props"]
 multimesh = SubResource("s468")
 
-[node name="MM_file_box" type="MultiMeshInstance3D" parent="Buildings/factory/1F/Props"]
+[node name="MM_monitor" type="MultiMeshInstance3D" parent="Buildings/factory/1F/Props"]
 multimesh = SubResource("s470")
 
-[node name="MM_table_top" type="MultiMeshInstance3D" parent="Buildings/factory/1F/Props"]
+[node name="MM_screen_on" type="MultiMeshInstance3D" parent="Buildings/factory/1F/Props"]
 multimesh = SubResource("s472")
 
-[node name="MM_vending_red" type="MultiMeshInstance3D" parent="Buildings/factory/1F/Props"]
+[node name="MM_chair_office" type="MultiMeshInstance3D" parent="Buildings/factory/1F/Props"]
 multimesh = SubResource("s474")
 
-[node name="MM_sofa" type="MultiMeshInstance3D" parent="Buildings/factory/1F/Props"]
+[node name="MM_file_box" type="MultiMeshInstance3D" parent="Buildings/factory/1F/Props"]
 multimesh = SubResource("s476")
 
-[node name="MM_control_panel" type="MultiMeshInstance3D" parent="Buildings/factory/B1/Props"]
+[node name="MM_table_top" type="MultiMeshInstance3D" parent="Buildings/factory/1F/Props"]
 multimesh = SubResource("s478")
 
-[node name="MM_panel_red" type="MultiMeshInstance3D" parent="Buildings/factory/B1/Props"]
+[node name="MM_vending_red" type="MultiMeshInstance3D" parent="Buildings/factory/1F/Props"]
 multimesh = SubResource("s480")
 
-[node name="MM_cable_tray" type="MultiMeshInstance3D" parent="Buildings/factory/B1/Props"]
+[node name="MM_sofa" type="MultiMeshInstance3D" parent="Buildings/factory/1F/Props"]
 multimesh = SubResource("s482")
 
-[node name="MM_file_box" type="MultiMeshInstance3D" parent="Buildings/factory/B1/Props"]
-multimesh = SubResource("s483")
+[node name="MM_control_panel" type="MultiMeshInstance3D" parent="Buildings/factory/B1/Props"]
+multimesh = SubResource("s484")
 
-[node name="MM_paper" type="MultiMeshInstance3D" parent="Buildings/factory/B1/Props"]
-multimesh = SubResource("s485")
+[node name="MM_panel_red" type="MultiMeshInstance3D" parent="Buildings/factory/B1/Props"]
+multimesh = SubResource("s486")
 
-[node name="MM_fac_server" type="MultiMeshInstance3D" parent="Buildings/factory/B1/Props"]
-multimesh = SubResource("s487")
-
-[node name="MM_led_red" type="MultiMeshInstance3D" parent="Buildings/factory/B1/Props"]
+[node name="MM_cable_tray" type="MultiMeshInstance3D" parent="Buildings/factory/B1/Props"]
 multimesh = SubResource("s488")
 
-[node name="MM_led_green" type="MultiMeshInstance3D" parent="Buildings/factory/B1/Props"]
-multimesh = SubResource("s490")
+[node name="MM_file_box" type="MultiMeshInstance3D" parent="Buildings/factory/B1/Props"]
+multimesh = SubResource("s489")
 
-[node name="MM_desk_top" type="MultiMeshInstance3D" parent="Buildings/factory/B1/Props"]
+[node name="MM_paper" type="MultiMeshInstance3D" parent="Buildings/factory/B1/Props"]
 multimesh = SubResource("s491")
 
-[node name="MM_monitor" type="MultiMeshInstance3D" parent="Buildings/factory/B1/Props"]
-multimesh = SubResource("s492")
-
-[node name="MM_screen_on" type="MultiMeshInstance3D" parent="Buildings/factory/B1/Props"]
+[node name="MM_fac_server" type="MultiMeshInstance3D" parent="Buildings/factory/B1/Props"]
 multimesh = SubResource("s493")
 
-[node name="MM_pipe" type="MultiMeshInstance3D" parent="Buildings/factory/B1/Props"]
-multimesh = SubResource("s495")
+[node name="MM_led_red" type="MultiMeshInstance3D" parent="Buildings/factory/B1/Props"]
+multimesh = SubResource("s494")
 
-[node name="MM_wall_b1_flood" type="MultiMeshInstance3D" parent="Buildings/factory/1F/Arch" groups=["otherworld_only"]]
+[node name="MM_led_green" type="MultiMeshInstance3D" parent="Buildings/factory/B1/Props"]
+multimesh = SubResource("s496")
+
+[node name="MM_desk_top" type="MultiMeshInstance3D" parent="Buildings/factory/B1/Props"]
 multimesh = SubResource("s497")
 
-[node name="MM_floor_b1_old" type="MultiMeshInstance3D" parent="Buildings/factory/B1/Arch" groups=["otherworld_only"]]
+[node name="MM_monitor" type="MultiMeshInstance3D" parent="Buildings/factory/B1/Props"]
+multimesh = SubResource("s498")
+
+[node name="MM_screen_on" type="MultiMeshInstance3D" parent="Buildings/factory/B1/Props"]
 multimesh = SubResource("s499")
 
-[node name="MM_wall_b1_flood" type="MultiMeshInstance3D" parent="Buildings/factory/B1/Arch" groups=["otherworld_only"]]
-multimesh = SubResource("s500")
+[node name="MM_pipe" type="MultiMeshInstance3D" parent="Buildings/factory/B1/Props"]
+multimesh = SubResource("s501")
 
-[node name="MM_water" type="MultiMeshInstance3D" parent="Buildings/factory/B1/Arch" groups=["otherworld_only"]]
-multimesh = SubResource("s502")
-
-[node name="MM_pipe" type="MultiMeshInstance3D" parent="Buildings/factory/B1/Arch" groups=["otherworld_only"]]
+[node name="MM_wall_b1_flood" type="MultiMeshInstance3D" parent="Buildings/factory/1F/Arch" groups=["otherworld_only"]]
 multimesh = SubResource("s503")
 
-[node name="MC_pipe_red" type="MultiMeshInstance3D" parent="Site"]
+[node name="MM_floor_b1_old" type="MultiMeshInstance3D" parent="Buildings/factory/B1/Arch" groups=["otherworld_only"]]
+multimesh = SubResource("s505")
+
+[node name="MM_wall_b1_flood" type="MultiMeshInstance3D" parent="Buildings/factory/B1/Arch" groups=["otherworld_only"]]
 multimesh = SubResource("s506")
 
-[node name="MC_lamp_post" type="MultiMeshInstance3D" parent="Site"]
+[node name="MM_water" type="MultiMeshInstance3D" parent="Buildings/factory/B1/Arch" groups=["otherworld_only"]]
+multimesh = SubResource("s508")
+
+[node name="MM_pipe" type="MultiMeshInstance3D" parent="Buildings/factory/B1/Arch" groups=["otherworld_only"]]
 multimesh = SubResource("s509")
+
+[node name="MC_pipe_red" type="MultiMeshInstance3D" parent="Site"]
+multimesh = SubResource("s512")
+
+[node name="MC_lamp_post" type="MultiMeshInstance3D" parent="Site"]
+multimesh = SubResource("s515")
 
 [node name="Collision" type="StaticBody3D" parent="Buildings/factory/1F/Arch"]
 
 [node name="S" type="CollisionShape3D" parent="Buildings/factory/1F/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, -0.1, 11)
-shape = SubResource("s510")
+shape = SubResource("s516")
 
 [node name="S_2" type="CollisionShape3D" parent="Buildings/factory/1F/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.6, -0.1, 11)
-shape = SubResource("s511")
+shape = SubResource("s517")
 
 [node name="S_3" type="CollisionShape3D" parent="Buildings/factory/1F/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33.2, -0.1, 11)
-shape = SubResource("s512")
+shape = SubResource("s518")
 
 [node name="S_4" type="CollisionShape3D" parent="Buildings/factory/1F/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.8, -0.1, 7.25)
-shape = SubResource("s513")
+shape = SubResource("s519")
 
 [node name="S_5" type="CollisionShape3D" parent="Buildings/factory/1F/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.8, -0.1, 21.25)
-shape = SubResource("s514")
+shape = SubResource("s520")
 
 [node name="S_6" type="CollisionShape3D" parent="Buildings/factory/1F/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.1, 2.3, 4.9)
-shape = SubResource("s515")
+shape = SubResource("s521")
 
 [node name="S_7" type="CollisionShape3D" parent="Buildings/factory/1F/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.1, 3.5, 10.7)
-shape = SubResource("s516")
+shape = SubResource("s522")
 
 [node name="S_8" type="CollisionShape3D" parent="Buildings/factory/1F/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.1, 2.3, 16.8)
-shape = SubResource("s517")
+shape = SubResource("s523")
 
 [node name="S_9" type="CollisionShape3D" parent="Buildings/factory/1F/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34.1, 2.3, 11)
-shape = SubResource("s518")
+shape = SubResource("s524")
 
 [node name="S_10" type="CollisionShape3D" parent="Buildings/factory/1F/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 2.3, -0.1)
-shape = SubResource("s519")
+shape = SubResource("s525")
 
 [node name="S_11" type="CollisionShape3D" parent="Buildings/factory/1F/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 1.5, -0.1)
-shape = SubResource("s520")
+shape = SubResource("s526")
 
 [node name="S_12" type="CollisionShape3D" parent="Buildings/factory/1F/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 4.3, -0.1)
-shape = SubResource("s521")
+shape = SubResource("s527")
 
 [node name="S_13" type="CollisionShape3D" parent="Buildings/factory/1F/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 2.3, -0.1)
-shape = SubResource("s519")
+shape = SubResource("s525")
 
 [node name="S_14" type="CollisionShape3D" parent="Buildings/factory/1F/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.5, 1.5, -0.1)
-shape = SubResource("s520")
+shape = SubResource("s526")
 
 [node name="S_15" type="CollisionShape3D" parent="Buildings/factory/1F/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.5, 4.3, -0.1)
-shape = SubResource("s521")
+shape = SubResource("s527")
 
 [node name="S_16" type="CollisionShape3D" parent="Buildings/factory/1F/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.5, 2.3, -0.1)
-shape = SubResource("s522")
+shape = SubResource("s528")
 
 [node name="S_17" type="CollisionShape3D" parent="Buildings/factory/1F/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.5, 1.3, -0.1)
-shape = SubResource("s523")
+shape = SubResource("s529")
 
 [node name="S_18" type="CollisionShape3D" parent="Buildings/factory/1F/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.5, 4.1, -0.1)
-shape = SubResource("s524")
+shape = SubResource("s530")
 
 [node name="S_19" type="CollisionShape3D" parent="Buildings/factory/1F/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31, 2.3, -0.1)
-shape = SubResource("s525")
+shape = SubResource("s531")
 
 [node name="S_20" type="CollisionShape3D" parent="Buildings/factory/1F/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 2.3, 22.1)
-shape = SubResource("s519")
+shape = SubResource("s525")
 
 [node name="S_21" type="CollisionShape3D" parent="Buildings/factory/1F/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 1.5, 22.1)
-shape = SubResource("s520")
+shape = SubResource("s526")
 
 [node name="S_22" type="CollisionShape3D" parent="Buildings/factory/1F/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 4.3, 22.1)
-shape = SubResource("s521")
+shape = SubResource("s527")
 
 [node name="S_23" type="CollisionShape3D" parent="Buildings/factory/1F/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 2.3, 22.1)
-shape = SubResource("s519")
+shape = SubResource("s525")
 
 [node name="S_24" type="CollisionShape3D" parent="Buildings/factory/1F/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.5, 1.5, 22.1)
-shape = SubResource("s520")
+shape = SubResource("s526")
 
 [node name="S_25" type="CollisionShape3D" parent="Buildings/factory/1F/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.5, 4.3, 22.1)
-shape = SubResource("s521")
+shape = SubResource("s527")
 
 [node name="S_26" type="CollisionShape3D" parent="Buildings/factory/1F/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 2.3, 22.1)
-shape = SubResource("s526")
+shape = SubResource("s532")
 
 [node name="S_27" type="CollisionShape3D" parent="Buildings/factory/1F/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 2.3, 5)
-shape = SubResource("s527")
+shape = SubResource("s533")
 
 [node name="S_28" type="CollisionShape3D" parent="Buildings/factory/1F/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 3.5, 10.7)
-shape = SubResource("s516")
+shape = SubResource("s522")
 
 [node name="S_29" type="CollisionShape3D" parent="Buildings/factory/1F/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 2.3, 16.7)
-shape = SubResource("s528")
+shape = SubResource("s534")
 
 [node name="S_30" type="CollisionShape3D" parent="Buildings/factory/1F/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.5, 2.3, 9.5)
-shape = SubResource("s529")
+shape = SubResource("s535")
 
 [node name="S_31" type="CollisionShape3D" parent="Buildings/factory/1F/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.7, 3.45, 9.5)
-shape = SubResource("s530")
+shape = SubResource("s536")
 
 [node name="S_32" type="CollisionShape3D" parent="Buildings/factory/1F/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.2, 2.3, 9.5)
-shape = SubResource("s531")
+shape = SubResource("s537")
 
 [node name="S_33" type="CollisionShape3D" parent="Buildings/factory/1F/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.5, 2.3, 12.5)
-shape = SubResource("s532")
+shape = SubResource("s538")
 
 [node name="S_34" type="CollisionShape3D" parent="Buildings/factory/1F/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.7, 3.45, 12.5)
-shape = SubResource("s530")
+shape = SubResource("s536")
 
 [node name="S_35" type="CollisionShape3D" parent="Buildings/factory/1F/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.75, 2.3, 12.5)
-shape = SubResource("s533")
+shape = SubResource("s539")
 
 [node name="S_36" type="CollisionShape3D" parent="Buildings/factory/1F/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.8, 3.45, 12.5)
-shape = SubResource("s530")
+shape = SubResource("s536")
 
 [node name="S_37" type="CollisionShape3D" parent="Buildings/factory/1F/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33.25, 2.3, 12.5)
-shape = SubResource("s534")
+shape = SubResource("s540")
 
 [node name="S_38" type="CollisionShape3D" parent="Buildings/factory/1F/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 2.3, 17.25)
-shape = SubResource("s535")
+shape = SubResource("s541")
 
 [node name="S_39" type="CollisionShape3D" parent="Buildings/factory/1F/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.16, 0.55, 17.5)
-shape = SubResource("s536")
+shape = SubResource("s542")
 
 [node name="S_40" type="CollisionShape3D" parent="Buildings/factory/1F/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 32.44, 0.55, 17.5)
-shape = SubResource("s536")
+shape = SubResource("s542")
 
 [node name="Collision" type="StaticBody3D" parent="Buildings/factory/B1/Arch"]
 
 [node name="S" type="CollisionShape3D" parent="Buildings/factory/B1/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, -3.9, 11)
-shape = SubResource("s537")
+shape = SubResource("s543")
 
 [node name="S_2" type="CollisionShape3D" parent="Buildings/factory/B1/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.9, -2, 8.4)
-shape = SubResource("s538")
+shape = SubResource("s544")
 
 [node name="S_3" type="CollisionShape3D" parent="Buildings/factory/B1/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.9, -0.8, 17.8)
-shape = SubResource("s539")
+shape = SubResource("s545")
 
 [node name="S_4" type="CollisionShape3D" parent="Buildings/factory/B1/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.9, -2, 20.4)
-shape = SubResource("s540")
+shape = SubResource("s546")
 
 [node name="S_5" type="CollisionShape3D" parent="Buildings/factory/B1/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34.1, -2, 11)
-shape = SubResource("s541")
+shape = SubResource("s547")
 
 [node name="S_6" type="CollisionShape3D" parent="Buildings/factory/B1/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, -2, -0.1)
-shape = SubResource("s542")
+shape = SubResource("s548")
 
 [node name="S_7" type="CollisionShape3D" parent="Buildings/factory/B1/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, -2, 22.1)
-shape = SubResource("s542")
+shape = SubResource("s548")
 
 [node name="S_8" type="CollisionShape3D" parent="Buildings/factory/B1/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.7, -2, 17.25)
-shape = SubResource("s543")
+shape = SubResource("s549")
 
 [node name="S_9" type="CollisionShape3D" parent="Buildings/factory/B1/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33.25, -2, 17.25)
-shape = SubResource("s544")
+shape = SubResource("s550")
 
 [node name="S_10" type="CollisionShape3D" parent="Buildings/factory/B1/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23, -2, 14)
-shape = SubResource("s545")
+shape = SubResource("s551")
 
 [node name="S_11" type="CollisionShape3D" parent="Buildings/factory/B1/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.7, -0.85, 14)
-shape = SubResource("s546")
+shape = SubResource("s552")
 
 [node name="S_12" type="CollisionShape3D" parent="Buildings/factory/B1/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.3, -2, 14)
-shape = SubResource("s547")
+shape = SubResource("s553")
 
 [node name="S_13" type="CollisionShape3D" parent="Buildings/factory/B1/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, -0.85, 14)
-shape = SubResource("s548")
+shape = SubResource("s554")
 
 [node name="S_14" type="CollisionShape3D" parent="Buildings/factory/B1/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.75, -2, 14)
-shape = SubResource("s549")
+shape = SubResource("s555")
 
 [node name="S_15" type="CollisionShape3D" parent="Buildings/factory/B1/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 32.35, -2, 14)
-shape = SubResource("s550")
+shape = SubResource("s556")
 
 [node name="S_16" type="CollisionShape3D" parent="Buildings/factory/B1/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.2, -2, 10.75)
-shape = SubResource("s543")
+shape = SubResource("s549")
 
 [node name="S_17" type="CollisionShape3D" parent="Buildings/factory/B1/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.8, -2, 8.75)
-shape = SubResource("s551")
+shape = SubResource("s557")
 
 [node name="S_18" type="CollisionShape3D" parent="Buildings/factory/B1/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.8, -0.85, 10.7)
-shape = SubResource("s552")
+shape = SubResource("s558")
 
 [node name="S_19" type="CollisionShape3D" parent="Buildings/factory/B1/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.8, -2, 12.7)
-shape = SubResource("s553")
+shape = SubResource("s559")
 
 [node name="S_20" type="CollisionShape3D" parent="Buildings/factory/B1/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.6, -2, 7.5)
-shape = SubResource("s554")
+shape = SubResource("s560")
 
 [node name="S_21" type="CollisionShape3D" parent="Buildings/factory/B1/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, -0.8, 7.5)
-shape = SubResource("s555")
+shape = SubResource("s561")
 
 [node name="S_22" type="CollisionShape3D" parent="Buildings/factory/B1/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.4, -2, 7.5)
-shape = SubResource("s554")
+shape = SubResource("s560")
 
 [node name="Collision" type="StaticBody3D" parent="Buildings/factory/Roof/Arch"]
 
 [node name="S" type="CollisionShape3D" parent="Buildings/factory/Roof/Arch/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17, 4.7, 11)
-shape = SubResource("s556")
+shape = SubResource("s562")
 
 [node name="Collision_2" type="StaticBody3D" parent="Buildings/factory/B1/Arch" groups=["real_only"]]
 
 [node name="S" type="CollisionShape3D" parent="Buildings/factory/B1/Arch/Collision_2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.9, -2.6, 17.8)
-shape = SubResource("s557")
+shape = SubResource("s563")
 
 [node name="Collision" type="StaticBody3D" parent="Buildings/factory/1F/Stairs"]
 
 [node name="S" type="CollisionShape3D" parent="Buildings/factory/1F/Stairs/Collision"]
 transform = Transform3D(1, 0, 0, 0, 0.8448, -0.5351, 0, 0.5351, 0.8448, 31.8, -2.0142, 17.5831)
-shape = SubResource("s558")
+shape = SubResource("s564")
 
 [node name="S_2" type="CollisionShape3D" parent="Buildings/factory/1F/Stairs/Collision"]
 transform = Transform3D(1, 0, 0, 0, 0.8448, -0.5351, 0, 0.5351, 0.8448, 31.23, -1.1403, 17.1)
-shape = SubResource("s559")
+shape = SubResource("s565")
 
 [node name="Collision" type="StaticBody3D" parent="Site"]
 
 [node name="S" type="CollisionShape3D" parent="Site/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, -0.135, -4.1)
-shape = SubResource("s560")
+shape = SubResource("s566")
 
 [node name="S_2" type="CollisionShape3D" parent="Site/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, -0.135, 26.1)
-shape = SubResource("s560")
+shape = SubResource("s566")
 
 [node name="S_3" type="CollisionShape3D" parent="Site/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.1, -0.135, 11)
-shape = SubResource("s561")
+shape = SubResource("s567")
 
 [node name="S_4" type="CollisionShape3D" parent="Site/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 38.1, -0.135, 11)
-shape = SubResource("s562")
+shape = SubResource("s568")
 
 [node name="S_5" type="CollisionShape3D" parent="Site/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.1, 1.1, 11)
-shape = SubResource("s563")
+shape = SubResource("s569")
 
 [node name="S_6" type="CollisionShape3D" parent="Site/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.1, 1.1, -2)
-shape = SubResource("s564")
+shape = SubResource("s570")
 
 [node name="S_7" type="CollisionShape3D" parent="Site/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.1, 1.1, 24)
-shape = SubResource("s564")
+shape = SubResource("s570")
 
 [node name="S_8" type="CollisionShape3D" parent="Site/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0.5, 6)
-shape = SubResource("s565")
+shape = SubResource("s571")
 
 [node name="S_9" type="CollisionShape3D" parent="Site/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.4, 0.075, 3.5)
-shape = SubResource("s566")
+shape = SubResource("s572")
 
 [node name="S_10" type="CollisionShape3D" parent="Site/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.9, 0.075, 19)
-shape = SubResource("s566")
+shape = SubResource("s572")
 
 [node name="S_11" type="CollisionShape3D" parent="Site/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.5, 0.44, 8)
-shape = SubResource("s567")
+shape = SubResource("s573")
 
 [node name="S_12" type="CollisionShape3D" parent="Site/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 0.44, 8.6)
-shape = SubResource("s567")
+shape = SubResource("s573")
 
 [node name="S_13" type="CollisionShape3D" parent="Site/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.44, 19.5)
-shape = SubResource("s567")
+shape = SubResource("s573")
 
 [node name="Collision" type="StaticBody3D" parent="Buildings/factory/1F/Props"]
 
 [node name="S" type="CollisionShape3D" parent="Buildings/factory/1F/Props/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0.45, 5.6)
-shape = SubResource("s568")
+shape = SubResource("s574")
 
 [node name="S_2" type="CollisionShape3D" parent="Buildings/factory/1F/Props/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 1.05, 5.6)
-shape = SubResource("s569")
+shape = SubResource("s575")
 
 [node name="S_3" type="CollisionShape3D" parent="Buildings/factory/1F/Props/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 0.45, 16.4)
-shape = SubResource("s568")
+shape = SubResource("s574")
 
 [node name="S_4" type="CollisionShape3D" parent="Buildings/factory/1F/Props/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12, 1.05, 16.4)
-shape = SubResource("s569")
+shape = SubResource("s575")
 
 [node name="S_5" type="CollisionShape3D" parent="Buildings/factory/1F/Props/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.1, 1.5, 9)
-shape = SubResource("s570")
+shape = SubResource("s576")
 
 [node name="S_6" type="CollisionShape3D" parent="Buildings/factory/1F/Props/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.1, 0.1, 9)
-shape = SubResource("s571")
+shape = SubResource("s577")
 
 [node name="S_7" type="CollisionShape3D" parent="Buildings/factory/1F/Props/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.2, 1.7, 13.1)
-shape = SubResource("s572")
+shape = SubResource("s578")
 
 [node name="S_8" type="CollisionShape3D" parent="Buildings/factory/1F/Props/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.2, 0.1, 13.1)
-shape = SubResource("s573")
+shape = SubResource("s579")
 
 [node name="S_9" type="CollisionShape3D" parent="Buildings/factory/1F/Props/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.5, 1.4, 8.7)
-shape = SubResource("s574")
+shape = SubResource("s580")
 
 [node name="S_10" type="CollisionShape3D" parent="Buildings/factory/1F/Props/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.5, 0.1, 8.7)
-shape = SubResource("s575")
+shape = SubResource("s581")
 
 [node name="S_11" type="CollisionShape3D" parent="Buildings/factory/1F/Props/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.7, 0.8, 12.7)
-shape = SubResource("s576")
+shape = SubResource("s582")
 
 [node name="S_12" type="CollisionShape3D" parent="Buildings/factory/1F/Props/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.7, 1.9, 12.7)
-shape = SubResource("s577")
+shape = SubResource("s583")
 
 [node name="S_13" type="CollisionShape3D" parent="Buildings/factory/1F/Props/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.7, 0.7, 2.7)
-shape = SubResource("s578")
+shape = SubResource("s584")
 
 [node name="S_14" type="CollisionShape3D" parent="Buildings/factory/1F/Props/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.7, 1.7, 2.7)
-shape = SubResource("s577")
+shape = SubResource("s583")
 
 [node name="S_15" type="CollisionShape3D" parent="Buildings/factory/1F/Props/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.7, 0.9, 13.7)
-shape = SubResource("s579")
+shape = SubResource("s585")
 
 [node name="S_16" type="CollisionShape3D" parent="Buildings/factory/1F/Props/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.7, 2.1, 13.7)
-shape = SubResource("s577")
+shape = SubResource("s583")
 
 [node name="S_17" type="CollisionShape3D" parent="Buildings/factory/1F/Props/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.2, 0.6, 20.2)
-shape = SubResource("s580")
+shape = SubResource("s586")
 
 [node name="S_18" type="CollisionShape3D" parent="Buildings/factory/1F/Props/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.2, 1.5, 20.2)
-shape = SubResource("s577")
+shape = SubResource("s583")
 
 [node name="S_19" type="CollisionShape3D" parent="Buildings/factory/1F/Props/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.7, 0.8, 14.2)
-shape = SubResource("s576")
+shape = SubResource("s582")
 
 [node name="S_20" type="CollisionShape3D" parent="Buildings/factory/1F/Props/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.7, 1.9, 14.2)
-shape = SubResource("s577")
+shape = SubResource("s583")
 
 [node name="S_21" type="CollisionShape3D" parent="Buildings/factory/1F/Props/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5, 1, 0.25)
-shape = SubResource("s581")
+shape = SubResource("s587")
 
 [node name="S_22" type="CollisionShape3D" parent="Buildings/factory/1F/Props/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 0.74, 0.65)
-shape = SubResource("s582")
+shape = SubResource("s588")
 
 [node name="S_23" type="CollisionShape3D" parent="Buildings/factory/1F/Props/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.8, 0.55, 1.8)
-shape = SubResource("s583")
+shape = SubResource("s589")
 
 [node name="S_24" type="CollisionShape3D" parent="Buildings/factory/1F/Props/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33, 0.9, 2)
-shape = SubResource("s584")
+shape = SubResource("s590")
 
 [node name="S_25" type="CollisionShape3D" parent="Buildings/factory/1F/Props/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.5, 0.74, 16.6)
-shape = SubResource("s585")
+shape = SubResource("s591")
 
 [node name="S_26" type="CollisionShape3D" parent="Buildings/factory/1F/Props/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.3, 0.95, 21.35)
-shape = SubResource("s586")
+shape = SubResource("s592")
 
 [node name="S_27" type="CollisionShape3D" parent="Buildings/factory/1F/Props/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.7, 0.4, 19.75)
-shape = SubResource("s587")
+shape = SubResource("s593")
 
 [node name="Collision" type="StaticBody3D" parent="Buildings/factory/B1/Props"]
 
 [node name="S" type="CollisionShape3D" parent="Buildings/factory/B1/Props/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.6, -3.1, 7.95)
-shape = SubResource("s588")
+shape = SubResource("s594")
 
 [node name="S_2" type="CollisionShape3D" parent="Buildings/factory/B1/Props/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.55, -3.4, 13.1)
-shape = SubResource("s589")
+shape = SubResource("s595")
 
 [node name="S_3" type="CollisionShape3D" parent="Buildings/factory/B1/Props/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.95, -3.4, 13.1)
-shape = SubResource("s589")
+shape = SubResource("s595")
 
 [node name="S_4" type="CollisionShape3D" parent="Buildings/factory/B1/Props/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.5, -2.7, 3.5)
-shape = SubResource("s590")
+shape = SubResource("s596")
 
 [node name="S_5" type="CollisionShape3D" parent="Buildings/factory/B1/Props/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.1, -2.7, 3.5)
-shape = SubResource("s590")
+shape = SubResource("s596")
 
 [node name="S_6" type="CollisionShape3D" parent="Buildings/factory/B1/Props/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.5, -2.7, 3.5)
-shape = SubResource("s590")
+shape = SubResource("s596")
 
 [node name="S_7" type="CollisionShape3D" parent="Buildings/factory/B1/Props/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 33.1, -2.7, 3.5)
-shape = SubResource("s590")
+shape = SubResource("s596")
 
 [node name="S_8" type="CollisionShape3D" parent="Buildings/factory/B1/Props/Collision"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, -3.06, 0.6)
-shape = SubResource("s591")
+shape = SubResource("s597")
 
 [node name="Collision_2" type="StaticBody3D" parent="Buildings/factory/1F/Arch" groups=["otherworld_only"]]
 
 [node name="S" type="CollisionShape3D" parent="Buildings/factory/1F/Arch/Collision_2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.8, 1.15, 12.5)
-shape = SubResource("s592")
+shape = SubResource("s598")
 
 [node name="Collision_3" type="StaticBody3D" parent="Buildings/factory/B1/Arch" groups=["otherworld_only"]]
 
 [node name="S" type="CollisionShape3D" parent="Buildings/factory/B1/Arch/Collision_3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.9, -3.9, 17.8)
-shape = SubResource("s593")
+shape = SubResource("s599")
 
 [node name="S_2" type="CollisionShape3D" parent="Buildings/factory/B1/Arch/Collision_3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.8, -2, 16.3)
-shape = SubResource("s594")
+shape = SubResource("s600")
 
 [node name="S_3" type="CollisionShape3D" parent="Buildings/factory/B1/Arch/Collision_3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.8, -2, 19.3)
-shape = SubResource("s594")
+shape = SubResource("s600")
 
 [node name="S_4" type="CollisionShape3D" parent="Buildings/factory/B1/Arch/Collision_3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9, -2, 17.8)
-shape = SubResource("s595")
+shape = SubResource("s601")

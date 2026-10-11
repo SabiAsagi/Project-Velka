@@ -4,10 +4,11 @@ class_name AnalysisBoard
 
 # 프로젝트 벨카 - 사건 보드 (프롤로그 P-03)
 # 코르크보드 위에 증거 카드(통화 기록, CCTV, 뉴스, 문서, 지도 …)가 핀으로 꽂혀 있다.
-#   1. 카드를 클릭하면 크게 펼쳐 자세히 본다 (처음 한 번은 꼭 봐야 실을 이을 수 있다. 우클릭으로 다시 보기)
+#   1. 카드를 클릭하면 언제든 크게 펼쳐 자세히 본다 (처음 한 번은 꼭 봐야 실을 이을 수 있다)
 #      펼친 증거의 밑줄 친 글자(번호·시각·장소)를 누르면 붉게 표시된다. 다른 증거에 같은 단서가 표시돼 있으면 사비가 알려 준다.
 #      사비가 증거마다 한마디씩 한다 (펼친 화면 아래, 카드를 고를 때).
-#   2. 살펴본 카드 두 장을 차례로 클릭하면 붉은 실로 잇는다. 맞는 연결이면 단서가 메모에 붙고,
+#   2. 살펴본 카드에서 다른 카드로 끌어다 놓으면 붉은 실로 잇는다 (또는 펼친 화면의 "붉은 실로 잇기" 뒤 다른 카드 클릭).
+#      맞는 연결이면 단서가 메모에 붙고,
 #      아니면 사비의 힌트 (상관없는 증거면 왜 상관없는지 말해 준다)
 #   막히면 "생각 정리"(H): 플레이어(사비)의 생각이 정리된다. 누를수록 구체적 (분류 -> 증거 하나 -> 두 증거)
 #   보드의 문장은 모두 사비 자신의 혼잣말·메모다 (플레이어 = 사비).
@@ -50,6 +51,12 @@ var _zoom: Control
 var _zoom_paper: PanelContainer
 var _zoom_box: VBoxContainer
 var _zoom_card := ""
+## 카드를 누른 채 끌고 있는가 (끌어다 놓기 = 실 잇기)
+var _press_card := ""
+var _press_pos := Vector2.ZERO
+var _dragging := false
+
+const DRAG_START := 10.0
 
 
 func _ready() -> void:
@@ -286,24 +293,79 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _on_card_input(event: InputEvent, card_id: String) -> void:
-	if not (event is InputEventMouseButton and event.pressed):
+	if event is InputEventMouseMotion:
+		if _press_card.is_empty():
+			return
+		if not _dragging and (event as InputEventMouseMotion).global_position.distance_to(_press_pos) > DRAG_START:
+			_dragging = true
+			if _inspected.has(_press_card):
+				_select(_press_card)
+		if _dragging:
+			_strings.queue_redraw()
+		return
+	if not event is InputEventMouseButton:
 		return
 	var mb := event as InputEventMouseButton
-	if mb.button_index == MOUSE_BUTTON_RIGHT or (mb.button_index == MOUSE_BUTTON_LEFT and mb.double_click):
+	if mb.button_index == MOUSE_BUTTON_RIGHT and mb.pressed:
 		_select("")
 		inspect(card_id)
-	elif mb.button_index == MOUSE_BUTTON_LEFT:
-		if not _inspected.has(card_id):
-			inspect(card_id)
-		elif _selected.is_empty():
-			_select(card_id)
-		elif _selected == card_id:
-			_select("")
+	elif mb.button_index == MOUSE_BUTTON_LEFT and mb.pressed:
+		_press_card = card_id
+		_press_pos = mb.global_position
+		_dragging = false
+	elif mb.button_index == MOUSE_BUTTON_LEFT and not mb.pressed and not _press_card.is_empty():
+		var from := _press_card
+		var was_drag := _dragging
+		_press_card = ""
+		_dragging = false
+		if was_drag:
+			drop_on(from, _card_at(mb.global_position))
 		else:
-			var first := _selected
-			_select("")
-			link(first, card_id)
+			click_card(from)
 	get_viewport().set_input_as_handled()
+
+
+## 카드 클릭: 실을 잇는 중이면 그 카드에 잇고, 아니면 펼쳐 본다
+func click_card(card_id: String) -> void:
+	if not _cards.has(card_id):
+		return
+	if not _selected.is_empty() and _selected != card_id:
+		var first := _selected
+		_select("")
+		link(first, card_id)
+	else:
+		_select("")
+		inspect(card_id)
+
+
+## 끌어다 놓기: from 카드를 to 카드 위에 놓으면 실로 잇는다 (빈 곳이면 취소)
+func drop_on(from: String, to: String) -> void:
+	_select("")
+	if to.is_empty() or to == from:
+		return
+	if not _inspected.has(from):
+		_say(String(_data.get("need_inspect", "")))
+		return
+	link(from, to)
+
+
+## 실 잇기 시작 (펼친 화면의 버튼): 다음에 고르는 카드와 잇는다
+func start_link(card_id: String) -> void:
+	_close_zoom()
+	if _inspected.has(card_id):
+		_select(card_id)
+
+
+## 그 자리에 보이는 카드 (겹쳐 있으면 위에 그려진 카드)
+func _card_at(global_point: Vector2) -> String:
+	var best := ""
+	var best_index := -1
+	for id in _cards:
+		var card := _cards[id] as Control
+		if card.visible and card.get_global_rect().has_point(global_point) and card.get_index() > best_index:
+			best = String(id)
+			best_index = card.get_index()
+	return best
 
 
 func _on_cork_input(event: InputEvent) -> void:
@@ -366,7 +428,15 @@ func _show_card_zoom(card: Dictionary) -> void:
 		c.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		c.custom_minimum_size = Vector2(660, 0)
 		_zoom_box.add_child(c)
-	_zoom_box.add_child(_zoom_footer("닫기  (ESC · 바깥 클릭)", _close_zoom))
+	var footer := _zoom_footer("닫기  (ESC · 바깥 클릭)", _close_zoom)
+	if not _pin_stage and not _is_solved:
+		var tie := Button.new()
+		tie.text = "붉은 실로 잇기"
+		VelkaStyle.style_small_button(tie, VelkaStyle.RED)
+		tie.pressed.connect(start_link.bind(card_id))
+		footer.add_child(tie)
+		footer.move_child(tie, 0)
+	_zoom_box.add_child(footer)
 	_zoom.visible = true
 
 
@@ -549,7 +619,7 @@ func _build_ui() -> void:
 	var head := VelkaStyle.label(String(_data.get("title", "사건 보드")), VelkaStyle.serif_bold(), 30, VelkaStyle.INK)
 	head.position = Vector2(24, 14)
 	_frame.add_child(head)
-	var help := VelkaStyle.label("클릭: 펼쳐 보기 / 실 잇기   ·   우클릭: 다시 보기   ·   H: 생각 정리   ·   ESC: 닫기",
+	var help := VelkaStyle.label("클릭: 펼쳐 보기  ·  카드끼리 끌어다 놓기: 실 잇기  ·  ESC: 닫기",
 			VelkaStyle.mono(), 15, VelkaStyle.INK_DIM)
 	help.position = Vector2(DESIGN.x - 900, 30)
 	help.size = Vector2(700, 20)

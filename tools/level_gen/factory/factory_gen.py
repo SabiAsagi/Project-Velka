@@ -54,6 +54,10 @@ EXTRA_MATS = {
     "fac_crate": ((0.45, 0.33, 0.2), {}),
     "fac_server": ((0.07, 0.08, 0.1), {"metallic": 0.3}),
     "fac_office_floor": ((0.4, 0.4, 0.42), {}),
+    # 마당의 외부 보안 단말: 컷어웨이로 걷어내지 않는다 (가까이 가면 사라져 보이지 않던 문제)
+    "fac_terminal": ((0.6, 0.63, 0.62), {"metallic": 0.3, "cut": 0}),
+    "fac_terminal_post": ((0.25, 0.26, 0.28), {"metallic": 0.4, "cut": 0}),
+    "fac_terminal_screen": ((0.35, 0.95, 0.6), {"emission": 1.2, "grime": 0.0, "cut": 0}),
 }
 
 
@@ -139,10 +143,11 @@ def yard(B):
     # 철망 담장 (마당을 막는다)
     for x0, x1, z0, z1 in ((-10.2, -10.0, -2.0, D + 2.0), (-10.0, -0.2, -2.1, -1.9), (-10.0, -0.2, D + 1.9, D + 2.1)):
         B.box(p, "fence", x0, x1, 0.0, 2.2, z0, z1, True, tag="fence")
-    # 외부 보안 단말 (기둥 위 상자)
-    B.box(p, "metal_dark", -3.15, -2.85, 0.0, 1.0, 5.85, 6.15, True, tag="terminal_post")
-    B.box(p, "panel_gray", -3.3, -2.7, 1.0, 1.6, 5.8, 6.2, tag="terminal")
-    B.box(p, "led_red", -2.69, -2.68, 1.4, 1.45, 5.95, 6.05, tag="led")
+    # 외부 보안 단말 (기둥 위 상자, 화면은 옆문 쪽(동쪽)을 본다). 어두운 마당에서도 보이게 화면이 빛난다.
+    B.box(p, "fac_terminal_post", -3.15, -2.85, 0.0, 1.0, 5.85, 6.15, True, tag="terminal_post")
+    B.box(p, "fac_terminal", -3.3, -2.7, 1.0, 1.6, 5.75, 6.25, tag="terminal")
+    B.box(p, "fac_terminal_screen", -2.7, -2.68, 1.12, 1.42, 5.83, 6.12, tag="terminal_screen")
+    B.box(p, "led_red", -2.69, -2.67, 1.48, 1.53, 6.15, 6.2, tag="led")
     # 버려진 팔레트·드럼통 (엄폐)
     for x0, z0 in ((-6.0, 3.0), (-4.5, 18.5)):
         B.box(p, "pallet", x0, x0 + 1.2, 0.0, 0.15, z0, z0 + 1.0, True, tag="pallet")
@@ -310,6 +315,7 @@ def main():
 
     # 조명: 마당 가로등, 생산동 나트륨등(드문드문), 사무동 형광등, 지하 비상등
     emit_light(sw, "Site", (-9.0, 3.8, 11.0), 9.0, "real_light", (1.0, 0.75, 0.45), 1.2)
+    emit_light(sw, "Site", (-2.3, 1.5, 6.0), 2.6, "real_light", (0.4, 1.0, 0.65), 0.7)   # 보안 단말 화면 빛
     for pos in ((6.0, 4.0, 4.0), (16.0, 4.0, 11.0), (6.0, 4.0, 18.0)):
         emit_light(sw, lv("1F", "Lights"), pos, 8.5, "real_light", (1.0, 0.72, 0.42), 1.2)
     for pos, rng in (((28.0, 3.2, 11.0), 6.0), ((28.0, 3.0, 4.5), 6.0), ((25.0, 3.0, 17.5), 5.0), ((32.2, 3.0, 13.6), 3.5)):
