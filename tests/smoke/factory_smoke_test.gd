@@ -45,6 +45,17 @@ func _run() -> void:
 	_hud = _scene.get_node("PrototypeHUD")
 	await _seconds(0.3)
 	_check(_zone().contains("마당"), "공장 서쪽 마당에서 시작한다 (%s)" % _zone())
+	# 외부 보안 단말은 가까이 가도 컷어웨이로 걷어내지 않는다 (다가가면 사라져 보이지 않던 버그)
+	var term_ok := true
+	for mm_name in ["MM_fac_terminal", "MM_fac_terminal_post", "MM_fac_terminal_screen"]:
+		var mm := _world.get_node_or_null("Site/" + mm_name) as MultiMeshInstance3D
+		var mat: ShaderMaterial = null
+		if mm:
+			mat = mm.material_override as ShaderMaterial
+			if mat == null and mm.multimesh and mm.multimesh.mesh:
+				mat = mm.multimesh.mesh.surface_get_material(0) as ShaderMaterial
+		term_ok = term_ok and mat != null and float(mat.get_shader_parameter("cutaway_affected")) < 0.5
+	_check(term_ok, "외부 보안 단말(기둥·상자·화면)은 컷어웨이에서 빠져 항상 보인다")
 	_world.get_node("Checkpoints/Checkpoint_yard").activate()
 
 	# --- 경비원: 시야 안 -> 발각 실패 -> 재시작 ---

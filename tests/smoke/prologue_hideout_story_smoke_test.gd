@@ -94,6 +94,19 @@ func _run() -> void:
 	var h3: String = board.ask_hint()
 	_check(not h1.is_empty() and h1 != h2 and h3.contains("의뢰인 A 통화 기록") and h3.contains("의뢰인 C 통화 기록"),
 			"생각을 정리할수록 힌트가 구체적이 된다 (%s)" % h3)
+	# 실제 마우스 입력: 이미 본 카드도 클릭하면 다시 펼쳐진다 / 끌어다 놓으면 실로 잇는다 / 펼친 화면의 버튼으로도 잇는다
+	board._close_zoom()
+	_click_card(board, "map")
+	_check(board.is_zoom_open() and board._zoom_card == "map", "이미 살펴본 카드도 클릭하면 다시 크게 펼쳐 볼 수 있다")
+	board._close_zoom()
+	var drag_pair: Array = links[0]["pairs"][0]
+	_drag_card(board, String(drag_pair[0]), String(drag_pair[1]))
+	_check(board.current_step() == 1 and not board.is_zoom_open(), "카드를 다른 카드로 끌어다 놓으면 붉은 실로 잇는다")
+	var tie_pair: Array = links[1]["pairs"][0]
+	board.inspect(String(tie_pair[0]))
+	board.start_link(String(tie_pair[0]))
+	_click_card(board, String(tie_pair[1]))
+	_check(board.current_step() == 2, "펼친 화면의 '붉은 실로 잇기' 다음 다른 카드를 클릭하면 잇는다")
 	for l in links:
 		var pair: Array = l["pairs"][0]
 		board.link(pair[0], pair[1])
@@ -165,3 +178,33 @@ func _check(condition: bool, label: String) -> void:
 
 func _seconds(duration: float) -> void:
 	await create_timer(duration).timeout
+
+
+func _card_center(board: Node, card_id: String) -> Vector2:
+	return (board._cards[card_id] as Control).get_global_rect().get_center()
+
+
+func _mouse_button(board: Node, card_id: String, pressed: bool, at: Vector2) -> void:
+	var ev := InputEventMouseButton.new()
+	ev.button_index = MOUSE_BUTTON_LEFT
+	ev.pressed = pressed
+	ev.global_position = at
+	ev.position = at
+	board._on_card_input(ev, card_id)
+
+
+func _click_card(board: Node, card_id: String) -> void:
+	var at := _card_center(board, card_id)
+	_mouse_button(board, card_id, true, at)
+	_mouse_button(board, card_id, false, at)
+
+
+func _drag_card(board: Node, from: String, to: String) -> void:
+	var a := _card_center(board, from)
+	var b := _card_center(board, to)
+	_mouse_button(board, from, true, a)
+	var motion := InputEventMouseMotion.new()
+	motion.global_position = b
+	motion.position = b
+	board._on_card_input(motion, from)
+	_mouse_button(board, from, false, b)
