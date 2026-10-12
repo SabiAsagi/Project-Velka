@@ -8674,7 +8674,7 @@ break_prompt = "봉쇄문 강제로 열기"
 sabi_blocked_line = "봉쇄문이 기계식으로 잠겨 있어… 샤무 힘이면 열 수 있을 거야."
 marker_height = 1.6
 requires_flag = "p04_security_hacked"
-requires_line = "봉쇄문에 경보 센서가 붙어 있어. 보안망이 살아 있으면 건드리는 순간 다 몰려와. 사비가 보안실 단말부터 처리해야 해."
+requires_line = "봉쇄문에 경보 센서가 붙어 있어. 보안망이 살아 있는 동안 건드리면 다 몰려와. 보안실 단말부터 꺼야 해."
 
 [node name="Piece" type="CSGBox3D" parent="Interactables/BlastDoor"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.15, 0)

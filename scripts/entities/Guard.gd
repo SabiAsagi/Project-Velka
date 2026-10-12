@@ -31,6 +31,8 @@ signal alert_changed(level: int)
 @export var search_time: float = 5.0
 
 const BEAM_SEGMENTS := 16
+## 바닥 부채꼴을 벽에 맞춰 다시 그리는 간격(초)
+const BEAM_REFRESH := 0.05
 const STEP_DISTANCE := 0.75
 
 var is_down: bool = false
@@ -54,6 +56,10 @@ var _seen_time := 0.0          # 마지막으로 대상을 본 뒤 지난 시간
 var _step_accum := 0.0
 var _alert_level := 0
 var _saw_hide := false         # 숨는 걸 봤다 (끌어낼 때까지 기억)
+var _beam_mesh: ArrayMesh
+var _beam_refresh_left := 0.0
+## 부채꼴 각 방향으로 빛이 닿는 거리 (벽에서 끊긴다). 테스트용으로 읽는다.
+var beam_reach := PackedFloat32Array()
 
 
 func _ready() -> void:
@@ -76,6 +82,10 @@ func _physics_process(delta: float) -> void:
 		body_root.rotation.y = lerp_angle(body_root.rotation.y, atan2(-_facing_direction.x, -_facing_direction.z), minf(1.0, delta * 10.0))
 	_update_icon()
 	_update_alert_level()
+	_beam_refresh_left -= delta
+	if _beam_refresh_left <= 0.0:
+		_beam_refresh_left = BEAM_REFRESH
+		_update_beam_shape()
 
 
 # --- 순찰 / 의심 ---
@@ -459,21 +469,9 @@ func _build_icon() -> void:
 	add_child(_icon)
 
 
-## 손전등 시야를 바닥에 부채꼴로 그린다 (Body 기준, -Z가 앞)
+## 손전등 시야를 바닥에 부채꼴로 그린다 (Body 기준, -Z가 앞). 벽에 막히면 그 자리에서 끊긴다.
 func _build_beam() -> void:
-	var half := deg_to_rad(vision_angle * 0.5)
-	var vertices := PackedVector3Array()
-	for i in BEAM_SEGMENTS:
-		var a0 := -half + 2.0 * half * float(i) / BEAM_SEGMENTS
-		var a1 := -half + 2.0 * half * float(i + 1) / BEAM_SEGMENTS
-		vertices.append(Vector3.ZERO)
-		vertices.append(Vector3(sin(a1), 0.0, -cos(a1)) * detection_range)
-		vertices.append(Vector3(sin(a0), 0.0, -cos(a0)) * detection_range)
-	var arrays := []
-	arrays.resize(Mesh.ARRAY_MAX)
-	arrays[Mesh.ARRAY_VERTEX] = vertices
-	var mesh := ArrayMesh.new()
-	mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+	_beam_mesh = ArrayMesh.new()
 	_beam_material = StandardMaterial3D.new()
 	_beam_material.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	_beam_material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
@@ -481,12 +479,60 @@ func _build_beam() -> void:
 	_beam_material.albedo_color = beam_color
 	_beam = MeshInstance3D.new()
 	_beam.name = "Beam"
-	_beam.mesh = mesh
+	_beam.mesh = _beam_mesh
 	_beam.material_override = _beam_material
 	_beam.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 	_beam.position = Vector3(0.0, 0.04, 0.0)
 	body_root.add_child(_beam)
 	_update_visual_state()
+	_update_beam_shape()
+
+
+## 부채꼴 방향마다 광선을 쏴서 벽까지의 거리로 모양을 다시 만든다
+func _update_beam_shape() -> void:
+	if _beam_mesh == null or not is_inside_tree():
+		return
+	var half := deg_to_rad(vision_angle * 0.5)
+	var space := get_world_3d().direct_space_state
+	var origin := global_position + Vector3.UP * 0.9
+	var body_basis := body_root.global_transform.basis
+	beam_reach.resize(BEAM_SEGMENTS + 1)
+	for i in BEAM_SEGMENTS + 1:
+		var a := -half + 2.0 * half * float(i) / BEAM_SEGMENTS
+		var local_dir := Vector3(sin(a), 0.0, -cos(a))
+		var dir := body_basis * local_dir
+		dir.y = 0.0
+		dir = dir.normalized()
+		beam_reach[i] = _wall_distance(space, origin, dir)
+	var vertices := PackedVector3Array()
+	for i in BEAM_SEGMENTS:
+		var a0 := -half + 2.0 * half * float(i) / BEAM_SEGMENTS
+		var a1 := -half + 2.0 * half * float(i + 1) / BEAM_SEGMENTS
+		vertices.append(Vector3.ZERO)
+		vertices.append(Vector3(sin(a1), 0.0, -cos(a1)) * beam_reach[i + 1])
+		vertices.append(Vector3(sin(a0), 0.0, -cos(a0)) * beam_reach[i])
+	var arrays := []
+	arrays.resize(Mesh.ARRAY_MAX)
+	arrays[Mesh.ARRAY_VERTEX] = vertices
+	_beam_mesh.clear_surfaces()
+	_beam_mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+
+
+## origin 에서 dir 로 벽(사람이 아닌 것)까지의 수평 거리. 없으면 detection_range
+func _wall_distance(space: PhysicsDirectSpaceState3D, origin: Vector3, dir: Vector3) -> float:
+	var exclude: Array[RID] = [get_rid()]
+	for attempt in 4:
+		var query := PhysicsRayQueryParameters3D.create(origin, origin + dir * detection_range, 1)
+		query.exclude = exclude
+		var hit := space.intersect_ray(query)
+		if hit.is_empty():
+			return detection_range
+		if hit.get("collider") is CharacterBody3D:
+			exclude.append(hit["rid"])
+			continue
+		var p: Vector3 = hit["position"]
+		return Vector2(p.x - origin.x, p.z - origin.z).length()
+	return detection_range
 
 
 func _flat(a: Vector3, b: Vector3) -> float:

@@ -68,18 +68,19 @@ func get_interaction_prompt(player: Node3D) -> String:
 
 
 func _on_interact(player: Node3D) -> void:
-	if not _requirement_met():
-		was_used = false
-		DialogueManager.start_dialogue_data("hack_requires_" + terminal_id, [{
-			"speaker": "sabi", "speaker_name": "사비 아사기",
-			"sabi_emotion": "serious", "shamu_emotion": "neutral", "text": requires_line,
-		}])
-		return
+	# 샤무가 먼저 "사비 담당"이라고 말한다. 조건 대사(requires_line)는 사비의 말이라 사비일 때만.
 	if not _is_sabi(player):
 		was_used = false
 		DialogueManager.start_dialogue_data("hack_shamu_" + terminal_id, [{
 			"speaker": "shamu", "speaker_name": "카즈네 샤무",
 			"sabi_emotion": "neutral", "shamu_emotion": "annoyed", "text": shamu_line,
+		}])
+		return
+	if not _requirement_met():
+		was_used = false
+		DialogueManager.start_dialogue_data("hack_requires_" + terminal_id, [{
+			"speaker": "sabi", "speaker_name": "사비 아사기",
+			"sabi_emotion": "serious", "shamu_emotion": "neutral", "text": requires_line,
 		}])
 		return
 	is_hacking = true

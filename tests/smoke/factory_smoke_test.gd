@@ -130,6 +130,16 @@ func _run() -> void:
 	await _seconds(0.3)
 	_check(not blast.is_broken, "보안실 단말을 해킹하기 전에는 봉쇄문을 부술 수 없다 (경보 센서)")
 	var dm := root.get_node("/root/DialogueManager")
+	var blast_line := String(blast.requires_line)
+	_check(dm.is_dialogue_active and not blast_line.contains("사비") and not blast_line.contains("샤무"),
+			"봉쇄문 조건 대사는 누가 조사해도 어울린다 (자기 이름을 부르지 않는다)")
+	if dm.is_dialogue_active:
+		dm.finish_dialogue()
+	var security = _world.get_node("Interactables/SecurityTerminal")
+	security.interact(_member())
+	_check(dm.current_dialogue_id == "hack_shamu_security", "샤무로 보안실 단말을 조사하면 샤무가 '사비 담당'이라고 한다 (사비 대사가 아니다)")
+	if dm.is_dialogue_active:
+		dm.finish_dialogue()
 	if dm.is_dialogue_active:
 		dm.finish_dialogue()
 	_gm.set_story_flag("p04_security_hacked", true)

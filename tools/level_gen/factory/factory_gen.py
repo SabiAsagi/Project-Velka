@@ -361,7 +361,7 @@ def main():
     for name, pos, size, mat, oid, prompt, line, point, req_flag, req_line in (
             ("BlastDoor", (31.8, 0.0, 12.5), (1.4, 2.3, 0.2), blast, "basement_door", "봉쇄문 강제로 열기",
              "봉쇄문이 기계식으로 잠겨 있어… 샤무 힘이면 열 수 있을 거야.", (0.0, 1.1, -0.8), "p04_security_hacked",
-             "봉쇄문에 경보 센서가 붙어 있어. 보안망이 살아 있으면 건드리는 순간 다 몰려와. 사비가 보안실 단말부터 처리해야 해."),
+             "봉쇄문에 경보 센서가 붙어 있어. 보안망이 살아 있는 동안 건드리면 다 몰려와. 보안실 단말부터 꺼야 해."),
             ("Shredder", (31.0, B1, 9.0), (1.8, 1.3, 1.0), shred, "data_shredder", "파쇄기 부수기",
              "자료가 계속 갈려 나가고 있어. 내 힘으로는 못 멈춰… 샤무!", (0.0, 1.1, 1.0), "", "")):
         sw.node(name, "Node3D", "Interactables", {"transform": tf(pos), "script": res["breakable"], "obstacle_id": q(oid),

@@ -8,7 +8,8 @@ class_name AnalysisBoard
 #      펼친 증거의 밑줄 친 글자(번호·시각·장소)를 누르면 붉게 표시된다. 다른 증거에 같은 단서가 표시돼 있으면 사비가 알려 준다.
 #      사비가 증거마다 한마디씩 한다 (펼친 화면 아래, 카드를 고를 때).
 #   2. 살펴본 카드에서 다른 카드로 끌어다 놓으면 붉은 실로 잇는다 (또는 펼친 화면의 "붉은 실로 잇기" 뒤 다른 카드 클릭).
-#      맞는 연결이면 단서가 메모에 붙고,
+#      맞는 연결이면 두 카드 사이 빈자리에 손글씨 단서 메모가 핀으로 꽂히고, 그 단서에 속한 카드들이 메모로 실을 잇는다
+#      (카드끼리 직접 잇지 않아 실이 여러 갈래로 엉키지 않는다). 단서 내용은 오른쪽 메모에도 붙고,
 #      아니면 사비의 힌트 (상관없는 증거면 왜 상관없는지 말해 준다)
 #   막히면 "생각 정리"(H): 플레이어(사비)의 생각이 정리된다. 누를수록 구체적 (분류 -> 증거 하나 -> 두 증거)
 #   보드의 문장은 모두 사비 자신의 혼잣말·메모다 (플레이어 = 사비).
@@ -146,7 +147,8 @@ func link(a: String, b: String) -> bool:
 					_say("그건 이미 이었어.")
 					return false
 				_found.append(String(l["id"]))
-				_strings.add_string(a, b)
+				var members := _link_members(l)
+				_strings.add_memo(String(l.get("title", "")), members, _memo_slot(members))
 				_add_memo(String(l.get("title", "")), String(l.get("found", "")))
 				_say(String(l.get("found", "")), VelkaStyle.GOOD)
 				if _found.size() >= step_count():
@@ -163,6 +165,60 @@ func link(a: String, b: String) -> bool:
 		reason = String(_card_data(b).get("decoy_reason", ""))
 	_say(reason if not reason.is_empty() else String(_data.get("wrong_hint", "")), VelkaStyle.RED_SOFT)
 	return false
+
+
+## 단서에 속한 카드들 (연결 정답에 한 번이라도 나오는 카드)
+func _link_members(l: Dictionary) -> Array[String]:
+	var result: Array[String] = []
+	for pair in l.get("pairs", []):
+		for id in pair:
+			if not result.has(String(id)):
+				result.append(String(id))
+	return result
+
+
+## 단서 메모를 꽂을 자리: 카드 사이 빈틈(교차점) 중 그 카드들의 한가운데에 가장 가까운 빈자리
+func _memo_slot(members: Array[String]) -> Vector2:
+	var center := Vector2.ZERO
+	for id in members:
+		var card := _cards[id] as Control
+		center += card.position + card.size * 0.5
+	center /= maxf(1.0, float(members.size()))
+	var best := center
+	var best_d := INF
+	for slot in _memo_slots():
+		if _strings.slot_taken(slot):
+			continue
+		var d := slot.distance_to(center)
+		if d < best_d:
+			best_d = d
+			best = slot
+	return best
+
+
+## 카드 격자 사이의 빈틈 교차점 (열 사이 x, 행 사이 y)
+func _memo_slots() -> Array[Vector2]:
+	var xs: Array[float] = []
+	var ys: Array[float] = []
+	var rects: Array[Rect2] = []
+	for id in _cards:
+		var c := _cards[id] as Control
+		rects.append(Rect2(c.position, c.size))
+	rects.sort_custom(func(a: Rect2, b: Rect2): return a.position.x < b.position.x)
+	for i in range(1, rects.size()):
+		var gap_x := (rects[i - 1].end.x + rects[i].position.x) * 0.5
+		if rects[i].position.x - rects[i - 1].position.x > CARD_SIZE.x * 0.6 and (xs.is_empty() or absf(xs[-1] - gap_x) > 60.0):
+			xs.append(gap_x)
+	rects.sort_custom(func(a: Rect2, b: Rect2): return a.position.y < b.position.y)
+	for i in range(1, rects.size()):
+		var gap_y := (rects[i - 1].end.y + rects[i].position.y) * 0.5
+		if rects[i].position.y - rects[i - 1].position.y > CARD_SIZE.y * 0.6 and (ys.is_empty() or absf(ys[-1] - gap_y) > 60.0):
+			ys.append(gap_y)
+	var slots: Array[Vector2] = []
+	for x in xs:
+		for y in ys:
+			slots.append(Vector2(x, y))
+	return slots
 
 
 ## 증거의 index 번째 키워드를 표시하거나 지운다. 다른 증거에 같은 단서가 표시돼 있으면 사비가 알려 준다.
@@ -884,22 +940,39 @@ class Card extends Control:
 
 ## 붉은 실과 핀 (카드 위에 그린다)
 class StringLayer extends Control:
+	const MEMO_SIZE := Vector2(138, 58)
 	var cards: Dictionary = {}
 	var pending_from := ""
-	var _strings: Array = []       # [a, b, 나타나는 정도 0~1]
+	var memos: Array = []          # {title, members, pos(핀 자리), t(나타나는 정도), rot}
 	var _wrong: Array = []         # [a, b, 남은 시간]
 
-	func add_string(a: String, b: String) -> void:
-		_strings.append([a, b, 0.0])
+	## 단서 메모를 꽂고, 그 단서의 카드들을 메모로 잇는다
+	func add_memo(title: String, members: Array[String], pos: Vector2) -> void:
+		memos.append({"title": title, "members": members, "pos": pos, "t": 0.0,
+				"rot": deg_to_rad(float((memos.size() * 37) % 9) - 4.0)})
+
+	func slot_taken(pos: Vector2) -> bool:
+		for m in memos:
+			if (m["pos"] as Vector2).distance_to(pos) < 20.0:
+				return true
+		return false
+
+	## 카드 id 에서 나간 실 수
+	func strings_from(card_id: String) -> int:
+		var n := 0
+		for m in memos:
+			if (m["members"] as Array).has(card_id):
+				n += 1
+		return n
 
 	func flash_wrong(a: String, b: String) -> void:
 		_wrong.append([a, b, 0.8])
 
 	func _process(delta: float) -> void:
 		var dirty := not pending_from.is_empty()
-		for s in _strings:
-			if s[2] < 1.0:
-				s[2] = minf(1.0, s[2] + delta * 2.5)
+		for m in memos:
+			if m["t"] < 1.0:
+				m["t"] = minf(1.0, m["t"] + delta * 2.2)
 				dirty = true
 		for w in _wrong:
 			w[2] -= delta
@@ -909,17 +982,40 @@ class StringLayer extends Control:
 			queue_redraw()
 
 	func _draw() -> void:
-		for s in _strings:
-			_rope(cards[s[0]].pin_point(), cards[s[1]].pin_point(), VelkaStyle.RED, s[2])
+		for m in memos:
+			for id in m["members"]:
+				if cards.has(id):
+					_rope(cards[id].pin_point(), m["pos"], VelkaStyle.RED, m["t"])
 		for w in _wrong:
 			_rope(cards[w[0]].pin_point(), cards[w[1]].pin_point(), Color(0.7, 0.7, 0.7, w[2]), 1.0)
 		if not pending_from.is_empty() and cards.has(pending_from):
 			_rope(cards[pending_from].pin_point(), get_local_mouse_position(), Color(0.85, 0.2, 0.18, 0.75), 1.0)
+		for m in memos:
+			_draw_memo(m)
 		for id in cards:
-			var p: Vector2 = cards[id].pin_point()
-			draw_circle(p + Vector2(1.5, 2.5), 6.5, Color(0, 0, 0, 0.4))
-			draw_circle(p, 6.5, Color(0.72, 0.1, 0.1))
-			draw_circle(p + Vector2(-2, -2), 2.2, Color(1, 0.6, 0.55))
+			_draw_pin(cards[id].pin_point())
+
+	## 손글씨 단서 메모 (노란 종이, 위쪽 가운데에 핀)
+	func _draw_memo(m: Dictionary) -> void:
+		var a: float = m["t"]
+		var pin: Vector2 = m["pos"]
+		draw_set_transform(pin, m["rot"], Vector2.ONE)
+		var r := Rect2(Vector2(-MEMO_SIZE.x * 0.5, -10.0), MEMO_SIZE)
+		draw_rect(Rect2(r.position + Vector2(3, 4), r.size), Color(0, 0, 0, 0.35 * a))
+		draw_rect(r, Color(0.98, 0.9, 0.52, a))
+		draw_line(r.position + Vector2(8, 22), r.position + Vector2(r.size.x - 8, 22), Color(0.85, 0.72, 0.35, 0.6 * a), 1.0)
+		var font := VelkaStyle.hand()
+		var title := String(m["title"])
+		var fs := 26
+		var w := font.get_string_size(title, HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x
+		draw_string(font, Vector2(-w * 0.5, r.position.y + 42), title, HORIZONTAL_ALIGNMENT_LEFT, -1, fs, Color(0.55, 0.08, 0.06, a))
+		draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+		_draw_pin(pin)
+
+	func _draw_pin(p: Vector2) -> void:
+		draw_circle(p + Vector2(1.5, 2.5), 6.5, Color(0, 0, 0, 0.4))
+		draw_circle(p, 6.5, Color(0.72, 0.1, 0.1))
+		draw_circle(p + Vector2(-2, -2), 2.2, Color(1, 0.6, 0.55))
 
 	## 살짝 처진 실 (t: 0~1, 처음 이을 때 a에서 b로 뻗어 간다)
 	func _rope(a: Vector2, b: Vector2, color: Color, t: float) -> void:

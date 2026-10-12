@@ -11,5 +11,5 @@ uniform float pulse_speed = 4.0;
 void fragment() {
 	float rim = pow(1.0 - clamp(dot(NORMAL, VIEW), 0.0, 1.0), rim_power);
 	float pulse = 0.7 + 0.3 * sin(TIME * pulse_speed);
-	ALBEDO = glow_color.rgb * (0.18 + rim) * intensity * pulse;
+	ALBEDO = glow_color.rgb * (0.32 + rim) * intensity * pulse;
 }

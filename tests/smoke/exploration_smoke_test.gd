@@ -81,6 +81,11 @@ func _run() -> void:
 	_check(board.get_highlight_level() == HIGHLIGHT_NEARBY, "주변 조사 대상은 표식만 표시된다")
 	_check(_has_overlay(book), "강조 셰이더 오버레이가 적용된다")
 	_check(not _has_overlay(board), "주변 대상에는 윤곽이 적용되지 않는다")
+	var spark_near = board.get_node_or_null("Sparkle")
+	var spark_focus = book.get_node_or_null("Sparkle")
+	_check(spark_near != null and spark_near.emitting and spark_focus != null and spark_focus.amount > spark_near.amount
+			and board.find_children("*", "Label3D", false, false).is_empty(),
+			"떠 있는 표식 대신 빛 입자가 반짝이고, 지금 조사할 대상이 더 많이 반짝인다")
 
 	_press_action("interact")
 	await _frames(2)

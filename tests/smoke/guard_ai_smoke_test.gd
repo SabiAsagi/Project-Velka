@@ -50,6 +50,14 @@ func _run() -> void:
 	companion.process_mode = Node.PROCESS_MODE_DISABLED
 	companion.global_position = Vector3(-8.0, Y, 20.0)
 
+	# --- 손전등 시야(바닥 부채꼴)는 벽에서 끊긴다 ---
+	_place_guard(Vector3(2.0, Y, 19.0), Vector3(-1, 0, 0))      # 서쪽 벽(x=0)을 2m 앞에 두고 선다
+	_guard.body_root.rotation.y = atan2(1.0, 0.0)
+	_guard._update_beam_shape()
+	var reach: PackedFloat32Array = _guard.beam_reach
+	var mid: float = reach[reach.size() / 2]
+	_check(mid < 2.6 and mid < _guard.detection_range - 1.0, "손전등 시야는 벽을 뚫지 않고 벽에서 끊긴다 (%.2fm)" % mid)
+
 	# --- 의심: 시야 끝에서 잠깐 -> "?" 만, 사라지면 확인하러 온다 ---
 	_place_guard(Vector3(4.0, Y, 10.6), Vector3(1, 0, 0))
 	_party.teleport_party(Vector3(10.6, Y, 10.6))
