@@ -111,6 +111,14 @@ func _run() -> void:
 		var pair: Array = l["pairs"][0]
 		board.link(pair[0], pair[1])
 	_check(board.current_step() == links.size() and board.is_pin_stage(), "다섯 연결을 모두 찾으면 지도에 핀을 꽂는 단계가 된다")
+	var most := 0
+	for c in data["cards"]:
+		most = maxi(most, board._strings.strings_from(String(c["id"])))
+	var memo_spots := {}
+	for m in board._strings.memos:
+		memo_spots[str(m["pos"])] = true
+	_check(board._strings.memos.size() == links.size() and memo_spots.size() == links.size() and most <= 2,
+			"연결마다 단서 메모가 따로 꽂히고, 카드 하나에서 나가는 실은 많아야 두 가닥 (%d)" % most)
 	_check(not board.pin_location("plaza") and not board.is_solved(), "사람 많은 곳에 핀을 꽂으면 아니라고 한다")
 	_check(board.pin_location(String(data["pin"]["answer"])) and board.is_solved(), "산업단지 북측에 핀을 꽂으면 공통 좌표가 나온다")
 	board.confirm_result()
