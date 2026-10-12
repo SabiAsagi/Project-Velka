@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="Script" path="res://scripts/characters/PartyMember.gd" id="1_party_member"]
 [ext_resource type="SpriteFrames" path="res://assets/characters/sprites/shamu_frames.tres" id="2_shamu_tex"]
@@ -11,6 +11,18 @@
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_shamu"]
 radius = 0.4
 height = 1.8
+
+[sub_resource type="Gradient" id="Gradient_contact_shadow"]
+offsets = PackedFloat32Array(0, 0.55, 1)
+colors = PackedColorArray(0, 0, 0, 0.6, 0, 0, 0, 0.3, 0, 0, 0, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_contact_shadow"]
+gradient = SubResource("Gradient_contact_shadow")
+width = 64
+height = 64
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(0.5, 0)
 
 [node name="Shamu" type="CharacterBody3D" groups=["party_member", "player"]]
 collision_layer = 2
@@ -27,13 +39,19 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
 shape = SubResource("CapsuleShape3D_shamu")
 
 [node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.85, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.04, 0)
 sprite_frames = ExtResource("2_shamu_tex")
 animation = &"idle_side"
-pixel_size = 0.0042
-billboard = 2
+pixel_size = 0.0035
+billboard = 1
+layers = 524288
 alpha_cut = 1
-shaded = true
+
+[node name="ContactShadow" type="Decal" parent="AnimatedSprite3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.04, 0)
+size = Vector3(0.9, 0.6, 0.6)
+texture_albedo = SubResource("GradientTexture2D_contact_shadow")
+cull_mask = 524287
 
 [node name="InteractionComponent" type="Node3D" parent="."]
 script = ExtResource("3_interact")
