@@ -27,22 +27,20 @@ var _warning_tween: Tween
 var overlay: Control
 
 const HudOverlay := preload("res://scripts/ui/HudOverlay.gd")
-const TensionFx := preload("res://scripts/ui/TensionFx.gd")
+const TENSION_FX_PATH := "res://scripts/ui/TensionFx.gd"
 var tension: Control
 const KEYS_TEXT := "WASD 이동   Shift 달리기   E 조사   F 능력   Space 공격   R 수첩   Q 전환   C 기다려/따라와   ESC 메뉴"
 
 
 func _ready() -> void:
 	add_to_group("rule_warning_listener")
+	# 예전 프로토타입 패널은 가장 먼저 숨긴다 (뒤에서 무엇이 실패해도 겹쳐 보이지 않게)
+	$MarginContainer.visible = false
+	interaction_panel.visible = false
 	_build_survival_ui()
 	overlay = HudOverlay.new()
 	add_child(overlay)
 	move_child(overlay, 0)
-	tension = TensionFx.new()
-	add_child(tension)
-	move_child(tension, 0)
-	$MarginContainer.visible = false
-	interaction_panel.visible = false
 	overlay.set_keys(KEYS_TEXT)
 	if not RuleManager.rule_discovered.is_connected(_on_rule_discovered):
 		RuleManager.rule_discovered.connect(_on_rule_discovered)
@@ -66,6 +64,18 @@ func _ready() -> void:
 			_bind_player(party.get_active_member())
 	elif player:
 		_bind_player(player)
+	# 긴장 연출은 부가 효과라 맨 마지막에 붙인다 (실패해도 HUD·조사 안내는 동작한다)
+	_add_tension_fx()
+
+
+func _add_tension_fx() -> void:
+	var script := load(TENSION_FX_PATH) as GDScript
+	if script == null or not script.can_instantiate():
+		push_error("[PrototypeHUD] 긴장 연출(TensionFx)을 불러오지 못했다 — 연출 없이 진행한다")
+		return
+	tension = script.new()
+	add_child(tension)
+	move_child(tension, 0)
 
 
 func _on_party_switched(active_member: PartyMember, _companion: PartyMember) -> void:
