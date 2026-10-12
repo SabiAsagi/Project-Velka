@@ -41,6 +41,26 @@ func _run() -> void:
 	_check(_zone().contains("1층"), "1층 출입문 앞에서 시작한다 (%s)" % _zone())
 	var upper_layer := int(_world.get_node("Buildings/hideout/2F").get_meta("cull_layer"))
 	_check(not _camera.get_cull_mask_value(upper_layer), "1층에 있으면 2층이 카메라에서 숨겨진다")
+	# 1층에 있으면 바로 위 2층의 조사 대상 표식이 뜨지 않는다 (깊이 무시 표식이 천장 너머로 보이던 문제)
+	var upstairs: Node3D = null
+	var me: Node3D = _member()
+	for it in get_nodes_in_group("interactable"):
+		var p: Vector3 = it.get_interaction_position()
+		if p.y > 3.0 and Vector2(p.x - me.global_position.x, p.z - me.global_position.z).length() < 4.0:
+			upstairs = it
+			break
+	if upstairs == null:
+		for it in get_nodes_in_group("interactable"):
+			if it.get_interaction_position().y > 3.0:
+				upstairs = it
+				break
+	var spot: Vector3 = upstairs.get_interaction_position()
+	var probe := Vector3(spot.x, 0.05, spot.z)
+	var comp = me.get_node("InteractionComponent")
+	_check(not comp.on_same_floor(probe, spot) and comp.on_same_floor(Vector3(spot.x, F2 + 0.05, spot.z), spot),
+			"위층(2층) 조사 지점은 1층에서 같은 층으로 치지 않는다")
+	await _seconds(0.3)
+	_check(upstairs.get_highlight_level() == 0, "1층에서는 2층 조사 대상(%s)에 표식이 뜨지 않는다" % upstairs.name)
 
 	# --- 철계단으로 2층 ---
 	var ok := await _walk([Vector3(11.8, 0.05, 3.0), Vector3(11.8, 0.05, 9.3), Vector3(13.2, 0.05, 9.4), Vector3(13.2, F2, 2.0)])

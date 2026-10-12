@@ -12,6 +12,8 @@ signal focus_changed(interactable: InteractableBase)
 ## 이 거리 안의 조사 대상은 머리 위 표식으로 미리 보여준다.
 @export var highlight_range: float = 6.0
 @export var scan_interval: float = 0.08
+## 같은 층으로 보는 높이 범위 (발 기준, 조사 지점 높이 - 발 높이). 위·아래층(3.8m 간격)의 대상은 표식도 띄우지 않는다.
+@export var floor_band: Vector2 = Vector2(-1.4, 2.6)
 
 const SABI_COLOR := Color(0.27, 0.63, 0.71)
 const SHAMU_COLOR := Color(0.85, 0.64, 0.21)
@@ -73,7 +75,10 @@ func _scan_for_interactable() -> void:
 			nearest_distance = 0.0
 			nearby.append(interactable)
 			continue
-		var distance := player.global_position.distance_to(interactable.get_interaction_position())
+		var point := interactable.get_interaction_position()
+		if not on_same_floor(player.global_position, point):
+			continue
+		var distance := player.global_position.distance_to(point)
 		if distance > highlight_range:
 			continue
 		nearby.append(interactable)
@@ -83,6 +88,12 @@ func _scan_for_interactable() -> void:
 
 	_set_focus(nearest)
 	_update_highlights(nearby)
+
+
+## 조사 지점이 발 높이 기준으로 같은 층에 있는가
+func on_same_floor(feet: Vector3, point: Vector3) -> bool:
+	var dy := point.y - feet.y
+	return dy >= floor_band.x and dy <= floor_band.y
 
 
 func _set_focus(interactable: InteractableBase) -> void:
