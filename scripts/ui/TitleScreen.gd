@@ -39,16 +39,9 @@ func _ready() -> void:
 	else:
 		new_game_btn.grab_focus()
 
-	# 버전 (오른쪽 아래)
-	var version := VelkaStyle.label(VelkaStyle.version_text() + "  ·  프롤로그 개발판", VelkaStyle.mono(), 16, Color(VelkaStyle.INK_DIM, 0.8))
-	version.name = "VersionLabel"
-	version.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT)
-	version.offset_left = -420
-	version.offset_top = -46
-	version.offset_right = -28
-	version.offset_bottom = -20
-	version.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	add_child(version)
+	# 버전 (왼쪽 아래, project.godot 의 버전을 그대로 보여 준다)
+	version_label.text = VelkaStyle.version_text() + "  ·  프롤로그 개발판  (Godot 4.7)"
+	version_label.offset_right = 600.0
 
 	# 타이틀 미세 펄스 애니메이션
 	var tween = create_tween().set_loops()
