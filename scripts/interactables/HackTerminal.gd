@@ -8,6 +8,8 @@ class_name HackTerminal
 # 중간에 연결을 끊으면(ESC) 아무 일도 없고 다시 시도할 수 있다.
 # 역추적 게이지가 다 차거나 암호 시도를 다 쓰면 들킨다: 단말에서 경보음이 울려 주변 경비원이 확인하러 온다.
 # 샤무가 조사하면 사비가 해야 한다는 대사만 나온다. requires_flag 가 켜져 있어야 상호작용할 수 있다.
+# remote_ok 단말은 샤무가 사비의 중계기를 꽂으면 사비가 밖에서 원격으로 해킹한다 (퍼즐은 사비 시점, 샤무는 그동안 단말 앞).
+#   무전은 흐르는 자막(radio_feed 그룹)으로: "연결됐어. 잠깐만 버텨." / "됐어." / "역추적당했어! 숨어!"
 
 signal hacked(terminal_id: String)
 
@@ -29,6 +31,11 @@ const HACK_COLOR := Color(0.27, 0.63, 0.71)
 ## 역추적 게이지 시간(초). 0 이면 기본
 @export var trace_seconds: float = 0.0
 @export_multiline var shamu_line: String = "이런 건 사비 담당이야. 사비로 바꾸자."
+## 샤무가 중계기를 꽂으면 사비가 원격으로 해킹할 수 있다
+@export var remote_ok: bool = false
+@export var relay_prompt: String = "중계기 꽂기 — 사비 원격 해킹"
+## remote_ok 단말을 샤무가 requires_flag 전에 조사했을 때 (샤무 자신의 말)
+@export_multiline var shamu_requires_line: String = ""
 
 ## terminal_id 별 기본 퍼즐: [종류, 크기, 역추적 시간]. 문·패널은 회로, 컴퓨터는 암호·영상
 const PUZZLES := {
@@ -64,12 +71,23 @@ func _requirement_met() -> bool:
 func get_interaction_prompt(player: Node3D) -> String:
 	if is_done():
 		return done_prompt
-	return hack_prompt if _is_sabi(player) else "사비가 다뤄야 한다"
+	if _is_sabi(player):
+		return hack_prompt
+	return relay_prompt if remote_ok else "사비가 다뤄야 한다"
 
 
 func _on_interact(player: Node3D) -> void:
+	var remote := remote_ok and not _is_sabi(player)
+	if remote and not _requirement_met():
+		was_used = false
+		var line := shamu_requires_line if not shamu_requires_line.is_empty() else requires_line
+		DialogueManager.start_dialogue_data("hack_requires_" + terminal_id, [{
+			"speaker": "shamu", "speaker_name": "카즈네 샤무",
+			"sabi_emotion": "neutral", "shamu_emotion": "serious", "text": line,
+		}])
+		return
 	# 샤무가 먼저 "사비 담당"이라고 말한다. 조건 대사(requires_line)는 사비의 말이라 사비일 때만.
-	if not _is_sabi(player):
+	if not _is_sabi(player) and not remote:
 		was_used = false
 		DialogueManager.start_dialogue_data("hack_shamu_" + terminal_id, [{
 			"speaker": "shamu", "speaker_name": "카즈네 샤무",
@@ -84,6 +102,8 @@ func _on_interact(player: Node3D) -> void:
 		}])
 		return
 	is_hacking = true
+	if remote:
+		_radio("연결됐어. 잠깐만 버텨.")
 	var preset: Array = PUZZLES.get(terminal_id, ["circuit", Vector2i(5, 4), 60.0])
 	var kind: String = puzzle_type if puzzle_type != "auto" and not puzzle_type.is_empty() else String(preset[0])
 	var size: Vector2i = circuit_size if circuit_size != Vector2i.ZERO else preset[1]
@@ -100,6 +120,8 @@ func _on_interact(player: Node3D) -> void:
 	if not success:
 		was_used = false
 		if game_traced:
+			if remote:
+				_radio("역추적당했어! 거기서 떨어져, 숨어!")
 			# 들켰다: 단말에서 경보음이 울려 주변 경비원이 몰려온다
 			AbilityFx.spawn_text(get_tree().current_scene, origin + Vector3.UP * 1.3, "역추적 — 경보!", Color(1.0, 0.35, 0.3), 1.4)
 			AbilityFx.spawn_ring(get_tree().current_scene, origin, Color(1.0, 0.35, 0.3), TRACE_NOISE_RADIUS, 0.6)
@@ -111,7 +133,14 @@ func _on_interact(player: Node3D) -> void:
 	if not done_flag.is_empty():
 		GameManager.set_story_flag(done_flag, true)
 	AbilityFx.spawn_text(get_tree().current_scene, origin + Vector3.UP * 1.3, "접속 완료", HACK_COLOR, 0.9)
+	if remote:
+		_radio("됐어. 들어왔어.")
 	hacked.emit(terminal_id)
+
+
+## 사비의 무전 (흐르는 자막, 게임은 멈추지 않는다)
+func _radio(text: String) -> void:
+	get_tree().call_group("radio_feed", "radio", "sabi", text)
 
 
 func _is_sabi(player: Node3D) -> bool:

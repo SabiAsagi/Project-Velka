@@ -23,6 +23,7 @@ var _notice_box: VBoxContainer
 var _warning_panel: PanelContainer
 var _warning_label: Label
 var _warning_tween: Tween
+var _radio_box: VBoxContainer
 ## 새 HUD 화면 (기존 라벨들은 값만 갱신하고 숨겨 둔다 — 테스트·디버그용)
 var overlay: Control
 
@@ -34,6 +35,7 @@ const KEYS_TEXT := "WASD 이동   Shift 달리기   E 조사   F 능력   Space 
 
 func _ready() -> void:
 	add_to_group("rule_warning_listener")
+	add_to_group("radio_feed")
 	# 예전 프로토타입 패널은 가장 먼저 숨긴다 (뒤에서 무엇이 실패해도 겹쳐 보이지 않게)
 	$MarginContainer.visible = false
 	interaction_panel.visible = false
@@ -42,6 +44,7 @@ func _ready() -> void:
 	add_child(overlay)
 	move_child(overlay, 0)
 	overlay.set_keys(KEYS_TEXT)
+	_build_radio_feed()
 	if not RuleManager.rule_discovered.is_connected(_on_rule_discovered):
 		RuleManager.rule_discovered.connect(_on_rule_discovered)
 		RuleManager.rule_violated.connect(_on_rule_violated)
@@ -151,7 +154,9 @@ func _update_vitals_display() -> void:
 	if pv:
 		var pname := "샤무" if partner.character_type == GameManager.CharacterType.SHAMU else "사비"
 		var ptext := "동료 %s  체력 %d / %d" % [pname, ceili(pv.hp), roundi(pv.max_hp)]
-		if party.has_method("is_companion_waiting") and party.is_companion_waiting():
+		if bool(party.get("solo")):
+			ptext += "  (밖에서 무전 중)"
+		elif party.has_method("is_companion_waiting") and party.is_companion_waiting():
 			ptext += "  (대기 중 — C: 따라와)"
 		var pstatus: Array = pv.status_names()
 		if not pstatus.is_empty():
@@ -182,6 +187,53 @@ func show_notice(text: String, color: Color = Color(0.9, 0.93, 0.96), seconds: f
 	tween.tween_interval(seconds)
 	tween.tween_property(label, "modulate:a", 0.0, 0.6)
 	tween.tween_callback(label.queue_free)
+
+
+## 무전 (흐르는 자막): 왼쪽 아래에 잠깐 떴다 사라진다. 게임은 멈추지 않는다.
+func radio(speaker: String, text: String, seconds: float = 4.5) -> void:
+	if _radio_box == null:
+		return
+	var names := {"sabi": "사비", "shamu": "샤무", "kwon": "권지혁"}
+	var colors := {"sabi": Color(0.55, 0.85, 0.92), "shamu": Color(0.98, 0.8, 0.42)}
+	var panel := PanelContainer.new()
+	var style := StyleBoxFlat.new()
+	style.bg_color = Color(0.02, 0.04, 0.05, 0.82)
+	style.border_color = Color(colors.get(speaker, Color(0.7, 0.75, 0.8)), 0.8)
+	style.border_width_left = 3
+	style.set_content_margin_all(10)
+	style.content_margin_left = 14
+	panel.add_theme_stylebox_override("panel", style)
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 12)
+	panel.add_child(row)
+	row.add_child(VelkaStyle.label("무전 · " + String(names.get(speaker, speaker)), VelkaStyle.mono_bold(), 18, colors.get(speaker, Color(0.8, 0.85, 0.9))))
+	var body := VelkaStyle.label(text, VelkaStyle.serif(), 20, Color(0.9, 0.92, 0.94))
+	body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	body.custom_minimum_size = Vector2(460, 0)
+	row.add_child(body)
+	_radio_box.add_child(panel)
+	while _radio_box.get_child_count() > 3:
+		_radio_box.get_child(0).queue_free()
+		_radio_box.remove_child(_radio_box.get_child(0))
+	SfxBank.play(self, "static", -20.0, 1.4)
+	var tween := panel.create_tween()
+	tween.tween_interval(seconds)
+	tween.tween_property(panel, "modulate:a", 0.0, 0.6)
+	tween.tween_callback(panel.queue_free)
+
+
+func _build_radio_feed() -> void:
+	_radio_box = VBoxContainer.new()
+	_radio_box.name = "RadioFeed"
+	_radio_box.add_theme_constant_override("separation", 6)
+	_radio_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_radio_box.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT)
+	_radio_box.offset_left = 24
+	_radio_box.offset_right = 700
+	_radio_box.offset_top = -250
+	_radio_box.offset_bottom = -70
+	_radio_box.alignment = BoxContainer.ALIGNMENT_END
+	add_child(_radio_box)
 
 
 ## RuleZone이 부른다: 알고 있는 규칙이 적용되는 곳에 들어왔을 때 경고

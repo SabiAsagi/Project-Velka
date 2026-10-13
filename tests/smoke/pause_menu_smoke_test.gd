@@ -31,6 +31,11 @@ func _run() -> void:
 	_press("pause")
 	await _input_frames()
 	_check(not _pause.is_open() and not paused, "타이틀 화면에서는 ESC로 일시정지 메뉴가 열리지 않는다")
+	var ver_label = current_scene.get_node_or_null("VersionLabel")
+	_check(current_scene.find_children("VersionLabel*", "Label", false, false).size() == 1, "버전 표시는 하나뿐이다")
+	var ver := String(ProjectSettings.get_setting("application/config/version", ""))
+	_check(not ver.is_empty() and ver_label != null and String(ver_label.text).begins_with("v" + ver),
+			"타이틀 화면 왼쪽 아래에 게임 버전이 보인다 (%s)" % (ver_label.text if ver_label else "없음"))
 
 	# --- 게임 중 열기/닫기 ---
 	_open_chapter()

@@ -7415,8 +7415,8 @@ metallic = 0.3
 background_mode = 1
 background_color = Color(0.02, 0.02, 0.04, 1)
 ambient_light_source = 2
-ambient_light_color = Color(0.45, 0.5, 0.62, 1)
-ambient_light_energy = 0.5
+ambient_light_color = Color(0.4, 0.46, 0.6, 1)
+ambient_light_energy = 0.16
 ssao_enabled = true
 ssao_radius = 1.2
 ssao_intensity = 2.2
@@ -7796,7 +7796,7 @@ size = Vector3(1, 1, 1)
 transform_format = 1
 instance_count = 1
 mesh = SubResource("s473")
-buffer = PackedFloat32Array(0.6, 0, 0, 27.8, 0, 1.1, 0, 0.55, 0, 0, 0.6, 1.8)
+buffer = PackedFloat32Array(0.6, 0, 0, 30.2, 0, 1.1, 0, 0.55, 0, 0, 0.6, 1.8)
 
 [sub_resource type="BoxMesh" id="s475"]
 material = SubResource("s145")
@@ -8396,8 +8396,14 @@ transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 0, 10)
 is_locked = true
 unlock_flag = "p04_gate_hacked"
 locked_prompt = "잠긴 문"
-locked_line = "전자식 잠금이야. 밖에 있는 보안 단말부터 열어야 해."
+locked_line = "전자식 잠금이야. 밖에 있는 보안 단말부터 열어야 해. 샤무라면 뜯을 수도 있겠지만… 경보가 울릴 거야."
 door_width = 1.40
+forceable = true
+force_flag = "p04_side_forced"
+force_prompt = "옆문 강제로 뜯기 (경보)"
+force_question = "잠금째 뜯어 버릴 수는 있어. 대신 사이렌이 울리고 경비가 몰려올 거야. 사비가 단말을 열 때까지 기다릴까?"
+force_choice = "뜯는다 — 사이렌이 울리고 경비가 늘어난다"
+force_cancel = "그만둔다 — 사비가 단말을 열게 한다"
 
 [node name="ServerDoor" parent="Doors" instance=ExtResource("e9")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.2, -3.8, 7.5)
@@ -8421,69 +8427,69 @@ omni_range = 2.60
 
 [node name="Light" type="OmniLight3D" parent="Buildings/factory/1F/Lights" groups=["real_light"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 4, 4)
-light_color = Color(1.00, 0.72, 0.42, 1)
-light_energy = 1.20
-omni_range = 8.50
+light_color = Color(1.00, 0.68, 0.38, 1)
+light_energy = 0.45
+omni_range = 6.00
 
 [node name="Light_2" type="OmniLight3D" parent="Buildings/factory/1F/Lights" groups=["real_light"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 4, 11)
-light_color = Color(1.00, 0.72, 0.42, 1)
-light_energy = 1.20
-omni_range = 8.50
+light_color = Color(1.00, 0.68, 0.38, 1)
+light_energy = 0.45
+omni_range = 6.00
 
 [node name="Light_3" type="OmniLight3D" parent="Buildings/factory/1F/Lights" groups=["real_light"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 4, 18)
-light_color = Color(1.00, 0.72, 0.42, 1)
-light_energy = 1.20
-omni_range = 8.50
+light_color = Color(1.00, 0.68, 0.38, 1)
+light_energy = 0.45
+omni_range = 6.00
 
 [node name="Light_4" type="OmniLight3D" parent="Buildings/factory/1F/Lights" groups=["real_light"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 3.2, 11)
 light_color = Color(0.85, 0.92, 1.00, 1)
-light_energy = 0.80
-omni_range = 6.00
+light_energy = 0.35
+omni_range = 5.00
 
 [node name="Light_5" type="OmniLight3D" parent="Buildings/factory/1F/Lights" groups=["real_light"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 3, 4.5)
 light_color = Color(0.85, 0.92, 1.00, 1)
-light_energy = 0.80
-omni_range = 6.00
+light_energy = 0.35
+omni_range = 5.00
 
 [node name="Light_6" type="OmniLight3D" parent="Buildings/factory/1F/Lights" groups=["real_light"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 3, 17.5)
 light_color = Color(0.85, 0.92, 1.00, 1)
-light_energy = 0.80
-omni_range = 5.00
+light_energy = 0.35
+omni_range = 4.00
 
 [node name="Light_7" type="OmniLight3D" parent="Buildings/factory/1F/Lights" groups=["real_light"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 32.2, 3, 13.6)
 light_color = Color(0.85, 0.92, 1.00, 1)
-light_energy = 0.80
-omni_range = 3.50
+light_energy = 0.35
+omni_range = 3.00
 
 [node name="Light" type="OmniLight3D" parent="Buildings/factory/B1/Lights" groups=["real_light"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26, -0.8, 18)
 light_color = Color(1.00, 0.85, 0.70, 1)
-light_energy = 0.80
-omni_range = 7.00
+light_energy = 0.45
+omni_range = 6.00
 
 [node name="Light_2" type="OmniLight3D" parent="Buildings/factory/B1/Lights" groups=["real_light"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.5, -0.8, 10.7)
 light_color = Color(1.00, 0.40, 0.35, 1)
-light_energy = 0.80
-omni_range = 5.00
+light_energy = 0.45
+omni_range = 4.50
 
 [node name="Light_3" type="OmniLight3D" parent="Buildings/factory/B1/Lights" groups=["real_light"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.4, -0.8, 10.7)
 light_color = Color(1.00, 0.85, 0.70, 1)
-light_energy = 0.80
-omni_range = 5.00
+light_energy = 0.45
+omni_range = 4.50
 
 [node name="Light_4" type="OmniLight3D" parent="Buildings/factory/B1/Lights" groups=["real_light"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, -0.8, 3.8)
 light_color = Color(0.50, 0.80, 1.00, 1)
-light_energy = 0.80
-omni_range = 7.00
+light_energy = 0.45
+omni_range = 6.00
 
 [node name="Light_8" type="OmniLight3D" parent="Buildings/factory/1F/Lights" groups=["real_light"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 1.6, 0.6)
@@ -8636,6 +8642,8 @@ requires_flag = "guard_down_security"
 hack_prompt = "보안망 접속·삭제 자료 복구"
 requires_line = "경비원이 모니터 앞을 지키고 있어. 샤무가 뒤에서 조용히 처리해 줘야 단말에 손댈 수 있어."
 marker_height = 1.80
+remote_ok = true
+shamu_requires_line = "경비원이 모니터 앞에 있어. 먼저 뒤에서 조용히 처리해야 중계기를 꽂을 수 있어."
 
 [node name="InteractionPoint" type="Marker3D" parent="Interactables/SecurityTerminal"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 1.2)
@@ -8649,6 +8657,7 @@ requires_flag = ""
 hack_prompt = "경보 장치 해제"
 requires_line = ""
 marker_height = 1.80
+remote_ok = true
 
 [node name="InteractionPoint" type="Marker3D" parent="Interactables/AlarmPanel"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 1.1)
@@ -8662,6 +8671,7 @@ requires_flag = "p04_server_open"
 hack_prompt = "서버에서 영상 복원"
 requires_line = "경보랑 파쇄기가 돌아가는 동안엔 서버가 잠겨 있어."
 marker_height = 1.80
+shamu_line = "서버는 외부 망이랑 완전히 끊겨 있어. 중계기로도 안 닿아… 사비가 직접 와야 해."
 
 [node name="InteractionPoint" type="Marker3D" parent="Interactables/MainServer"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 1.3)
@@ -8675,6 +8685,11 @@ sabi_blocked_line = "봉쇄문이 기계식으로 잠겨 있어… 샤무 힘이
 marker_height = 1.6
 requires_flag = "p04_security_hacked"
 requires_line = "봉쇄문에 경보 센서가 붙어 있어. 보안망이 살아 있는 동안 건드리면 다 몰려와. 보안실 단말부터 꺼야 해."
+force_flag = "p04_basement_forced"
+force_prompt = "봉쇄문 강제로 뜯기 (경보)"
+force_question = "보안망이 살아 있어. 지금 뜯으면 센서가 울리고 사무동이랑 지하 경비가 다 몰려올 거야. 사비가 보안실 단말을 끌 때까지 기다릴까?"
+force_choice = "뜯는다 — 사이렌이 울리고 경비가 늘어난다"
+force_cancel = "그만둔다 — 보안실 단말부터"
 
 [node name="Piece" type="CSGBox3D" parent="Interactables/BlastDoor"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.15, 0)
@@ -9409,7 +9424,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 0.74, 0.65)
 shape = SubResource("s588")
 
 [node name="S_23" type="CollisionShape3D" parent="Buildings/factory/1F/Props/Collision"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.8, 0.55, 1.8)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30.2, 0.55, 1.8)
 shape = SubResource("s589")
 
 [node name="S_24" type="CollisionShape3D" parent="Buildings/factory/1F/Props/Collision"]

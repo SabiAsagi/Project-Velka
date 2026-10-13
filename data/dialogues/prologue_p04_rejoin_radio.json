@@ -1,0 +1,22 @@
+{
+  "dialogue_id": "prologue_p04_rejoin_radio",
+  "lines": [
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "text": "……경비 신호가 전부 끊겼어. 다 재운 거야?",
+      "radio": true
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "text": "조용히."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "text": "들어갈게. 샤무가 지나온 길로.",
+      "radio": true
+    }
+  ]
+}

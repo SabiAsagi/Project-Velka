@@ -32,6 +32,7 @@ func peek_chapter() -> String:
 func save_game() -> bool:
 	var save_data = {
 		"chapter": GameManager.current_chapter,
+		"version": VelkaStyle.version(),
 		"active_character": GameManager.active_character,
 		"trust": GameManager.sabi_shamu_trust,
 		"suspicion": GameManager.anomaly_suspicion,

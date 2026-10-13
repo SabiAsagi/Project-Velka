@@ -29,6 +29,12 @@ signal alert_changed(level: int)
 @export var notice_time_far: float = 1.5
 ## 놓친 뒤 마지막 위치에서 두리번거리는 시간
 @export var search_time: float = 5.0
+## 등 뒤에서 제압할 때 쓰러지는 소리 / 정면에서 맞고 소리칠 때 들리는 거리 (m)
+@export var takedown_noise_radius: float = 6.0
+## 들키면 쫓지 않고 곧바로 '발각' 실패 ("!" 가 뜨고 잠깐 뒤)
+@export var fail_on_spot: bool = true
+@export var spot_fail_delay: float = 0.45
+@export var resist_noise_radius: float = 14.0
 
 const BEAM_SEGMENTS := 16
 ## 바닥 부채꼴을 벽에 맞춰 다시 그리는 간격(초)
@@ -75,6 +81,10 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	if is_down:
+		return
+	# 대화 중에는 멈춰 선다 (읽는 동안 들키는 억울한 실패가 없게). 해킹 중에는 계속 움직인다.
+	if DialogueManager.is_dialogue_active:
+		_halt(delta)
 		return
 	_seen_time += delta
 	super._physics_process(delta)
@@ -180,11 +190,24 @@ func _begin_chase() -> void:
 	suspicion = 1.0
 	SfxBank.play(self, "sting", -3.0)
 	super._begin_chase()
+	if fail_on_spot:
+		get_tree().create_timer(spot_fail_delay).timeout.connect(_spot_fail)
+
+
+## 들켰다: 도망칠 틈 없이 '발각'
+func _spot_fail() -> void:
+	if is_instance_valid(self) and not is_down and current_state == AnomalyState.CHASE:
+		FailureManager.fail("spotted")
 
 
 func _process_chase(delta: float) -> void:
 	if target_player == null:
 		_end_chase()
+		return
+	if fail_on_spot:
+		# 들킨 순간: 멈춰 서서 대상을 본다 (곧 '발각' 실패)
+		_face(target_player.global_position - global_position, delta)
+		_halt(delta)
 		return
 	if is_target_hidden():
 		# 바로 눈앞에서 숨는 걸 봤으면 끌어낸다
@@ -350,13 +373,43 @@ func _can_see(member: CharacterBody3D, ignore_view_angle: bool) -> bool:
 # --- 제압 ---
 
 ## 샤무의 근접 공격: 쓰러뜨린다
+## 샤무의 근접 공격: 눈치채지 못한 채 등 뒤(손전등 시야 밖)에서 맞으면 쓰러진다.
+## 정면에서 치거나 이미 쫓는 중이면 버티고 바로 추격하며 소리친다 (근처 경비원도 몰려온다).
 func take_hit(attacker: Node3D) -> void:
 	if is_down:
 		return
 	if attacker and attacker.get("character_type") == GameManager.CharacterType.SHAMU:
-		_knock_down(true)
+		if can_be_taken_down_by(attacker):
+			_knock_down(true)
+			# 쓰러지는 소리: 가까운 경비원이 확인하러 온다
+			NoiseEvents.emit(get_tree(), global_position, takedown_noise_radius, attacker, false)
+		else:
+			_resist(attacker)
 	else:
 		super.take_hit(attacker)
+
+
+## 등 뒤에서 몰래 다가왔는가: 쫓는 중이 아니고, 공격자가 시야 부채꼴 밖에 있다
+func can_be_taken_down_by(attacker: Node3D) -> bool:
+	if is_down or current_state == AnomalyState.CHASE:
+		return false
+	var to := attacker.global_position - global_position
+	to.y = 0.0
+	if to.length() < 0.001 or _facing_direction.length_squared() < 0.0001:
+		return true
+	return _facing_direction.normalized().dot(to.normalized()) < cos(deg_to_rad(vision_angle * 0.5))
+
+
+## 정면에서 맞음: 버티고 곧바로 쫓는다
+func _resist(attacker: Node3D) -> void:
+	AbilityFx.spawn_text(get_tree().current_scene, global_position + Vector3.UP * 2.1, "막았다!", Color(1.0, 0.4, 0.3), 0.8)
+	target_player = attacker as CharacterBody3D
+	_last_known_position = attacker.global_position
+	_seen_time = 0.0
+	_face(attacker.global_position - global_position, 1.0)
+	if current_state != AnomalyState.CHASE:
+		_begin_chase()
+	NoiseEvents.emit(get_tree(), global_position, resist_noise_radius, attacker, false)
 
 
 func reset_to_spawn() -> void:

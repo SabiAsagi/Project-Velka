@@ -119,16 +119,20 @@ def structure(B, sw, res):
 
     # 문: 서쪽 옆문(사비가 외부 단말 해킹 -> 열림), 서버실 문(경보 해제 + 파쇄기 파괴 -> 열림)
     door(sw, res, "Doors", "SideDoor", (0.0, 0.0, 10.0), -90, 1.4, "p04_gate_hacked",
-         "전자식 잠금이야. 밖에 있는 보안 단말부터 열어야 해.")
+         "전자식 잠금이야. 밖에 있는 보안 단말부터 열어야 해. 샤무라면 뜯을 수도 있겠지만… 경보가 울릴 거야.",
+         {"forceable": "true", "force_flag": q("p04_side_forced"), "force_prompt": q("옆문 강제로 뜯기 (경보)"),
+          "force_question": q("잠금째 뜯어 버릴 수는 있어. 대신 사이렌이 울리고 경비가 몰려올 거야. 사비가 단말을 열 때까지 기다릴까?"),
+          "force_choice": q("뜯는다 — 사이렌이 울리고 경비가 늘어난다"), "force_cancel": q("그만둔다 — 사비가 단말을 열게 한다")})
     door(sw, res, "Doors", "ServerDoor", (27.2, B1, 7.5), 0, 1.6, "p04_server_open",
          "서버실은 경보랑 자료 폐기가 돌아가는 동안 잠겨 있어.")
 
 
-def door(sw, res, parent, name, pos, yaw, width, unlock_flag, locked_line):
-    sw.node(name, None, parent, {"transform": tf(pos, rot_y(yaw) if yaw else None), "is_locked": "true",
-                                 "unlock_flag": q(unlock_flag), "locked_prompt": q("잠긴 문"),
-                                 "locked_line": q(locked_line), "door_width": "%.2f" % width},
-            instance=res["door"])
+def door(sw, res, parent, name, pos, yaw, width, unlock_flag, locked_line, extra=None):
+    props = {"transform": tf(pos, rot_y(yaw) if yaw else None), "is_locked": "true",
+             "unlock_flag": q(unlock_flag), "locked_prompt": q("잠긴 문"),
+             "locked_line": q(locked_line), "door_width": "%.2f" % width}
+    props.update(extra or {})
+    sw.node(name, None, parent, props, instance=res["door"])
 
 
 # ---------------------------------------------------------------- 마당 (시작)
@@ -199,7 +203,8 @@ def offices(B):
         for h in (0.95, 1.65):
             B.box(p, "monitor", x, x + 1.0, h, h + 0.6, 0.05, 0.12, tag="monitor")
             B.box(p, "screen_on", x + 0.05, x + 0.95, h + 0.05, h + 0.55, 0.12, 0.125, tag="screen")
-    B.box(p, "chair_office", 27.5, 28.1, 0.0, 1.1, 1.5, 2.1, True, tag="chair")
+    # 의자는 단말 앞(조사 자리)을 비워 두고 옆으로 밀어 둔다
+    B.box(p, "chair_office", 29.9, 30.5, 0.0, 1.1, 1.5, 2.1, True, tag="chair")
     B.box(p, "file_box", 32.4, 33.6, 0.0, 1.8, 1.0, 3.0, True, tag="cabinet")
     # 휴게실: 테이블, 자판기, 사물함
     B.box(p, "table_top", 23.5, 25.5, 0.72, 0.76, 16.0, 17.2, True, tag="table")
@@ -272,7 +277,7 @@ def main():
     mats = palette.make(sw, EXTRA_MATS)
     env = sw.sub_res("env_factory", "Environment", {
         "background_mode": "1", "background_color": "Color(0.02, 0.02, 0.04, 1)", "ambient_light_source": "2",
-        "ambient_light_color": "Color(0.45, 0.5, 0.62, 1)", "ambient_light_energy": "0.5",
+        "ambient_light_color": "Color(0.4, 0.46, 0.6, 1)", "ambient_light_energy": "0.16",
         "ssao_enabled": "true", "ssao_radius": "1.2", "ssao_intensity": "2.2", "ssao_power": "1.6", "ssao_light_affect": "0.2",
         "adjustment_enabled": "true", "adjustment_saturation": "0.85", "adjustment_contrast": "1.08"})
     env_other = sw.sub_res("env_factory_other", "Environment", {
@@ -316,13 +321,14 @@ def main():
     # 조명: 마당 가로등, 생산동 나트륨등(드문드문), 사무동 형광등, 지하 비상등
     emit_light(sw, "Site", (-9.0, 3.8, 11.0), 9.0, "real_light", (1.0, 0.75, 0.45), 1.2)
     emit_light(sw, "Site", (-2.3, 1.5, 6.0), 2.6, "real_light", (0.4, 1.0, 0.65), 0.7)   # 보안 단말 화면 빛
+    # 폐쇄된 공장: 작업등은 거의 꺼져 있다. 남은 등도 어둡다 (경비원의 시야는 손전등에 달려 있다)
     for pos in ((6.0, 4.0, 4.0), (16.0, 4.0, 11.0), (6.0, 4.0, 18.0)):
-        emit_light(sw, lv("1F", "Lights"), pos, 8.5, "real_light", (1.0, 0.72, 0.42), 1.2)
-    for pos, rng in (((28.0, 3.2, 11.0), 6.0), ((28.0, 3.0, 4.5), 6.0), ((25.0, 3.0, 17.5), 5.0), ((32.2, 3.0, 13.6), 3.5)):
-        emit_light(sw, lv("1F", "Lights"), pos, rng, "real_light", (0.85, 0.92, 1.0), 0.8)
-    for pos, rng, col in (((26.0, B1 + 3.0, 18.0), 7.0, (1.0, 0.85, 0.7)), ((24.5, B1 + 3.0, 10.7), 5.0, (1.0, 0.4, 0.35)),
-                          ((31.4, B1 + 3.0, 10.7), 5.0, (1.0, 0.85, 0.7)), ((28.0, B1 + 3.0, 3.8), 7.0, (0.5, 0.8, 1.0))):
-        emit_light(sw, lv("B1", "Lights"), pos, rng, "real_light", col, 0.8)
+        emit_light(sw, lv("1F", "Lights"), pos, 6.0, "real_light", (1.0, 0.68, 0.38), 0.45)
+    for pos, rng in (((28.0, 3.2, 11.0), 5.0), ((28.0, 3.0, 4.5), 5.0), ((25.0, 3.0, 17.5), 4.0), ((32.2, 3.0, 13.6), 3.0)):
+        emit_light(sw, lv("1F", "Lights"), pos, rng, "real_light", (0.85, 0.92, 1.0), 0.35)
+    for pos, rng, col in (((26.0, B1 + 3.0, 18.0), 6.0, (1.0, 0.85, 0.7)), ((24.5, B1 + 3.0, 10.7), 4.5, (1.0, 0.4, 0.35)),
+                          ((31.4, B1 + 3.0, 10.7), 4.5, (1.0, 0.85, 0.7)), ((28.0, B1 + 3.0, 3.8), 6.0, (0.5, 0.8, 1.0))):
+        emit_light(sw, lv("B1", "Lights"), pos, rng, "real_light", col, 0.45)
     emit_light(sw, lv("1F", "Lights"), (28.0, 1.6, 0.6), 3.0, "real_light", (0.45, 0.85, 0.95), 0.6)
 
     # 구역 이름
@@ -349,10 +355,18 @@ def main():
             ("SecurityTerminal", (28.0, 0.0, 0.7), (0.0, 1.1, 1.2), "security", "p04_security_hacked", "guard_down_security", "보안망 접속·삭제 자료 복구", 1.8),
             ("AlarmPanel", (23.6, B1, 8.0), (0.0, 1.1, 1.1), "alarm", "p04_alarm_off", "", "경보 장치 해제", 1.8),
             ("MainServer", (28.0, B1, 0.6), (0.0, 1.1, 1.3), "server", "p04_footage_restored", "p04_server_open", "서버에서 영상 복원", 1.8)):
-        sw.node(name, "Node3D", "Interactables", {"transform": tf(pos), "script": res["hack"], "terminal_id": q(tid),
-                                                  "done_flag": q(done), "requires_flag": q(req), "hack_prompt": q(prompt),
-                                                  "requires_line": q(HACK_REQUIRES_LINES.get(tid, "")),
-                                                  "marker_height": "%.2f" % marker})
+        props = {"transform": tf(pos), "script": res["hack"], "terminal_id": q(tid),
+                 "done_flag": q(done), "requires_flag": q(req), "hack_prompt": q(prompt),
+                 "requires_line": q(HACK_REQUIRES_LINES.get(tid, "")), "marker_height": "%.2f" % marker}
+        # 사비는 밖에 있다: 보안실 단말·경보 장치는 샤무가 중계기를 꽂으면 사비가 원격으로 해킹한다.
+        # 지하 서버는 외부 망과 끊겨 있어 사비가 직접 와야 한다.
+        if tid in ("security", "alarm"):
+            props["remote_ok"] = "true"
+        if tid == "security":
+            props["shamu_requires_line"] = q("경비원이 모니터 앞에 있어. 먼저 뒤에서 조용히 처리해야 중계기를 꽂을 수 있어.")
+        if tid == "server":
+            props["shamu_line"] = q("서버는 외부 망이랑 완전히 끊겨 있어. 중계기로도 안 닿아… 사비가 직접 와야 해.")
+        sw.node(name, "Node3D", "Interactables", props)
         sw.node("InteractionPoint", "Marker3D", "Interactables/" + name, {"transform": tf(point)}, unique=False)
 
     # 부술 수 있는 것 (샤무): 계단실 봉쇄문, 자료 파쇄기
@@ -364,9 +378,16 @@ def main():
              "봉쇄문에 경보 센서가 붙어 있어. 보안망이 살아 있는 동안 건드리면 다 몰려와. 보안실 단말부터 꺼야 해."),
             ("Shredder", (31.0, B1, 9.0), (1.8, 1.3, 1.0), shred, "data_shredder", "파쇄기 부수기",
              "자료가 계속 갈려 나가고 있어. 내 힘으로는 못 멈춰… 샤무!", (0.0, 1.1, 1.0), "", "")):
-        sw.node(name, "Node3D", "Interactables", {"transform": tf(pos), "script": res["breakable"], "obstacle_id": q(oid),
-                                                  "break_prompt": q(prompt), "sabi_blocked_line": q(line), "marker_height": "1.6",
-                                                  "requires_flag": q(req_flag), "requires_line": q(req_line)})
+        props = {"transform": tf(pos), "script": res["breakable"], "obstacle_id": q(oid),
+                 "break_prompt": q(prompt), "sabi_blocked_line": q(line), "marker_height": "1.6",
+                 "requires_flag": q(req_flag), "requires_line": q(req_line)}
+        if oid == "basement_door":
+            # 보안망 접속 전에도 샤무가 억지로 뜯을 수 있다 (사이렌, 경비 증원)
+            props.update({"force_flag": q("p04_basement_forced"), "force_prompt": q("봉쇄문 강제로 뜯기 (경보)"),
+                          "force_question": q("보안망이 살아 있어. 지금 뜯으면 센서가 울리고 사무동이랑 지하 경비가 다 몰려올 거야. 사비가 보안실 단말을 끌 때까지 기다릴까?"),
+                          "force_choice": q("뜯는다 — 사이렌이 울리고 경비가 늘어난다"),
+                          "force_cancel": q("그만둔다 — 보안실 단말부터")})
+        sw.node(name, "Node3D", "Interactables", props)
         sw.node("Piece", "CSGBox3D", "Interactables/" + name, {"transform": tf((0.0, size[1] / 2, 0.0)), "use_collision": "true",
                                                                "size": "Vector3(%.2f, %.2f, %.2f)" % size, "material": mat}, unique=False)
         sw.node("InteractionPoint", "Marker3D", "Interactables/" + name, {"transform": tf(point)}, unique=False)

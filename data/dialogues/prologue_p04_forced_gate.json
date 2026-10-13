@@ -1,0 +1,32 @@
+{
+  "dialogue_id": "prologue_p04_forced_gate",
+  "lines": [
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "text": "[shake rate=20.0 level=6][color=#ff6050]─── 사이렌 ───[/color][/shake]",
+      "shake": true
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "text": "금속이 찢어지는 소리에 이어, 공장 전체에 사이렌이 울린다. 안쪽에서 발소리가 늘어난다."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "text": "……샤무.",
+      "sabi_emotion": "serious"
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "text": "경비가 늘었어. 다들 문 쪽으로 올 거야. 숨어. 들키면 그걸로 끝이야."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "text": "나는 여기서 무전할게. 경비를 다 재우면 그때 들어갈 수 있어."
+    }
+  ]
+}

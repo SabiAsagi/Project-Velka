@@ -39,6 +39,10 @@ func _ready() -> void:
 	else:
 		new_game_btn.grab_focus()
 
+	# 버전 (왼쪽 아래, project.godot 의 버전을 그대로 보여 준다)
+	version_label.text = VelkaStyle.version_text() + "  ·  프롤로그 개발판  (Godot 4.7)"
+	version_label.offset_right = 600.0
+
 	# 타이틀 미세 펄스 애니메이션
 	var tween = create_tween().set_loops()
 	tween.tween_property(title_label, "modulate:a", 0.85, 1.5)
