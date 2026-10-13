@@ -31,6 +31,9 @@ signal alert_changed(level: int)
 @export var search_time: float = 5.0
 ## 등 뒤에서 제압할 때 쓰러지는 소리 / 정면에서 맞고 소리칠 때 들리는 거리 (m)
 @export var takedown_noise_radius: float = 6.0
+## 들키면 쫓지 않고 곧바로 '발각' 실패 ("!" 가 뜨고 잠깐 뒤)
+@export var fail_on_spot: bool = true
+@export var spot_fail_delay: float = 0.45
 @export var resist_noise_radius: float = 14.0
 
 const BEAM_SEGMENTS := 16
@@ -78,6 +81,10 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	if is_down:
+		return
+	# 대화 중에는 멈춰 선다 (읽는 동안 들키는 억울한 실패가 없게). 해킹 중에는 계속 움직인다.
+	if DialogueManager.is_dialogue_active:
+		_halt(delta)
 		return
 	_seen_time += delta
 	super._physics_process(delta)
@@ -183,11 +190,24 @@ func _begin_chase() -> void:
 	suspicion = 1.0
 	SfxBank.play(self, "sting", -3.0)
 	super._begin_chase()
+	if fail_on_spot:
+		get_tree().create_timer(spot_fail_delay).timeout.connect(_spot_fail)
+
+
+## 들켰다: 도망칠 틈 없이 '발각'
+func _spot_fail() -> void:
+	if is_instance_valid(self) and not is_down and current_state == AnomalyState.CHASE:
+		FailureManager.fail("spotted")
 
 
 func _process_chase(delta: float) -> void:
 	if target_player == null:
 		_end_chase()
+		return
+	if fail_on_spot:
+		# 들킨 순간: 멈춰 서서 대상을 본다 (곧 '발각' 실패)
+		_face(target_player.global_position - global_position, delta)
+		_halt(delta)
 		return
 	if is_target_hidden():
 		# 바로 눈앞에서 숨는 걸 봤으면 끌어낸다

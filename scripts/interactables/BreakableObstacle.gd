@@ -16,6 +16,12 @@ signal broken(obstacle_id: String, breaker: Node3D)
 @export var requires_flag: String = ""
 ## requires_flag 가 아직일 때 조사하면 나오는 대사
 @export_multiline var requires_line: String = ""
+## requires_flag 가 아직이어도 샤무가 억지로 부술 수 있다 (먼저 묻는다). 부수면 force_flag 가 켜진다 (경보 등).
+@export var force_flag: String = ""
+@export var force_prompt: String = "강제로 뜯기"
+@export_multiline var force_question: String = ""
+@export var force_choice: String = "뜯는다 (경보가 울린다)"
+@export var force_cancel: String = "그만둔다"
 
 const BREAK_COLOR := Color(0.95, 0.72, 0.25)
 
@@ -30,6 +36,8 @@ func _ready() -> void:
 	super._ready()
 	if not obstacle_id.is_empty() and GameManager.has_story_flag("broken_" + obstacle_id):
 		_set_broken_state(false)
+	if not force_flag.is_empty():
+		GameManager.story_flag_set.connect(_on_story_flag)
 
 
 func can_interact(player: Node3D) -> bool:
@@ -37,12 +45,37 @@ func can_interact(player: Node3D) -> bool:
 
 
 func get_interaction_prompt(player: Node3D) -> String:
+	if _is_shamu(player) and not _requirement_met() and not force_flag.is_empty():
+		return force_prompt
 	return break_prompt if _is_shamu(player) else blocked_prompt
 
 
+func _requirement_met() -> bool:
+	return requires_flag.is_empty() or bool(GameManager.get_story_flag(requires_flag, false))
+
+
+func _on_story_flag(flag_name: String, value: Variant) -> void:
+	if flag_name == force_flag and value and not is_broken:
+		while DialogueManager.is_dialogue_active:
+			await DialogueManager.dialogue_completed
+		var party := get_tree().get_first_node_in_group("player_party")
+		var breaker: Node3D = party.get_active_member() if party and party.has_method("get_active_member") else null
+		_break(breaker)
+
+
 func _on_interact(player: Node3D) -> void:
-	if not requires_flag.is_empty() and not GameManager.get_story_flag(requires_flag, false):
+	if not _requirement_met():
 		was_used = false
+		if _is_shamu(player) and not force_flag.is_empty():
+			DialogueManager.start_dialogue_data("force_" + obstacle_id, [{
+				"speaker": "shamu", "speaker_name": "카즈네 샤무",
+				"sabi_emotion": "worried", "shamu_emotion": "serious", "text": force_question,
+				"choices": [
+					{"text": force_choice, "outcome": {"flags": {force_flag: true}}},
+					{"text": force_cancel, "outcome": {}},
+				],
+			}])
+			return
 		if not requires_line.is_empty():
 			var shamu := _is_shamu(player)
 			DialogueManager.start_dialogue_data("requires_" + obstacle_id, [{
@@ -60,6 +93,13 @@ func _on_interact(player: Node3D) -> void:
 			"shamu_emotion": "neutral",
 			"text": sabi_blocked_line,
 		}])
+		return
+	_break(player)
+
+
+## 부순다: 큰 소음 (주변 괴이·경비가 반응), broken_<id> 플래그
+func _break(player: Node3D) -> void:
+	if is_broken:
 		return
 	var config := CharacterAbility.load_config("shamu_break")
 	var noise_radius := float(config.get("noise_radius", 12.0))

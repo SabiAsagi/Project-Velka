@@ -119,16 +119,20 @@ def structure(B, sw, res):
 
     # 문: 서쪽 옆문(사비가 외부 단말 해킹 -> 열림), 서버실 문(경보 해제 + 파쇄기 파괴 -> 열림)
     door(sw, res, "Doors", "SideDoor", (0.0, 0.0, 10.0), -90, 1.4, "p04_gate_hacked",
-         "전자식 잠금이야. 밖에 있는 보안 단말부터 열어야 해.")
+         "전자식 잠금이야. 밖에 있는 보안 단말부터 열어야 해. 샤무라면 뜯을 수도 있겠지만… 경보가 울릴 거야.",
+         {"forceable": "true", "force_flag": q("p04_side_forced"), "force_prompt": q("옆문 강제로 뜯기 (경보)"),
+          "force_question": q("잠금째 뜯어 버릴 수는 있어. 대신 사이렌이 울리고 경비가 몰려올 거야. 사비가 단말을 열 때까지 기다릴까?"),
+          "force_choice": q("뜯는다 — 사이렌이 울리고 경비가 늘어난다"), "force_cancel": q("그만둔다 — 사비가 단말을 열게 한다")})
     door(sw, res, "Doors", "ServerDoor", (27.2, B1, 7.5), 0, 1.6, "p04_server_open",
          "서버실은 경보랑 자료 폐기가 돌아가는 동안 잠겨 있어.")
 
 
-def door(sw, res, parent, name, pos, yaw, width, unlock_flag, locked_line):
-    sw.node(name, None, parent, {"transform": tf(pos, rot_y(yaw) if yaw else None), "is_locked": "true",
-                                 "unlock_flag": q(unlock_flag), "locked_prompt": q("잠긴 문"),
-                                 "locked_line": q(locked_line), "door_width": "%.2f" % width},
-            instance=res["door"])
+def door(sw, res, parent, name, pos, yaw, width, unlock_flag, locked_line, extra=None):
+    props = {"transform": tf(pos, rot_y(yaw) if yaw else None), "is_locked": "true",
+             "unlock_flag": q(unlock_flag), "locked_prompt": q("잠긴 문"),
+             "locked_line": q(locked_line), "door_width": "%.2f" % width}
+    props.update(extra or {})
+    sw.node(name, None, parent, props, instance=res["door"])
 
 
 # ---------------------------------------------------------------- 마당 (시작)
@@ -365,9 +369,16 @@ def main():
              "봉쇄문에 경보 센서가 붙어 있어. 보안망이 살아 있는 동안 건드리면 다 몰려와. 보안실 단말부터 꺼야 해."),
             ("Shredder", (31.0, B1, 9.0), (1.8, 1.3, 1.0), shred, "data_shredder", "파쇄기 부수기",
              "자료가 계속 갈려 나가고 있어. 내 힘으로는 못 멈춰… 샤무!", (0.0, 1.1, 1.0), "", "")):
-        sw.node(name, "Node3D", "Interactables", {"transform": tf(pos), "script": res["breakable"], "obstacle_id": q(oid),
-                                                  "break_prompt": q(prompt), "sabi_blocked_line": q(line), "marker_height": "1.6",
-                                                  "requires_flag": q(req_flag), "requires_line": q(req_line)})
+        props = {"transform": tf(pos), "script": res["breakable"], "obstacle_id": q(oid),
+                 "break_prompt": q(prompt), "sabi_blocked_line": q(line), "marker_height": "1.6",
+                 "requires_flag": q(req_flag), "requires_line": q(req_line)}
+        if oid == "basement_door":
+            # 보안망 접속 전에도 샤무가 억지로 뜯을 수 있다 (사이렌, 경비 증원)
+            props.update({"force_flag": q("p04_basement_forced"), "force_prompt": q("봉쇄문 강제로 뜯기 (경보)"),
+                          "force_question": q("보안망이 살아 있어. 지금 뜯으면 센서가 울리고 사무동이랑 지하 경비가 다 몰려올 거야. 사비가 보안실 단말을 끌 때까지 기다릴까?"),
+                          "force_choice": q("뜯는다 — 사이렌이 울리고 경비가 늘어난다"),
+                          "force_cancel": q("그만둔다 — 보안실 단말부터")})
+        sw.node(name, "Node3D", "Interactables", props)
         sw.node("Piece", "CSGBox3D", "Interactables/" + name, {"transform": tf((0.0, size[1] / 2, 0.0)), "use_collision": "true",
                                                                "size": "Vector3(%.2f, %.2f, %.2f)" % size, "material": mat}, unique=False)
         sw.node("InteractionPoint", "Marker3D", "Interactables/" + name, {"transform": tf(point)}, unique=False)

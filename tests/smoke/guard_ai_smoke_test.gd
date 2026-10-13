@@ -89,7 +89,19 @@ func _run() -> void:
 	_check(_flat(_guard.global_position, Vector3(10.6, 0, 10.6)) < 1.5, "확인하러 그 자리까지 걸어온다")
 	await _reset()
 
-	# --- 길찾기: 컨베이어 너머의 대상을 돌아서 붙잡는다 ---
+	# --- 들키면 곧바로 '발각' (쫓아오지 않는다) ---
+	_place_guard(Vector3(4.0, Y, 10.6), Vector3(1, 0, 0))
+	_party.teleport_party(Vector3(6.0, Y, 10.6))
+	var spot_t := 0.0
+	while _failed_cause == "" and spot_t < 3.0:
+		await _seconds(0.1)
+		spot_t += 0.1
+	_check(_failed_cause == "spotted" and _flat(_guard.global_position, Vector3(4.0, 0, 10.6)) < 0.8,
+			"시야 안에서 들키면 쫓기 전에 곧바로 '발각' 실패 (%.1f초)" % spot_t)
+	await _reset()
+
+	# --- 길찾기: 컨베이어 너머의 대상을 돌아서 붙잡는다 (즉시 실패를 끄고 추격 길찾기만 본다) ---
+	_guard.fail_on_spot = false
 	_place_guard(Vector3(10.0, Y, 7.6), Vector3(0, 0, 1))
 	_party.teleport_party(Vector3(10.0, Y, 3.8))
 	await _frames(2)
@@ -102,6 +114,7 @@ func _run() -> void:
 		await _seconds(0.25)
 		t += 0.25
 	_check(_failed_cause == "spotted", "컨베이어를 돌아 쫓아와 붙잡는다 (%.1f초, 이동 %.1fm)" % [t, _flat(start, _guard.global_position)])
+	_guard.fail_on_spot = true
 	await _reset()
 
 	# --- 소음: 기계 너머에서 부서지는 소리 -> 확인하러 온다 ---

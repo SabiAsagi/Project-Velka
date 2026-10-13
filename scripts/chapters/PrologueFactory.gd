@@ -3,10 +3,13 @@ extends Node3D
 # 프로젝트 벨카 - 프롤로그 폐쇄 공장 컨트롤러 (시나리오 P-04 현실 잠입)
 # 진행은 스토리 플래그로만 판단한다 (체크포인트 재시작 시 플래그가 되돌아가도 목표가 맞게 다시 계산된다).
 #   1. p04_gate_hacked        : 사비로 마당의 외부 보안 단말 해킹 -> 옆문 열림
+#      (또는 p04_side_forced  : 샤무가 옆문을 강제로 뜯음 -> 사이렌, 경비 증원)
 #   2. p04_reached_office     : 경비원 손전등을 피해 생산동을 지나 사무동 복도 도착
 #   3. guard_down_security    : 샤무로 보안실 경비원을 뒤에서 제압
 #   4. p04_security_hacked    : 사비로 보안실 단말 해킹 (지하 서버층 발견)
 #   5. broken_basement_door   : 샤무로 계단실 봉쇄문 강제 개방
+#      (보안망 접속 전에 뜯으면 p04_basement_forced: 사이렌, 경비 증원. 3·4 단계는 건너뛴다)
+# 들키면 곧바로 '발각' 실패 (Guard.fail_on_spot). 경보가 울리면 같은 층 경비가 그 자리를 확인하러 온다.
 #   6. p04_alarm_off + broken_data_shredder -> p04_server_open : 지하 협업 (경보=사비, 파쇄기=샤무)
 #   7. p04_footage_restored   : 사비로 서버 영상 복원 -> 최하층 컷신 -> 조명이 꺼진다
 # 이어서 P-05 전이, P-06 최초 개체 조우:
@@ -20,6 +23,16 @@ signal objective_changed(text: String)
 
 const OBJECTIVE_COLOR := Color(0.95, 0.85, 0.45)
 const DONE_FLAG := "prologue_factory_p04_done"
+const GUARD_SCENE := preload("res://scenes/entities/Guard.tscn")
+const GUARD_NAV := Rect2(-10.5, -0.5, 45, 23)
+## 경보가 울린 자리 (강제로 뜯은 문)
+const ALARM_SPOTS := {"p04_side_forced": Vector3(0.0, 0.05, 10.0), "p04_basement_forced": Vector3(31.8, 0.05, 12.5)}
+## 경보로 늘어나는 경비 [위치, 순찰 폭]
+const REINFORCEMENTS := {
+	"p04_side_forced": [[Vector3(3.5, 0.05, 2.6), Vector3(14.0, 0.0, 0.0)], [Vector3(23.3, 0.05, 2.5), Vector3(0.0, 0.0, 15.5)]],
+	"p04_basement_forced": [[Vector3(22.8, -3.75, 20.6), Vector3(4.2, 0.0, 0.0)], [Vector3(3.5, 0.05, 19.8), Vector3(13.0, 0.0, 0.0)]],
+}
+const ALARM_SECONDS := 14.0
 
 ## 끄면 이야기 없이 맵만 돌아다닌다 (맵 확인·테스트용)
 @export var run_story: bool = true
@@ -51,6 +64,9 @@ func _ready() -> void:
 	var encounter := world.get_node_or_null("FirstEncounter")
 	if encounter:
 		encounter.finished.connect(_rescue)
+	for forced in REINFORCEMENTS:
+		if _flag(forced) and not _flag("p05_started"):
+			_spawn_reinforcements(forced)
 	if _flag("p05_started"):
 		# 전이 뒤에 저장한 상태로 다시 들어온 경우 (재시작 등)
 		world.apply_phase(GameManager.WORLD_OTHERWORLD, false)
@@ -76,10 +92,14 @@ func _on_zone_entered(zone_id: String, _member: Node3D, _zone: Node) -> void:
 		_structure_changed()
 
 
-func _on_flag_set(flag_name: String, _value: Variant) -> void:
+func _on_flag_set(flag_name: String, value: Variant) -> void:
 	if _busy:
 		return
 	match flag_name:
+		"p04_side_forced", "p04_basement_forced":
+			if value:
+				await _forced_entry(flag_name)
+			return
 		"p04_gate_hacked":
 			await _play_once("prologue_p04_gate")
 		"p04_reached_office":
@@ -108,15 +128,15 @@ func current_objective() -> String:
 		return "들어왔던 출입구로 돌아가자 (계단 위로)"
 	if _flag(DONE_FLAG):
 		return "……"
-	if not _flag("p04_gate_hacked"):
-		return "사비로 마당의 외부 보안 단말을 해킹하자"
+	if not (_flag("p04_gate_hacked") or _flag("p04_side_forced")):
+		return "사비로 마당의 외부 보안 단말을 해킹하자 (샤무로 옆문을 뜯을 수도 있다 — 경보)"
 	if not _flag("p04_reached_office"):
-		return "경비원의 손전등 빛을 피해 생산동을 지나 사무동으로 가자"
-	if not _flag("guard_down_security"):
-		return "보안실 경비원을 샤무로 뒤에서 제압하자 (Space)"
-	if not _flag("p04_security_hacked"):
-		return "사비로 보안실 단말에서 보안망에 접속하자"
+		return "경비원의 손전등 빛을 피해 생산동을 지나 사무동으로 가자 (들키면 끝)"
 	if not _flag("broken_basement_door"):
+		if not _flag("guard_down_security"):
+			return "보안실 경비원을 샤무로 뒤에서 제압하자 (Space)"
+		if not _flag("p04_security_hacked"):
+			return "사비로 보안실 단말에서 보안망에 접속하자"
 		return "샤무로 계단실 봉쇄문을 강제로 열자"
 	if not _flag("p04_server_open"):
 		var left: Array[String] = []
@@ -136,6 +156,77 @@ func _refresh_objective() -> void:
 	objective_changed.emit(text)
 	if hud and hud.has_method("show_notice"):
 		hud.show_notice("목표: " + text, OBJECTIVE_COLOR, 6.0)
+
+
+## 샤무가 문을 억지로 뜯었다: 사이렌, 같은 층 경비가 몰려오고, 경비가 늘어난다
+func _forced_entry(flag_name: String) -> void:
+	_busy = true
+	raise_alarm(ALARM_SPOTS.get(flag_name, Vector3.ZERO))
+	_spawn_reinforcements(flag_name)
+	await _play_once("prologue_" + ("p04_forced_gate" if flag_name == "p04_side_forced" else "p04_forced_basement"))
+	_send_guards_to(ALARM_SPOTS.get(flag_name, Vector3.ZERO))
+	if flag_name == "p04_basement_forced":
+		while not _flag("broken_basement_door"):
+			await GameManager.story_flag_set
+		await _play_once("prologue_p04_basement")
+	_busy = false
+	_refresh_objective()
+
+
+## 경보: 사이렌과 붉은 깜빡임, 같은 층 경비가 그 자리를 확인하러 온다
+func raise_alarm(at: Vector3) -> void:
+	GameManager.set_story_flag("p04_alarms", int(GameManager.get_story_flag("p04_alarms", 0)) + 1)
+	_send_guards_to(at)
+	if hud and hud.has_method("show_notice"):
+		hud.show_notice("경보 발령 — 경비가 늘어난다", Color(1.0, 0.35, 0.3), 5.0)
+	var siren := AudioStreamPlayer.new()
+	siren.name = "Siren"
+	siren.stream = SfxBank.stream("siren")
+	siren.volume_db = -8.0
+	add_child(siren)
+	siren.play()
+	var layer := CanvasLayer.new()
+	layer.name = "AlarmFlash"
+	layer.layer = 4
+	add_child(layer)
+	var flash := ColorRect.new()
+	flash.color = Color(0.85, 0.05, 0.03, 0.0)
+	flash.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	flash.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	layer.add_child(flash)
+	var pulses := int(ALARM_SECONDS)
+	var tween := create_tween()
+	for i in pulses:
+		tween.tween_property(flash, "color:a", 0.16, 0.5).set_trans(Tween.TRANS_SINE)
+		tween.tween_property(flash, "color:a", 0.0, 0.5).set_trans(Tween.TRANS_SINE)
+	tween.parallel().tween_property(siren, "volume_db", -40.0, 1.5).set_delay(0.0)
+	tween.tween_callback(func():
+		siren.queue_free()
+		layer.queue_free())
+
+
+## 같은 층 경비가 그 자리를 확인하러 온다 (대화 중에는 멈춰 있다가 대화가 끝나면 움직인다)
+func _send_guards_to(at: Vector3) -> void:
+	for guard in world.get_node("Guards").get_children():
+		if guard.has_method("hear_noise") and absf((guard as Node3D).global_position.y - at.y) < 2.0:
+			guard.hear_noise(at, null)
+
+
+## 경보로 늘어난 경비를 세운다 (다시 들어와도 플래그로 다시 세운다)
+func _spawn_reinforcements(flag_name: String) -> void:
+	var guards := world.get_node("Guards")
+	var index := 0
+	for entry in REINFORCEMENTS.get(flag_name, []):
+		index += 1
+		var node_name := "Reinforce_%s_%d" % [flag_name.trim_prefix("p04_"), index]
+		if guards.has_node(node_name):
+			continue
+		var g := GUARD_SCENE.instantiate()
+		g.name = node_name
+		g.set("patrol_span", entry[1])
+		g.set("nav_bounds", GUARD_NAV)
+		g.position = entry[0]
+		guards.add_child(g)
 
 
 func _server_cutscene() -> void:

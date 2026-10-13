@@ -8396,8 +8396,14 @@ transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 0, 10)
 is_locked = true
 unlock_flag = "p04_gate_hacked"
 locked_prompt = "잠긴 문"
-locked_line = "전자식 잠금이야. 밖에 있는 보안 단말부터 열어야 해."
+locked_line = "전자식 잠금이야. 밖에 있는 보안 단말부터 열어야 해. 샤무라면 뜯을 수도 있겠지만… 경보가 울릴 거야."
 door_width = 1.40
+forceable = true
+force_flag = "p04_side_forced"
+force_prompt = "옆문 강제로 뜯기 (경보)"
+force_question = "잠금째 뜯어 버릴 수는 있어. 대신 사이렌이 울리고 경비가 몰려올 거야. 사비가 단말을 열 때까지 기다릴까?"
+force_choice = "뜯는다 — 사이렌이 울리고 경비가 늘어난다"
+force_cancel = "그만둔다 — 사비가 단말을 열게 한다"
 
 [node name="ServerDoor" parent="Doors" instance=ExtResource("e9")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.2, -3.8, 7.5)
@@ -8675,6 +8681,11 @@ sabi_blocked_line = "봉쇄문이 기계식으로 잠겨 있어… 샤무 힘이
 marker_height = 1.6
 requires_flag = "p04_security_hacked"
 requires_line = "봉쇄문에 경보 센서가 붙어 있어. 보안망이 살아 있는 동안 건드리면 다 몰려와. 보안실 단말부터 꺼야 해."
+force_flag = "p04_basement_forced"
+force_prompt = "봉쇄문 강제로 뜯기 (경보)"
+force_question = "보안망이 살아 있어. 지금 뜯으면 센서가 울리고 사무동이랑 지하 경비가 다 몰려올 거야. 사비가 보안실 단말을 끌 때까지 기다릴까?"
+force_choice = "뜯는다 — 사이렌이 울리고 경비가 늘어난다"
+force_cancel = "그만둔다 — 보안실 단말부터"
 
 [node name="Piece" type="CSGBox3D" parent="Interactables/BlastDoor"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.15, 0)
