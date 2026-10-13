@@ -9,6 +9,7 @@ extends RefCounted
 #   shake(tree, ...)        : 카메라 흔들기
 #   bark(node, text, color) : 머리 위 짧은 말 (게임은 멈추지 않는다)
 #   wait(tree, seconds)     : 연출 중 잠시 멈춤
+#   lay_down(member, ...)   : 캐릭터를 눕힌다 / 다시 세운다 (쓰러짐, 업혀 감, 침대)
 # 캐릭터 이동은 PartyMember.walk_path() 를 쓴다.
 
 const LOCK := "cutscene"
@@ -109,6 +110,39 @@ static func hit_stop(tree: SceneTree, seconds: float = 0.07) -> void:
 	Engine.time_scale = 0.05
 	await tree.create_timer(seconds, true, false, true).timeout
 	Engine.time_scale = 1.0
+
+
+## 캐릭터 스프라이트를 눕힌다 (카메라 쪽을 향해 옆으로 누운 모습). lying=false 면 원래대로 세운다.
+## angle: 기울기(도, 90 이면 완전히 누움), height: 누웠을 때 스프라이트 중심 높이(캐릭터 발 기준)
+static func lay_down(member: Node3D, lying: bool, angle: float = 90.0, height: float = 0.32) -> void:
+	var sprite := member.get("sprite") as SpriteBase3D if member else null
+	if sprite == null:
+		return
+	if lying:
+		if not sprite.has_meta("stand_billboard"):
+			sprite.set_meta("stand_billboard", sprite.billboard)
+			sprite.set_meta("stand_rotation", sprite.rotation)
+			sprite.set_meta("stand_position", sprite.position)
+		sprite.billboard = BaseMaterial3D.BILLBOARD_DISABLED
+		var yaw := 0.0
+		var camera := member.get_viewport().get_camera_3d()
+		if camera:
+			var to := camera.global_position - member.global_position
+			yaw = atan2(to.x, to.z) - member.global_rotation.y
+		sprite.rotation = Vector3(0.0, yaw, deg_to_rad(angle))
+		sprite.position = Vector3(sprite.position.x, height, sprite.position.z)
+	elif sprite.has_meta("stand_billboard"):
+		sprite.billboard = sprite.get_meta("stand_billboard")
+		sprite.rotation = sprite.get_meta("stand_rotation")
+		sprite.position = sprite.get_meta("stand_position")
+		sprite.remove_meta("stand_billboard")
+		sprite.remove_meta("stand_rotation")
+		sprite.remove_meta("stand_position")
+
+
+static func is_lying(member: Node3D) -> bool:
+	var sprite := member.get("sprite") as SpriteBase3D if member else null
+	return sprite != null and sprite.has_meta("stand_billboard")
 
 
 static func wait(tree: SceneTree, seconds: float) -> void:

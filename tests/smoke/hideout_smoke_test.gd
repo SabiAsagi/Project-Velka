@@ -90,6 +90,19 @@ func _run() -> void:
 			loaded += 1
 	_check(loaded == names.size(), "조사 대상 %d/%d개가 대사 데이터를 읽는다" % [loaded, names.size()])
 
+	# 자잘한 사물도 조사할 수 있다 (승합차, 냉장고, 인형 등) — 조작 캐릭터의 생각으로 나온다
+	var dm := root.get_node("/root/DialogueManager")
+	var flavor: Array = _world.find_children("Flavor_*", "", true, false)
+	_check(flavor.size() >= 10, "자잘한 사물 조사 지점이 있다 (%d개)" % flavor.size())
+	var van = _world.find_child("Flavor_hide_van", true, false)
+	if van:
+		van.interact(_member())
+		await process_frame
+	_check(van != null and dm.is_dialogue_active and dm.current_dialogue_id == "inspect_hide_van", "승합차를 조사하면 짧은 생각이 나온다")
+	while dm.is_dialogue_active:
+		dm.show_next_line()
+		await process_frame
+
 	print("")
 	print("RESULT passed=%d failed=%d" % [_passes, _failures.size()])
 	for f in _failures:

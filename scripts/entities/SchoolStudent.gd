@@ -7,6 +7,8 @@ class_name SchoolStudent
 #   경로(points)가 있으면 그 점들을 차례로 걷는다. loop 면 끝에서 되돌아 걷는다.
 #   경로가 없으면 제자리에 서 있다 (motion: "idle" 숨쉬기, "repeat" 같은 동작을 끝없이 반복).
 #   despawn_far > 0 이면, 첫 점을 지난 뒤 watcher 에게서 그만큼 멀어지면 사라진다 (화면 밖 정리).
+#   fade_out() 을 부르면 걷던 방향으로 몇 걸음 더 걸으며 서서히 흐려진 뒤 사라진다 (건물 안으로 들어가는 연출).
+#   층 판정: 조작 캐릭터와 다른 층이면 숨긴다 (set_floor_visible — 챕터 컨트롤러가 매 프레임 부른다).
 # 이상한 학생: no_shadow (그림자가 없다).
 
 signal route_finished(student: SchoolStudent)
@@ -20,6 +22,9 @@ const LEGS := Color(0.1, 0.11, 0.15)
 const GUARD_COAT := Color(0.24, 0.25, 0.2)
 const GUARD_CAP := Color(0.12, 0.13, 0.11)
 const GREY_HAIR := Color(0.55, 0.55, 0.53)
+
+## 층 높이 (학교 맵·WorldPhaseController.LEVEL_HEIGHT 와 같은 값 — 스크립트 의존을 피해 따로 둔다)
+const LEVEL_HEIGHT := 3.8
 
 static var _materials: Dictionary = {}
 
@@ -45,9 +50,12 @@ var _head: Node3D
 var _leg_l: Node3D
 var _leg_r: Node3D
 var _meshes: Array[MeshInstance3D] = []
+var _fade_total: float = 0.0
+var _fade_left: float = 0.0
 
 
 func _ready() -> void:
+	add_to_group("school_figure")
 	if outfit == "student":
 		add_to_group("school_student")
 	_phase = randf() * TAU
@@ -71,6 +79,37 @@ func is_walking() -> bool:
 	return not points.is_empty() and _target >= 0
 
 
+## 높이(y)가 속한 층 번호 (0 = 지면·지하, 1 = 본관 1층·고지대 ...)
+static func floor_index(y: float) -> int:
+	return floori((y + 0.5) / LEVEL_HEIGHT)
+
+
+## 조작 캐릭터와 같은 층에 있는가.
+## 둘 다 건물 밖이면 (경사로·고지대·운동장은 이어진 땅이라) 늘 보인다. 한쪽이라도 건물 안이면 같은 층일 때만 보인다.
+static func is_on_same_floor(my_y: float, my_inside: bool, viewer_y: float, viewer_inside: bool) -> bool:
+	if not my_inside and not viewer_inside:
+		return true
+	return floor_index(my_y) == floor_index(viewer_y)
+
+
+## 다른 층이면 숨긴다 (걷기·애니메이션은 그대로 계속된다)
+func set_floor_visible(on_floor: bool) -> void:
+	visible = on_floor
+
+
+## 걷던 방향으로 계속 걸으며 duration 초 동안 흐려진 뒤 사라진다 (문 안으로 들어가는 연출)
+func fade_out(duration: float = 0.9) -> void:
+	if _fade_total > 0.0:
+		return
+	_fade_total = maxf(duration, 0.05)
+	_fade_left = _fade_total
+	_target = -1
+
+
+func is_fading() -> bool:
+	return _fade_total > 0.0
+
+
 ## (테스트·연출용) 바라보는 방향을 정한다
 func face(point: Vector3) -> void:
 	var d := point - global_position
@@ -81,6 +120,9 @@ func face(point: Vector3) -> void:
 
 func _process(delta: float) -> void:
 	_t += delta
+	if _fade_total > 0.0:
+		_process_fade(delta)
+		return
 	var moving := false
 	if not points.is_empty() and _target >= 0:
 		var goal := points[_target]
@@ -99,6 +141,18 @@ func _process(delta: float) -> void:
 	if despawn_far > 0.0 and watcher and is_instance_valid(watcher) and _target >= 2:
 		if watcher.global_position.distance_to(global_position) > despawn_far:
 			queue_free()
+
+
+## 흐려지는 동안은 바라보는 방향으로 계속 걷는다
+func _process_fade(delta: float) -> void:
+	_fade_left -= delta
+	global_position += Vector3(sin(rotation.y), 0.0, cos(rotation.y)) * walk_speed * delta
+	var amount := clampf(1.0 - _fade_left / _fade_total, 0.0, 1.0)
+	for m in _meshes:
+		m.transparency = amount
+	_animate(true)
+	if _fade_left <= 0.0:
+		queue_free()
 
 
 ## 앞길에 사람이 있으면 진행 방향의 옆으로 비킨다 (속도 벡터)

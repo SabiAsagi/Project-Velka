@@ -7,7 +7,8 @@ class_name HackTerminal
 #   문·패널: 회로 잇기(HackMinigame) / 보안 컴퓨터: 암호 해독(HackCodeBreaker) / 서버: 영상 프레임 복원(HackFrames)
 # 중간에 연결을 끊으면(ESC) 아무 일도 없고 다시 시도할 수 있다.
 # 역추적 게이지가 다 차거나 암호 시도를 다 쓰면 들킨다: 단말에서 경보음이 울려 주변 경비원이 확인하러 온다.
-# 샤무가 조사하면 사비가 해야 한다는 대사만 나온다. requires_flag 가 켜져 있어야 상호작용할 수 있다.
+# 샤무가 조사하면: 사비가 함께 있으면 "사비에게 맡긴다"(사비가 와서 연다) / (있으면) "강제로 뜯는다" / "그만둔다"를 고른다.
+# 사비가 밖에 있으면(단독 잠입) 사비가 무전으로 답한다. requires_flag 가 켜져 있어야 해킹할 수 있다.
 
 signal hacked(terminal_id: String)
 
@@ -28,7 +29,16 @@ const HACK_COLOR := Color(0.27, 0.63, 0.71)
 @export var circuit_size: Vector2i = Vector2i.ZERO
 ## 역추적 게이지 시간(초). 0 이면 기본
 @export var trace_seconds: float = 0.0
+## 켜 두면 시도할 때마다 다른 패턴이 나온다 (끄면 단말마다 항상 같은 패턴)
+@export var random_pattern: bool = true
 @export_multiline var shamu_line: String = "이런 건 사비 담당이야. 사비로 바꾸자."
+## 샤무가 조사했을 때 사비가 함께 있으면 샤무가 하는 말 (선택지가 붙는다)
+@export_multiline var shamu_question: String = "사비, 이거 부탁해."
+## 비우지 않으면 샤무가 '강제로 뜯기'도 고를 수 있다 (이 플래그가 켜진다 — 경보 등)
+@export var shamu_force_flag: String = ""
+@export var shamu_force_choice: String = "강제로 뜯는다 — 경보가 울린다"
+## 사비가 밖에 있을 때(단독 잠입) 샤무가 조사하면 나오는 사비의 무전 (비우면 shamu_line)
+@export_multiline var solo_radio_line: String = ""
 
 ## terminal_id 별 기본 퍼즐: [종류, 크기, 역추적 시간]. 문·패널은 회로, 컴퓨터는 암호·영상
 const PUZZLES := {
@@ -71,10 +81,7 @@ func _on_interact(player: Node3D) -> void:
 	# 샤무가 먼저 "사비 담당"이라고 말한다. 조건 대사(requires_line)는 사비의 말이라 사비일 때만.
 	if not _is_sabi(player):
 		was_used = false
-		DialogueManager.start_dialogue_data("hack_shamu_" + terminal_id, [{
-			"speaker": "shamu", "speaker_name": "카즈네 샤무",
-			"sabi_emotion": "neutral", "shamu_emotion": "annoyed", "text": shamu_line,
-		}])
+		_shamu_interact()
 		return
 	if not _requirement_met():
 		was_used = false
@@ -90,7 +97,8 @@ func _on_interact(player: Node3D) -> void:
 	var trace: float = trace_seconds if trace_seconds > 0.0 else float(preset[2])
 	var game: HackBase = PUZZLE_SCRIPTS.get(kind, PUZZLE_SCRIPTS["circuit"]).new()
 	get_tree().root.add_child(game)
-	game.start(hack_prompt, size, hash(terminal_id + str(size)), trace)
+	var seed_value: int = randi() if random_pattern else hash(terminal_id + str(size))
+	game.start(hack_prompt, size, seed_value, trace)
 	var traced_ref := [false]
 	game.finished.connect(func(_ok): traced_ref[0] = game.traced, CONNECT_ONE_SHOT)
 	var success: bool = await game.finished
@@ -112,6 +120,53 @@ func _on_interact(player: Node3D) -> void:
 		GameManager.set_story_flag(done_flag, true)
 	AbilityFx.spawn_text(get_tree().current_scene, origin + Vector3.UP * 1.3, "접속 완료", HACK_COLOR, 0.9)
 	hacked.emit(terminal_id)
+
+
+## 샤무가 조사했다
+func _shamu_interact() -> void:
+	var party := get_tree().get_first_node_in_group("player_party")
+	if party == null or bool(party.get("solo")):
+		# 사비는 밖에 있다: 사비가 무전으로 답한다
+		var radio := not solo_radio_line.is_empty()
+		DialogueManager.start_dialogue_data("hack_shamu_" + terminal_id, [{
+			"speaker": "sabi" if radio else "shamu", "speaker_name": "사비 아사기" if radio else "카즈네 샤무",
+			"radio": radio, "sabi_emotion": "serious", "shamu_emotion": "annoyed",
+			"text": solo_radio_line if radio else shamu_line,
+		}])
+		return
+	var choices: Array = [{"text": "사비에게 맡긴다", "outcome": {"action": "handoff"}}]
+	if not shamu_force_flag.is_empty() and not bool(GameManager.get_story_flag(shamu_force_flag, false)):
+		choices.append({"text": shamu_force_choice, "outcome": {"flags": {shamu_force_flag: true}}})
+	choices.append({"text": "그만둔다", "outcome": {}})
+	if not DialogueManager.choice_resolved.is_connected(_on_shamu_choice):
+		DialogueManager.choice_resolved.connect(_on_shamu_choice, CONNECT_ONE_SHOT)
+	DialogueManager.start_dialogue_data("hack_shamu_" + terminal_id, [{
+		"speaker": "shamu", "speaker_name": "카즈네 샤무",
+		"sabi_emotion": "neutral", "shamu_emotion": "neutral", "text": shamu_question,
+		"choices": choices,
+	}])
+
+
+## "사비에게 맡긴다": 사비로 바꾸고, 사비가 단말 앞으로 와서 바로 연다
+func _on_shamu_choice(_index: int, outcome: Dictionary) -> void:
+	if String(outcome.get("action", "")) != "handoff":
+		return
+	while DialogueManager.is_dialogue_active:
+		await DialogueManager.dialogue_completed
+	var party := get_tree().get_first_node_in_group("player_party")
+	if party == null:
+		return
+	if GameManager.active_character != GameManager.CharacterType.SABI:
+		GameManager.switch_character(GameManager.CharacterType.SABI)
+	var sabi: PartyMember = party.sabi
+	var stand := get_interaction_position()
+	var to_sabi := sabi.global_position - stand
+	to_sabi.y = 0.0
+	stand = Vector3(stand.x, sabi.global_position.y, stand.z) + (to_sabi.normalized() * 0.7 if to_sabi.length() > 0.01 else Vector3.ZERO)
+	Cutscene.begin(get_tree(), false)
+	await sabi.walk_path([stand], 3.2)
+	Cutscene.end(get_tree())
+	interact(sabi)
 
 
 func _is_sabi(player: Node3D) -> bool:

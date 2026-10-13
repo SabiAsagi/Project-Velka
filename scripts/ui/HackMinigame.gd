@@ -6,7 +6,7 @@ class_name HackMinigame
 # 격자 위 회로 조각을 클릭해 90도씩 돌려 왼쪽 IN 에서 오른쪽 OUT 까지 신호를 잇는다.
 # 신호가 닿은 조각은 초록으로 빛난다. OUT 에 닿으면 접속 완료 -> finished(true).
 # 역추적 게이지가 다 차기 전에 이어야 한다 (HackBase). ESC 로 연결을 끊으면 finished(false).
-# 키보드: 방향키 이동, Space/E 회전. 퍼즐은 seed 로 만들기 때문에 같은 단말은 매번 같은 회로가 나온다.
+# 키보드: 방향키 이동, Space/E 회전. 퍼즐은 seed 로 만든다 (HackTerminal 이 시도할 때마다 다른 seed 를 준다).
 
 const TILE := 104.0
 # 연결 비트: 위 1, 오른쪽 2, 아래 4, 왼쪽 8
@@ -180,6 +180,20 @@ func _update_power() -> void:
 	if is_solved and not was and _grid:
 		is_solved = false
 		_on_solved("경로 확보 … 접속 완료")
+
+
+func _tutorial_id() -> String:
+	return "circuit"
+
+
+func _tutorial_lines() -> Array:
+	return [
+		"회로 잇기",
+		"왼쪽 IN 에서 오른쪽 OUT 까지 신호를 이어야 열린다.",
+		"회로 조각을 클릭하면 90도씩 돈다. 신호가 닿은 조각은 초록으로 빛난다.",
+		"위쪽 역추적 게이지가 다 차기 전에 이어야 한다. 다 차면 들켜서 단말에서 경보음이 난다.",
+		"키보드: 방향키로 고르고 Space 로 돌린다. ESC 로 연결을 끊으면 아무 일 없이 다시 할 수 있다.",
+	]
 
 
 func _help_text() -> String:

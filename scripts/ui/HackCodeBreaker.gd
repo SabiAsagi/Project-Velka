@@ -106,6 +106,20 @@ func _handle_key(event: InputEvent) -> void:
 	get_viewport().set_input_as_handled()
 
 
+func _tutorial_id() -> String:
+	return "code"
+
+
+func _tutorial_lines() -> Array:
+	return [
+		"암호 해독",
+		"서로 다른 숫자 네 자리 접속 암호를 맞힌다.",
+		"넣어 볼 때마다 결과가 나온다:  ● 숫자와 자리가 모두 맞음   ○ 숫자는 있는데 자리가 다름   · 없음",
+		"시도 횟수를 다 쓰거나 역추적 게이지가 다 차면 들킨다.",
+		"숫자 키 또는 클릭으로 입력, Backspace 지우기, Enter 넣기. ESC 로 연결을 끊을 수 있다.",
+	]
+
+
 func _help_text() -> String:
 	return "숫자 키 / 클릭: 입력   ·   Backspace: 지우기   ·   Enter: 넣기   ·   ESC: 연결 끊기"
 

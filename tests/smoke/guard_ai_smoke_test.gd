@@ -162,6 +162,8 @@ func _place_guard(at: Vector3, facing: Vector3) -> void:
 	_guard.set("_facing_direction", facing)
 	_guard.set("_patrol_points", [at, at + Vector3(0.01, 0, 0)])
 	_guard.suspicion = 0.0
+	# 재시작 직후 유예(3초)는 테스트 배치에서는 없앤다 (_reset 이 실패 화면을 넘기며 재시작한다)
+	_guard.notice_grace = 0.0
 	_guard.set_state(_guard.AnomalyState.PATROL)
 
 

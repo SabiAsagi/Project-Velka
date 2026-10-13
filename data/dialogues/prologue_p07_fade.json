@@ -1,0 +1,54 @@
+{
+  "dialogue_id": "prologue_p07_fade",
+  "lines": [
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "sad",
+      "shamu_emotion": "serious",
+      "text": "사비, 눈 떠."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "sad",
+      "shamu_emotion": "serious",
+      "text": "잠와.."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "sad",
+      "shamu_emotion": "serious",
+      "text": "자지 마."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "sad",
+      "shamu_emotion": "serious",
+      "text": "갠차나."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "sad",
+      "shamu_emotion": "sad",
+      "text": "안 괜찮아."
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "sad",
+      "shamu_emotion": "sad",
+      "text": "눈꺼풀이 무겁다. 발소리도, 조명 점멸도 점점 멀어진다."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "sad",
+      "shamu_emotion": "sad",
+      "text": "사비. ……사비!"
+    }
+  ]
+}

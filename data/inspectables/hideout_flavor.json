@@ -1,0 +1,236 @@
+{
+  "hide_van": {
+    "pos": [
+      4.5,
+      1.0,
+      3.4
+    ],
+    "prompt": "승합차 살펴보기",
+    "lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "",
+        "text_sabi": "우리 승합차. 연료는 반쯤 남았어. 공장까진 충분해.",
+        "text_shamu": "운전은 내가 해. 네가 하면 벽에 박아."
+      }
+    ]
+  },
+  "hide_sandbag": {
+    "pos": [
+      8.6,
+      1.2,
+      5.6
+    ],
+    "prompt": "샌드백 살펴보기",
+    "lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "",
+        "text_sabi": "샤무 샌드백… 가운데가 움푹 들어갔어.",
+        "text_shamu": "오늘은 안 쳐. 손 아껴 둬야지."
+      }
+    ]
+  },
+  "hide_dumbbell": {
+    "pos": [
+      10.55,
+      0.9,
+      7.3
+    ],
+    "prompt": "아령 살펴보기",
+    "lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "",
+        "text_sabi": "이거 하나 들어 봤다가 허리 나갈 뻔했지.",
+        "text_shamu": "그건 네가 제일 무거운 걸 집어서 그래."
+      }
+    ]
+  },
+  "hide_workbench": {
+    "pos": [
+      8.4,
+      1.0,
+      1.1
+    ],
+    "prompt": "작업대 살펴보기",
+    "lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "",
+        "text_sabi": "납땜 냄새. 지난번에 만들다 만 신호 증폭기가 그대로야.",
+        "text_shamu": "치우라고 했잖아."
+      }
+    ]
+  },
+  "hide_shoe_rack": {
+    "pos": [
+      12.1,
+      0.7,
+      0.8
+    ],
+    "prompt": "신발장 살펴보기",
+    "lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "",
+        "text_sabi": "신발 정리는 샤무 담당이야.",
+        "text_shamu": "네가 아무 데나 벗어 두니까."
+      }
+    ]
+  },
+  "hide_tires": {
+    "pos": [
+      4.85,
+      0.8,
+      8.9
+    ],
+    "prompt": "타이어 살펴보기",
+    "lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "",
+        "text_sabi": "여분 타이어. 펑크 나면 쓰려고 쌓아 둔 거.",
+        "text_shamu": "지난번에 갈아 끼운 거 나야."
+      }
+    ]
+  },
+  "hide_locker": {
+    "pos": [
+      0.9,
+      1.0,
+      9.55
+    ],
+    "prompt": "사물함 살펴보기",
+    "lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "",
+        "text_sabi": "샤무 사물함. 안 열어 봐도 알아. 운동화 세 켤레.",
+        "text_shamu": "네 켤레야."
+      }
+    ]
+  },
+  "hide_sink": {
+    "pos": [
+      9.3,
+      4.85,
+      0.95
+    ],
+    "prompt": "싱크대 살펴보기",
+    "lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "",
+        "text_sabi": "컵라면 용기가 산더미야… 내가 먹은 거 아님.",
+        "text_shamu": "전부 네 거야."
+      }
+    ]
+  },
+  "hide_fridge": {
+    "pos": [
+      11.45,
+      4.85,
+      1.0
+    ],
+    "prompt": "냉장고 살펴보기",
+    "lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "",
+        "text_sabi": "에너지 드링크랑 계란 두 개. 끝.",
+        "text_shamu": "계란은 내 거야. 손대지 마."
+      }
+    ]
+  },
+  "hide_server_rack": {
+    "pos": [
+      1.0,
+      4.85,
+      7.05
+    ],
+    "prompt": "서버 살펴보기",
+    "lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "",
+        "text_sabi": "내 서버. 의뢰인 자료 백업은 전부 여기 있어.",
+        "text_shamu": "저 팬 소리 때문에 밤에 잠을 못 자."
+      }
+    ]
+  },
+  "hide_shamu_bed": {
+    "pos": [
+      6.4,
+      4.55,
+      7.6
+    ],
+    "prompt": "침대 살펴보기",
+    "lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "",
+        "text_sabi": "샤무 침대. 이불이 각 잡혀 있어.",
+        "text_shamu": "군대 습관 아니고 그냥 성격이야."
+      }
+    ]
+  },
+  "hide_plush": {
+    "pos": [
+      10.5,
+      4.55,
+      9.1
+    ],
+    "prompt": "인형 살펴보기",
+    "lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "",
+        "text_sabi": "내 인형. 이름은 비밀이야.",
+        "text_shamu": "'뭉치'잖아."
+      }
+    ]
+  },
+  "hide_books": {
+    "pos": [
+      9.3,
+      4.55,
+      8.9
+    ],
+    "prompt": "책 더미 살펴보기",
+    "lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "",
+        "text_sabi": "읽다 만 책 더미. 전부 미스터리 소설.",
+        "text_shamu": "요즘은 현실이 소설보다 이상해."
+      }
+    ]
+  }
+}

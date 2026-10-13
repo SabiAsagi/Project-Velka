@@ -34,6 +34,9 @@ signal attacked(targets: Array)
 ## 연출용 이동(walk_path)이 끝났다
 signal scripted_move_finished
 
+## 캐릭터 스프라이트 렌더 레이어 (WorldPhaseController.CHARACTER_RENDER_LAYER 와 같은 값)
+const CHARACTER_RENDER_LAYER := 19
+
 var is_controlled: bool = false:
 	set(val):
 		is_controlled = val
@@ -95,6 +98,9 @@ func _ready() -> void:
 	floor_snap_length = 0.45
 	floor_max_angle = deg_to_rad(42.0)
 
+	# 캐릭터 전용 렌더 레이어 (이계의 붉은 비상등이 캐릭터를 물들이지 않게: WorldPhaseController)
+	if sprite:
+		sprite.layers = 1 << (CHARACTER_RENDER_LAYER - 1)
 	if companion_ai:
 		companion_ai.init(self)
 	if vitals:

@@ -5,8 +5,10 @@ extends Node3D
 # 사비는 밖(마당)에 남아 무전으로 돕고, 샤무 혼자 잠입한다 (p04_solo). 샤무가 들키지 않고 경비원을 모두 제압하면
 # 사비가 들어와 합류한다 (p04_sabi_joined). 공장 안 단말(보안실·경보 장치·서버)은 합류한 사비가 직접 연다.
 # 사비가 밖에 있는 동안 사비의 대사는 자동으로 무전(radio)으로 보여 준다.
-#   1. p04_gate_hacked        : 사비로 마당의 외부 보안 단말 해킹 -> 옆문 열림
-#      (또는 p04_side_forced  : 샤무가 옆문을 강제로 뜯음 -> 사이렌, 경비 증원)
+#   1. p04_gate_hacked        : 사비로 마당의 외부 보안 단말 해킹 -> 옆문 열림 (조용한 길: 샤무 단독 잠입)
+#      (또는 p04_side_forced  : 샤무가 옆문을 강제로 뜯음 -> 빠르지만 어려운 길: 사이렌, 경비 증원,
+#                               둘이 함께 들어가고 지하 경보 장치를 끌 때까지 '보안 업체 출동' 제한 시간)
+#   지하에 들어서면 파쇄기가 자료를 갈기 시작한다: 샤무가 파쇄기를 부술 때까지 제한 시간 (강제 진입이면 더 짧다)
 #   2. p04_reached_office     : 경비원 손전등을 피해 생산동을 지나 사무동 복도 도착
 #   3. guard_down_security    : 샤무로 보안실 경비원을 뒤에서 제압
 #   4. p04_security_hacked    : 사비로 보안실 단말 해킹 (지하 서버층 발견)
@@ -43,6 +45,13 @@ const INFILTRATION_CHECKPOINT := Vector3(1.6, 0.05, 10.0)
 const SOLO_REASON := "사비는 밖에서 무전으로 돕고 있다 — 경비를 모두 재우면 들어온다"
 ## 경비가 "?" 를 띄웠을 때 무전 경고 사이 간격(초)
 const WARN_COOLDOWN := 9.0
+## 사비가 들어오는 옆문 바깥·안쪽 (정문 쪽에서 문을 지나 들어온다)
+const SABI_ENTRY_PATH := [Vector3(-1.6, 0.05, 10.0), Vector3(1.4, 0.05, 10.0), Vector3(3.0, 0.05, 10.0)]
+## 제한 시간(초): 강제 진입 뒤 보안 업체 출동까지 (지하 경보 장치를 끄면 멈춘다)
+const SECURITY_SECONDS := {"p04_side_forced": 300.0, "p04_basement_forced": 180.0}
+## 제한 시간(초): 지하에 들어선 뒤 파쇄기가 자료를 다 갈기까지 (조용히 / 강제 진입)
+const SHRED_SECONDS := 150.0
+const SHRED_SECONDS_FORCED := 100.0
 
 ## 끄면 이야기 없이 맵만 돌아다닌다 (맵 확인·테스트용)
 @export var run_story: bool = true
@@ -59,9 +68,14 @@ var objective: String = ""
 var _busy: bool = false
 var _warn_left: float = 0.0
 var _hall_hint_done: bool = false
+var _alarm_tween: Tween
+## 진행 중인 제한 시간: id -> {caption, left, cause, stop_flag}
+var _timers: Dictionary = {}
 
 
 func _ready() -> void:
+	# 자잘한 사물·표지판도 조사할 수 있다
+	FlavorSpots.spawn(world, "res://data/inspectables/factory_flavor.json")
 	GameManager.set_world_phase(GameManager.WORLD_REAL)
 	if not run_story:
 		return
@@ -96,6 +110,7 @@ func _ready() -> void:
 ## 다른 층의 경비원(손전등 빛 포함)은 보이지 않게 한다 (지하에서 1층 빛이 비쳐 보이지 않게)
 func _process(delta: float) -> void:
 	_warn_left -= delta
+	_tick_timers(delta)
 	var member = party.get_active_member() if party else null
 	if member == null:
 		return
@@ -110,6 +125,9 @@ func _on_zone_entered(zone_id: String, _member: Node3D, _zone: Node) -> void:
 		_radio("생산동이야. 빛이 지나간 다음에 움직여. 등 뒤로 붙으면 재울 수 있어.")
 	if zone_id == "fac_corridor" and not _flag("p04_reached_office"):
 		GameManager.set_story_flag("p04_reached_office", true)
+	if zone_id.begins_with("fac_b1") and not _flag("p05_started") and not _flag("p04_b1_entered"):
+		GameManager.set_story_flag("p04_b1_entered", true)
+		_arm_timers()
 	elif zone_id == "fac_stairs" and _flag("p05_started") and not _flag("p05_structure_seen") and not _busy:
 		_structure_changed()
 
@@ -152,7 +170,7 @@ func current_objective() -> String:
 	if _flag(DONE_FLAG):
 		return "……"
 	if not (_flag("p04_gate_hacked") or _flag("p04_side_forced")):
-		return "사비로 마당의 외부 보안 단말을 해킹하자 (샤무로 옆문을 뜯을 수도 있다 — 경보)"
+		return "사비로 마당의 외부 보안 단말을 열자 — 조용한 길 (샤무로 옆문을 뜯으면 빠르지만 경보·시간 제한)"
 	if _solo():
 		return "경비원을 들키지 않고 모두 제압하자 — 다 재우면 사비가 들어온다 (%d명 남음)" % guards_left()
 	if not _flag("p04_reached_office"):
@@ -204,7 +222,15 @@ func _begin_infiltration() -> void:
 
 ## 체크포인트 재시작 뒤: 파티를 플래그대로 맞추고, 경비가 이미 모두 쓰러져 있으면 사비가 합류한다
 func _after_restart() -> void:
+	# 울리던 사이렌·붉은 깜빡임은 멈춘다 (체크포인트 상태로 돌아간다)
+	if _alarm_tween and _alarm_tween.is_valid():
+		_alarm_tween.kill()
+	for node in get_tree().get_nodes_in_group("alarm_fx"):
+		node.queue_free()
+	_busy = false
 	_sync_party()
+	_arm_timers(true)
+	_refresh_objective()
 	if _solo() and _all_guards_down():
 		await _sabi_joins()
 
@@ -282,16 +308,33 @@ func _sabi_joins() -> void:
 func _sabi_walks_in() -> void:
 	var shamu: PartyMember = party.get_active_member()
 	Cutscene.begin(get_tree())
-	await Cutscene.wait(get_tree(), 0.8)
+	await Cutscene.wait(get_tree(), 0.6)
+	# 1) 사비가 마당에서 옆문을 지나 공장 안으로 들어온다 (카메라가 사비를 비춘다)
+	var side_door := world.get_node_or_null("Doors/SideDoor")
+	if side_door and not side_door.is_open and not side_door.is_locked:
+		side_door.call("_on_interact", null)
+	party.end_solo(SABI_ENTRY_PATH[0])
+	var sabi: PartyMember = party.sabi
+	Cutscene.focus(get_tree(), sabi)
+	await sabi.walk_path(SABI_ENTRY_PATH, 2.6)
+	await Cutscene.wait(get_tree(), 0.3)
+	# 2) 샤무가 멀리 있으면 잠깐 암전한 사이 샤무 근처까지 온다
 	var dir := _open_direction(shamu)
 	var stand := shamu.global_position + dir * 1.1
-	var entry := shamu.global_position + dir * 4.0
+	var entry := shamu.global_position + dir * 3.0
 	if dir == Vector3.ZERO:
 		stand = _spot_near(shamu)
 		entry = stand
-	party.end_solo(entry)
-	var sabi: PartyMember = party.sabi
-	SfxBank.play_at(sabi, entry, "footstep", -8.0, 1.05, 14.0)
+	if _flat(sabi.global_position, shamu.global_position) > 6.0:
+		Cutscene.flash(get_tree(), Color(0, 0, 0, 1), 0.35, 0.35, 0.45)
+		await Cutscene.wait(get_tree(), 0.4)
+		sabi.global_position = entry
+		sabi.velocity = Vector3.ZERO
+		Cutscene.focus(get_tree(), shamu)
+		await Cutscene.wait(get_tree(), 0.3)
+	else:
+		Cutscene.focus(get_tree(), shamu)
+	SfxBank.play_at(sabi, sabi.global_position, "footstep", -8.0, 1.05, 14.0)
 	await sabi.walk_path([stand], 2.6)
 	sabi.face_direction(-dir if dir != Vector3.ZERO else shamu.global_position - sabi.global_position)
 	shamu.face_direction(dir if dir != Vector3.ZERO else sabi.global_position - shamu.global_position)
@@ -367,13 +410,15 @@ func _forced_entry(flag_name: String) -> void:
 	_spawn_reinforcements(flag_name)
 	await _play_once("prologue_" + ("p04_forced_gate" if flag_name == "p04_side_forced" else "p04_forced_basement"))
 	_send_guards_to(ALARM_SPOTS.get(flag_name, Vector3.ZERO))
+	_arm_timers()
 	if flag_name == "p04_basement_forced":
 		while not _flag("broken_basement_door"):
 			await GameManager.story_flag_set
 		await _play_once("prologue_p04_basement")
 	_busy = false
 	if flag_name == "p04_side_forced":
-		await _begin_infiltration()
+		# 빠른 길: 문이 뜯겼으니 사비도 함께 들어간다 (단독 잠입 없음)
+		FailureManager.save_checkpoint("forced_entry", "옆문 안쪽", INFILTRATION_CHECKPOINT)
 	_refresh_objective()
 
 
@@ -387,11 +432,13 @@ func raise_alarm(at: Vector3) -> void:
 	siren.name = "Siren"
 	siren.stream = SfxBank.stream("siren")
 	siren.volume_db = -8.0
+	siren.add_to_group("alarm_fx")
 	add_child(siren)
 	siren.play()
 	var layer := CanvasLayer.new()
 	layer.name = "AlarmFlash"
 	layer.layer = 4
+	layer.add_to_group("alarm_fx")
 	add_child(layer)
 	var flash := ColorRect.new()
 	flash.color = Color(0.85, 0.05, 0.03, 0.0)
@@ -400,6 +447,7 @@ func raise_alarm(at: Vector3) -> void:
 	layer.add_child(flash)
 	var pulses := int(ALARM_SECONDS)
 	var tween := create_tween()
+	_alarm_tween = tween
 	for i in pulses:
 		tween.tween_property(flash, "color:a", 0.16, 0.5).set_trans(Tween.TRANS_SINE)
 		tween.tween_property(flash, "color:a", 0.0, 0.5).set_trans(Tween.TRANS_SINE)
@@ -444,9 +492,8 @@ func _server_cutscene() -> void:
 		light.remove_from_group("real_light")
 	await get_tree().create_timer(1.2).timeout
 	GameManager.set_story_flag(DONE_FLAG, true)
-	# P-05 전이: 깜빡임 -> 정적 -> 괴이세계 (경비원·현실 조명 사라짐, 창은 검게, 붉은 비상등)
-	world.enter_otherworld()
-	await world.transition_finished
+	# P-05 전이: 두 사람이 잠깐 정신을 잃는다 -> 암전 속에서 괴이세계로 (경비원·현실 조명 사라짐, 붉은 비상등)
+	await _black_out_into_otherworld()
 	GameManager.set_story_flag("p05_started", true)
 	_give_flashlights()
 	if hud and hud.has_method("show_notice"):
@@ -458,6 +505,30 @@ func _server_cutscene() -> void:
 		cp.activate()
 	_busy = false
 	_refresh_objective()
+
+
+## 정신을 잃는다: 귀가 먹먹해지고(속삭임·심장 소리) 화면이 흔들리다 암전.
+## 암전한 동안 세계가 바뀌고, 천천히 눈을 뜨면 괴이세계다.
+func _black_out_into_otherworld() -> void:
+	Cutscene.begin(get_tree())
+	var sabi: PartyMember = party.sabi
+	var shamu: PartyMember = party.shamu
+	SfxBank.play(self, "whisper", -4.0, 0.8)
+	SfxBank.play(self, "heartbeat", -2.0, 0.85)
+	Cutscene.bark(sabi, "……머리가……", VelkaStyle.SABI, 1.6)
+	Cutscene.shake(get_tree(), 0.12, 1.4)
+	await Cutscene.wait(get_tree(), 0.6)
+	Cutscene.bark(shamu, "사비……?", VelkaStyle.SHAMU, 1.4)
+	# 눈앞이 어두워진다 (천천히 암전 → 한동안 검은 화면 → 천천히 밝아진다)
+	Cutscene.flash(get_tree(), Color(0, 0, 0, 1), 1.4, 3.2, 1.8)
+	await Cutscene.wait(get_tree(), 1.5)
+	SfxBank.play(self, "heartbeat", -6.0, 0.7)
+	world.enter_otherworld()
+	await world.transition_finished
+	await Cutscene.wait(get_tree(), 1.2)
+	Cutscene.bark(sabi, "(……얼마나 쓰러져 있었지?)", VelkaStyle.SABI, 2.2)
+	await Cutscene.wait(get_tree(), 1.6)
+	Cutscene.end(get_tree())
 
 
 ## 전이 뒤 남은 빛은 두 사람의 손전등뿐이다 (캐릭터 주변을 밝히는 약한 빛)
@@ -487,17 +558,311 @@ func _structure_changed() -> void:
 	_refresh_objective()
 
 
-## P-06 패배 뒤: 협회 구조 암시 (P-07 은 세이프 하우스에서 이어진다)
+## P-07 협회 구조 (P-06 패배 뒤)
+##   1) 컷씬: 흰 봉쇄선이 복도를 가르고 개체들이 멈춘다. 권지혁과 구조팀이 다가와 쓰러진 사비를 업는다.
+##   2) 짧은 조작: 샤무(부상)로 업혀 가는 사비 곁을 따라간다. 느린 걸음, 흔들리는 시야, 심장 소리.
+##      사비에게서 멀어지면 구조대원이 멈춰 기다리고, 너무 멀리는 갈 수 없다.
+##   3) 컷씬: 샤무가 사비에게 계속 말을 걸고, 화면이 어두워진다 -> 세이프 하우스(P-08)
 func _rescue() -> void:
 	_busy = true
-	captions.play(["금속 장치가 바닥에 박히는 소리.", "흰 봉쇄선이 복도를 가른다.",
-			"\"공격하지 마! 반응 속도만 올라간다!\"", "샤무가 사비의 이름을 부르는 목소리를 마지막으로, 의식이 끊긴다."])
-	await captions.finished
+	var sabi: PartyMember = party.sabi
+	var shamu: PartyMember = party.shamu
+	if GameManager.active_character != GameManager.CharacterType.SHAMU:
+		GameManager.switch_character(GameManager.CharacterType.SHAMU)
+	party.hold_companion("사비는 구조대원에게 업혀 있다")
+	Cutscene.begin(get_tree())
+	sabi.set_physics_process(false)
+	sabi.velocity = Vector3.ZERO
+	var base: Vector3 = shamu.global_position
+	sabi.global_position = base + Vector3(-0.8, 0.0, 0.5)
+	Cutscene.lay_down(sabi, true)
+	Cutscene.flash(get_tree(), Color(0, 0, 0, 1), 0.0, 0.6, 1.6)
+	await Cutscene.wait(get_tree(), 1.2)
+	# 봉쇄 장치: 금속 장치가 박히고 흰 선이 복도를 가른다. 선 너머의 개체들이 멈춘다
+	var line_x := base.x - 2.4
+	for i in 2:
+		SfxBank.play_at(self, Vector3(line_x, base.y, base.z), "crash", -2.0, 1.3 + 0.2 * i, 26.0)
+		Cutscene.shake(get_tree(), 0.18, 0.25)
+		await Cutscene.wait(get_tree(), 0.35)
+	_rescue_root = Node3D.new()
+	_rescue_root.name = "Rescue"
+	add_child(_rescue_root)
+	_make_barrier(Vector3(line_x, base.y, 17.8))
+	Cutscene.flash(get_tree(), Color(0.95, 0.97, 1.0, 0.55), 0.04, 0.05, 0.5)
+	for dz in [-0.7, 0.6]:
+		var e: RegeneratingEntity = (load("res://scenes/entities/RegeneratingEntity.tscn") as PackedScene).instantiate()
+		_rescue_root.add_child(e)
+		e.global_position = Vector3(line_x - 2.2 - absf(dz), base.y, 17.8 + dz)
+		e.set_physics_process(false)
+		e.remove_from_group("anomaly")
+		e.emerge(0.4)
+	# 구조팀이 반대쪽(동쪽)에서 조명을 점멸시키며 다가온다
+	var kwon := _make_figure("권지혁", Vector3(base.x + 7.0, base.y, 17.4), Color(0.2, 0.24, 0.18))
+	var carrier := _make_figure("구조대원", Vector3(base.x + 7.6, base.y, 18.3), Color(0.16, 0.18, 0.2))
+	var medic := _make_figure("구조대원", Vector3(base.x + 8.4, base.y, 17.6), Color(0.16, 0.18, 0.2))
+	Cutscene.focus(get_tree(), kwon)
+	var tween := create_tween().set_parallel()
+	tween.tween_property(kwon, "global_position", Vector3(base.x + 1.6, base.y, 17.2), 1.8)
+	tween.tween_property(carrier, "global_position", sabi.global_position + Vector3(0.7, 0.0, 0.0), 2.0)
+	tween.tween_property(medic, "global_position", Vector3(base.x + 2.4, base.y, 18.4), 2.1)
+	_blink_lights(medic, 6)
+	await tween.finished
+	Cutscene.focus(get_tree(), shamu)
+	await _play_once("prologue_p07_rescue")
+	# 사비를 업는다
+	Cutscene.lay_down(sabi, false)
+	Cutscene.lay_down(sabi, true, 62.0, 1.15)
+	_carrier = carrier
+	_carried = sabi
+	Cutscene.end(get_tree())
+	# 짧은 조작: 부상당한 샤무로 사비 곁을 따라간다
+	var speed_before := shamu.speed
+	shamu.speed = 1.25
+	if hud and hud.has_method("show_notice"):
+		hud.show_notice("목표: 업혀 가는 사비 곁에서 떨어지지 말고 구조팀을 따라가자", OBJECTIVE_COLOR, 6.0)
+	await _escort(carrier, shamu, [Vector3(base.x + 4.0, base.y, 17.8), Vector3(21.6, base.y, 17.8), Vector3(25.5, base.y, 17.8)])
+	shamu.speed = speed_before
+	# 의식이 끊긴다
+	Cutscene.begin(get_tree())
+	await _play_once("prologue_p07_fade")
+	Cutscene.flash(get_tree(), Color(0, 0, 0, 1), 2.6, 6.0, 0.4)
+	await Cutscene.wait(get_tree(), 2.8)
+	_carrier = null
 	GameManager.set_story_flag("prologue_factory_done", true)
 	_busy = false
 	_refresh_objective()
 	if not next_scene.is_empty():
 		SceneManager.change_scene(next_scene)
+
+
+var _rescue_root: Node3D
+var _carrier: Node3D
+var _carried: Node3D
+## 테스트·디버그용: 호위 구간 진행 중
+var escorting: bool = false
+const ESCORT_SPEED := 1.3
+## 사비(업힌 사람)에게서 이만큼 떨어지면 구조대원이 멈춰 기다린다
+const ESCORT_WAIT_DISTANCE := 3.0
+## 이보다 멀리는 갈 수 없다
+const ESCORT_LEASH := 4.5
+
+
+## 구조대원이 사비를 업고 path 를 따라 걷는다. 샤무가 떨어지면 기다린다.
+func _escort(carrier: Node3D, follower: PartyMember, path: Array) -> void:
+	escorting = true
+	var heart_left := 0.0
+	var shake_left := 1.5
+	var wait_bark_left := 0.0
+	for raw_point in path:
+		var point: Vector3 = raw_point
+		while _flat(carrier.global_position, point) > 0.2:
+			var delta := get_physics_process_delta_time()
+			await get_tree().physics_frame
+			if not is_instance_valid(carrier):
+				escorting = false
+				return
+			var gap := _flat(carrier.global_position, follower.global_position)
+			# 너무 멀리 가지 못하게 붙잡는다
+			if gap > ESCORT_LEASH:
+				var back := follower.global_position - carrier.global_position
+				back.y = 0.0
+				follower.global_position = carrier.global_position + back.normalized() * ESCORT_LEASH + Vector3(0, follower.global_position.y - carrier.global_position.y, 0)
+			if gap <= ESCORT_WAIT_DISTANCE and not DialogueManager.is_dialogue_active:
+				var dir := point - carrier.global_position
+				dir.y = 0.0
+				carrier.global_position += dir.normalized() * minf(ESCORT_SPEED * delta, dir.length())
+				if dir.length() > 0.01:
+					carrier.look_at(carrier.global_position + dir, Vector3.UP)
+			else:
+				wait_bark_left -= delta
+				if wait_bark_left <= 0.0:
+					wait_bark_left = 4.0
+					Cutscene.bark(carrier, "이쪽이다. 떨어지지 마.", Color(0.9, 0.9, 0.85), 1.6)
+			heart_left -= delta
+			if heart_left <= 0.0:
+				heart_left = 1.1
+				SfxBank.play(self, "heartbeat", -6.0, 0.9)
+			shake_left -= delta
+			if shake_left <= 0.0:
+				shake_left = randf_range(1.6, 2.6)
+				Cutscene.shake(get_tree(), 0.08, 0.5)
+	escorting = false
+
+
+## 업힌 사비를 구조대원 등에 붙여 둔다
+func _physics_process(_delta: float) -> void:
+	if _carrier and is_instance_valid(_carrier) and _carried:
+		var back := _carrier.global_transform.basis.z.normalized() * 0.25
+		_carried.global_position = _carrier.global_position + back
+
+
+## 봉쇄 장치: 바닥을 가르는 흰 빛줄기와 양 끝 기둥
+func _make_barrier(at: Vector3) -> void:
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = Color(0.95, 0.97, 1.0)
+	mat.emission_enabled = true
+	mat.emission = Color(0.85, 0.92, 1.0)
+	mat.emission_energy_multiplier = 3.0
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	var strip := MeshInstance3D.new()
+	var box := BoxMesh.new()
+	box.size = Vector3(0.12, 0.03, 2.8)
+	box.material = mat
+	strip.mesh = box
+	_rescue_root.add_child(strip)
+	strip.global_position = at + Vector3(0, 0.02, 0)
+	for dz in [-1.35, 1.35]:
+		var post := MeshInstance3D.new()
+		var cyl := CylinderMesh.new()
+		cyl.top_radius = 0.06
+		cyl.bottom_radius = 0.09
+		cyl.height = 0.7
+		cyl.material = mat
+		post.mesh = cyl
+		_rescue_root.add_child(post)
+		post.global_position = at + Vector3(0, 0.35, dz)
+	var light := OmniLight3D.new()
+	light.light_color = Color(0.85, 0.92, 1.0)
+	light.light_energy = 1.4
+	light.omni_range = 4.0
+	_rescue_root.add_child(light)
+	light.global_position = at + Vector3(0, 1.2, 0)
+
+
+## 구조팀 인물 (캡슐 몸 + 머리 + 흰 완장 + 이름표)
+func _make_figure(label: String, at: Vector3, color: Color) -> Node3D:
+	var root := Node3D.new()
+	root.name = "Rescuer"
+	_rescue_root.add_child(root)
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = color
+	mat.roughness = 0.8
+	var body := MeshInstance3D.new()
+	var capsule := CapsuleMesh.new()
+	capsule.radius = 0.26
+	capsule.height = 1.5
+	capsule.material = mat
+	body.mesh = capsule
+	body.position = Vector3(0, 0.8, 0)
+	root.add_child(body)
+	var head := MeshInstance3D.new()
+	var sphere := SphereMesh.new()
+	sphere.radius = 0.15
+	sphere.height = 0.3
+	sphere.material = mat
+	head.mesh = sphere
+	head.position = Vector3(0, 1.7, 0)
+	root.add_child(head)
+	var band_mat := StandardMaterial3D.new()
+	band_mat.albedo_color = Color(0.92, 0.92, 0.9)
+	band_mat.emission_enabled = true
+	band_mat.emission = Color(0.6, 0.6, 0.6)
+	var band := MeshInstance3D.new()
+	var ring := CylinderMesh.new()
+	ring.top_radius = 0.275
+	ring.bottom_radius = 0.275
+	ring.height = 0.08
+	ring.material = band_mat
+	band.mesh = ring
+	band.position = Vector3(0, 1.2, 0)
+	root.add_child(band)
+	var tag := Label3D.new()
+	tag.text = label
+	tag.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+	tag.font_size = 40
+	tag.outline_size = 10
+	tag.pixel_size = 0.006
+	tag.no_depth_test = true
+	tag.position = Vector3(0, 2.1, 0)
+	root.add_child(tag)
+	var torch := SpotLight3D.new()
+	torch.name = "Torch"
+	torch.light_energy = 2.0
+	torch.spot_range = 7.0
+	torch.spot_angle = 26.0
+	torch.position = Vector3(0, 1.3, -0.2)
+	root.add_child(torch)
+	root.global_position = at
+	return root
+
+
+## 정해진 간격의 조명 점멸 (구조팀이 개체 반응 타이밍에 맞춰 움직인다)
+func _blink_lights(figure: Node3D, times: int) -> void:
+	var torch := figure.get_node_or_null("Torch") as Light3D
+	if torch == null:
+		return
+	for i in times:
+		torch.visible = false
+		await get_tree().create_timer(0.18).timeout
+		if not is_instance_valid(torch):
+			return
+		torch.visible = true
+		await get_tree().create_timer(0.32).timeout
+		if not is_instance_valid(torch):
+			return
+
+
+# --- 제한 시간 ---------------------------------------------------------------
+
+## 플래그대로 제한 시간을 건다 (이미 걸려 있으면 그대로, restart=true 면 처음부터 다시)
+func _arm_timers(restart: bool = false) -> void:
+	if restart:
+		for id in _timers.keys():
+			_clear_timer(id)
+	if _flag("p05_started") or _flag(DONE_FLAG):
+		return
+	var forced := ""
+	for f in ["p04_side_forced", "p04_basement_forced"]:
+		if _flag(f) and forced.is_empty():
+			forced = f
+	if not forced.is_empty() and not _flag("p04_alarm_off") and not _timers.has("security"):
+		_timers["security"] = {"caption": "보안 업체 출동까지", "left": float(SECURITY_SECONDS[forced]),
+				"cause": "security_arrived", "stop_flag": "p04_alarm_off"}
+	if _flag("p04_b1_entered") and not _flag("broken_data_shredder") and not _timers.has("shred"):
+		_timers["shred"] = {"caption": "파쇄기가 자료를 다 갈기까지",
+				"left": SHRED_SECONDS_FORCED if not forced.is_empty() else SHRED_SECONDS,
+				"cause": "data_destroyed", "stop_flag": "broken_data_shredder"}
+		if hud and hud.has_method("show_notice"):
+			hud.show_notice("파쇄기가 자료를 갈고 있다 — 샤무로 자료 폐기실 파쇄기를 멈추자", Color(1.0, 0.55, 0.4), 5.0)
+
+
+## 대화·해킹·연출·실패 화면 중에는 멈춘다
+func _timers_paused() -> bool:
+	return DialogueManager.is_dialogue_active or FailureManager.is_failing or Cutscene.is_active() \
+			or get_tree().get_first_node_in_group("hack_minigame") != null
+
+
+func _tick_timers(delta: float) -> void:
+	if _timers.is_empty():
+		return
+	var paused := _timers_paused()
+	for id in _timers.keys():
+		var t: Dictionary = _timers[id]
+		if _flag(String(t["stop_flag"])):
+			_clear_timer(id)
+			continue
+		if not paused:
+			t["left"] = float(t["left"]) - delta
+		if hud and hud.has_method("set_timer"):
+			hud.set_timer(id, String(t["caption"]), float(t["left"]))
+		if float(t["left"]) <= 0.0:
+			_clear_timer(id)
+			FailureManager.fail(String(t["cause"]))
+
+
+func _clear_timer(id: String) -> void:
+	_timers.erase(id)
+	if hud and hud.has_method("clear_timer"):
+		hud.clear_timer(id)
+
+
+## 테스트·디버그용: 남은 시간 (없으면 -1)
+func timer_left(id: String) -> float:
+	return float(_timers[id]["left"]) if _timers.has(id) else -1.0
+
+
+func _flat(a: Vector3, b: Vector3) -> float:
+	return Vector2(a.x - b.x, a.z - b.z).length()
 
 
 ## 같은 대화는 한 번만 (플래그 dlg_<id>)

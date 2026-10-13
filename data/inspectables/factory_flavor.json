@@ -1,0 +1,218 @@
+{
+  "fac_vending": {
+    "pos": [
+      29.3,
+      1.0,
+      20.55
+    ],
+    "prompt": "자판기 살펴보기",
+    "lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "",
+        "text_sabi": "자판기 불이 아직 들어와 있어. 폐쇄된 공장인데… 누가 전기를 계속 대고 있는 거지?",
+        "text_shamu": "동전 넣으면 나오려나. …농담이야."
+      }
+    ],
+    "otherworld_lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "worried",
+        "shamu_emotion": "serious",
+        "text": "",
+        "text_sabi": "자판기 불빛이 붉어. 진열된 음료 이름이 전부 읽을 수 없는 글자야.",
+        "text_shamu": "마실 생각 없어. 저건 절대."
+      }
+    ]
+  },
+  "fac_lounge_table": {
+    "pos": [
+      24.5,
+      1.0,
+      16.6
+    ],
+    "prompt": "탁자 살펴보기",
+    "lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "",
+        "text_sabi": "식은 커피랑 컵라면 용기. 경비원들 야식인가 봐.",
+        "text_shamu": "근무 중에 라면이라. 여유롭네."
+      }
+    ],
+    "otherworld_lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "worried",
+        "shamu_emotion": "serious",
+        "text": "",
+        "text_sabi": "탁자 위가 깨끗해. 조금 전까지 있던 컵이 전부 없어졌어.",
+        "text_shamu": "치운 사람이 없는데 치워졌네."
+      }
+    ]
+  },
+  "fac_sofa": {
+    "pos": [
+      23.6,
+      0.8,
+      19.75
+    ],
+    "prompt": "소파 살펴보기",
+    "lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "",
+        "text_sabi": "누가 여기서 쪽잠을 잤나 봐. 담요가 구겨져 있어.",
+        "text_shamu": "경비 서다 졸았나. 운 좋은 날이었겠네."
+      }
+    ]
+  },
+  "fac_locker_row": {
+    "pos": [
+      7.5,
+      1.0,
+      0.85
+    ],
+    "prompt": "사물함 살펴보기",
+    "lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "",
+        "text_sabi": "작업복 사물함. 이름표가 전부 뜯겨 있어.",
+        "text_shamu": "흔적 지우는 데는 꼼꼼하네."
+      }
+    ]
+  },
+  "fac_cabinet": {
+    "pos": [
+      32.1,
+      1.0,
+      2.0
+    ],
+    "prompt": "서류함 살펴보기",
+    "lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "",
+        "text_sabi": "출입 기록 바인더. 마지막 장이 찢겨 나갔어.",
+        "text_shamu": "누가 먼저 다녀갔다는 거네."
+      }
+    ]
+  },
+  "fac_sign_yard": {
+    "pos": [
+      -1.6,
+      1.0,
+      13.0
+    ],
+    "prompt": "표지판 읽기",
+    "lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "",
+        "text_sabi": "'관계자 외 출입금지'. 폐쇄했다면서 표지판은 새것이야.",
+        "text_shamu": "새로 붙였다는 건, 아직 누가 관리한다는 거지."
+      }
+    ],
+    "sign": {
+      "text": "관계자 외 출입금지\n— 폐쇄 시설 —",
+      "at": [
+        -1.6,
+        1.75,
+        13.6
+      ],
+      "yaw": 45,
+      "size": [
+        1.5,
+        0.8
+      ],
+      "post": true,
+      "color": "#7a1612"
+    }
+  },
+  "fac_sign_safety": {
+    "pos": [
+      12.0,
+      1.4,
+      0.8
+    ],
+    "prompt": "게시판 읽기",
+    "lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "",
+        "text_sabi": "무재해 기록판이 '0일'에서 멈춰 있어.",
+        "text_shamu": "마지막 날에 뭔가 있었다는 얘기네."
+      }
+    ],
+    "otherworld_lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "worried",
+        "shamu_emotion": "serious",
+        "text": "",
+        "text_sabi": "숫자가 바뀌었어. '무재해 -1일'.",
+        "text_shamu": "하루를 빼 간 거야? 누가?"
+      }
+    ],
+    "sign": {
+      "text": "안전제일\n무재해  0 일",
+      "at": [
+        12.0,
+        2.1,
+        0.13
+      ],
+      "yaw": 0,
+      "size": [
+        1.6,
+        0.95
+      ],
+      "color": "#1d4a2a"
+    }
+  },
+  "fac_sign_b1": {
+    "pos": [
+      26.0,
+      -2.4,
+      14.6
+    ],
+    "prompt": "안내판 읽기",
+    "lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "",
+        "text_sabi": "'자료 보존실 → 관계자 외 출입금지'. 화살표가 서버실 쪽이야.",
+        "text_shamu": "보존이 아니라 파기하는 중이던데."
+      }
+    ],
+    "sign": {
+      "text": "자료 보존실  →\n관계자 외 출입금지",
+      "at": [
+        26.0,
+        -1.7999999999999998,
+        14.08
+      ],
+      "yaw": 0,
+      "size": [
+        1.7,
+        0.65
+      ]
+    }
+  }
+}

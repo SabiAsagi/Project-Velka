@@ -24,6 +24,9 @@ var _warning_panel: PanelContainer
 var _warning_label: Label
 var _warning_tween: Tween
 var _radio_box: VBoxContainer
+## 제한 시간 표시 (위 가운데). id -> Label
+var _timer_box: VBoxContainer
+var _timer_labels: Dictionary = {}
 ## 새 HUD 화면 (기존 라벨들은 값만 갱신하고 숨겨 둔다 — 테스트·디버그용)
 var overlay: Control
 
@@ -221,6 +224,47 @@ func radio(speaker: String, text: String, seconds: float = 4.5) -> void:
 	tween.tween_interval(seconds)
 	tween.tween_property(panel, "modulate:a", 0.0, 0.6)
 	tween.tween_callback(panel.queue_free)
+
+
+## 제한 시간 표시 (캐릭터 카드 아래): id 별로 한 줄 ("보안 업체 출동까지  2:31"). 15초 아래면 붉게 깜빡인다.
+func set_timer(id: String, caption: String, seconds_left: float) -> void:
+	if _timer_box == null:
+		_timer_box = VBoxContainer.new()
+		_timer_box.name = "MissionTimers"
+		_timer_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		# 캐릭터 카드 바로 아래 (위 가운데 알림 줄과 겹치지 않게)
+		_timer_box.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
+		_timer_box.offset_left = 24
+		_timer_box.offset_right = 560
+		_timer_box.offset_top = 226
+		_timer_box.alignment = BoxContainer.ALIGNMENT_BEGIN
+		add_child(_timer_box)
+	var label: Label = _timer_labels.get(id)
+	if label == null:
+		label = VelkaStyle.label("", VelkaStyle.mono(), 24, VelkaStyle.INK)
+		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+		label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.9))
+		label.add_theme_constant_override("outline_size", 6)
+		_timer_box.add_child(label)
+		_timer_labels[id] = label
+	var left := maxf(seconds_left, 0.0)
+	label.text = "%s  %d:%02d" % [caption, int(left) / 60, int(left) % 60]
+	var urgent := left <= 15.0
+	var blink := urgent and fmod(left, 1.0) > 0.5
+	label.add_theme_color_override("font_color", Color(1.0, 0.35, 0.3) if urgent else Color(1.0, 0.82, 0.45))
+	label.modulate.a = 0.55 if blink else 1.0
+
+
+func clear_timer(id: String) -> void:
+	var label: Label = _timer_labels.get(id)
+	if label:
+		label.queue_free()
+		_timer_labels.erase(id)
+
+
+func get_timer_text(id: String) -> String:
+	var label: Label = _timer_labels.get(id)
+	return label.text if label else ""
 
 
 func _build_radio_feed() -> void:

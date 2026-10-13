@@ -146,6 +146,11 @@ func _run() -> void:
 	_check(_scene._rulebook_paper.visible, "게시판에 수칙서가 붙어 있다")
 	_check(_objective().contains("진짜 사람"), "다음 목표 (%s)" % _objective())
 
+	# --- 학생 길: 경사로 · 현관 · 층 ---
+	_check_student_route_follows_ground()
+	await _check_student_enters_central_door()
+	await _check_students_hidden_on_other_floor()
+
 	print("")
 	print("RESULT passed=%d failed=%d" % [_passes, _failures.size()])
 	for f in _failures:
@@ -202,3 +207,88 @@ func _check(condition: bool, label: String) -> void:
 
 func _seconds(duration: float) -> void:
 	await create_timer(duration).timeout
+
+
+## 학생 길 위의 점들이 실제 바닥(충돌 면) 높이를 0.1m 안에서 따라가는가 (경사로에서 다리가 파묻히지 않는다)
+func _check_student_route_follows_ground() -> void:
+	var space: PhysicsDirectSpaceState3D = _scene.get_world_3d().direct_space_state
+	var route: Array = _scene.ROUTE_TO_MAIN
+	var worst := 0.0
+	var worst_at := Vector3.ZERO
+	var ramp_samples := 0
+	for i in range(route.size() - 1):
+		var a: Vector3 = route[i]
+		var b: Vector3 = route[i + 1]
+		var steps := maxi(1, int(a.distance_to(b) / 0.5))
+		for k in range(steps + 1):
+			var p := a.lerp(b, float(k) / steps)
+			var query := PhysicsRayQueryParameters3D.create(p + Vector3(0, 1.2, 0), p + Vector3(0, -2.0, 0))
+			var hit := space.intersect_ray(query)
+			if hit.is_empty():
+				continue
+			var gap := absf(p.y - float(hit["position"].y))
+			if p.z < -22.0 and p.z > -38.0 and p.x > 40.0:
+				ramp_samples += 1
+			if gap > worst:
+				worst = gap
+				worst_at = p
+	_check(ramp_samples >= 20, "경사로 구간을 충분히 샘플링했다 (%d)" % ramp_samples)
+	_check(worst <= 0.1, "학생 발 높이가 바닥을 따라간다 (최대 오차 %.2f m @ %s)" % [worst, worst_at])
+
+
+## 중앙문에 닿은 학생은 눈앞에서 지워지지 않고 문을 지나 안으로 들어간 뒤 사라진다
+func _check_student_enters_central_door() -> void:
+	var route: Array = _scene.ROUTE_TO_MAIN
+	var door_z := -47.15
+	_party.teleport_party(Vector3(20.0, 3.85, -44.5))
+	await _seconds(0.3)
+	var s: SchoolStudent = _scene._spawn_arrival()
+	s.global_position = Vector3(6.0, 3.8, -41.2)
+	s.walk(PackedVector3Array(route.slice(5)), 4.0)
+	s.despawn_far = 0.0
+	var seen_at_door := false
+	var last_pos := s.global_position
+	var elapsed := 0.0
+	while is_instance_valid(s) and elapsed < 15.0:
+		last_pos = s.global_position
+		if last_pos.z <= door_z - 0.2 and last_pos.z > door_z - 1.0:
+			seen_at_door = seen_at_door or s.visible
+		await _seconds(0.05)
+		elapsed += 0.05
+	_check(seen_at_door, "중앙문 앞에서 사라지지 않고 문을 지나간다")
+	_check(not is_instance_valid(s) and last_pos.z < -50.5, "현관 안쪽으로 들어간 뒤에야 사라진다 (마지막 z %.2f)" % last_pos.z)
+
+
+## 조작 캐릭터와 다른 층의 학생은 숨긴다 (지하·다른 층 / 같은 층이면 보인다)
+func _check_students_hidden_on_other_floor() -> void:
+	var hall := get_nodes_in_group("c1_hall_student")
+	_check(hall.size() > 0, "본관 1층 학생이 있다 (%d)" % hall.size())
+	_party.teleport_party(Vector3(2.0, 3.85, -50.0))
+	await _seconds(0.3)
+	var all_seen := true
+	for n in hall:
+		all_seen = all_seen and (n as Node3D).visible
+	_check(all_seen, "같은 층(본관 1층)이면 학생이 보인다")
+	_party.teleport_party(Vector3(2.0, 0.05, -52.0))
+	await _seconds(0.3)
+	var any_seen := false
+	for n in hall:
+		any_seen = any_seen or (n as Node3D).visible
+	_check(not any_seen, "지하에 있으면 1층 학생은 모두 숨겨진다")
+	_party.teleport_party(Vector3(2.0, 7.65, -50.0))
+	await _seconds(0.3)
+	any_seen = false
+	for n in hall:
+		any_seen = any_seen or (n as Node3D).visible
+	_check(not any_seen, "2층에 있으면 1층 학생은 모두 숨겨진다")
+	# 건물 밖 학생은 건물 밖에 있는 동안 늘 보인다 (경사로·고지대·운동장은 이어진 땅)
+	_party.teleport_party(Vector3(49.4, 0.05, -12.0))
+	await _seconds(0.3)
+	var outside: SchoolStudent = _scene._spawn_student(Vector3(49.4, 3.8, -40.0))
+	await _seconds(0.2)
+	_check(outside.visible, "건물 밖끼리는 높이가 달라도 보인다 (경사로 위 학생)")
+	outside.queue_free()
+	# 정적 판정
+	_check(SchoolStudent.is_on_same_floor(3.8, true, 3.85, true), "판정: 1층과 1층은 같은 층")
+	_check(not SchoolStudent.is_on_same_floor(3.8, true, 0.05, true), "판정: 1층과 지하는 다른 층")
+	_check(SchoolStudent.is_on_same_floor(3.8, false, 0.05, false), "판정: 둘 다 건물 밖이면 보인다")

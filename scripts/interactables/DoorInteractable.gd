@@ -25,10 +25,13 @@ class_name DoorInteractable
 
 var is_open: bool = false
 var _is_animating: bool = false
+## 열린 문짝의 충돌 (열린 자리에 따로 세운 정적 충돌체 — 문짝을 그대로 뚫고 지나가지 않게)
+var _open_body: StaticBody3D
 
 
 func _ready() -> void:
 	super._ready()
+	add_to_group("checkpoint_state")
 	show_nearby_marker = false
 	if not is_equal_approx(door_width, 2.8):
 		_resize_door(door_width)
@@ -40,6 +43,7 @@ func _ready() -> void:
 			is_open = true
 			hinge.rotation.y = deg_to_rad(open_angle)
 			collision_shape.set_deferred("disabled", true)
+			_set_open_blocker.call_deferred(true)
 
 
 ## 공유 리소스를 복제한 뒤 폭을 바꾼다 (다른 문 인스턴스에 영향 없음).
@@ -130,6 +134,8 @@ func _on_interact(player: Node3D) -> void:
 	# 남을 수 있으므로, 열린 문은 통로를 확실히 비우고 닫힌 뒤에만 막습니다.
 	if is_open:
 		collision_shape.set_deferred("disabled", true)
+	else:
+		_set_open_blocker(false)
 	var target_angle := deg_to_rad(open_angle) if is_open else 0.0
 	var tween := create_tween()
 	tween.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
@@ -137,5 +143,46 @@ func _on_interact(player: Node3D) -> void:
 	await tween.finished
 	if not is_open:
 		collision_shape.set_deferred("disabled", false)
+	else:
+		_set_open_blocker(true)
 	_is_animating = false
 	NavGrid.invalidate()
+
+
+## 체크포인트 저장: 열림·잠김
+func checkpoint_save() -> Variant:
+	return {"open": is_open, "locked": is_locked}
+
+
+## 체크포인트 복원: 그때 열림·잠김 상태로 곧바로 되돌린다
+func checkpoint_load(state: Variant) -> void:
+	if state == null or _is_animating:
+		return
+	is_locked = bool(state.get("locked", is_locked))
+	is_open = bool(state.get("open", is_open))
+	hinge.rotation.y = deg_to_rad(open_angle) if is_open else 0.0
+	collision_shape.set_deferred("disabled", is_open)
+	_set_open_blocker(is_open)
+	NavGrid.invalidate()
+
+
+## 열린 문짝 자리에 정적 충돌체를 세우거나 치운다.
+## (문짝 AnimatableBody 는 힌지 회전을 바로 따라가지 않을 수 있어서, 열린 동안은 따로 막는다)
+func _set_open_blocker(enabled: bool) -> void:
+	if not enabled:
+		if _open_body:
+			_open_body.queue_free()
+			_open_body = null
+		return
+	if _open_body or not is_inside_tree():
+		return
+	var door_body := collision_shape.get_parent() as CollisionObject3D
+	_open_body = StaticBody3D.new()
+	_open_body.name = "OpenBlocker"
+	_open_body.collision_layer = door_body.collision_layer if door_body else 1
+	_open_body.collision_mask = 0
+	var shape := CollisionShape3D.new()
+	shape.shape = collision_shape.shape
+	_open_body.add_child(shape)
+	add_child(_open_body)
+	_open_body.global_transform = collision_shape.global_transform

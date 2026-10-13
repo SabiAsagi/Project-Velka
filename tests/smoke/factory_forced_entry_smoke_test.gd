@@ -2,8 +2,11 @@ extends SceneTree
 
 # 프로젝트 벨카 - 공장 강제 진입(샤무가 문을 뜯는 길) 스모크 테스트
 # 실행: godot --headless --path . -s res://tests/smoke/factory_forced_entry_smoke_test.gd
-# 옆문: 사비가 마당 단말을 열기 전에 샤무가 뜯으면 묻고 -> 뜯으면 사이렌·붉은 깜빡임·경비 2명 증원, 목표는 다음으로.
+# 마당 단말: 샤무로 조사하면 "사비에게 맡긴다 / 옆문을 뜯는다 / 그만둔다". 맡기면 사비로 바뀌어 사비가 단말을 연다.
+# 옆문: 사비가 마당 단말을 열기 전에 샤무가 뜯으면 묻고 -> 뜯으면 사이렌·붉은 깜빡임·경비 2명 증원,
+#       빠른 길이라 둘이 함께 들어가고(단독 잠입 없음) '보안 업체 출동까지' 제한 시간이 흐른다 (대화 중에는 멈춘다).
 # 봉쇄문: 보안망 접속 전에 샤무가 뜯으면 묻고 -> 그만두면 그대로, 뜯으면 사이렌·경비 2명 증원·지하 목표로 건너뛴다.
+# 지하에 들어서면 파쇄기 제한 시간이 흐르고, 파쇄기를 부수면 멈춘다.
 # 순찰 경비원은 멈추고, 실패는 막아 둔다 (진행 흐름만 본다).
 
 const SCENE := "res://scenes/chapters/Prologue_Factory.tscn"
@@ -47,6 +50,23 @@ func _run() -> void:
 	var side = _world.get_node("Doors/SideDoor")
 	_check(side.get_interaction_prompt(_member()) == "잠긴 문", "사비에게 잠긴 옆문은 그냥 '잠긴 문'")
 	await _as("shamu")
+	# 마당 단말을 샤무로: 사비에게 맡기면 사비가 와서 연다
+	var gate = _world.get_node("Interactables/GateTerminal")
+	gate.interact(_member())
+	await _finish_dialogue()
+	_check(_dm.get("_waiting_for_choice") and _dm.current_dialogue_id == "hack_shamu_gate",
+			"샤무로 마당 단말을 조사하면 '사비로 바꾸자' 대신 고를 수 있다")
+	_dm.choose_option(0)
+	var t := 0.0
+	while get_first_node_in_group("hack_minigame") == null and t < 6.0:
+		await _seconds(0.1)
+		t += 0.1
+	var game = get_first_node_in_group("hack_minigame")
+	_check(game != null and _gm.active_character == _gm.CharacterType.SABI, "'사비에게 맡긴다' 를 고르면 사비로 바뀌어 사비가 단말을 연다")
+	if game:
+		game.cancel()
+	await _seconds(0.4)
+	await _as("shamu")
 	_check(side.get_interaction_prompt(_member()).contains("뜯기"), "샤무에게는 '옆문 강제로 뜯기' 가 보인다")
 	side.interact(_member())
 	await _finish_dialogue()
@@ -67,6 +87,17 @@ func _run() -> void:
 	await _seconds(0.5)
 	_check(side.is_open, "뜯긴 옆문이 열린다")
 	_check(not _objective().contains("외부 보안 단말"), "목표가 다음으로 넘어간다 (%s)" % _objective())
+	_check(not _party.solo and not _flag("p04_solo"), "빠른 길: 문이 뜯겼으니 사비도 함께 들어간다 (단독 잠입 없음)")
+	var left0: float = _scene.timer_left("security")
+	await _seconds(1.0)
+	var left1: float = _scene.timer_left("security")
+	_check(left0 > 200.0 and left1 < left0 - 0.5, "'보안 업체 출동까지' 제한 시간이 흐른다 (%.1f -> %.1f)" % [left0, left1])
+	_check(_scene.get_node("PrototypeHUD").get_timer_text("security").contains("보안 업체"), "HUD에 남은 시간이 보인다 (%s)" % _scene.get_node("PrototypeHUD").get_timer_text("security"))
+	_dm.start_dialogue_data("test_pause", [{"speaker": "system", "text": "…"}])
+	var paused0: float = _scene.timer_left("security")
+	await _seconds(0.8)
+	_check(absf(_scene.timer_left("security") - paused0) < 0.05, "대화 중에는 제한 시간이 멈춘다")
+	await _finish_dialogue()
 	_freeze_guards()
 
 	# --- 봉쇄문: 보안망 접속 전에 뜯기 ---
@@ -89,7 +120,19 @@ func _run() -> void:
 	_check(_dm.current_dialogue_id == "prologue_p04_basement", "이어서 지하 경보(자료 삭제) 대화")
 	await _finish_dialogue()
 	await _seconds(0.3)
-	_check(_objective().contains("경비원") and _objective().contains("명 남음"), "샤무 혼자인 동안 목표는 늘어난 경비까지 모두 제압 (%s)" % _objective())
+	_check(_objective().contains("지하에서 둘 다 멈추자"), "봉쇄문을 뜯으면 지하 목표로 건너뛴다 (%s)" % _objective())
+	_check(_scene.timer_left("security") > 0.0, "보안 업체 출동 제한 시간은 지하 경보 장치를 끌 때까지 이어진다")
+	# 지하에 들어서면 파쇄기 제한 시간 (강제 진입이라 짧다)
+	_gm.set_story_flag("p04_b1_entered", true)
+	_scene.call("_arm_timers")
+	var shred: float = _scene.timer_left("shred")
+	_check(shred > 0.0 and shred <= 100.0, "지하에서는 파쇄기가 자료를 다 갈기까지 제한 시간 (%.0f초)" % shred)
+	_gm.set_story_flag("broken_data_shredder", true)
+	await _seconds(0.2)
+	_check(_scene.timer_left("shred") < 0.0 and _scene.get_node("PrototypeHUD").get_timer_text("shred") == "", "파쇄기를 부수면 제한 시간이 사라진다")
+	_gm.set_story_flag("p04_alarm_off", true)
+	await _seconds(0.2)
+	_check(_scene.timer_left("security") < 0.0, "경보 장치를 끄면 보안 업체 제한 시간도 사라진다")
 	var lifted := true
 	for g in _world.get_node("Guards").get_children():
 		if String(g.name).begins_with("Reinforce_"):

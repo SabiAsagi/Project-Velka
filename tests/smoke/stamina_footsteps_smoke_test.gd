@@ -3,7 +3,7 @@ extends SceneTree
 # 프로젝트 벨카 - 달리기 숨(스태미나)·발소리 스모크 테스트
 # 실행: godot --headless --path . -s res://tests/smoke/stamina_footsteps_smoke_test.gd
 # 폐쇄 공장 생산동에서 (경비원은 끄고, 소리를 듣는 가짜 청취자를 둔다)
-#  - 달리면 숨이 줄고, 바닥나면 숨이 찰 때까지 달릴 수 없다 (HUD "숨이 차다")
+#  - 달리면 숨이 줄고, 바닥나면 숨이 찰 때까지 달릴 수 없다 (HUD "지쳤다")
 #  - 숨은 달리기를 멈추고 잠시 뒤 다시 차고, 일정 비율까지 차면 다시 달릴 수 있다
 #  - 달리는 발소리는 근처 청취자(경비원·괴이)에게 들리고, 걷는 발소리는 들리지 않는다
 #  - 샤무는 사비보다 숨이 길고, 동료(AI)의 숨은 줄지 않는다
@@ -48,7 +48,7 @@ func _physics_process(_delta: float) -> bool:
 			_sprinted_while_exhausted = true
 		if m.vitals.exhausted:
 			_saw_exhausted = true
-			if _hud.overlay.get_stamina_text() == "숨이 차다":
+			if _hud.overlay.get_stamina_text() == "지쳤다":
 				_hud_said_breathless = true
 		_was_exhausted = m.vitals.exhausted
 	return false
@@ -80,7 +80,7 @@ func _run() -> void:
 	var sabi = _member()
 	var max_sabi: float = sabi.vitals.max_stamina
 	_check(max_sabi > 0.0 and is_equal_approx(sabi.vitals.stamina, max_sabi), "처음엔 숨이 가득 차 있다 (%d)" % roundi(max_sabi))
-	_check(_hud.overlay.get_stamina_text() == "100%", "HUD에 숨 게이지가 보인다 (%s)" % _hud.overlay.get_stamina_text())
+	_check(_hud.overlay.get_stamina_text() == "100%", "HUD에 기력 게이지가 보인다 (%s)" % _hud.overlay.get_stamina_text())
 
 	# --- 걷기: 발소리는 청취자에게 들리지 않는다 ---
 	_party.teleport_party(Vector3(1.5, Y, 4.2))
@@ -101,7 +101,7 @@ func _run() -> void:
 	_check(_min_stamina < max_sabi * 0.5, "달리면 숨이 준다 (최저 %.1f)" % _min_stamina)
 	_check(_saw_exhausted, "계속 달리면 숨이 바닥난다")
 	_check(not _sprinted_while_exhausted, "숨이 바닥나면 다시 찰 때까지 달릴 수 없다")
-	_check(_hud_said_breathless, "숨이 바닥나면 HUD에 '숨이 차다'가 나온다")
+	_check(_hud_said_breathless, "숨이 바닥나면 HUD에 '지쳤다'가 나온다")
 	_check(int(_listener.get("heard")) > 0 and sabi.footstep_noise_count > 0,
 			"달리는 발소리는 근처 청취자가 듣는다 (%d번)" % int(_listener.get("heard")))
 	_check(is_equal_approx(companion.vitals.stamina, companion.vitals.max_stamina), "동료(AI)의 숨은 줄지 않는다")

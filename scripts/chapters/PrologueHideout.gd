@@ -50,6 +50,8 @@ var step: Step = Step.CLIENT
 
 
 func _ready() -> void:
+	# 자잘한 사물들도 조사할 수 있다
+	FlavorSpots.spawn(world, "res://data/inspectables/hideout_flavor.json")
 	for id in ["hideout_client_photos", "hideout_board", "hideout_gear_bag"]:
 		var target := _inspectable(id)
 		if target:
