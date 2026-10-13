@@ -66,7 +66,6 @@ func _run() -> void:
 	await _wait_dialogue("prologue_p04_gate")
 	await _finish_dialogue()
 	await _seconds(0.4)
-	_check(_objective().contains("손전등"), "다음 목표: 경비원을 피해 사무동으로 (%s)" % _objective())
 
 	# --- 샤무 단독 잠입: 사비는 마당에 남는다 ---
 	var sabi_node: Node3D = _party.sabi
@@ -75,59 +74,38 @@ func _run() -> void:
 	_check(not _party.request_switch() and _gm.active_character == _gm.CharacterType.SHAMU, "잠입하는 동안은 사비로 바꿀 수 없다")
 	_check(_member().has_node("NightEyes"), "깜깜한 공장: 캐릭터 주변만 희미하게 보인다")
 
-	# --- 사무동 도착 (구역 진입) ---
+	# 잠입 중 들켜서 다시 시작해도 샤무 혼자 옆문 안쪽에서, 사비는 마당에 그대로 (사비가 혼자 움직이던 버그)
+	var fm = root.get_node("/root/FailureManager")
+	_party.teleport_party(Vector3(8.0, 0.05, 10.0))
+	await _seconds(0.2)
+	fm.fail("spotted")
+	await _seconds(0.3)
+	fm.continue_after_failure()
+	await _seconds(0.4)
+	_check(_party.solo and _gm.active_character == _gm.CharacterType.SHAMU and _member().global_position.distance_to(Vector3(1.6, 0.0, 10.0)) < 0.6
+			and sabi_node.global_position.x < -5.0 and sabi_node.process_mode == Node.PROCESS_MODE_DISABLED,
+			"잠입 중 발각 뒤 재시작: 샤무 혼자 옆문 안쪽에서, 사비는 마당에 그대로")
+
+	_check(_objective().contains("모두 제압") and _objective().contains("3명"), "샤무 혼자인 동안 목표: 경비원 모두 제압 (%s)" % _objective())
+
+	# --- 사무동 도착 (구역 진입): 사비의 말은 무전 ---
 	_party.teleport_party(Vector3(24.0, 0.05, 11.0))
 	await _seconds(0.5)
 	_check(sabi_node.global_position.x < -5.0, "샤무를 옮겨도 사비는 마당에 그대로 있다")
 	await _wait_dialogue("prologue_p04_office")
-	_check(bool(_line_radio()), "사무동 도착 대화의 사비 대사는 무전이다")
+	_check(bool(_line_radio()), "사비가 밖에 있는 동안 사비의 대사는 무전이다")
 	await _finish_dialogue()
-	await _seconds(0.3)
-	_check(_objective().contains("제압"), "사무동 복도에 도착하면 보안실 경비원 제압이 목표가 된다 (%s)" % _objective())
-
-	# --- 보안실: 경비원 제압(샤무) -> 중계기(샤무) -> 사비 원격 해킹 ---
 	_interact("Interactables/SecurityTerminal")
-	_check(_dm.current_dialogue_id == "hack_requires_security", "경비원이 있으면 중계기를 꽂을 수 없다 (샤무 혼잣말)")
+	_check(_dm.current_dialogue_id == "hack_shamu_security" and get_first_node_in_group("hack_minigame") == null,
+			"샤무 혼자서는 단말을 열 수 없다 (사비 담당)")
 	await _finish_dialogue()
-	var sec_guard = _world.get_node("Guards/GuardSecurity")
-	_knock(sec_guard)
+
+	# --- 경비원을 모두 제압 -> 사비 합류 ---
+	_knock(_world.get_node("Guards/GuardSecurity"))
 	await _seconds(0.4)
-	_check(_objective().contains("중계기"), "경비원을 제압하면 보안실 단말에 중계기 꽂기가 목표 (%s)" % _objective())
 	var radio_box = _scene.get_node("PrototypeHUD").get_node_or_null("RadioFeed")
 	_check(radio_box != null and radio_box.get_child_count() > 0, "제압하면 사비가 무전으로 남은 경비를 알려 준다 (게임은 멈추지 않는다)")
-	var term = _world.get_node("Interactables/SecurityTerminal")
-	_check(term.get_interaction_prompt(_member()).contains("중계기"), "샤무에게 보안실 단말은 '중계기 꽂기 — 사비 원격 해킹'")
-	_interact("Interactables/SecurityTerminal")
-	await _hack()
-	await _wait_dialogue("prologue_p04_security")
-	await _finish_dialogue()
-	await _seconds(0.3)
-	_check(_flag("p04_security_hacked") and _objective().contains("봉쇄문"), "사비가 원격으로 보안망에 들어가면 봉쇄문 개방이 목표 (%s)" % _objective())
-
-	# --- 봉쇄문(샤무) -> 지하: 경보 장치(중계기) + 파쇄기 ---
-	_interact("Interactables/BlastDoor")
-	await _seconds(0.6)
-	await _wait_dialogue("prologue_p04_basement")
-	await _finish_dialogue()
-	await _seconds(0.3)
-	_check(_objective().contains("경보") and _objective().contains("파쇄기"), "봉쇄문을 열면 경보·파쇄기 두 가지가 목표가 된다 (%s)" % _objective())
-	_interact("Interactables/AlarmPanel")
-	await _hack()
-	_check(_flag("p04_alarm_off") and not _objective().contains("경보실") and _objective().contains("파쇄기"),
-			"경보 장치도 중계기로 사비가 끈다. 파쇄기만 남는다 (%s)" % _objective())
-	_interact("Interactables/Shredder")
-	await _seconds(0.6)
-	_check(_flag("p04_server_open"), "경보와 파쇄기를 모두 멈추면 서버실 문이 풀린다")
-	await _wait_dialogue("prologue_p04_coop")
-	await _finish_dialogue()
-	await _seconds(0.3)
-	_check(_objective().contains("남은 경비원") and _objective().contains("2명"), "서버는 사비가 직접: 남은 경비를 모두 재워야 한다 (%s)" % _objective())
-	_interact("Interactables/MainServer")
-	_check(_dm.current_dialogue_id == "hack_shamu_server" and get_first_node_in_group("hack_minigame") == null,
-			"서버는 외부 망과 끊겨 있어 샤무(중계기)로는 안 된다")
-	await _finish_dialogue()
-
-	# --- 남은 경비를 모두 제압 -> 사비 합류 ---
+	_check(_party.solo and _objective().contains("2명"), "두 명 남았다 (%s)" % _objective())
 	_knock(_world.get_node("Guards/GuardHall"))
 	await _seconds(0.3)
 	_check(_party.solo and _objective().contains("1명"), "한 명 남았다 (%s)" % _objective())
@@ -135,10 +113,53 @@ func _run() -> void:
 	await _wait_dialogue("prologue_p04_rejoin_radio", 4.0)
 	_check(_dm.current_dialogue_id == "prologue_p04_rejoin_radio", "경비를 모두 재우면 사비가 무전으로 들어오겠다고 한다")
 	await _finish_dialogue()
-	await _finish_captions()
-	await _wait_dialogue("prologue_p04_rejoin", 4.0)
+	var walked := 0.0
+	var last_sabi: Vector3 = sabi_node.global_position
+	var t_in := 0.0
+	while not (_dm.is_dialogue_active and _dm.current_dialogue_id == "prologue_p04_rejoin") and t_in < 6.0:
+		await physics_frame
+		t_in += 1.0 / Engine.physics_ticks_per_second
+		var step_len: float = sabi_node.global_position.distance_to(last_sabi)
+		if step_len < 0.5:
+			walked += step_len
+		last_sabi = sabi_node.global_position
+	_check(_dm.current_dialogue_id == "prologue_p04_rejoin" and _bars_shown(), "합류는 컷씬으로 이어진다 (화면 위아래 검은 띠)")
+	_check(walked > 1.5, "사비가 순간이동하지 않고 걸어 들어온다 (%.1fm)" % walked)
 	_check(not _party.solo and sabi_node.global_position.distance_to(_member().global_position) < 3.0 and sabi_node.process_mode != Node.PROCESS_MODE_DISABLED,
 			"사비가 샤무 옆으로 합류한다")
+	_check(not bool(_line_radio()), "합류한 뒤 사비의 대사는 무전이 아니다")
+	await _finish_dialogue()
+	await _seconds(0.6)
+	_check(not _bars_shown() and not _gm.is_exploration_locked(), "합류 대화가 끝나면 다시 움직일 수 있다 (검은 띠 %s, 잠금 %s)" % [_bars_shown(), _gm.is_exploration_locked()])
+	_check(_objective().contains("보안실 단말"), "합류하면 사비로 보안실 단말 (%s)" % _objective())
+
+	# --- 보안실 단말(사비) -> 봉쇄문(샤무) ---
+	await _as("sabi")
+	_interact("Interactables/SecurityTerminal")
+	await _hack()
+	await _wait_dialogue("prologue_p04_security")
+	await _finish_dialogue()
+	await _seconds(0.3)
+	_check(_flag("p04_security_hacked") and _objective().contains("봉쇄문"), "보안망에 접속하면 봉쇄문 개방이 목표 (%s)" % _objective())
+	await _as("shamu")
+	_interact("Interactables/BlastDoor")
+	await _seconds(0.6)
+	await _wait_dialogue("prologue_p04_basement")
+	await _finish_dialogue()
+	await _seconds(0.3)
+	_check(_objective().contains("경보") and _objective().contains("파쇄기"), "봉쇄문을 열면 경보·파쇄기 두 가지가 목표가 된다 (%s)" % _objective())
+
+	# --- 지하 협업: 경보(사비) + 파쇄기(샤무) ---
+	await _as("sabi")
+	_interact("Interactables/AlarmPanel")
+	await _hack()
+	_check(_flag("p04_alarm_off") and not _objective().contains("경보실") and _objective().contains("파쇄기"),
+			"경보를 끄면 파쇄기만 남는다 (%s)" % _objective())
+	await _as("shamu")
+	_interact("Interactables/Shredder")
+	await _seconds(0.6)
+	_check(_flag("p04_server_open"), "경보와 파쇄기를 모두 멈추면 서버실 문이 풀린다")
+	await _wait_dialogue("prologue_p04_coop")
 	await _finish_dialogue()
 	await _seconds(0.3)
 	_check(_objective().contains("영상"), "마지막 목표: 사비로 서버에서 영상 복원 (%s)" % _objective())
@@ -182,16 +203,27 @@ func _run() -> void:
 	await _seconds(0.4)
 	ok = await _walk([Vector3(21.0, -3.75, 17.8), Vector3(14.0, -3.75, 17.8)], 12.0)
 	_check(ok or _dm.is_dialogue_active, "현실에서 막혀 있던 서쪽 벽이 열려 변질된 통로로 들어간다")
-	await _wait_dialogue("prologue_p06_encounter", 3.0)
+	await _wait_dialogue("prologue_p06_encounter", 10.0)
 	_check(_dm.current_dialogue_id == "prologue_p06_encounter", "통로 가운데에서 개체와 조우한다")
 	var encounter = _world.get_node("FirstEncounter")
+	var entity = encounter.entities[0]
+	var sabi = _party.sabi
+	var shamu = _party.shamu
+	_check(_bars_shown() and entity.sprite.modulate.a > 0.95, "조우는 컷씬으로: 개체가 어둠 속에서 드러난다 (화면 위아래 검은 띠)")
+	_check(_flat(sabi.global_position, entity.global_position) > _flat(shamu.global_position, entity.global_position) + 0.8,
+			"사비는 샤무 뒤로 물러서고 샤무가 앞에 나선다")
 	var t := 0.0
-	while encounter.phase != "defeat" and t < 45.0:
+	var saw_hurt_cutscene := false
+	while encounter.phase != "defeat" and t < 75.0:
 		if _dm.is_dialogue_active:
 			_dm.show_next_line()
+		if encounter.phase == "sabi_hurt" and _bars_shown():
+			saw_hurt_cutscene = true
 		await _seconds(0.1)
 		t += 0.1
+	_check(saw_hurt_cutscene, "사비가 대신 맞는 장면도 컷씬으로 이어진다")
 	_check(encounter.phase == "defeat", "공격할수록 빨라지는 개체에게 사비가 다치고, 결국 패배한다 (%s)" % encounter.phase)
+	_check(encounter.entities.size() == 3 and is_equal_approx(Engine.time_scale, 1.0), "어둠 속에서 개체가 늘어나고, 느린 화면은 원래대로 돌아온다")
 	root.get_node("/root/FailureManager").continue_after_failure()
 	await _seconds(1.5)
 	var captions = _scene.get_node("CaptionSequence")
@@ -303,6 +335,16 @@ func _hack() -> void:
 	if game:
 		game.solve()
 	await _seconds(1.3)
+
+
+func _flat(a: Vector3, b: Vector3) -> float:
+	return Vector2(a.x - b.x, a.z - b.z).length()
+
+
+## 컷씬 레터박스(화면 위아래 검은 띠)가 보이는지
+func _bars_shown() -> bool:
+	var bars := _scene.get_node_or_null("CutsceneBars")
+	return bars != null and (bars.get_node("Top") as ColorRect).offset_bottom > 1.0
 
 
 func _wait_dialogue(dialogue_id: String, limit: float = 3.0) -> void:

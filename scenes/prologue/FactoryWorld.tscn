@@ -8642,8 +8642,7 @@ requires_flag = "guard_down_security"
 hack_prompt = "보안망 접속·삭제 자료 복구"
 requires_line = "경비원이 모니터 앞을 지키고 있어. 샤무가 뒤에서 조용히 처리해 줘야 단말에 손댈 수 있어."
 marker_height = 1.80
-remote_ok = true
-shamu_requires_line = "경비원이 모니터 앞에 있어. 먼저 뒤에서 조용히 처리해야 중계기를 꽂을 수 있어."
+shamu_line = "이건 사비 담당이야. 경비를 다 재우면 사비가 들어와서 열 거야."
 
 [node name="InteractionPoint" type="Marker3D" parent="Interactables/SecurityTerminal"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 1.2)
@@ -8657,7 +8656,7 @@ requires_flag = ""
 hack_prompt = "경보 장치 해제"
 requires_line = ""
 marker_height = 1.80
-remote_ok = true
+shamu_line = "이건 사비 담당이야. 경비를 다 재우면 사비가 들어와서 열 거야."
 
 [node name="InteractionPoint" type="Marker3D" parent="Interactables/AlarmPanel"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 1.1)
@@ -8671,7 +8670,7 @@ requires_flag = "p04_server_open"
 hack_prompt = "서버에서 영상 복원"
 requires_line = "경보랑 파쇄기가 돌아가는 동안엔 서버가 잠겨 있어."
 marker_height = 1.80
-shamu_line = "서버는 외부 망이랑 완전히 끊겨 있어. 중계기로도 안 닿아… 사비가 직접 와야 해."
+shamu_line = "서버는 외부 망이랑 완전히 끊겨 있어… 사비가 직접 와야 해."
 
 [node name="InteractionPoint" type="Marker3D" parent="Interactables/MainServer"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 1.3)

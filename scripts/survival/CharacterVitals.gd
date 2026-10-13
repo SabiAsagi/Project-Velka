@@ -26,6 +26,14 @@ var threatened: bool = false
 ## 0보다 크면 체력이 이 값 아래로 내려가지 않는다 (연출용 보호)
 var hp_floor: float = 0.0
 var is_downed: bool = false
+## 숨(스태미나). 달리면 줄고, 멈추면 잠시 뒤 다시 찬다
+var max_stamina: float = 100.0
+var stamina: float = 100.0
+## 이번 프레임에 달리는 중인지 (PartyMember 가 매 물리 프레임 넣는다)
+var sprinting: bool = false
+## 숨이 바닥났다: 일정 비율까지 회복할 때까지 달릴 수 없다
+var exhausted: bool = false
+var _stamina_rest: float = 0.0
 
 # status_id -> 남은 시간(초), -1이면 해제될 때까지
 var statuses: Dictionary = {}
@@ -55,6 +63,8 @@ func _ready() -> void:
 	heart_rate = heart_rest
 	_heart_gain_mult = float(_config.get("heart_gain_mult", 1.0))
 	_mental_loss_mult = float(_config.get("mental_loss_mult", 1.0))
+	max_stamina = float(_config.get("stamina_max", 100.0))
+	stamina = max_stamina
 
 
 func _process(delta: float) -> void:
@@ -87,6 +97,11 @@ func _process(delta: float) -> void:
 	if _emit_timer <= 0.0:
 		_emit_timer = 0.1
 		changed.emit(self)
+
+
+## 숨은 이동과 같은 물리 프레임에서 계산한다 (PartyMember 가 sprinting 을 먼저 넣는다)
+func _physics_process(delta: float) -> void:
+	_update_stamina(delta)
 
 
 ## 피해. injury로 상태이상(예: "bleeding", "injured")을 함께 건다.
@@ -154,6 +169,30 @@ func status_names() -> Array:
 	return names
 
 
+## 지금 달릴 수 있는지 (숨이 남았고, 바닥난 뒤라면 충분히 회복했는지)
+func can_sprint() -> bool:
+	return not exhausted and stamina > 0.0
+
+
+## 숨: 달리면 초당 drain 만큼 줄고, 달리기를 멈추고 regen_delay 초가 지나면 다시 찬다.
+## 바닥나면 exhausted — 숨이 exhausted_recover_ratio 만큼 찰 때까지 달릴 수 없고 심박이 오른다.
+func _update_stamina(delta: float) -> void:
+	var cfg: Dictionary = data().get("sprint", {})
+	if sprinting and not exhausted:
+		_stamina_rest = 0.0
+		stamina = maxf(0.0, stamina - float(cfg.get("stamina_drain_per_sec", 20.0)) * delta)
+		if stamina <= 0.0:
+			exhausted = true
+			add_heart(float(cfg.get("exhausted_heart_gain", 10.0)))
+		return
+	_stamina_rest += delta
+	if _stamina_rest < float(cfg.get("stamina_regen_delay", 0.8)):
+		return
+	stamina = minf(max_stamina, stamina + float(cfg.get("stamina_regen_per_sec", 16.0)) * delta)
+	if exhausted and stamina >= max_stamina * float(cfg.get("exhausted_recover_ratio", 0.35)):
+		exhausted = false
+
+
 ## 이동 속도 배율 (심박 단계 × 상태이상)
 func speed_multiplier() -> float:
 	var mult := float(stage("heart").get("speed_mult", 1.0))
@@ -188,6 +227,10 @@ func restore(snap: Dictionary) -> void:
 	for id in snap.get("statuses", {}):
 		apply_status(id, float(snap["statuses"][id]))
 	threatened = false
+	# 다시 시작하면 숨은 가득 찬 채로 시작한다
+	stamina = max_stamina
+	exhausted = false
+	sprinting = false
 	changed.emit(self)
 
 

@@ -2,13 +2,6 @@
   "dialogue_id": "prologue_p06_encounter",
   "lines": [
     {
-      "speaker": "system",
-      "speaker_name": "",
-      "sabi_emotion": "neutral",
-      "shamu_emotion": "neutral",
-      "text": "복도 끝에서 무언가가 천천히 걸어온다. 사람의 형태지만, 걸음이 어딘가 어긋나 있다."
-    },
-    {
       "speaker": "sabi",
       "speaker_name": "사비 아사기",
       "sabi_emotion": "surprised",

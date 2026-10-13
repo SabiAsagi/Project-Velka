@@ -25,6 +25,8 @@ var _switch_cooldown_left: float = 0.0
 ## 이 동안은 조작 전환·동행 명령이 안 되고, 순간이동(재시작)은 조작 캐릭터만 옮긴다.
 var solo: bool = false
 var solo_reason: String = ""
+## 연출 중 동료가 혼자 움직이는 동안: 동행 AI를 멈추고 조작 전환·동행 명령을 막는다 (hold_companion)
+var hold_reason: String = ""
 
 
 func _ready() -> void:
@@ -99,6 +101,8 @@ func begin_solo(who: int, park_at: Vector3, reason: String = "") -> void:
 		GameManager.switch_character(who)
 	solo = true
 	solo_reason = reason
+	var me: PartyMember = shamu if who == GameManager.CharacterType.SHAMU else sabi
+	me.process_mode = Node.PROCESS_MODE_INHERIT
 	var other: PartyMember = sabi if who == GameManager.CharacterType.SHAMU else shamu
 	other.global_position = park_at
 	other.velocity = Vector3.ZERO
@@ -111,10 +115,12 @@ func begin_solo(who: int, park_at: Vector3, reason: String = "") -> void:
 func end_solo(join_at: Vector3) -> void:
 	solo = false
 	solo_reason = ""
+	# 남아 있던 사람이 (재시작 등으로) 조작 캐릭터가 됐을 수도 있다: 둘 다 다시 움직이게 한다
+	for m in [sabi, shamu]:
+		m.process_mode = Node.PROCESS_MODE_INHERIT
 	var other: PartyMember = companion_member
 	if other == null:
 		return
-	other.process_mode = Node.PROCESS_MODE_INHERIT
 	other.global_position = join_at
 	other.velocity = Vector3.ZERO
 	if other.companion_ai:
@@ -122,9 +128,27 @@ func end_solo(join_at: Vector3) -> void:
 
 
 ## 동행에게 "여기서 기다려" / "따라와" (C 키). 대화·연출 중이거나 숨어 있으면 무시한다.
+## 연출: 동료가 따라오지 않고 혼자 움직인다 (walk_path 로 움직인다). reason 은 전환·C 를 눌렀을 때 보여 준다.
+func hold_companion(reason: String) -> void:
+	hold_reason = reason
+	if companion_member and companion_member.companion_ai:
+		companion_member.companion_ai.set_state(CompanionAI.CompanionState.SCRIPTED)
+
+
+## 연출이 끝나면 동료가 다시 조작 캐릭터를 따라온다 (지금 자리에서 새로 따라오기 시작).
+func release_companion() -> void:
+	hold_reason = ""
+	if companion_member and companion_member.companion_ai:
+		companion_member.stop_scripted_move()
+		companion_member.companion_ai.set_leader(active_member)
+
+
 func toggle_companion_wait() -> bool:
 	if solo:
 		companion_command.emit(solo_reason, true)
+		return false
+	if not hold_reason.is_empty():
+		companion_command.emit(hold_reason, false)
 		return false
 	if GameManager.is_exploration_locked() or companion_member == null or companion_member.companion_ai == null:
 		return false
@@ -149,6 +173,11 @@ func request_switch() -> bool:
 		if not solo_reason.is_empty() and _switch_cooldown_left <= 0.0:
 			_switch_cooldown_left = 1.0
 			companion_command.emit(solo_reason, true)
+		return false
+	if not hold_reason.is_empty():
+		if _switch_cooldown_left <= 0.0:
+			_switch_cooldown_left = 1.0
+			companion_command.emit(hold_reason, false)
 		return false
 	if GameManager.is_exploration_locked() or _switch_cooldown_left > 0.0:
 		return false
