@@ -7415,8 +7415,8 @@ metallic = 0.3
 background_mode = 1
 background_color = Color(0.02, 0.02, 0.04, 1)
 ambient_light_source = 2
-ambient_light_color = Color(0.45, 0.5, 0.62, 1)
-ambient_light_energy = 0.5
+ambient_light_color = Color(0.4, 0.46, 0.6, 1)
+ambient_light_energy = 0.16
 ssao_enabled = true
 ssao_radius = 1.2
 ssao_intensity = 2.2
@@ -8427,69 +8427,69 @@ omni_range = 2.60
 
 [node name="Light" type="OmniLight3D" parent="Buildings/factory/1F/Lights" groups=["real_light"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 4, 4)
-light_color = Color(1.00, 0.72, 0.42, 1)
-light_energy = 1.20
-omni_range = 8.50
+light_color = Color(1.00, 0.68, 0.38, 1)
+light_energy = 0.45
+omni_range = 6.00
 
 [node name="Light_2" type="OmniLight3D" parent="Buildings/factory/1F/Lights" groups=["real_light"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 4, 11)
-light_color = Color(1.00, 0.72, 0.42, 1)
-light_energy = 1.20
-omni_range = 8.50
+light_color = Color(1.00, 0.68, 0.38, 1)
+light_energy = 0.45
+omni_range = 6.00
 
 [node name="Light_3" type="OmniLight3D" parent="Buildings/factory/1F/Lights" groups=["real_light"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 4, 18)
-light_color = Color(1.00, 0.72, 0.42, 1)
-light_energy = 1.20
-omni_range = 8.50
+light_color = Color(1.00, 0.68, 0.38, 1)
+light_energy = 0.45
+omni_range = 6.00
 
 [node name="Light_4" type="OmniLight3D" parent="Buildings/factory/1F/Lights" groups=["real_light"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 3.2, 11)
 light_color = Color(0.85, 0.92, 1.00, 1)
-light_energy = 0.80
-omni_range = 6.00
+light_energy = 0.35
+omni_range = 5.00
 
 [node name="Light_5" type="OmniLight3D" parent="Buildings/factory/1F/Lights" groups=["real_light"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 3, 4.5)
 light_color = Color(0.85, 0.92, 1.00, 1)
-light_energy = 0.80
-omni_range = 6.00
+light_energy = 0.35
+omni_range = 5.00
 
 [node name="Light_6" type="OmniLight3D" parent="Buildings/factory/1F/Lights" groups=["real_light"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 3, 17.5)
 light_color = Color(0.85, 0.92, 1.00, 1)
-light_energy = 0.80
-omni_range = 5.00
+light_energy = 0.35
+omni_range = 4.00
 
 [node name="Light_7" type="OmniLight3D" parent="Buildings/factory/1F/Lights" groups=["real_light"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 32.2, 3, 13.6)
 light_color = Color(0.85, 0.92, 1.00, 1)
-light_energy = 0.80
-omni_range = 3.50
+light_energy = 0.35
+omni_range = 3.00
 
 [node name="Light" type="OmniLight3D" parent="Buildings/factory/B1/Lights" groups=["real_light"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26, -0.8, 18)
 light_color = Color(1.00, 0.85, 0.70, 1)
-light_energy = 0.80
-omni_range = 7.00
+light_energy = 0.45
+omni_range = 6.00
 
 [node name="Light_2" type="OmniLight3D" parent="Buildings/factory/B1/Lights" groups=["real_light"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24.5, -0.8, 10.7)
 light_color = Color(1.00, 0.40, 0.35, 1)
-light_energy = 0.80
-omni_range = 5.00
+light_energy = 0.45
+omni_range = 4.50
 
 [node name="Light_3" type="OmniLight3D" parent="Buildings/factory/B1/Lights" groups=["real_light"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.4, -0.8, 10.7)
 light_color = Color(1.00, 0.85, 0.70, 1)
-light_energy = 0.80
-omni_range = 5.00
+light_energy = 0.45
+omni_range = 4.50
 
 [node name="Light_4" type="OmniLight3D" parent="Buildings/factory/B1/Lights" groups=["real_light"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, -0.8, 3.8)
 light_color = Color(0.50, 0.80, 1.00, 1)
-light_energy = 0.80
-omni_range = 7.00
+light_energy = 0.45
+omni_range = 6.00
 
 [node name="Light_8" type="OmniLight3D" parent="Buildings/factory/1F/Lights" groups=["real_light"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 1.6, 0.6)
@@ -8642,6 +8642,8 @@ requires_flag = "guard_down_security"
 hack_prompt = "보안망 접속·삭제 자료 복구"
 requires_line = "경비원이 모니터 앞을 지키고 있어. 샤무가 뒤에서 조용히 처리해 줘야 단말에 손댈 수 있어."
 marker_height = 1.80
+remote_ok = true
+shamu_requires_line = "경비원이 모니터 앞에 있어. 먼저 뒤에서 조용히 처리해야 중계기를 꽂을 수 있어."
 
 [node name="InteractionPoint" type="Marker3D" parent="Interactables/SecurityTerminal"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 1.2)
@@ -8655,6 +8657,7 @@ requires_flag = ""
 hack_prompt = "경보 장치 해제"
 requires_line = ""
 marker_height = 1.80
+remote_ok = true
 
 [node name="InteractionPoint" type="Marker3D" parent="Interactables/AlarmPanel"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 1.1)
@@ -8668,6 +8671,7 @@ requires_flag = "p04_server_open"
 hack_prompt = "서버에서 영상 복원"
 requires_line = "경보랑 파쇄기가 돌아가는 동안엔 서버가 잠겨 있어."
 marker_height = 1.80
+shamu_line = "서버는 외부 망이랑 완전히 끊겨 있어. 중계기로도 안 닿아… 사비가 직접 와야 해."
 
 [node name="InteractionPoint" type="Marker3D" parent="Interactables/MainServer"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 1.3)

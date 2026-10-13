@@ -119,3 +119,12 @@ static func style_small_button(b: Button, accent: Color = INK_DIM) -> void:
 	b.add_theme_stylebox_override("hover", h)
 	b.add_theme_stylebox_override("focus", h)
 	b.add_theme_stylebox_override("pressed", h)
+
+
+## 게임 버전 (project.godot application/config/version). 기능 업데이트는 가운데, 버그·자잘한 수정은 마지막 숫자를 올린다 — 기획서/07.기술_문서/버전_기록.md
+static func version() -> String:
+	return String(ProjectSettings.get_setting("application/config/version", "0.0.0"))
+
+
+static func version_text() -> String:
+	return "v" + version()

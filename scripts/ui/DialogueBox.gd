@@ -6,6 +6,7 @@ extends CanvasLayer
 #   - 말하는 인물의 초상화가 대화창 안쪽 왼쪽에 들어가고, 이름표·대사는 그 오른쪽에서 시작한다 (참고 예시 1번)
 #     사비·샤무는 표정 초상화, 다른 인물은 디자인이 나오기 전까지 색이 다른 실루엣 (NPC_SILHOUETTES)
 #   - 인물 대사는 「」 로 감싸고, 서술(system)은 초상화·이름표 없이 흐린 글씨
+#   - "radio": true 인 대사는 무전: 이름표에 "· 무전", 잡음, 초상화가 푸르스름하다
 #   - 타자기 효과, 클릭/E 로 넘기기, 화면 흔들림(shake), 선택지, BBCode ([shake] [wave] [color] [b])
 # 초상화를 새로 그리면 assets/characters/portraits/<id>_<표정>.png 로 넣고 PORTRAIT_FILES 에 추가한다.
 
@@ -137,14 +138,18 @@ func _on_line_started(line: Dictionary) -> void:
 	var narration := speaker_id == "system" or display_name.is_empty()
 	var raw_text := DialogueManager.resolve_line_text(line)
 
-	# 이름표
+	# 이름표 (무전이면 "· 무전" 과 잡음, 초상화는 푸르스름하게)
+	var radio := bool(line.get("radio", false)) and not narration
 	_name_tag.visible = not narration
-	speaker_label.text = display_name
+	speaker_label.text = display_name + ("  · 무전" if radio else "")
 	speaker_label.add_theme_color_override("font_color", NAME_COLORS.get(speaker_id, VelkaStyle.INK))
 
 	# 초상화
 	var emotion := String(line.get("sabi_emotion" if speaker_id == "sabi" else "shamu_emotion", "neutral"))
 	_show_speaker(speaker_id if not narration else "", emotion)
+	_portrait.self_modulate = Color(0.72, 0.9, 1.0) if radio else Color.WHITE
+	if radio:
+		SfxBank.play(self, "static", -22.0, 1.4)
 
 	# 본문: 인물 대사는 「」, 서술은 흐리게
 	var shown := raw_text if narration else "「%s」" % raw_text

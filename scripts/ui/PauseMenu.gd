@@ -161,6 +161,7 @@ func _build_ui() -> void:
 	column.add_child(head)
 	head.add_child(VelkaStyle.label("PAUSED", VelkaStyle.mono(), 16, VelkaStyle.RED_SOFT))
 	head.add_child(VelkaStyle.label("일시정지", VelkaStyle.serif_bold(), 38, VelkaStyle.INK))
+	head.add_child(VelkaStyle.label(VelkaStyle.version_text(), VelkaStyle.mono(), 14, VelkaStyle.INK_DIM))
 	var line := ColorRect.new()
 	line.color = Color(VelkaStyle.RED, 0.6)
 	line.custom_minimum_size = Vector2(0, 1)

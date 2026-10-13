@@ -21,6 +21,10 @@ signal companion_command(text: String, waiting: bool)
 var active_member: PartyMember = null
 var companion_member: PartyMember = null
 var _switch_cooldown_left: float = 0.0
+## 단독 행동: 한 사람만 움직이고 다른 사람은 다른 곳에 남아 있다 (예: 공장 잠입 — 사비는 밖에서 무전).
+## 이 동안은 조작 전환·동행 명령이 안 되고, 순간이동(재시작)은 조작 캐릭터만 옮긴다.
+var solo: bool = false
+var solo_reason: String = ""
 
 
 func _ready() -> void:
@@ -89,8 +93,39 @@ func _unhandled_input(event: InputEvent) -> void:
 		toggle_companion_wait()
 
 
+## 단독 행동 시작: who 를 조작하고, 다른 사람은 park_at 에 세워 둔다 (따라오지 않는다)
+func begin_solo(who: int, park_at: Vector3, reason: String = "") -> void:
+	if GameManager.active_character != who:
+		GameManager.switch_character(who)
+	solo = true
+	solo_reason = reason
+	var other: PartyMember = sabi if who == GameManager.CharacterType.SHAMU else shamu
+	other.global_position = park_at
+	other.velocity = Vector3.ZERO
+	if other.companion_ai:
+		other.companion_ai.set_state(CompanionAI.CompanionState.WAIT)
+	other.process_mode = Node.PROCESS_MODE_DISABLED
+
+
+## 단독 행동 끝: 남아 있던 사람이 조작 캐릭터 옆(join_at)으로 와서 다시 따라온다
+func end_solo(join_at: Vector3) -> void:
+	solo = false
+	solo_reason = ""
+	var other: PartyMember = companion_member
+	if other == null:
+		return
+	other.process_mode = Node.PROCESS_MODE_INHERIT
+	other.global_position = join_at
+	other.velocity = Vector3.ZERO
+	if other.companion_ai:
+		other.companion_ai.set_state(CompanionAI.CompanionState.FOLLOW)
+
+
 ## 동행에게 "여기서 기다려" / "따라와" (C 키). 대화·연출 중이거나 숨어 있으면 무시한다.
 func toggle_companion_wait() -> bool:
+	if solo:
+		companion_command.emit(solo_reason, true)
+		return false
 	if GameManager.is_exploration_locked() or companion_member == null or companion_member.companion_ai == null:
 		return false
 	if active_member.is_hidden or companion_member.is_hidden:
@@ -110,6 +145,11 @@ func is_companion_waiting() -> bool:
 
 ## 조작 캐릭터 전환 요청. 대화·연출 중이거나 쿨타임이면 무시하고 false를 반환한다.
 func request_switch() -> bool:
+	if solo:
+		if not solo_reason.is_empty() and _switch_cooldown_left <= 0.0:
+			_switch_cooldown_left = 1.0
+			companion_command.emit(solo_reason, true)
+		return false
 	if GameManager.is_exploration_locked() or _switch_cooldown_left > 0.0:
 		return false
 	# 캐비닛에 숨어 있는 동안은 바꿀 수 없다 (나오는 사람이 꼬이지 않게)
@@ -188,7 +228,7 @@ func teleport_party(target_position: Vector3) -> void:
 	if active_member:
 		active_member.global_position = target_position
 		active_member.velocity = Vector3.ZERO
-	if companion_member:
+	if companion_member and not solo:
 		companion_member.global_position = target_position + Vector3(-1.0, 0.0, 1.0)
 		companion_member.velocity = Vector3.ZERO
 

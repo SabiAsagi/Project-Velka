@@ -16,12 +16,13 @@
       "speaker": "sabi",
       "speaker_name": "사비 아사기",
       "text": "보안망이 살아 있었는데……! 다 몰려와.",
+      "radio": true,
       "sabi_emotion": "serious"
     },
     {
       "speaker": "shamu",
       "speaker_name": "카즈네 샤무",
-      "text": "내려가. 따라붙기 전에."
+      "text": "내려간다. 따라붙기 전에."
     }
   ]
 }

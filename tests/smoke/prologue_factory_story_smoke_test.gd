@@ -65,54 +65,83 @@ func _run() -> void:
 	_check(_flag("p04_gate_hacked"), "회로를 이으면 옆문 잠금이 풀린다")
 	await _wait_dialogue("prologue_p04_gate")
 	await _finish_dialogue()
-	await _seconds(0.3)
+	await _seconds(0.4)
 	_check(_objective().contains("손전등"), "다음 목표: 경비원을 피해 사무동으로 (%s)" % _objective())
+
+	# --- 샤무 단독 잠입: 사비는 마당에 남는다 ---
+	var sabi_node: Node3D = _party.sabi
+	_check(_party.solo and _gm.active_character == _gm.CharacterType.SHAMU and sabi_node.global_position.x < -5.0,
+			"옆문이 열리면 샤무 혼자 들어가고 사비는 마당에 남는다")
+	_check(not _party.request_switch() and _gm.active_character == _gm.CharacterType.SHAMU, "잠입하는 동안은 사비로 바꿀 수 없다")
+	_check(_member().has_node("NightEyes"), "깜깜한 공장: 캐릭터 주변만 희미하게 보인다")
 
 	# --- 사무동 도착 (구역 진입) ---
 	_party.teleport_party(Vector3(24.0, 0.05, 11.0))
 	await _seconds(0.5)
+	_check(sabi_node.global_position.x < -5.0, "샤무를 옮겨도 사비는 마당에 그대로 있다")
 	await _wait_dialogue("prologue_p04_office")
+	_check(bool(_line_radio()), "사무동 도착 대화의 사비 대사는 무전이다")
 	await _finish_dialogue()
 	await _seconds(0.3)
 	_check(_objective().contains("제압"), "사무동 복도에 도착하면 보안실 경비원 제압이 목표가 된다 (%s)" % _objective())
 
-	# --- 보안실 경비원 제압(샤무) -> 보안실 단말(사비) ---
-	await _as("shamu")
+	# --- 보안실: 경비원 제압(샤무) -> 중계기(샤무) -> 사비 원격 해킹 ---
+	_interact("Interactables/SecurityTerminal")
+	_check(_dm.current_dialogue_id == "hack_requires_security", "경비원이 있으면 중계기를 꽂을 수 없다 (샤무 혼잣말)")
+	await _finish_dialogue()
 	var sec_guard = _world.get_node("Guards/GuardSecurity")
-	var sec_face: Vector3 = sec_guard.get("_facing_direction")
-	_party.get_active_member().global_position = sec_guard.global_position - sec_face.normalized() * 1.0   # 모니터를 보는 경비원의 등 뒤
-	sec_guard.take_hit(_party.get_active_member())
+	_knock(sec_guard)
 	await _seconds(0.4)
-	_check(_objective().contains("보안실 단말"), "경비원을 제압하면 보안실 단말 해킹이 목표가 된다 (%s)" % _objective())
-	await _as("sabi")
+	_check(_objective().contains("중계기"), "경비원을 제압하면 보안실 단말에 중계기 꽂기가 목표 (%s)" % _objective())
+	var radio_box = _scene.get_node("PrototypeHUD").get_node_or_null("RadioFeed")
+	_check(radio_box != null and radio_box.get_child_count() > 0, "제압하면 사비가 무전으로 남은 경비를 알려 준다 (게임은 멈추지 않는다)")
+	var term = _world.get_node("Interactables/SecurityTerminal")
+	_check(term.get_interaction_prompt(_member()).contains("중계기"), "샤무에게 보안실 단말은 '중계기 꽂기 — 사비 원격 해킹'")
 	_interact("Interactables/SecurityTerminal")
 	await _hack()
 	await _wait_dialogue("prologue_p04_security")
 	await _finish_dialogue()
 	await _seconds(0.3)
-	_check(_objective().contains("봉쇄문"), "보안망에 접속하면 봉쇄문 개방이 목표가 된다 (%s)" % _objective())
+	_check(_flag("p04_security_hacked") and _objective().contains("봉쇄문"), "사비가 원격으로 보안망에 들어가면 봉쇄문 개방이 목표 (%s)" % _objective())
 
-	# --- 봉쇄문(샤무) -> 지하 협업 ---
-	await _as("shamu")
+	# --- 봉쇄문(샤무) -> 지하: 경보 장치(중계기) + 파쇄기 ---
 	_interact("Interactables/BlastDoor")
 	await _seconds(0.6)
 	await _wait_dialogue("prologue_p04_basement")
 	await _finish_dialogue()
 	await _seconds(0.3)
 	_check(_objective().contains("경보") and _objective().contains("파쇄기"), "봉쇄문을 열면 경보·파쇄기 두 가지가 목표가 된다 (%s)" % _objective())
-	await _as("sabi")
 	_interact("Interactables/AlarmPanel")
 	await _hack()
 	_check(_flag("p04_alarm_off") and not _objective().contains("경보실") and _objective().contains("파쇄기"),
-			"경보를 끄면 파쇄기만 남는다 (%s)" % _objective())
-	await _as("shamu")
+			"경보 장치도 중계기로 사비가 끈다. 파쇄기만 남는다 (%s)" % _objective())
 	_interact("Interactables/Shredder")
 	await _seconds(0.6)
 	_check(_flag("p04_server_open"), "경보와 파쇄기를 모두 멈추면 서버실 문이 풀린다")
 	await _wait_dialogue("prologue_p04_coop")
 	await _finish_dialogue()
 	await _seconds(0.3)
-	_check(_objective().contains("영상"), "마지막 목표: 서버에서 영상 복원 (%s)" % _objective())
+	_check(_objective().contains("남은 경비원") and _objective().contains("2명"), "서버는 사비가 직접: 남은 경비를 모두 재워야 한다 (%s)" % _objective())
+	_interact("Interactables/MainServer")
+	_check(_dm.current_dialogue_id == "hack_shamu_server" and get_first_node_in_group("hack_minigame") == null,
+			"서버는 외부 망과 끊겨 있어 샤무(중계기)로는 안 된다")
+	await _finish_dialogue()
+
+	# --- 남은 경비를 모두 제압 -> 사비 합류 ---
+	_knock(_world.get_node("Guards/GuardHall"))
+	await _seconds(0.3)
+	_check(_party.solo and _objective().contains("1명"), "한 명 남았다 (%s)" % _objective())
+	_knock(_world.get_node("Guards/GuardEast"))
+	await _wait_dialogue("prologue_p04_rejoin_radio", 4.0)
+	_check(_dm.current_dialogue_id == "prologue_p04_rejoin_radio", "경비를 모두 재우면 사비가 무전으로 들어오겠다고 한다")
+	await _finish_dialogue()
+	await _finish_captions()
+	await _wait_dialogue("prologue_p04_rejoin", 4.0)
+	_check(not _party.solo and sabi_node.global_position.distance_to(_member().global_position) < 3.0 and sabi_node.process_mode != Node.PROCESS_MODE_DISABLED,
+			"사비가 샤무 옆으로 합류한다")
+	await _finish_dialogue()
+	await _seconds(0.3)
+	_check(_objective().contains("영상"), "마지막 목표: 사비로 서버에서 영상 복원 (%s)" % _objective())
 
 	# --- 서버 -> 최하층 컷신 -> 끝 ---
 	await _as("sabi")
@@ -183,6 +212,29 @@ func _run() -> void:
 
 func _member():
 	return _party.get_active_member()
+
+
+## 경비원의 등 뒤로 가서 샤무가 친다
+func _knock(guard: Node3D) -> void:
+	var face: Vector3 = guard.get("_facing_direction")
+	_member().global_position = guard.global_position - face.normalized() * 1.0
+	guard.take_hit(_member())
+
+
+func _line_radio() -> bool:
+	var lines: Array = _dm.get("_current_lines")
+	var i: int = _dm.get("_current_line_index") - 1
+	return i >= 0 and i < lines.size() and bool(lines[i].get("radio", false))
+
+
+func _finish_captions() -> void:
+	var captions = _scene.get_node("CaptionSequence")
+	await _seconds(0.5)
+	var guard := 0
+	while captions.is_playing() and guard < 20:
+		captions.advance()
+		guard += 1
+		await _seconds(0.4)
 
 
 func _walk(points: Array, timeout_each: float = 10.0) -> bool:

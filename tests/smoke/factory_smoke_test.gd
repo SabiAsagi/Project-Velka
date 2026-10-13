@@ -137,7 +137,9 @@ func _run() -> void:
 		dm.finish_dialogue()
 	var security = _world.get_node("Interactables/SecurityTerminal")
 	security.interact(_member())
-	_check(dm.current_dialogue_id == "hack_shamu_security", "샤무로 보안실 단말을 조사하면 샤무가 '사비 담당'이라고 한다 (사비 대사가 아니다)")
+	var cur_lines: Array = dm.get("_current_lines")
+	_check(dm.current_dialogue_id == "hack_requires_security" and not cur_lines.is_empty() and String(cur_lines[0].get("speaker", "")) == "shamu",
+			"경비원이 있을 때 샤무가 보안실 단말에 중계기를 꽂으려 하면 샤무 자신이 말한다 (사비 대사가 아니다)")
 	if dm.is_dialogue_active:
 		dm.finish_dialogue()
 	if dm.is_dialogue_active:

@@ -4,43 +4,51 @@
     {
       "speaker": "system",
       "speaker_name": "",
-      "sabi_emotion": "neutral",
-      "shamu_emotion": "neutral",
       "text": "도시 외곽 산업단지 북측 3구역. 간판도, 회사 이름도 지워진 공장이 어둠 속에 서 있다."
     },
     {
       "speaker": "shamu",
       "speaker_name": "카즈네 샤무",
-      "sabi_emotion": "neutral",
-      "shamu_emotion": "serious",
-      "text": "폐쇄됐다더니 불이 켜져 있네. 경비도 있고."
+      "text": "폐쇄됐다더니 경비가 있네. 불은 다 꺼 놓고."
     },
     {
       "speaker": "sabi",
       "speaker_name": "사비 아사기",
-      "sabi_emotion": "serious",
-      "shamu_emotion": "serious",
       "text": "폐쇄된 곳을 지키는 사람이 있다는 게 더 이상해."
     },
     {
       "speaker": "sabi",
       "speaker_name": "사비 아사기",
-      "sabi_emotion": "determined",
-      "shamu_emotion": "neutral",
-      "text": "옆문은 전자식 잠금. 마당에 있는 보안 단말부터 열게."
+      "text": "계획대로 가자. 나는 밖에서 망을 열고, 샤무가 안으로 들어가."
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "text": "사비가 손바닥만 한 중계기 몇 개와 무전기를 샤무에게 건넨다."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "text": "단말에 이거 꽂으면 내가 밖에서 들어갈 수 있어. 꽂고 버티기만 해."
     },
     {
       "speaker": "shamu",
       "speaker_name": "카즈네 샤무",
-      "sabi_emotion": "determined",
-      "shamu_emotion": "smug",
+      "text": "버티는 건 자신 있어."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "text": "옆문은 전자식 잠금이야. 마당 보안 단말부터 열게."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
       "text": "들키면 두고 간다."
     },
     {
       "speaker": "sabi",
       "speaker_name": "사비 아사기",
-      "sabi_emotion": "gentle_smile",
-      "shamu_emotion": "smug",
       "text": "거짓말."
     }
   ]
