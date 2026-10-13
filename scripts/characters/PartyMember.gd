@@ -66,7 +66,12 @@ var hp: float:
 
 ## 달리는 중인지 (규칙 구역의 '뛰지 마십시오' 판정용)
 var is_sprinting: bool = false
+## 달리면서 낸 발소리를 경비원·괴이가 들은 횟수 (테스트·디버그용)
+var footstep_noise_count: int = 0
 var _attack_cooldown: float = 0.0
+# 발소리: 마지막 발소리 뒤로 걸은 거리, 달리기 소음 쿨다운
+var _stride_left: float = 0.0
+var _noise_cooldown: float = 0.0
 
 var is_hidden: bool = false
 var is_threatened: bool = false
@@ -128,31 +133,84 @@ func _physics_process(delta: float) -> void:
 	_update_heart_rate(delta)
 	if _attack_cooldown > 0.0:
 		_attack_cooldown -= delta
+	if _noise_cooldown > 0.0:
+		_noise_cooldown -= delta
 	if is_downed():
+		is_sprinting = false
 		velocity.x = 0.0
 		velocity.z = 0.0
 		apply_gravity_and_slide(delta)
+		_sync_sprint_to_vitals()
 		_update_animation()
 		return
 
 	if is_controlled:
 		_process_player_input(delta)
 	else:
+		is_sprinting = false
 		if companion_ai:
 			companion_ai.process_companion(delta)
 
+	_sync_sprint_to_vitals()
+	_update_footsteps(delta)
 	_update_animation()
+
+
+var _was_exhausted: bool = false
+
+
+func _sync_sprint_to_vitals() -> void:
+	if vitals == null:
+		return
+	vitals.sprinting = is_sprinting
+	# 숨이 바닥나면 헐떡인다
+	if vitals.exhausted and not _was_exhausted and is_inside_tree():
+		SfxBank.play_at(self, global_position + Vector3.UP * 1.4, "breath", -6.0, 1.08 if character_type == GameManager.CharacterType.SABI else 0.9, 10.0)
+		if is_controlled:
+			AbilityFx.spawn_text(get_tree().current_scene, global_position + Vector3.UP * 2.0, "헉… 헉…", Color(0.8, 0.85, 0.9), 0.9)
+	_was_exhausted = vitals.exhausted
+
+
+## 걸은 거리만큼 발소리를 낸다. 조작 캐릭터가 달리면 크게 울려 근처 경비원·괴이가 듣는다.
+func _update_footsteps(delta: float) -> void:
+	if is_hidden or not is_on_floor():
+		return
+	var ground_speed := Vector2(velocity.x, velocity.z).length()
+	if ground_speed < 0.3:
+		_stride_left = 0.0
+		return
+	var cfg: Dictionary = CharacterVitals.data().get("footsteps", {})
+	_stride_left -= ground_speed * delta
+	if _stride_left > 0.0:
+		return
+	var running := is_sprinting or (not is_controlled and ground_speed > speed * 1.35)
+	_stride_left = float(cfg.get("run_stride" if running else "walk_stride", 1.3 if running else 0.95))
+	var volume := float(cfg.get("walk_volume_db", -17.0))
+	if not is_controlled:
+		volume = float(cfg.get("companion_volume_db", -22.0))
+	elif is_sprinting:
+		volume = float(cfg.get("run_volume_db", -5.0))
+	SfxBank.play_at(self, global_position, "footstep", volume, randf_range(0.9, 1.1) * (1.08 if running else 1.0),
+			float(cfg.get("max_distance", 14.0)))
+	if is_controlled and is_sprinting and _noise_cooldown <= 0.0:
+		var sprint_cfg: Dictionary = CharacterVitals.data().get("sprint", {})
+		_noise_cooldown = float(sprint_cfg.get("noise_interval", 0.5))
+		# 규칙 구역의 '뛰지 마십시오'는 따로 잡으므로 여기서는 알리지 않는다
+		if NoiseEvents.emit(get_tree(), global_position, float(sprint_cfg.get("noise_radius", 7.0)), self, false) > 0:
+			footstep_noise_count += 1
 
 
 func _process_player_input(delta: float) -> void:
 	if is_hidden:
 		# 숨어 있는 동안은 충돌판이 꺼져 있으므로 중력도 주지 않는다 (바닥 아래로 떨어지지 않게)
+		is_sprinting = false
 		velocity = Vector3.ZERO
 		return
 
 	var input_dir := _get_movement_input()
 	var direction := _get_camera_relative_direction(input_dir)
-	is_sprinting = direction != Vector3.ZERO and Input.is_action_pressed("sprint") and not GameManager.is_exploration_locked()
+	is_sprinting = direction != Vector3.ZERO and Input.is_action_pressed("sprint") and not GameManager.is_exploration_locked() \
+			and (vitals == null or vitals.can_sprint())
 	var mult := vitals.speed_multiplier() if vitals else 1.0
 	if is_sprinting:
 		mult *= float(CharacterVitals.data().get("sprint", {}).get("speed_mult", 1.73))

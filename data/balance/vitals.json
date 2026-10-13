@@ -1,8 +1,8 @@
 {
   "_source": "기획서/01. 기획 및 시스템/밸런스_기획서.md 1~3, 7장 플레이스홀더 값",
   "characters": {
-    "sabi": {"max_hp": 100, "heart_rest": 78, "heart_gain_mult": 1.3, "mental_loss_mult": 0.85},
-    "shamu": {"max_hp": 120, "heart_rest": 68, "heart_gain_mult": 0.8, "mental_loss_mult": 1.0}
+    "sabi": {"max_hp": 100, "heart_rest": 78, "heart_gain_mult": 1.3, "mental_loss_mult": 0.85, "stamina_max": 80},
+    "shamu": {"max_hp": 120, "heart_rest": 68, "heart_gain_mult": 0.8, "mental_loss_mult": 1.0, "stamina_max": 120}
   },
   "heart": {
     "min": 40, "max": 200,
@@ -29,6 +29,14 @@
     "downed": {"name": "행동 불능", "speed_mult": 0.0, "duration": -1}
   },
   "bond_link": {"threshold": 30, "heart_per_sec": 6.0, "mental_per_sec": 0.3},
-  "sprint": {"speed_mult": 1.73, "noise_radius": 7.0},
+  "sprint": {
+    "speed_mult": 1.73, "noise_radius": 7.0, "noise_interval": 0.5,
+    "stamina_drain_per_sec": 20.0, "stamina_regen_per_sec": 16.0, "stamina_regen_delay": 0.8,
+    "exhausted_recover_ratio": 0.35, "exhausted_heart_gain": 10.0
+  },
+  "footsteps": {
+    "walk_stride": 0.95, "run_stride": 1.3,
+    "walk_volume_db": -17.0, "run_volume_db": -5.0, "companion_volume_db": -22.0, "max_distance": 14.0
+  },
   "shamu_attack": {"range": 1.7, "cooldown": 0.45, "heart_gain": 6.0}
 }

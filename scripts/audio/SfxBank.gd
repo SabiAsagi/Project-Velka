@@ -12,6 +12,7 @@ extends RefCounted
 #   whisper   : 괴이세계의 숨소리 같은 잡음
 #   bell      : 학교 종 (딩-동-댕-동)
 #   siren     : 공장 경보 사이렌 (반복)
+#   breath    : 숨이 차서 헐떡이는 소리 (들숨·날숨 세 번)
 
 const RATE := 22050
 
@@ -133,6 +134,23 @@ static func _make(sfx_name: String) -> AudioStreamWAV:
 					var env := minf(1.0, u * 300.0) * exp(-u * 1.5)
 					v += (sin(TAU * f * u) + 0.4 * sin(TAU * f * 2.76 * u) * exp(-u * 4.0) + 0.25 * sin(TAU * f * 5.4 * u) * exp(-u * 9.0)) * env
 				s[i] = clampf(v * 0.32, -1.0, 1.0)
+		"breath":
+			# 헐떡임: 걸러낸 잡음을 짧은 들숨·긴 날숨 세 쌍으로 끊는다
+			s = _buffer(2.1)
+			var lp := 0.0
+			var bp := 0.0
+			for i in s.size():
+				var t := float(i) / RATE
+				lp = lerpf(lp, rng.randf_range(-1, 1), 0.22)
+				bp = lerpf(bp, lp, 0.12)
+				var u := fmod(t, 0.7)
+				var env := 0.0
+				if u < 0.22:
+					env = sin(PI * u / 0.22) * 0.7
+				elif u < 0.62:
+					env = sin(PI * (u - 0.22) / 0.4)
+				env *= 1.0 - t / 2.6
+				s[i] = (lp - bp) * 2.4 * env * 0.7
 		"siren":
 			# 공장 경보 사이렌 (오르내리는 소리, 반복 재생용 2초)
 			s = _buffer(2.0)

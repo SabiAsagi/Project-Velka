@@ -147,7 +147,9 @@ func _decay_suspicion(delta: float) -> bool:
 func hear_noise(noise_position: Vector3, _source: Node) -> void:
 	if is_down or current_state == AnomalyState.CHASE:
 		return
-	SfxBank.play_at(self, global_position + Vector3.UP * 1.6, "suspicious", -2.0, 0.85)
+	# 이미 확인하러 가는 중이면 소리 쪽으로 목표만 옮긴다 (달리는 발소리가 계속 들려도 "어?"는 한 번)
+	if current_state != AnomalyState.OBSERVE:
+		SfxBank.play_at(self, global_position + Vector3.UP * 1.6, "suspicious", -2.0, 0.85)
 	_investigate(noise_position, 0.5)
 
 

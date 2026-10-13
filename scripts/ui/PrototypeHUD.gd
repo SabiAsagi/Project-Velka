@@ -141,6 +141,7 @@ func _update_vitals_display() -> void:
 	mental_strength_label.text = "정신력  %d / 100 (%s)" % [roundi(v.mental), v.stage("mental").get("name", "")]
 	overlay.set_vitals(v.hp, v.max_hp, v.heart_rate, String(v.stage("heart").get("name", "")),
 			v.mental, String(v.stage("mental").get("name", "")))
+	overlay.set_stamina(v.stamina, v.max_stamina, v.exhausted)
 	var names: Array = v.status_names()
 	if party and party.has_method("is_bond_link_active") and party.is_bond_link_active():
 		names.append("유대감 링크")

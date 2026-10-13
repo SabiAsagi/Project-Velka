@@ -20,6 +20,7 @@ var _chip_panel: PanelContainer
 var _hp_bar: StatBar
 var _heart_bar: StatBar
 var _mind_bar: StatBar
+var _stamina_bar: StatBar
 var _effects: Label
 var _partner: Label
 var _zone_caption: Label
@@ -56,7 +57,7 @@ func set_character(is_shamu: bool) -> void:
 	cs.border_color = _accent
 	(_prompt_panel.get_theme_stylebox("panel") as StyleBoxFlat).border_color = _accent
 	_prompt_key.add_theme_color_override("font_color", _accent)
-	for bar in [_hp_bar, _heart_bar, _mind_bar]:
+	for bar in [_hp_bar, _heart_bar, _mind_bar, _stamina_bar]:
 		bar.queue_redraw()
 
 
@@ -70,6 +71,18 @@ func set_vitals(hp: float, max_hp: float, bpm: float, heart_stage: String, menta
 	_heart_bar.pulse_bpm = bpm
 	_mind_bar.set_value(mental / 100.0, "%d  %s" % [roundi(mental), mental_stage],
 			Color(0.55, 0.45, 0.85) if mental > 30.0 else Color(0.8, 0.3, 0.6))
+
+
+## 숨(스태미나) 게이지. 바닥나서 회복 중이면 붉게 "숨이 차다"
+func set_stamina(value: float, max_value: float, exhausted: bool) -> void:
+	var ratio := value / maxf(max_value, 1.0)
+	var text := "숨이 차다" if exhausted else ("%d%%" % roundi(ratio * 100.0))
+	_stamina_bar.set_value(ratio, text,
+			Color(0.8, 0.32, 0.28) if exhausted else Color(0.42, 0.68, 0.82).lerp(Color(0.85, 0.7, 0.35), 1.0 - ratio))
+
+
+func get_stamina_text() -> String:
+	return _stamina_bar.value_text
 
 
 func set_effects(names: Array) -> void:
@@ -208,6 +221,7 @@ func _build() -> void:
 	_hp_bar = _bar(col, "체력")
 	_heart_bar = _bar(col, "심박")
 	_mind_bar = _bar(col, "정신")
+	_stamina_bar = _bar(col, "숨")
 	_effects = VelkaStyle.label("", VelkaStyle.mono(), 16, VelkaStyle.RED_SOFT)
 	_effects.visible = false
 	col.add_child(_effects)
