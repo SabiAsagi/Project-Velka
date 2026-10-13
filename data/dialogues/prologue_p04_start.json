@@ -19,22 +19,17 @@
     {
       "speaker": "sabi",
       "speaker_name": "사비 아사기",
-      "text": "계획대로 가자. 나는 밖에서 망을 열고, 샤무가 안으로 들어가."
-    },
-    {
-      "speaker": "system",
-      "speaker_name": "",
-      "text": "사비가 손바닥만 한 중계기 몇 개와 무전기를 샤무에게 건넨다."
-    },
-    {
-      "speaker": "sabi",
-      "speaker_name": "사비 아사기",
-      "text": "단말에 이거 꽂으면 내가 밖에서 들어갈 수 있어. 꽂고 버티기만 해."
+      "text": "계획대로 가자. 나는 밖에서 망을 열고, 샤무가 먼저 들어가."
     },
     {
       "speaker": "shamu",
       "speaker_name": "카즈네 샤무",
-      "text": "버티는 건 자신 있어."
+      "text": "경비는?"
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "text": "샤무가 다 재워 주면 그때 내가 들어갈게. 안쪽 단말은 직접 만져야 해."
     },
     {
       "speaker": "sabi",

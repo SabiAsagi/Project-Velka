@@ -99,6 +99,8 @@ func begin_solo(who: int, park_at: Vector3, reason: String = "") -> void:
 		GameManager.switch_character(who)
 	solo = true
 	solo_reason = reason
+	var me: PartyMember = shamu if who == GameManager.CharacterType.SHAMU else sabi
+	me.process_mode = Node.PROCESS_MODE_INHERIT
 	var other: PartyMember = sabi if who == GameManager.CharacterType.SHAMU else shamu
 	other.global_position = park_at
 	other.velocity = Vector3.ZERO
@@ -111,10 +113,12 @@ func begin_solo(who: int, park_at: Vector3, reason: String = "") -> void:
 func end_solo(join_at: Vector3) -> void:
 	solo = false
 	solo_reason = ""
+	# 남아 있던 사람이 (재시작 등으로) 조작 캐릭터가 됐을 수도 있다: 둘 다 다시 움직이게 한다
+	for m in [sabi, shamu]:
+		m.process_mode = Node.PROCESS_MODE_INHERIT
 	var other: PartyMember = companion_member
 	if other == null:
 		return
-	other.process_mode = Node.PROCESS_MODE_INHERIT
 	other.global_position = join_at
 	other.velocity = Vector3.ZERO
 	if other.companion_ai:

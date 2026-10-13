@@ -2,9 +2,9 @@ extends Node3D
 
 # 프로젝트 벨카 - 프롤로그 폐쇄 공장 컨트롤러 (시나리오 P-04 현실 잠입)
 # 진행은 스토리 플래그로만 판단한다 (체크포인트 재시작 시 플래그가 되돌아가도 목표가 맞게 다시 계산된다).
-# 사비는 밖(마당)에 남아 무전으로 돕고, 샤무 혼자 잠입한다 (p04_solo). 공장 안 단말은 샤무가 중계기를 꽂으면
-# 사비가 원격으로 해킹한다. 샤무가 들키지 않고 경비원을 모두 제압하면 사비가 들어와 합류한다 (p04_sabi_joined).
-# 지하 서버는 외부 망과 끊겨 있어 사비가 직접 있어야 한다.
+# 사비는 밖(마당)에 남아 무전으로 돕고, 샤무 혼자 잠입한다 (p04_solo). 샤무가 들키지 않고 경비원을 모두 제압하면
+# 사비가 들어와 합류한다 (p04_sabi_joined). 공장 안 단말(보안실·경보 장치·서버)은 합류한 사비가 직접 연다.
+# 사비가 밖에 있는 동안 사비의 대사는 자동으로 무전(radio)으로 보여 준다.
 #   1. p04_gate_hacked        : 사비로 마당의 외부 보안 단말 해킹 -> 옆문 열림
 #      (또는 p04_side_forced  : 샤무가 옆문을 강제로 뜯음 -> 사이렌, 경비 증원)
 #   2. p04_reached_office     : 경비원 손전등을 피해 생산동을 지나 사무동 복도 도착
@@ -38,6 +38,8 @@ const REINFORCEMENTS := {
 const ALARM_SECONDS := 14.0
 ## 잠입하는 동안 사비가 있는 곳 (마당, 안에서 보이지 않는 자리)
 const SABI_POST := Vector3(-7.5, 0.05, 4.0)
+## 잠입을 시작하면 여기(옆문 안쪽)를 체크포인트로 저장한다 — 들키면 샤무 혼자 여기서 다시 시작
+const INFILTRATION_CHECKPOINT := Vector3(1.6, 0.05, 10.0)
 const SOLO_REASON := "사비는 밖에서 무전으로 돕고 있다 — 경비를 모두 재우면 들어온다"
 ## 경비가 "?" 를 띄웠을 때 무전 경고 사이 간격(초)
 const WARN_COOLDOWN := 9.0
@@ -79,7 +81,7 @@ func _ready() -> void:
 			_spawn_reinforcements(forced)
 	for guard in world.get_node("Guards").get_children():
 		_watch_guard(guard)
-	FailureManager.restarted.connect(func(_id): _sync_party())
+	FailureManager.restarted.connect(func(_id): _after_restart())
 	if not _flag("p05_started"):
 		_give_night_eyes()
 	_sync_party()
@@ -132,8 +134,7 @@ func _on_flag_set(flag_name: String, value: Variant) -> void:
 		"p04_alarm_off", "broken_data_shredder":
 			if _flag("p04_alarm_off") and _flag("broken_data_shredder") and not _flag("p04_server_open"):
 				GameManager.set_story_flag("p04_server_open", true)
-				if not _flag("p04_sabi_joined"):
-					await _play_once("prologue_p04_coop")
+				await _play_once("prologue_p04_coop")
 		"p04_footage_restored":
 			await _server_cutscene()
 			return
@@ -152,24 +153,23 @@ func current_objective() -> String:
 		return "……"
 	if not (_flag("p04_gate_hacked") or _flag("p04_side_forced")):
 		return "사비로 마당의 외부 보안 단말을 해킹하자 (샤무로 옆문을 뜯을 수도 있다 — 경보)"
-	var joined := _flag("p04_sabi_joined")
+	if _solo():
+		return "경비원을 들키지 않고 모두 제압하자 — 다 재우면 사비가 들어온다 (%d명 남음)" % guards_left()
 	if not _flag("p04_reached_office"):
 		return "경비원의 손전등 빛을 피해 생산동을 지나 사무동으로 가자 (들키면 끝)"
 	if not _flag("broken_basement_door"):
 		if not _flag("guard_down_security"):
 			return "보안실 경비원을 샤무로 뒤에서 제압하자 (Space)"
 		if not _flag("p04_security_hacked"):
-			return "사비로 보안실 단말에서 보안망에 접속하자" if joined else "보안실 단말에 중계기를 꽂자 — 사비가 밖에서 연다"
+			return "사비로 보안실 단말에서 보안망에 접속하자"
 		return "샤무로 계단실 봉쇄문을 강제로 열자"
 	if not _flag("p04_server_open"):
 		var left: Array[String] = []
 		if not _flag("p04_alarm_off"):
-			left.append("경보실 경보 장치" + ("(사비)" if joined else "에 중계기"))
+			left.append("사비: 경보실 경보 장치")
 		if not _flag("broken_data_shredder"):
-			left.append("자료 폐기실 파쇄기(샤무)")
+			left.append("샤무: 자료 폐기실 파쇄기")
 		return "지하에서 둘 다 멈추자 — " + ", ".join(left)
-	if not joined:
-		return "남은 경비원을 들키지 않고 모두 제압하자 — 사비가 들어올 수 있게 (%d명 남음)" % guards_left()
 	return "사비로 서버실에서 실종 당시 영상을 복원하자"
 
 
@@ -195,9 +195,17 @@ func _begin_infiltration() -> void:
 		return
 	GameManager.set_story_flag("p04_solo", true)
 	_sync_party()
+	FailureManager.save_checkpoint("infiltration", "옆문 안쪽", INFILTRATION_CHECKPOINT)
 	if hud and hud.has_method("show_notice"):
 		hud.show_notice("샤무 단독 잠입 — 사비는 밖에서 무전으로 돕는다", Color(0.55, 0.85, 0.92), 5.0)
 	if _all_guards_down():
+		await _sabi_joins()
+
+
+## 체크포인트 재시작 뒤: 파티를 플래그대로 맞추고, 경비가 이미 모두 쓰러져 있으면 사비가 합류한다
+func _after_restart() -> void:
+	_sync_party()
+	if _solo() and _all_guards_down():
 		await _sabi_joins()
 
 
@@ -262,6 +270,7 @@ func _sabi_joins() -> void:
 	await captions.finished
 	GameManager.set_story_flag("p04_sabi_joined", true)
 	_sync_party()
+	FailureManager.save_checkpoint("rejoin", "사비 합류", party.get_active_member().global_position)
 	await _play_once("prologue_p04_rejoin")
 	if hud and hud.has_method("show_notice"):
 		hud.show_notice("사비 합류 — 다시 Q로 바꿀 수 있다", Color(0.55, 0.85, 0.92), 4.0)
@@ -454,7 +463,18 @@ func _play_once(dialogue_id: String) -> void:
 	while DialogueManager.is_dialogue_active:
 		await DialogueManager.dialogue_completed
 	GameManager.set_story_flag("dlg_" + dialogue_id, true)
-	DialogueManager.start_dialogue(dialogue_id)
+	if _solo():
+		# 사비는 밖에 있다: 사비의 대사는 무전으로
+		var data = JSON.parse_string(FileAccess.get_file_as_string("res://data/dialogues/%s.json" % dialogue_id))
+		var lines: Array = []
+		for raw in (data.get("lines", []) if data is Dictionary else []):
+			var line: Dictionary = (raw as Dictionary).duplicate(true)
+			if String(line.get("speaker", "")) == "sabi":
+				line["radio"] = true
+			lines.append(line)
+		DialogueManager.start_dialogue_data(dialogue_id, lines)
+	else:
+		DialogueManager.start_dialogue(dialogue_id)
 	while DialogueManager.is_dialogue_active:
 		await DialogueManager.dialogue_completed
 

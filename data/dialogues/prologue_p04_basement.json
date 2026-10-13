@@ -10,8 +10,7 @@
     {
       "speaker": "sabi",
       "speaker_name": "사비 아사기",
-      "text": "경보가 울렸어. 아래층에서 자료를 지우기 시작했어!",
-      "radio": true
+      "text": "경보가 울렸어. 아래층에서 자료를 지우기 시작했어!"
     },
     {
       "speaker": "shamu",
@@ -21,19 +20,7 @@
     {
       "speaker": "sabi",
       "speaker_name": "사비 아사기",
-      "text": "응. 경보실 경보 장치에 중계기 꽂아. 그건 내가 끌게. 파쇄기는 네가 부숴.",
-      "radio": true
-    },
-    {
-      "speaker": "shamu",
-      "speaker_name": "카즈네 샤무",
-      "text": "몸이 두 개였으면 좋겠네."
-    },
-    {
-      "speaker": "sabi",
-      "speaker_name": "사비 아사기",
-      "text": "하나로도 충분해.",
-      "radio": true
+      "text": "응. 나는 경보 장치, 샤무는 파쇄기. 그래야 서버실 문이 풀려."
     }
   ]
 }

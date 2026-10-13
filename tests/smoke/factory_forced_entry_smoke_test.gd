@@ -89,7 +89,7 @@ func _run() -> void:
 	_check(_dm.current_dialogue_id == "prologue_p04_basement", "이어서 지하 경보(자료 삭제) 대화")
 	await _finish_dialogue()
 	await _seconds(0.3)
-	_check(_objective().contains("지하에서 둘 다 멈추자"), "보안실 단계를 건너뛰고 지하 목표로 (%s)" % _objective())
+	_check(_objective().contains("경비원") and _objective().contains("명 남음"), "샤무 혼자인 동안 목표는 늘어난 경비까지 모두 제압 (%s)" % _objective())
 	var lifted := true
 	for g in _world.get_node("Guards").get_children():
 		if String(g.name).begins_with("Reinforce_"):

@@ -358,14 +358,11 @@ def main():
         props = {"transform": tf(pos), "script": res["hack"], "terminal_id": q(tid),
                  "done_flag": q(done), "requires_flag": q(req), "hack_prompt": q(prompt),
                  "requires_line": q(HACK_REQUIRES_LINES.get(tid, "")), "marker_height": "%.2f" % marker}
-        # 사비는 밖에 있다: 보안실 단말·경보 장치는 샤무가 중계기를 꽂으면 사비가 원격으로 해킹한다.
-        # 지하 서버는 외부 망과 끊겨 있어 사비가 직접 와야 한다.
+        # 사비는 샤무가 경비를 모두 재운 뒤에 들어온다: 그 전에 샤무가 단말을 조사하면 사비 몫이라고만 한다.
         if tid in ("security", "alarm"):
-            props["remote_ok"] = "true"
-        if tid == "security":
-            props["shamu_requires_line"] = q("경비원이 모니터 앞에 있어. 먼저 뒤에서 조용히 처리해야 중계기를 꽂을 수 있어.")
+            props["shamu_line"] = q("이건 사비 담당이야. 경비를 다 재우면 사비가 들어와서 열 거야.")
         if tid == "server":
-            props["shamu_line"] = q("서버는 외부 망이랑 완전히 끊겨 있어. 중계기로도 안 닿아… 사비가 직접 와야 해.")
+            props["shamu_line"] = q("서버는 외부 망이랑 완전히 끊겨 있어… 사비가 직접 와야 해.")
         sw.node(name, "Node3D", "Interactables", props)
         sw.node("InteractionPoint", "Marker3D", "Interactables/" + name, {"transform": tf(point)}, unique=False)
 
