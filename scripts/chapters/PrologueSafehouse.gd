@@ -39,6 +39,8 @@ var _busy: bool = false
 
 
 func _ready() -> void:
+	# 자잘한 사물들도 조사할 수 있다
+	FlavorSpots.spawn(world, "res://data/inspectables/safehouse_flavor.json")
 	GameManager.set_world_phase(GameManager.WORLD_REAL)
 	if not run_story:
 		return
@@ -49,11 +51,50 @@ func _ready() -> void:
 	for npc in world.get_node("Npcs").get_children():
 		npc.inspected.connect(_on_npc_inspected)
 	_apply_stage_positions()
-	await get_tree().create_timer(0.6).timeout
-	await _play_once("prologue_p08_wake")
+	if not _flag("dlg_prologue_p08_wake"):
+		await _wake_in_bed()
+	else:
+		await get_tree().create_timer(0.6).timeout
 	_set_stage("explore")    # 권지혁은 중앙 홀로 간다
 	GameManager.set_story_flag("sh_p08_done", true)
 	_refresh_objective()
+
+
+## 치료실 침대 (사비 / 샤무): 매트리스 가운데, 눕는 높이
+const BED_SABI := Vector3(1.1, 0.66, 1.3)
+const BED_SHAMU := Vector3(4.9, 0.66, 1.3)
+## 침대에서 내려와 서는 자리
+const BEDSIDE_SABI := Vector3(2.0, 0.05, 2.8)
+const BEDSIDE_SHAMU := Vector3(4.9, 0.05, 3.0)
+
+
+## P-08 시작: 치료실 침대에서 깨어난다. 대화 뒤 두 사람이 침대에서 일어나 내려선다.
+func _wake_in_bed() -> void:
+	var sabi: PartyMember = party.sabi
+	var shamu: PartyMember = party.shamu
+	Cutscene.begin(get_tree())
+	for pair in [[sabi, BED_SABI], [shamu, BED_SHAMU]]:
+		var m: PartyMember = pair[0]
+		m.set_physics_process(false)
+		m.velocity = Vector3.ZERO
+		m.global_position = pair[1]
+		Cutscene.lay_down(m, true, 90.0, 0.18)
+	Cutscene.focus(get_tree(), sabi)
+	# 검은 화면에서 천천히 눈을 뜬다
+	Cutscene.flash(get_tree(), Color(0, 0, 0, 1), 0.0, 1.0, 2.2)
+	await Cutscene.wait(get_tree(), 2.4)
+	Cutscene.bark(sabi, "(……여기는……?)", VelkaStyle.SABI, 2.0)
+	await Cutscene.wait(get_tree(), 1.4)
+	await _play_once("prologue_p08_wake")
+	# 침대에서 일어나 내려온다
+	for pair in [[sabi, BEDSIDE_SABI], [shamu, BEDSIDE_SHAMU]]:
+		var m: PartyMember = pair[0]
+		Cutscene.lay_down(m, false)
+		m.global_position = pair[1]
+		m.set_physics_process(true)
+	Cutscene.bark(sabi, "읏……", VelkaStyle.SABI, 1.2)
+	await Cutscene.wait(get_tree(), 0.6)
+	Cutscene.end(get_tree())
 
 
 ## 지금 플래그로 다음 목표를 정한다

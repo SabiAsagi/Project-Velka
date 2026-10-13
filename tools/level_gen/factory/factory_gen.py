@@ -121,8 +121,8 @@ def structure(B, sw, res):
     door(sw, res, "Doors", "SideDoor", (0.0, 0.0, 10.0), -90, 1.4, "p04_gate_hacked",
          "전자식 잠금이야. 밖에 있는 보안 단말부터 열어야 해. 샤무라면 뜯을 수도 있겠지만… 경보가 울릴 거야.",
          {"forceable": "true", "force_flag": q("p04_side_forced"), "force_prompt": q("옆문 강제로 뜯기 (경보)"),
-          "force_question": q("잠금째 뜯어 버릴 수는 있어. 대신 사이렌이 울리고 경비가 몰려올 거야. 사비가 단말을 열 때까지 기다릴까?"),
-          "force_choice": q("뜯는다 — 사이렌이 울리고 경비가 늘어난다"), "force_cancel": q("그만둔다 — 사비가 단말을 열게 한다")})
+          "force_question": q("잠금째 뜯어 버릴 수는 있어. 빠르긴 한데, 사이렌이 울리고 경비가 몰려올 거야. 보안 업체가 오기 전에 끝내야 하고. 사비가 단말을 열 때까지 기다릴까?"),
+          "force_choice": q("뜯는다 — 빠르지만 사이렌·경비 증원, 보안 업체 출동까지 시간 제한"), "force_cancel": q("그만둔다 — 사비가 단말을 열게 한다 (조용한 길)")})
     door(sw, res, "Doors", "ServerDoor", (27.2, B1, 7.5), 0, 1.6, "p04_server_open",
          "서버실은 경보랑 자료 폐기가 돌아가는 동안 잠겨 있어.")
 
@@ -349,6 +349,18 @@ def main():
     # 해킹 단말 (사비)
     HACK_REQUIRES_LINES = {"security": "경비원이 모니터 앞을 지키고 있어. 샤무가 뒤에서 조용히 처리해 줘야 단말에 손댈 수 있어.",
                            "server": "경보랑 파쇄기가 돌아가는 동안엔 서버가 잠겨 있어."}
+    SHAMU_TERMINAL_LINES = {
+        # 마당: 사비가 열면 조용히 잠입, 샤무가 옆문을 뜯으면 빠르지만 경보·시간 제한
+        "gate": {"shamu_question": "사비가 단말을 열면 조용히 들어갈 수 있어. 급하면 내가 옆문을 뜯어도 되고.",
+                 "shamu_force_flag": "p04_side_forced",
+                 "shamu_force_choice": "옆문을 뜯는다 — 빠르지만 사이렌·경비 증원, 보안 업체 출동까지 시간 제한"},
+        "security": {"shamu_question": "사비, 보안망은 네 몫이야.",
+                     "solo_radio_line": "보안실 단말은 내가 직접 만져야 해. 경비부터 다 재워 줘. 그럼 바로 들어갈게."},
+        "alarm": {"shamu_question": "사비, 경보 장치 부탁해.",
+                  "solo_radio_line": "경보 장치는 내가 직접 끌게. 경비를 다 재우면 들어갈 테니까 조금만 버텨."},
+        "server": {"shamu_question": "사비, 영상 복원 부탁해.",
+                   "solo_radio_line": "서버는 외부 망이랑 끊겨 있어. 내가 직접 가야 해."},
+    }
     sw.node("Interactables", "Node3D", ".", {}, unique=False)
     for name, pos, point, tid, done, req, prompt, marker in (
             ("GateTerminal", (-3.0, 0.0, 6.0), (0.9, 1.1, 0.0), "gate", "p04_gate_hacked", "", "외부 보안 단말 해킹", 1.9),
@@ -358,11 +370,9 @@ def main():
         props = {"transform": tf(pos), "script": res["hack"], "terminal_id": q(tid),
                  "done_flag": q(done), "requires_flag": q(req), "hack_prompt": q(prompt),
                  "requires_line": q(HACK_REQUIRES_LINES.get(tid, "")), "marker_height": "%.2f" % marker}
-        # 사비는 샤무가 경비를 모두 재운 뒤에 들어온다: 그 전에 샤무가 단말을 조사하면 사비 몫이라고만 한다.
-        if tid in ("security", "alarm"):
-            props["shamu_line"] = q("이건 사비 담당이야. 경비를 다 재우면 사비가 들어와서 열 거야.")
-        if tid == "server":
-            props["shamu_line"] = q("서버는 외부 망이랑 완전히 끊겨 있어… 사비가 직접 와야 해.")
+        # 샤무가 조사하면: 사비가 함께 있으면 "사비에게 맡긴다"를 고른다 (사비가 와서 연다).
+        # 사비가 밖에 있는 동안(단독 잠입)에는 사비가 무전으로 답한다.
+        props.update({k: q(v) for k, v in SHAMU_TERMINAL_LINES[tid].items()})
         sw.node(name, "Node3D", "Interactables", props)
         sw.node("InteractionPoint", "Marker3D", "Interactables/" + name, {"transform": tf(point)}, unique=False)
 
@@ -382,7 +392,7 @@ def main():
             # 보안망 접속 전에도 샤무가 억지로 뜯을 수 있다 (사이렌, 경비 증원)
             props.update({"force_flag": q("p04_basement_forced"), "force_prompt": q("봉쇄문 강제로 뜯기 (경보)"),
                           "force_question": q("보안망이 살아 있어. 지금 뜯으면 센서가 울리고 사무동이랑 지하 경비가 다 몰려올 거야. 사비가 보안실 단말을 끌 때까지 기다릴까?"),
-                          "force_choice": q("뜯는다 — 사이렌이 울리고 경비가 늘어난다"),
+                          "force_choice": q("뜯는다 — 사이렌·경비 증원, 보안 업체 출동까지 시간 제한"),
                           "force_cancel": q("그만둔다 — 보안실 단말부터")})
         sw.node(name, "Node3D", "Interactables", props)
         sw.node("Piece", "CSGBox3D", "Interactables/" + name, {"transform": tf((0.0, size[1] / 2, 0.0)), "use_collision": "true",

@@ -121,10 +121,24 @@ func _run() -> void:
 	await create_timer(1.0).timeout
 	_check(result[0] == true, "프레임 순서를 맞추면 영상이 복원된다")
 
+	# --- 처음 보는 퍼즐: 하는 법 팝업 (읽는 동안 역추적이 멈춘다) ---
+	gm.set_story_flag("tutorial_hack_circuit", false)
+	var tut = script.new()
+	root.add_child(tut)
+	tut.start("게이트", Vector2i(4, 3), 5, 0.5)
+	_check(tut.tutorial_open, "처음 보는 퍼즐이면 하는 법이 먼저 뜬다")
+	await create_timer(0.7).timeout
+	_check(not tut._done and not tut.traced, "하는 법을 읽는 동안에는 역추적이 멈춘다")
+	tut.close_tutorial()
+	_check(not tut.tutorial_open and bool(gm.get_story_flag("tutorial_hack_circuit", false)), "닫으면 시작하고, 다음부터는 뜨지 않는다")
+	tut.cancel()
+	await process_frame
+
 	# --- 역추적 게이지 ---
 	var tr = script.new()
 	root.add_child(tr)
 	tr.start("게이트", Vector2i(4, 3), 3, 0.5)
+	_check(not tr.tutorial_open, "한 번 본 퍼즐은 하는 법 없이 바로 시작한다")
 	result[0] = null
 	traced[0] = false
 	tr.finished.connect(func(ok):

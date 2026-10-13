@@ -66,10 +66,15 @@ var _beam_mesh: ArrayMesh
 var _beam_refresh_left := 0.0
 ## 부채꼴 각 방향으로 빛이 닿는 거리 (벽에서 끊긴다). 테스트용으로 읽는다.
 var beam_reach := PackedFloat32Array()
+## 재시작 직후 잠깐 아무도 알아채지 못한다 (다시 시작하자마자 들키는 일이 없게)
+var notice_grace: float = 0.0
+## 체크포인트 재시작 직후 주는 유예(초)
+const RESTART_GRACE := 3.0
 
 
 func _ready() -> void:
 	super._ready()
+	add_to_group("checkpoint_state")
 	capture_on_attack = true
 	_build_beam()
 	_build_icon()
@@ -87,6 +92,8 @@ func _physics_process(delta: float) -> void:
 		_halt(delta)
 		return
 	_seen_time += delta
+	if notice_grace > 0.0:
+		notice_grace -= delta
 	super._physics_process(delta)
 	if _facing_direction.length_squared() > 0.0001:
 		body_root.rotation.y = lerp_angle(body_root.rotation.y, atan2(-_facing_direction.x, -_facing_direction.z), minf(1.0, delta * 10.0))
@@ -345,6 +352,8 @@ func _nav() -> NavGrid:
 
 ## 시야 안에 보이는 파티원 (조작 캐릭터 우선)
 func _visible_member() -> CharacterBody3D:
+	if notice_grace > 0.0:
+		return null
 	var best: CharacterBody3D = null
 	for m in get_tree().get_nodes_in_group("party_member"):
 		if m is CharacterBody3D and _can_see(m, false):
@@ -422,7 +431,54 @@ func reset_to_spawn() -> void:
 	_saw_hide = false
 	_path = PackedVector3Array()
 	set_state(AnomalyState.PATROL)
+	# 다시 시작한 자리에서 먼 쪽 순찰 지점에서, 그 자리를 등지고 다시 순찰한다
+	var party := get_tree().get_first_node_in_group("player_party")
+	var member = party.get_active_member() if party and party.has_method("get_active_member") else null
+	if member and _patrol_points.size() >= 2:
+		var p: Vector3 = (member as Node3D).global_position
+		var far := 0 if _flat(_patrol_points[0], p) >= _flat(_patrol_points[1], p) else 1
+		global_position = _patrol_points[far]
+		_patrol_index = (far + 1) % _patrol_points.size()
+		var away := global_position - p
+		away.y = 0.0
+		if away.length_squared() > 0.01:
+			_facing_direction = away.normalized()
+			body_root.rotation.y = atan2(-_facing_direction.x, -_facing_direction.z)
+	notice_grace = RESTART_GRACE
 	_update_visual_state()
+
+
+## 체크포인트 저장: 쓰러졌는지 (재시작하면 그때 상태로 돌아간다)
+func checkpoint_save() -> Variant:
+	return {"down": is_down}
+
+
+## 체크포인트 복원. state 가 null 이면 체크포인트 뒤에 생긴 경비(경보 증원)라서 없앤다.
+func checkpoint_load(state: Variant) -> void:
+	if state == null:
+		# 체크포인트 뒤에 경보로 늘어난 경비만 없앤다 (원래 있던 경비는 그대로)
+		if String(name).begins_with("Reinforce_"):
+			get_parent().remove_child(self)
+			queue_free()
+		return
+	if is_down and not bool(state.get("down", false)):
+		_stand_up()
+	elif not is_down and bool(state.get("down", false)):
+		_knock_down(false)
+
+
+## 쓰러진 경비원이 다시 일어선다 (체크포인트 재시작)
+func _stand_up() -> void:
+	is_down = false
+	suspicion = 0.0
+	add_to_group(NoiseEvents.NOISE_GROUP)
+	$CollisionShape3D.set_deferred("disabled", false)
+	flashlight.visible = true
+	_beam.visible = true
+	body_root.rotation = Vector3(0.0, body_root.rotation.y, 0.0)
+	body_root.position = Vector3.ZERO
+	set_state(AnomalyState.PATROL)
+	_update_alert_level()
 
 
 func _knock_down(animate: bool) -> void:

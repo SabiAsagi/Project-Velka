@@ -21,12 +21,19 @@
     {
       "speaker": "sabi",
       "speaker_name": "사비 아사기",
-      "text": "경비가 늘었어. 다들 문 쪽으로 올 거야. 숨어. 들키면 그걸로 끝이야."
+      "text": "경비가 늘었어. 다들 문 쪽으로 올 거야. 들키면 그걸로 끝이야."
     },
     {
       "speaker": "sabi",
       "speaker_name": "사비 아사기",
-      "text": "나는 여기서 무전할게. 경비를 다 재우면 그때 들어갈 수 있어."
+      "text": "문이 뜯겼으니 나도 같이 들어갈게. 경보가 보안 업체로 넘어가기 전에 지하 경보 장치부터 꺼야 해. 서두르자."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "serious",
+      "text": "빨리 끝내자. 붙어 있어."
     }
   ]
 }

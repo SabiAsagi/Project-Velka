@@ -49,8 +49,11 @@ func _run() -> void:
 	# --- 외부 단말: 샤무로는 해킹 못 한다 ---
 	await _as("shamu")
 	_interact("Interactables/GateTerminal")
+	await process_frame
+	_check(_dm.get("_waiting_for_choice") and _dm.current_dialogue_id == "hack_shamu_gate", "샤무로 단말을 조사하면 사비에게 맡길지·옆문을 뜯을지 고른다")
+	_dm.choose_option(2)
 	await _finish_dialogue()
-	_check(not _flag("p04_gate_hacked"), "샤무로 단말을 조사하면 해킹되지 않는다")
+	_check(not _flag("p04_gate_hacked") and not _flag("p04_side_forced"), "'그만둔다' 를 고르면 아무 일도 없다")
 	await _as("sabi")
 	_interact("Interactables/GateTerminal")
 	await process_frame
@@ -85,6 +88,20 @@ func _run() -> void:
 	_check(_party.solo and _gm.active_character == _gm.CharacterType.SHAMU and _member().global_position.distance_to(Vector3(1.6, 0.0, 10.0)) < 0.6
 			and sabi_node.global_position.x < -5.0 and sabi_node.process_mode == Node.PROCESS_MODE_DISABLED,
 			"잠입 중 발각 뒤 재시작: 샤무 혼자 옆문 안쪽에서, 사비는 마당에 그대로")
+
+	# 재시작하면 체크포인트 뒤에 쓰러뜨린 경비원도 다시 일어선다 (쓰러진 채 남던 버그)
+	var hall_guard = _world.get_node("Guards/GuardHall")
+	_knock(hall_guard)
+	await _seconds(0.3)
+	_check(hall_guard.is_down, "경비원을 쓰러뜨린다")
+	fm.fail("spotted")
+	await _seconds(0.3)
+	fm.continue_after_failure()
+	await _seconds(0.4)
+	_check(not hall_guard.is_down and not _flag("guard_down_hall") and hall_guard.flashlight.visible,
+			"재시작하면 체크포인트 뒤에 쓰러뜨린 경비원이 다시 일어선다")
+	_check(hall_guard.notice_grace > 0.0 and _flat(hall_guard.global_position, _member().global_position) > 4.0,
+			"재시작 직후 경비원은 잠깐 알아채지 못하고, 다시 시작한 자리에서 먼 쪽에서 순찰한다 (%.1fm)" % _flat(hall_guard.global_position, _member().global_position))
 
 	_check(_objective().contains("모두 제압") and _objective().contains("3명"), "샤무 혼자인 동안 목표: 경비원 모두 제압 (%s)" % _objective())
 
@@ -179,8 +196,18 @@ func _run() -> void:
 	_check(lights_on == 0, "컷신 끝에 모든 조명이 꺼진다 (켜진 조명 %d)" % lights_on)
 	_check(_flag("prologue_factory_p04_done"), "P-04가 끝난다 (prologue_factory_p04_done)")
 
-	# --- P-05 전이 ---
-	await _wait_dialogue("prologue_p05_transition", 6.0)
+	# --- P-05 전이: 잠깐 정신을 잃었다가(암전) 눈을 뜨면 괴이세계 ---
+	var t_bo := 0.0
+	var saw_blackout := false
+	while not (_dm.is_dialogue_active and _dm.current_dialogue_id == "prologue_p05_transition") and t_bo < 16.0:
+		for layer in _scene.get_children():
+			if layer is CanvasLayer:
+				for c in layer.get_children():
+					if c is ColorRect and (c as ColorRect).color.a > 0.95 and (c as ColorRect).color.r < 0.05 and (c as ColorRect).anchor_right == 1.0 and (c as ColorRect).anchor_bottom == 1.0:
+						saw_blackout = true
+		await _seconds(0.1)
+		t_bo += 0.1
+	_check(saw_blackout and _bars_shown(), "전이 전에 두 사람이 정신을 잃는다 (암전 컷씬)")
 	_check(_gm.is_otherworld(), "조명이 꺼진 뒤 괴이세계로 전이한다")
 	_check(not _world.get_node("Guards").visible, "전이하면 경비원(쓰러진 경비원 포함)이 사라진다")
 	_check(_dm.current_dialogue_id == "prologue_p05_transition", "전이 대화: 정전? 아니. 사람들이 없어.")
@@ -225,13 +252,33 @@ func _run() -> void:
 	_check(encounter.phase == "defeat", "공격할수록 빨라지는 개체에게 사비가 다치고, 결국 패배한다 (%s)" % encounter.phase)
 	_check(encounter.entities.size() == 3 and is_equal_approx(Engine.time_scale, 1.0), "어둠 속에서 개체가 늘어나고, 느린 화면은 원래대로 돌아온다")
 	root.get_node("/root/FailureManager").continue_after_failure()
-	await _seconds(1.5)
-	var captions = _scene.get_node("CaptionSequence")
-	_check(captions.is_playing(), "패배 뒤 협회 구조 장면 자막이 이어진다")
-	while captions.is_playing():
-		captions.advance()
+	# --- P-07 협회 구조: 봉쇄선, 구조팀, 사비를 업는다 ---
+	await _wait_dialogue("prologue_p07_rescue", 12.0)
+	_check(_dm.current_dialogue_id == "prologue_p07_rescue" and _bars_shown(), "패배 뒤 협회 구조 장면이 컷씬으로 이어진다")
+	var rescue_root = _scene.get_node_or_null("Rescue")
+	_check(rescue_root != null and rescue_root.get_child_count() >= 6, "흰 봉쇄선과 멈춘 개체들, 구조팀이 보인다")
+	await _finish_dialogue()
+	await _seconds(0.6)
+	_check(_scene.escorting and _gm.active_character == _gm.CharacterType.SHAMU and not _gm.is_exploration_locked(),
+			"짧은 조작: 샤무로 업혀 가는 사비 곁을 따라간다")
+	var carrier: Node3D = _scene.get("_carrier")
+	_check(carrier != null and _flat(_party.sabi.global_position, carrier.global_position) < 0.5 and _party.sabi.global_position.y < carrier.global_position.y + 0.3,
+			"사비는 구조대원에게 업혀 있다")
+	# 샤무가 멀리 떨어져 있으면 구조대원이 기다린다
+	var c0: Vector3 = carrier.global_position
+	_member().global_position = c0 + Vector3(-3.6, 0.0, 0.0)
+	await _seconds(0.6)
+	_check(_flat(carrier.global_position, c0) < 0.2, "샤무가 떨어지면 구조대원이 멈춰 기다린다")
+	# 샤무가 곁을 따라가면 끝까지 간다
+	var t_es := 0.0
+	while _scene.escorting and t_es < 30.0:
+		_member().global_position = carrier.global_position + Vector3(-1.0, 0.0, 0.6)
 		await _seconds(0.1)
-	await _seconds(0.8)
+		t_es += 0.1
+	await _wait_dialogue("prologue_p07_fade", 6.0)
+	_check(_dm.current_dialogue_id == "prologue_p07_fade", "구조팀을 따라가면 샤무가 사비에게 말을 걸고, 의식이 끊긴다")
+	await _finish_dialogue()
+	await _seconds(3.5)
 	_check(_flag("prologue_p06_done") and _flag("prologue_factory_done"), "프롤로그 공장 파트가 끝난다 (prologue_factory_done)")
 	_check(_objective().contains("세이프 하우스"), "다음 목표 안내: 협회 세이프 하우스 (%s)" % _objective())
 

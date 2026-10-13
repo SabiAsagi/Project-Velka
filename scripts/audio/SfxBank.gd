@@ -16,14 +16,69 @@ extends RefCounted
 #   hit       : 둔탁하게 치는 소리 + 젖은 것이 뒤틀리는 소리 (개체를 쳤을 때)
 
 const RATE := 22050
+## 시작할 때 백그라운드에서 미리 합성해 두는 소리 (처음 쓸 때 메인 스레드가 멈추지 않게 한다)
+## 합성이 오래 걸리는 것(bell 약 125ms, sting 45ms, drone 44ms)을 앞에 둔다.
+const PREWARM_NAMES := ["bell", "sting", "drone", "siren", "whisper", "breath", "crash", "heartbeat", "hit",
+	"suspicious", "static", "footstep"]
 
 static var _cache: Dictionary = {}
+## _cache 는 메인 스레드와 미리 합성하는 작업 스레드가 함께 쓰므로 뮤텍스로 감싼다
+static var _mutex := Mutex.new()
+static var _prewarm_started: bool = false
+static var _prewarm_task_id: int = -1
+static var _prewarm_done: bool = false
 
 
+## 받은 소리를 반환한다. 아직 없으면 그 자리에서 합성한다 (스레드 안전).
 static func stream(sfx_name: String) -> AudioStreamWAV:
-	if not _cache.has(sfx_name):
-		_cache[sfx_name] = _make(sfx_name)
-	return _cache[sfx_name]
+	_mutex.lock()
+	var cached: AudioStreamWAV = _cache.get(sfx_name)
+	_mutex.unlock()
+	if cached != null:
+		return cached
+	var made := _make(sfx_name) # 오래 걸리는 합성은 뮤텍스 밖에서 한다
+	_mutex.lock()
+	if _cache.has(sfx_name):
+		made = _cache[sfx_name] # 그 사이 다른 스레드가 먼저 만들었으면 그것을 쓴다
+	else:
+		_cache[sfx_name] = made
+	_mutex.unlock()
+	return made
+
+
+## 모든 소리를 WorkerThreadPool 작업 하나로 미리 합성한다. 여러 번 불러도 한 번만 시작한다.
+## 합성 도중 stream() 이 먼저 불려도 안전하다 (그 소리만 그 자리에서 만든다).
+static func prewarm() -> void:
+	if _prewarm_started:
+		return
+	_prewarm_started = true
+	_prewarm_task_id = WorkerThreadPool.add_task(_prewarm_all, false, "SfxBank prewarm")
+
+
+## 미리 합성이 끝났는지. 끝났으면 작업 스레드 정리도 같이 한다 (WorkerThreadPool 작업은 한 번 기다려 줘야 해제된다).
+static func is_prewarmed() -> bool:
+	_mutex.lock()
+	var done := _prewarm_done
+	_mutex.unlock()
+	if done:
+		wait_prewarm() # 이미 끝났으므로 바로 돌아온다
+	return done
+
+
+## 미리 합성이 끝날 때까지 기다린다 (테스트·종료 처리용, 게임 중에는 부르지 않는다)
+static func wait_prewarm() -> void:
+	if _prewarm_task_id >= 0:
+		var task_id := _prewarm_task_id
+		_prewarm_task_id = -1
+		WorkerThreadPool.wait_for_task_completion(task_id)
+
+
+static func _prewarm_all() -> void:
+	for sfx_name in PREWARM_NAMES:
+		stream(sfx_name)
+	_mutex.lock()
+	_prewarm_done = true
+	_mutex.unlock()
 
 
 ## 화면 어디서나 들리는 소리 (2D)

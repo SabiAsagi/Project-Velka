@@ -6,14 +6,28 @@
       "speaker_name": "",
       "sabi_emotion": "worried",
       "shamu_emotion": "serious",
-      "text": "경보음도, 환풍기 소리도 멎었다. 손전등 불빛만 남았다."
+      "text": "눈을 뜨니 경보음도, 환풍기 소리도 멎어 있다. 손전등 불빛만 남았다."
     },
     {
       "speaker": "shamu",
       "speaker_name": "카즈네 샤무",
       "sabi_emotion": "worried",
       "shamu_emotion": "serious",
-      "text": "정전?"
+      "text": "사비, 괜찮아? 둘 다 잠깐 정신을 잃었어."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "serious",
+      "text": "……응. 머리가 울려."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "serious",
+      "text": "정전인가?"
     },
     {
       "speaker": "sabi",

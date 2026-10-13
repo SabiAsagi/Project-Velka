@@ -5,6 +5,9 @@ class_name InspectInteractable
 # 프로젝트 벨카 - 조사 오브젝트
 # data/inspectables/*.json 에서 inspect_id 항목을 읽어 짧은 독백/대화로 보여준다.
 # 대사 speaker를 "inspector"로 두면 조사한 캐릭터(사비/샤무)가 화자가 된다.
+# 사람(NPC, "npc" 그룹 또는 데이터의 "joint": true)과의 대화는 두 사람이 함께 한다:
+#   text_sabi / text_shamu 가 둘 다 있는 inspector 대사는 조사한 쪽이 먼저, 동료가 이어서 답한다.
+#   (한 사람만 이야기하고 다음으로 넘어가 버리지 않게 — 단, 동료가 따로 떨어져 있으면 혼자)
 # 두 번째 조사부터는 repeat_lines가 있으면 그것을 사용한다.
 # 이계 상태에서는 otherworld_lines / otherworld_prompt가 있으면 그것을 우선한다 (조사 횟수도 따로 센다).
 # 규칙 연동: discovers_rules(배열)는 조사하면 수첩에 등록, violates_rule은 조사 자체가 규칙 위반.
@@ -78,6 +81,8 @@ func _on_interact(player: Node3D) -> void:
 
 func _resolve_lines(source: Array, inspector: Node3D) -> Array:
 	var inspector_id := _character_id_of(inspector)
+	var other_id := "sabi" if inspector_id == "shamu" else "shamu"
+	var joint := _is_joint_talk()
 	var result: Array = []
 	for raw in source:
 		if not raw is Dictionary:
@@ -85,11 +90,40 @@ func _resolve_lines(source: Array, inspector: Node3D) -> Array:
 		var line: Dictionary = (raw as Dictionary).duplicate(true)
 		if String(line.get("speaker", "")) == "inspector":
 			line["speaker"] = inspector_id
+			var own := String(line.get("text_" + inspector_id, ""))
+			var other := String(line.get("text_" + other_id, ""))
+			if joint and not own.is_empty() and not other.is_empty():
+				# 함께 대화: 조사한 쪽이 답하고, 동료도 이어서 답한다
+				line["text"] = own
+				line.erase("text_sabi")
+				line.erase("text_shamu")
+				line["speaker_name"] = SPEAKER_NAMES[inspector_id]
+				result.append(line)
+				var reply: Dictionary = line.duplicate(true)
+				reply["speaker"] = other_id
+				reply["speaker_name"] = SPEAKER_NAMES[other_id]
+				reply["text"] = other
+				result.append(reply)
+				continue
 		var speaker := String(line.get("speaker", "system"))
 		if not line.has("speaker_name"):
 			line["speaker_name"] = SPEAKER_NAMES.get(speaker, "")
 		result.append(line)
 	return result
+
+
+## 사람과의 대화라 두 사람이 함께 하는가 (동료가 곁에 있을 때만)
+func _is_joint_talk() -> bool:
+	if not (is_in_group("npc") or bool(_entry.get("joint", false))):
+		return false
+	var party := get_tree().get_first_node_in_group("player_party")
+	if party == null or bool(party.get("solo")):
+		return false
+	var companion = party.get_companion_member() if party.has_method("get_companion_member") else null
+	var active = party.get_active_member() if party.has_method("get_active_member") else null
+	if companion == null or active == null:
+		return false
+	return (companion as Node3D).global_position.distance_to((active as Node3D).global_position) < 6.0
 
 
 func _character_id_of(node: Node3D) -> String:

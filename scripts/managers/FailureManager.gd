@@ -4,6 +4,9 @@ extends Node
 # 체크포인트에서 파티 위치·생존 수치·스토리 플래그·규칙 상태·세계 상태를 저장하고,
 # 실패(두 명 모두 행동 불능, 정신 붕괴, 포획, 금지 규칙 위반) 시 실패 화면을 거쳐 그 시점으로 되돌린다.
 # 실패는 정보 습득의 일부다: 실패 화면에 원인과 새로 알게 된 규칙을 보여 준다.
+# 세계의 물건(경비원 쓰러짐, 문 열림, 부서진 장애물 등)은 "checkpoint_state" 그룹 노드가
+# checkpoint_save() -> Variant / checkpoint_load(state) 로 직접 저장·복원한다.
+# 체크포인트 뒤에 생긴 노드(경보 증원 등)는 checkpoint_load(null) 을 받는다.
 
 signal checkpoint_saved(checkpoint_id: String, display_name: String)
 signal failed(info: Dictionary)
@@ -57,6 +60,8 @@ func save_checkpoint(checkpoint_id: String, display_name: String, position: Vect
 		"world_phase": GameManager.world_phase,
 		"rules": RuleManager.snapshot(),
 		"items": InventoryManager.items.duplicate(),
+		"states": _save_states(),
+		"scene": _scene_path(),
 	}
 	checkpoint_saved.emit(checkpoint_id, display_name)
 
@@ -113,10 +118,32 @@ func restart_from_checkpoint() -> void:
 	_party.shamu.vitals.restore(checkpoint["vitals"]["shamu"])
 	if GameManager.active_character != checkpoint["active"]:
 		GameManager.switch_character(checkpoint["active"])
+	# 다른 씬에서 저장한 체크포인트라면 이 씬의 물건 상태는 건드리지 않는다
+	if String(checkpoint.get("scene", "")) == _scene_path():
+		_load_states(checkpoint.get("states", {}))
 	_party.teleport_party(checkpoint["position"])
 	get_tree().call_group("anomaly", "reset_to_spawn")
 	_end_failure()
 	restarted.emit(String(checkpoint["id"]))
+
+
+func _scene_path() -> String:
+	var scene := get_tree().current_scene
+	return scene.scene_file_path if scene else ""
+
+
+func _save_states() -> Dictionary:
+	var states := {}
+	for node in get_tree().get_nodes_in_group("checkpoint_state"):
+		if node.has_method("checkpoint_save") and node.is_inside_tree():
+			states[String(node.get_path())] = node.checkpoint_save()
+	return states
+
+
+func _load_states(states: Dictionary) -> void:
+	for node in get_tree().get_nodes_in_group("checkpoint_state"):
+		if node.has_method("checkpoint_load") and node.is_inside_tree():
+			node.checkpoint_load(states.get(String(node.get_path()), null))
 
 
 func _begin_failure(info: Dictionary, on_continue: Callable) -> void:

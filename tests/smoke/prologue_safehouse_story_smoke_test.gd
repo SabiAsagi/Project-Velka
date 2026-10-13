@@ -38,16 +38,34 @@ func _run() -> void:
 	_party = _scene.get_node("PlayerParty")
 	await _seconds(1.0)
 
-	# --- P-08 ---
+	# --- P-08: 치료실 침대에서 깨어난다 ---
+	var t := 0.0
+	while not (_dm.is_dialogue_active and _dm.current_dialogue_id == "prologue_p08_wake") and t < 8.0:
+		await _seconds(0.1)
+		t += 0.1
 	_check(_dm.is_dialogue_active and _dm.current_dialogue_id == "prologue_p08_wake", "치료실에서 깨어나는 대화로 시작한다")
+	var sabi = _party.sabi
+	_check(sabi.global_position.y > 0.5 and _is_lying(sabi) and _is_lying(_party.shamu), "두 사람은 치료실 침대에 누워 있다")
 	_check(_npc("NpcKwon").position.x < 8.0, "깨어날 때 권지혁은 치료실에 있다")
 	await _finish_dialogue()
-	await _seconds(0.3)
+	await _seconds(1.2)
+	_check(not _is_lying(sabi) and sabi.global_position.y < 0.3 and not _gm.is_exploration_locked(), "대화가 끝나면 침대에서 일어나 내려선다")
 	_check(_flag("sh_p08_done") and _objective().contains("서유림"), "P-08 뒤 목표: 대원들과 이야기 (%s)" % _objective())
 	_check(_npc("NpcKwon").position.x > 15.0 and _npc("NpcKwon").position.z < 9.5, "권지혁은 중앙 홀로 간다")
 
 	# --- P-09 ---
-	for pair in [["NpcSeo", "talked_seo"], ["NpcHan", "talked_han"]]:
+	# 사람과의 대화는 두 사람이 함께 한다: 서유림의 질문에 사비도 샤무도 대답한다
+	_npc("NpcSeo").interact(_party.get_active_member())
+	await process_frame
+	var lines: Array = _dm.get("_current_lines")
+	var speakers := {}
+	for l in lines:
+		speakers[String(l.get("speaker", ""))] = true
+	_check(speakers.has("sabi") and speakers.has("shamu"), "NPC와 이야기하면 사비와 샤무가 함께 대답한다 (한 사람만 이야기하고 넘어가지 않는다)")
+	await _finish_dialogue()
+	await _seconds(0.2)
+	_check(_flag("talked_seo"), "NpcSeo와 이야기하면 talked_seo")
+	for pair in [["NpcHan", "talked_han"]]:
 		_npc(pair[0]).interact(_party.get_active_member())
 		await _finish_dialogue()
 		await _seconds(0.2)
@@ -171,6 +189,11 @@ func _finish_captions() -> void:
 		captions.advance()
 		guard += 1
 		await _seconds(0.5)
+
+
+## 누워 있는지 (Cutscene.lay_down 이 스프라이트에 남기는 표시)
+func _is_lying(member) -> bool:
+	return member.sprite.has_meta("stand_billboard")
 
 
 func _check(condition: bool, label: String) -> void:

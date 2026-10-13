@@ -5,6 +5,9 @@ extends CanvasLayer
 #   - 이름표는 대화창 위에 따로 붙은 작은 상자
 #   - 말하는 인물의 초상화가 대화창 안쪽 왼쪽에 들어가고, 이름표·대사는 그 오른쪽에서 시작한다 (참고 예시 1번)
 #     사비·샤무는 표정 초상화, 다른 인물은 디자인이 나오기 전까지 색이 다른 실루엣 (NPC_SILHOUETTES)
+#     초상화는 항상 같은 크기의 액자(창) 안에 들어간다: 그림 비율(정사각 1254x1254, 세로 1086x1448)이 달라도
+#     폭을 창에 맞추고 위쪽을 기준으로 아래를 잘라, 머리·얼굴이 보이고 그림 가장자리가 액자 테두리와 겹친다.
+#   - 이름표는 이름 길이와 상관없이 같은 최소 폭의 상자 가운데에 이름을 놓는다 (이름이 길면 그만큼만 넓어진다)
 #   - 인물 대사는 「」 로 감싸고, 서술(system)은 초상화·이름표 없이 흐린 글씨
 #   - "radio": true 인 대사는 무전: 이름표에 "· 무전", 잡음, 초상화가 푸르스름하다
 #   - 타자기 효과, 클릭/E 로 넘기기, 화면 흔들림(shake), 선택지, BBCode ([shake] [wave] [color] [b])
@@ -38,7 +41,8 @@ const PORTRAIT_FILES := {
 # 이전 대사 데이터에서 쓰던 키 호환용 별칭
 const EMOTION_ALIASES := {
 	"sabi": {"smile": "gentle_smile", "surprise": "surprised", "embarassed": "embarrassed"},
-	"shamu": {"smile": "cheerful_grin", "laugh": "cheerful_grin", "grin": "cheerful_grin", "surprise": "surprised"},
+	"shamu": {"smile": "cheerful_grin", "laugh": "cheerful_grin", "grin": "cheerful_grin", "surprise": "surprised",
+			"worried": "serious", "embarrassed": "annoyed", "gentle_smile": "neutral"},
 }
 ## 초상화가 아직 없는 인물: 실루엣 색 [몸, 윤곽선]
 const NPC_SILHOUETTES := {
@@ -54,9 +58,14 @@ const NAME_COLORS := {"sabi": Color(0.55, 0.85, 0.92), "shamu": Color(0.98, 0.8,
 const BOX_HEIGHT := 250.0
 const SIDE := 40.0
 const BOTTOM := 28.0
-const PORTRAIT_SIZE := 238.0
-const PORTRAIT_X := 10.0
-const TEXT_LEFT_WITH_PORTRAIT := PORTRAIT_X + PORTRAIT_SIZE + 34.0
+## 초상화 액자 (대화창 안쪽 왼쪽). 모든 표정·인물이 이 창 안에서 같은 방식으로 잘린다.
+const PORTRAIT_X := 24.0
+const PORTRAIT_Y := 18.0
+const PORTRAIT_W := 224.0
+const PORTRAIT_H := BOX_HEIGHT - PORTRAIT_Y * 2.0
+const TEXT_LEFT_WITH_PORTRAIT := PORTRAIT_X + PORTRAIT_W + 34.0
+## 이름표 최소 폭 (세 글자 이름도 두 글자 이름도 같은 크기의 상자에 가운데 정렬)
+const NAME_TAG_MIN_WIDTH := 210.0
 
 var root_container: Control
 var text_panel: Panel
@@ -65,11 +74,15 @@ var dialogue_label: RichTextLabel
 var next_indicator: Label
 var choices_container: VBoxContainer
 var _name_tag: PanelContainer
+var _portrait_frame: Panel
 var _portrait: TextureRect
 var _silhouette: Silhouette
 var _text_margin: MarginContainer
 
-var _portrait_cache: Dictionary = {}
+## 불러 둔 초상화 (경로 -> 텍스처). 씬이 바뀌어도 유지된다 (대화창이 씬마다 새로 만들어지므로 static).
+static var _portrait_cache: Dictionary = {}
+static var _portrait_prefetch_started: bool = false
+
 var _is_typing: bool = false
 var _type_timer: float = 0.0
 var _pending_choices: Array = []
@@ -79,6 +92,7 @@ var _box_base_y := 0.0
 
 func _ready() -> void:
 	layer = 50
+	prefetch_portraits() # 보통 SceneManager 가 시작할 때 이미 해 뒀다 (두 번째부터는 아무것도 하지 않는다)
 	_build()
 	root_container.visible = false
 	choices_container.visible = false
@@ -142,6 +156,7 @@ func _on_line_started(line: Dictionary) -> void:
 	var radio := bool(line.get("radio", false)) and not narration
 	_name_tag.visible = not narration
 	speaker_label.text = display_name + ("  · 무전" if radio else "")
+	_refit_name_tag()
 	speaker_label.add_theme_color_override("font_color", NAME_COLORS.get(speaker_id, VelkaStyle.INK))
 
 	# 초상화
@@ -167,10 +182,13 @@ func _show_speaker(speaker_id: String, emotion: String) -> void:
 	var has_portrait := PORTRAIT_FILES.has(speaker_id)
 	var has_silhouette := NPC_SILHOUETTES.has(speaker_id)
 	var any := has_portrait or has_silhouette
+	_portrait_frame.visible = any
 	_portrait.visible = has_portrait
 	_silhouette.visible = has_silhouette
 	if has_portrait:
-		_portrait.texture = get_portrait(speaker_id, emotion)
+		var tex := get_portrait(speaker_id, emotion)
+		_portrait.texture = tex
+		_fit_portrait(tex)
 	elif has_silhouette:
 		_silhouette.colors = NPC_SILHOUETTES[speaker_id]
 		_silhouette.queue_redraw()
@@ -195,10 +213,53 @@ func get_portrait(character_id: String, emotion: String) -> Texture2D:
 	if not files.has(key):
 		push_warning("[DialogueBox] 알 수 없는 표정 '%s' (%s) - neutral로 대체" % [emotion, character_id])
 		key = "neutral"
-	var path: String = PORTRAIT_DIR + files[key]
-	if not _portrait_cache.has(path):
-		_portrait_cache[path] = load(path)
-	return _portrait_cache[path]
+	return _fetch_portrait(PORTRAIT_DIR + files[key])
+
+
+## 초상화 전부를 백그라운드 스레드에서 미리 불러 오기 시작한다. 여러 번 불러도 한 번만 시작한다.
+## (1254x1254 무손실 PNG 라 처음 한 장을 읽는 데 약 90ms 걸려, 대사 도중 처음 나온 표정에서 화면이 멈칫했다.)
+static func prefetch_portraits() -> void:
+	if _portrait_prefetch_started:
+		return
+	_portrait_prefetch_started = true
+	for character_id in PORTRAIT_FILES:
+		for file_name in PORTRAIT_FILES[character_id].values():
+			var path: String = PORTRAIT_DIR + file_name
+			if not _portrait_cache.has(path):
+				ResourceLoader.load_threaded_request(path)
+
+
+## 캐시 -> 백그라운드로 불러 오던 것 -> (요청이 없었으면) 즉시 불러오기 순으로 초상화를 구한다.
+static func _fetch_portrait(path: String) -> Texture2D:
+	if _portrait_cache.has(path):
+		return _portrait_cache[path]
+	var tex: Texture2D = null
+	if ResourceLoader.load_threaded_get_status(path) == ResourceLoader.THREAD_LOAD_INVALID_RESOURCE:
+		tex = load(path) as Texture2D
+	else:
+		tex = ResourceLoader.load_threaded_get(path) as Texture2D # 아직 읽는 중이면 끝날 때까지만 기다린다
+	_portrait_cache[path] = tex
+	return tex
+
+
+## 초상화를 액자(창)에 꽉 차게 맞춘다: 폭을 창에 맞추고(세로가 모자라면 세로에 맞춰) 가운데 정렬 + 위쪽 기준.
+## 그림 비율이 달라도 항상 창 전체가 채워지고, 잘리는 쪽은 아래(어깨)라 얼굴은 남는다.
+func _fit_portrait(tex: Texture2D) -> void:
+	if tex == null:
+		return
+	var tex_size := tex.get_size()
+	if tex_size.x <= 0.0 or tex_size.y <= 0.0:
+		return
+	var fit := maxf(PORTRAIT_W / tex_size.x, PORTRAIT_H / tex_size.y)
+	_portrait.size = tex_size * fit
+	_portrait.position = Vector2((PORTRAIT_W - _portrait.size.x) * 0.5, 0.0)
+
+
+## 이름표를 글자에 맞게 다시 줄인다. PanelContainer 는 부모가 컨테이너가 아니면 한 번 늘어난 크기를
+## 줄이지 않아, 긴 이름("카즈네 샤무") 뒤에 짧은 이름("수위")이 오면 글자가 왼쪽으로 쏠려 보였다.
+func _refit_name_tag() -> void:
+	_name_tag.reset_size()
+	_name_tag.reset_size.call_deferred() # 글자 최소 크기 갱신이 한 프레임 늦는 경우 대비
 
 
 func _finish_typing() -> void:
@@ -283,21 +344,39 @@ func _build() -> void:
 	frame.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	text_panel.add_child(frame)
-	# 초상화 (대화창 안쪽 왼쪽, 아래 끝을 대화창 아래에 맞춘다)
+	# 초상화 액자 (대화창 안쪽 왼쪽): 안쪽을 잘라 내는 창 + 창 위에 얹은 얇은 테두리
+	_portrait_frame = Panel.new()
+	_portrait_frame.name = "PortraitFrame"
+	var frame_style := StyleBoxFlat.new()
+	frame_style.bg_color = Color(0.03, 0.04, 0.06, 0.95)
+	_portrait_frame.add_theme_stylebox_override("panel", frame_style)
+	_portrait_frame.clip_contents = true
+	_portrait_frame.position = Vector2(PORTRAIT_X, PORTRAIT_Y)
+	_portrait_frame.size = Vector2(PORTRAIT_W, PORTRAIT_H)
+	_portrait_frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	text_panel.add_child(_portrait_frame)
 	_portrait = TextureRect.new()
 	_portrait.name = "Portrait"
 	_portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	_portrait.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	_portrait.size = Vector2(PORTRAIT_SIZE, PORTRAIT_SIZE)
-	_portrait.position = Vector2(PORTRAIT_X, BOX_HEIGHT - PORTRAIT_SIZE - 6.0)
+	_portrait.stretch_mode = TextureRect.STRETCH_SCALE # 크기·위치는 _fit_portrait 가 정한다
+	_portrait.size = Vector2(PORTRAIT_W, PORTRAIT_H)
 	_portrait.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	text_panel.add_child(_portrait)
+	_portrait_frame.add_child(_portrait)
 	_silhouette = Silhouette.new()
 	_silhouette.name = "Silhouette"
-	_silhouette.size = Vector2(PORTRAIT_SIZE * 0.85, PORTRAIT_SIZE - 10.0)
-	_silhouette.position = Vector2(PORTRAIT_X + PORTRAIT_SIZE * 0.075, BOX_HEIGHT - PORTRAIT_SIZE + 4.0)
+	_silhouette.size = Vector2(PORTRAIT_W, PORTRAIT_H)
 	_silhouette.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	text_panel.add_child(_silhouette)
+	_portrait_frame.add_child(_silhouette)
+	var frame_line := Panel.new()
+	frame_line.name = "PortraitFrameLine"
+	var line_style := StyleBoxFlat.new()
+	line_style.draw_center = false
+	line_style.border_color = Color(0.55, 0.55, 0.6, 0.7)
+	line_style.set_border_width_all(1)
+	frame_line.add_theme_stylebox_override("panel", line_style)
+	frame_line.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	frame_line.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_portrait_frame.add_child(frame_line)
 
 	_text_margin = MarginContainer.new()
 	_text_margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -336,15 +415,17 @@ func _build() -> void:
 	ns.border_color = Color(0.82, 0.82, 0.85, 0.9)
 	ns.set_border_width_all(1)
 	ns.border_width_bottom = 0
-	ns.content_margin_left = 30
-	ns.content_margin_right = 34
+	ns.content_margin_left = 32
+	ns.content_margin_right = 32
 	ns.content_margin_top = 10
 	ns.content_margin_bottom = 10
 	_name_tag.add_theme_stylebox_override("panel", ns)
+	_name_tag.custom_minimum_size = Vector2(NAME_TAG_MIN_WIDTH, 0.0)
 	_name_tag.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root_container.add_child(_name_tag)
 	speaker_label = VelkaStyle.label("", VelkaStyle.serif_bold(), 32, VelkaStyle.INK)
 	speaker_label.name = "SpeakerLabel"
+	speaker_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_name_tag.add_child(speaker_label)
 
 	# 선택지 (대화창 위 오른쪽)

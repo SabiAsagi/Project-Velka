@@ -84,6 +84,20 @@ func _is_ordered() -> bool:
 	return true
 
 
+func _tutorial_id() -> String:
+	return "frames"
+
+
+func _tutorial_lines() -> Array:
+	return [
+		"영상 프레임 복원",
+		"손상된 CCTV 영상의 프레임이 뒤섞여 있다. 원래 순서대로 맞추면 영상이 이어진다.",
+		"프레임 두 개를 차례로 클릭하면 자리가 바뀐다.",
+		"시각 표시가 깨진 프레임도 있다. 복도를 걸어가는 사람의 위치로 순서를 짐작하자.",
+		"역추적 게이지가 다 차기 전에 맞춰야 한다. ESC 로 연결을 끊을 수 있다.",
+	]
+
+
 func _help_text() -> String:
 	return "프레임 두 개를 차례로 클릭: 자리 바꾸기   ·   ESC: 연결 끊기"
 

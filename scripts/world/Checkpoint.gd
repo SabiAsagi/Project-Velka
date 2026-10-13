@@ -37,4 +37,8 @@ func _on_body_entered(body: Node3D) -> void:
 		return
 	if _saved_once and not refresh_on_reenter:
 		return
+	# 경비원·괴이가 의심하거나 쫓는 중에는 저장하지 않는다 (다시 시작하자마자 들키는 자리가 저장되지 않게)
+	for anomaly in get_tree().get_nodes_in_group("anomaly"):
+		if anomaly.has_method("alert_level") and int(anomaly.alert_level()) > 0:
+			return
 	activate()

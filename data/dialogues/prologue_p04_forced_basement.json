@@ -22,6 +22,13 @@
       "speaker": "shamu",
       "speaker_name": "카즈네 샤무",
       "text": "내려간다. 따라붙기 전에."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "serious",
+      "text": "보안 업체로 신호가 넘어가고 있어. 지하 경보 장치를 끌 때까지 시간이 없어."
     }
   ]
 }

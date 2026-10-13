@@ -7,6 +7,7 @@ class_name HackBase
 #   추적 게이지: 시간이 지나면 차오른다. 다 차면 들켜서 연결이 끊기고(traced) 단말에서 소음이 난다.
 #   본문: 퍼즐마다 다르다 (_build_body). 오른쪽에 작업 로그.
 #   ESC / 연결 끊기 버튼: finished(false) — 다시 시도할 수 있다.
+#   처음 보는 퍼즐 종류면 시작 전에 하는 법을 팝업으로 보여 준다 (그동안 역추적은 멈춘다, 플래그 tutorial_hack_<종류>).
 # 퍼즐: HackMinigame(회로 잇기), HackCodeBreaker(암호 해독), HackFrames(영상 프레임 복원)
 
 signal finished(success: bool)
@@ -27,6 +28,9 @@ var _log_lines: Array[String] = []
 var _trace_bar: ProgressBar
 var _trace_left := 0.0
 var _done := false
+## 하는 법 팝업이 떠 있는 동안 (역추적이 멈춘다)
+var tutorial_open := false
+var _tutorial_layer: Control
 
 
 func _ready() -> void:
@@ -55,7 +59,7 @@ func _open(title: String, trace: float) -> void:
 
 
 func _process(delta: float) -> void:
-	if _done or is_solved or trace_seconds <= 0.0:
+	if _done or is_solved or trace_seconds <= 0.0 or tutorial_open:
 		return
 	_trace_left -= delta
 	if _trace_bar:
@@ -74,6 +78,11 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("pause") or event.is_action_pressed("ui_cancel"):
 		get_viewport().set_input_as_handled()
 		cancel()
+		return
+	if tutorial_open:
+		if event.is_action_pressed("ui_accept") or event.is_action_pressed("interact"):
+			get_viewport().set_input_as_handled()
+			close_tutorial()
 		return
 	_handle_key(event)
 
@@ -124,6 +133,75 @@ func _build_body(_parent: Container) -> void:
 
 func _help_text() -> String:
 	return "ESC: 연결 끊기"
+
+
+## 하는 법 팝업용: 퍼즐 종류 (비우면 팝업 없음)
+func _tutorial_id() -> String:
+	return ""
+
+
+## 하는 법 팝업용: [제목, 설명 줄들...]
+func _tutorial_lines() -> Array:
+	return []
+
+
+## 처음 보는 퍼즐이면 하는 법을 띄운다
+func _maybe_show_tutorial(root: Control) -> void:
+	var id := _tutorial_id()
+	if id.is_empty() or bool(GameManager.get_story_flag("tutorial_hack_" + id, false)):
+		return
+	var lines := _tutorial_lines()
+	if lines.is_empty():
+		return
+	tutorial_open = true
+	_tutorial_layer = Control.new()
+	_tutorial_layer.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	root.add_child(_tutorial_layer)
+	var dim := ColorRect.new()
+	dim.color = Color(0, 0, 0, 0.6)
+	dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_tutorial_layer.add_child(dim)
+	var center := CenterContainer.new()
+	center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_tutorial_layer.add_child(center)
+	var panel := PanelContainer.new()
+	var ps := VelkaStyle.panel_style(VelkaStyle.TERMINAL, Color(0.02, 0.06, 0.05, 0.98), 6, 2)
+	ps.content_margin_left = 36
+	ps.content_margin_right = 36
+	ps.content_margin_top = 26
+	ps.content_margin_bottom = 26
+	panel.add_theme_stylebox_override("panel", ps)
+	center.add_child(panel)
+	var col := VBoxContainer.new()
+	col.add_theme_constant_override("separation", 14)
+	panel.add_child(col)
+	col.add_child(VelkaStyle.label("하는 법 — " + String(lines[0]), VelkaStyle.mono_bold(), 28, VelkaStyle.TERMINAL))
+	for i in range(1, lines.size()):
+		var l := VelkaStyle.label(String(lines[i]), VelkaStyle.mono(), 21, VelkaStyle.INK)
+		l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		l.custom_minimum_size = Vector2(760, 0)
+		col.add_child(l)
+	var go := Button.new()
+	go.text = "시작  (Enter)"
+	VelkaStyle.style_small_button(go, VelkaStyle.TERMINAL)
+	go.add_theme_font_size_override("font_size", 22)
+	go.size_flags_horizontal = Control.SIZE_SHRINK_END
+	go.pressed.connect(close_tutorial)
+	col.add_child(go)
+	go.grab_focus.call_deferred()
+
+
+## 하는 법 팝업을 닫고 시작한다 (다음부터는 이 종류는 안 뜬다)
+func close_tutorial() -> void:
+	if not tutorial_open:
+		return
+	tutorial_open = false
+	var id := _tutorial_id()
+	if not id.is_empty():
+		GameManager.set_story_flag("tutorial_hack_" + id, true)
+	if _tutorial_layer:
+		_tutorial_layer.queue_free()
+		_tutorial_layer = null
 
 
 func _build_ui() -> void:
@@ -203,3 +281,4 @@ func _build_ui() -> void:
 	quit.add_theme_font_size_override("font_size", 18)
 	quit.pressed.connect(cancel)
 	foot.add_child(quit)
+	_maybe_show_tutorial(root)

@@ -34,9 +34,15 @@ const ARRIVAL_START_X := 96.0
 const WAVE_SIZE := 24
 const WAVE_INTERVAL := 0.9
 const WAVE_PAUSE := 14.0
-## 정문 앞에서 본관 중앙 현관까지 (학생들이 걷는 길)
-const ROUTE_TO_MAIN := [Vector3(62.0, 0.0, -10.0), Vector3(49.4, 0.0, -10.0), Vector3(49.4, 0.0, -26.5),
-		Vector3(49.4, 3.8, -39.0), Vector3(49.4, 3.8, -41.2), Vector3(2.0, 3.8, -41.2), Vector3(2.0, 3.8, -46.5)]
+## 정문 앞에서 본관 중앙 현관 안쪽까지 (학생들이 걷는 길)
+## 동측 경사로는 z -22.0(y 0) -> -38.0(y 3.8) 의 직선 경사다 (생성기 site2.py RAMP_FOOT / STAIR_TOP / PLATEAU_TOP).
+## 그래서 경사로 양 끝 점을 그 자리에 두어야 발이 경사면을 따라 오른다.
+## 끝의 두 점은 중앙 현관문(z -47.15)을 지나 로비 안쪽이다. 거기서 걸으며 흐려져 사라진다.
+const ROUTE_TO_MAIN := [Vector3(62.0, 0.0, -10.0), Vector3(49.4, 0.0, -10.0), Vector3(49.4, 0.0, -22.0),
+		Vector3(49.4, 3.8, -38.0), Vector3(49.4, 3.8, -41.2), Vector3(2.0, 3.8, -41.2), Vector3(2.0, 3.8, -47.3),
+		Vector3(2.0, 3.8, -51.0)]
+## 현관 안쪽에 들어선 뒤 흐려지는 시간 (이 동안 같은 방향으로 계속 걷는다)
+const ENTER_FADE_TIME := 1.0
 ## 첫 종 전, 정문 앞에서 떠드는 학생들 [위치, 바라보는 곳]
 const PLAZA_STUDENTS := [
 	[Vector3(63.0, 0.0, -7.2), Vector3(63.8, 0.0, -7.7)], [Vector3(63.8, 0.0, -7.7), Vector3(63.0, 0.0, -7.2)],
@@ -89,6 +95,8 @@ func _ready() -> void:
 	var gate := get_node_or_null("SchoolWorld/Checkpoints/Checkpoint_gate") as Checkpoint
 	if gate:
 		gate.activate()
+	# 게시판 포스터도 조사할 수 있다
+	FlavorSpots.posters(school, "res://data/inspectables/school_flavor.json")
 	if not run_story:
 		return
 	captions = CaptionSequence.new()
@@ -167,6 +175,7 @@ func _process(delta: float) -> void:
 		return
 	_update_waves(delta)
 	_check_gate_approach()
+	_update_student_floors()
 
 
 func _on_flag_set(flag_name: String, value: Variant) -> void:
@@ -304,7 +313,7 @@ func _spawn_arrival() -> SchoolStudent:
 	var s := _spawn_student(route[0], route, randf_range(1.25, 1.45))
 	s.add_to_group("c1_arrival_student")
 	s.despawn_far = 30.0
-	s.route_finished.connect(func(st: SchoolStudent): st.queue_free())
+	s.route_finished.connect(_free_student)
 	return s
 
 
@@ -325,8 +334,25 @@ func _send_students_inside() -> void:
 			st.route_finished.connect(_free_student)
 
 
+## 길 끝(현관 안쪽)에 닿은 학생: 눈앞에서 사라지지 않고 안으로 걸어 들어가며 흐려진다
 func _free_student(st: SchoolStudent) -> void:
-	st.queue_free()
+	st.fade_out(ENTER_FADE_TIME)
+
+
+## 조작 캐릭터가 있는 층의 학생만 보인다 (다른 층·지하의 학생은 숨긴다)
+func _update_student_floors() -> void:
+	var member := _member()
+	if member == null or school == null:
+		return
+	var viewer := member.global_position
+	var viewer_inside: bool = String(school.locate(viewer)[0]) != ""
+	for node in get_tree().get_nodes_in_group("school_figure"):
+		var figure := node as SchoolStudent
+		if figure == null:
+			continue
+		var at := figure.global_position
+		var inside: bool = String(school.locate(at)[0]) != ""
+		figure.set_floor_visible(SchoolStudent.is_on_same_floor(at.y, inside, viewer.y, viewer_inside))
 
 
 func _spawn_plaza_students() -> void:

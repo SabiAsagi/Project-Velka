@@ -24,6 +24,9 @@ signal transition_finished
 
 ## 층 높이 (학교 맵 생성기와 같은 값)
 const LEVEL_HEIGHT := 3.8
+## 캐릭터(사비·샤무) 스프라이트 전용 렌더 레이어. 이계의 붉은 비상등은 이 레이어를 비추지 않는다
+## (캐릭터가 비상등 근처에서 새빨갛게 물들지 않게 — 캐릭터는 손전등·주변광으로만 보인다)
+const CHARACTER_RENDER_LAYER := 19
 ## 위층을 숨긴 뒤에는 시선이 건물에서 이만큼 더 벗어나야 다시 보인다.
 const SHADOW_MARGIN := 0.6
 
@@ -61,6 +64,9 @@ func _ready() -> void:
 		(zone as ZoneArea).member_entered.connect(_on_zone_entered.bind(zone))
 	_assign_upper_floor_layer()
 	_assign_level_layers()
+	for light in get_tree().get_nodes_in_group("otherworld_light"):
+		if light is Light3D:
+			(light as Light3D).light_cull_mask &= ~(1 << (CHARACTER_RENDER_LAYER - 1))
 	GameManager.set_world_phase(starting_phase)
 	apply_phase(starting_phase, false)
 

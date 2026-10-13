@@ -30,10 +30,23 @@ var is_broken: bool = false
 var last_noise_heard: int = 0
 
 var _pieces: Array[Node] = []
+# 체크포인트 복원용: 부서지기 전 조각들의 모양 [노드, transform, visible, transparency]
+var _intact: Array = []
+# 부서지기 전 충돌 설정 [노드, 켜져 있었는지]
+var _intact_collision: Array = []
 
 
 func _ready() -> void:
 	super._ready()
+	add_to_group("checkpoint_state")
+	for piece in find_children("*", "GeometryInstance3D", true, false):
+		if not piece is Label3D:
+			_intact.append([piece, (piece as Node3D).transform, (piece as Node3D).visible, (piece as GeometryInstance3D).transparency])
+	for node in find_children("*", "", true, false):
+		if node is CSGShape3D:
+			_intact_collision.append([node, (node as CSGShape3D).use_collision])
+		elif node is CollisionShape3D:
+			_intact_collision.append([node, not (node as CollisionShape3D).disabled])
 	if not obstacle_id.is_empty() and GameManager.has_story_flag("broken_" + obstacle_id):
 		_set_broken_state(false)
 	if not force_flag.is_empty():
@@ -141,6 +154,32 @@ func _set_broken_state(animate: bool, seconds: float = 0.45) -> void:
 		tween.tween_property(node, "position:y", 0.08, seconds).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
 		tween.tween_property(node, "transparency", 1.0, 0.6).set_delay(seconds + 0.8)
 	tween.chain().tween_callback(_hide_pieces)
+
+
+## 체크포인트 저장: 부서졌는지
+func checkpoint_save() -> Variant:
+	return {"broken": is_broken}
+
+
+## 체크포인트 복원: 그때 아직 멀쩡했다면 다시 세운다
+func checkpoint_load(state: Variant) -> void:
+	if state == null or not is_broken or bool(state.get("broken", false)):
+		return
+	is_broken = false
+	for entry in _intact:
+		var piece := entry[0] as GeometryInstance3D
+		if is_instance_valid(piece):
+			piece.transform = entry[1]
+			piece.visible = entry[2]
+			piece.transparency = entry[3]
+	for entry in _intact_collision:
+		if not is_instance_valid(entry[0]):
+			continue
+		if entry[0] is CSGShape3D:
+			(entry[0] as CSGShape3D).use_collision = entry[1]
+		else:
+			(entry[0] as CollisionShape3D).set_deferred("disabled", not entry[1])
+	NavGrid.invalidate()
 
 
 func _hide_pieces() -> void:

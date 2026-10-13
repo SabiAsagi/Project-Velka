@@ -1,0 +1,103 @@
+{
+  "dialogue_id": "prologue_p07_rescue",
+  "lines": [
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "serious",
+      "text": "금속 장치가 바닥에 박히는 소리. 흰 봉쇄선이 복도를 가른다."
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "serious",
+      "text": "선 너머의 개체들이 일제히 멈춰 선다. 마치 그 선을 넘으면 안 된다는 걸 아는 것처럼."
+    },
+    {
+      "speaker": "kwon",
+      "speaker_name": "권지혁",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "serious",
+      "text": "공격하지 마! 반응 속도만 올라간다!"
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "serious",
+      "text": "검은 장비의 구조팀이 정해진 간격으로 조명을 점멸시키며 다가온다. 누구도 개체에게 총구를 겨누지 않는다."
+    },
+    {
+      "speaker": "kwon",
+      "speaker_name": "권지혁",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "serious",
+      "text": "부상자 회수. 후퇴로 확보해."
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "serious",
+      "text": "구조대원 한 명이 쓰러진 사비를 들쳐 업는다."
+    },
+    {
+      "speaker": "kwon",
+      "speaker_name": "권지혁",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "annoyed",
+      "text": "그쪽도 업혀."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "serious",
+      "text": "사비부터 옮겨."
+    },
+    {
+      "speaker": "kwon",
+      "speaker_name": "권지혁",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "serious",
+      "text": "둘 다 옮긴다. 고집부릴 상황 아니야."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "annoyed",
+      "text": "누구인지도 모르는데 어떻게 믿어."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "sad",
+      "shamu_emotion": "serious",
+      "text": "샤무."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "sad",
+      "shamu_emotion": "serious",
+      "text": "왜."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "sad",
+      "shamu_emotion": "serious",
+      "text": "가자."
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "serious",
+      "text": "샤무가 마지못해 구조팀을 따른다.  [조작: 업혀 가는 사비 곁에서 떨어지지 말고 따라가자]"
+    }
+  ]
+}
