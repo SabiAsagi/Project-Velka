@@ -6,7 +6,8 @@ extends Node3D
 #   2. PHOTO   : 테이블 위 사진을 조사하면 얼굴 위로 노이즈가 지나간다.
 #   3. MONTAGE : 검은 화면 자막 몽타주 (사라지는 의뢰인들).
 #   4. BOARD   : 사비로 조사 보드를 분석해 공통 좌표를 찾는다 (AnalysisBoard).
-#   5. BAG     : 두 사람 대화 뒤, 샤무로 1층 장비 가방을 챙긴다.
+#   5. BAG     : 두 사람 대화 뒤, 샤무가 한숨을 쉬고 혼자 1층 장비 벽으로 내려간다 (짧은 컷씬).
+#                조작이 돌아오면 사비로 샤무를 따라 내려가고, 가까이 가면 마지막 대화가 나온다.
 #   6. DONE    : 아지트 파트 끝 (다음: 폐쇄 공장).
 # 진행 상황은 GameManager 스토리 플래그(prologue_*)에 남긴다.
 # 설계: 기획서/04. 맵 및 환경/아지트_맵_상세.md, 기획서/05.스토리/게임 시나리오/01.프롤로그 게임 시나리오.docx
@@ -24,6 +25,15 @@ const MONTAGE_LINES := [
 	"사비의 조사 보드에 사진이 늘어 간다.",
 ]
 const OBJECTIVE_COLOR := Color(0.95, 0.85, 0.45)
+## 보드 앞에서 1층 장비 벽까지 샤무가 걷는 길: 응접 공간 남쪽 → 식탁 북쪽 → 계단 위 → 계단 → 1층 장비 벽
+const SHAMU_ROUTE := [
+	Vector3(5.9, 3.85, 2.4), Vector3(7.6, 3.85, 2.4), Vector3(8.0, 3.85, 4.2), Vector3(11.5, 3.85, 4.2),
+	Vector3(12.2, 3.85, 2.1), Vector3(13.2, 3.85, 2.0), Vector3(13.2, 0.05, 9.4),
+	Vector3(11.0, 0.05, 8.3), Vector3(3.0, 0.05, 8.0), Vector3(1.9, 0.05, 7.4),
+]
+## 사비가 이만큼 가까이 오면 장비 벽 장면이 이어진다
+const FOLLOW_REACH := 3.0
+const HOLD_REASON := "샤무는 먼저 내려갔다. 따라가 보자."
 
 ## 끄면 이야기를 진행하지 않고 맵만 돌아다닌다 (맵 확인·테스트용)
 @export var run_story: bool = true
@@ -78,10 +88,7 @@ func _on_inspected(inspect_id: String, inspector: Node3D, _first_time: bool) -> 
 				await _wait_dialogue()
 				_objective("자료 분석은 사비가 해야 한다 — Q로 사비로 전환")
 		[Step.BAG, "hideout_gear_bag"]:
-			if _is_sabi(inspector):
-				await _wait_dialogue()
-				_objective("장비 가방은 샤무가 챙긴다 — Q로 샤무로 전환")
-			else:
+			if _shamu_at_bag():
 				_take_bag()
 
 
@@ -104,14 +111,63 @@ func _on_board_solved() -> void:
 		return
 	GameManager.set_story_flag("prologue_board_solved")
 	await _play_dialogue("prologue_p03_talk")
+	await _shamu_heads_out()
 	_set_step(Step.BAG)
-	_objective("샤무로 1층 장비 벽의 가방을 챙기자")
+	_objective("샤무를 따라가 보자 — 1층 장비 벽")
+
+
+## 컷씬: 샤무가 한숨을 쉬고 혼자 계단으로 걸어간다. 카메라가 샤무를 따라가다가,
+## 샤무가 계단을 내려가기 시작하면 사비에게 돌아오고 조작이 풀린다 (샤무는 계속 장비 벽으로 간다).
+func _shamu_heads_out() -> void:
+	var sabi: PartyMember = party.sabi
+	var shamu: PartyMember = party.shamu
+	if GameManager.active_character != GameManager.CharacterType.SABI:
+		GameManager.switch_character(GameManager.CharacterType.SABI)
+	party.hold_companion(HOLD_REASON)
+	Cutscene.begin(get_tree())
+	await Cutscene.wait(get_tree(), 0.5)
+	Cutscene.bark(shamu, "하아…", VelkaStyle.SHAMU, 1.8)
+	await Cutscene.wait(get_tree(), 1.2)
+	Cutscene.focus(get_tree(), shamu)
+	shamu.walk_path(SHAMU_ROUTE)
+	var t := 0.0
+	while shamu.is_scripted_moving() and shamu.global_position.y > 3.2 and t < 9.0:
+		await get_tree().physics_frame
+		t += get_physics_process_delta_time()
+	Cutscene.focus(get_tree(), sabi)
+	await Cutscene.wait(get_tree(), 0.6)
+	Cutscene.bark(sabi, "(…화났나.)", VelkaStyle.SABI, 1.8)
+	Cutscene.end(get_tree())
+
+
+func _physics_process(_delta: float) -> void:
+	if step != Step.BAG or DialogueManager.is_dialogue_active:
+		return
+	var sabi: PartyMember = party.sabi
+	if _shamu_at_bag() and sabi.global_position.y < 1.5 \
+			and Vector2(sabi.global_position.x - party.shamu.global_position.x, sabi.global_position.z - party.shamu.global_position.z).length() <= FOLLOW_REACH:
+		_take_bag()
+
+
+## 샤무가 장비 벽에 도착했는지
+func _shamu_at_bag() -> bool:
+	var shamu: PartyMember = party.shamu
+	var stop: Vector3 = SHAMU_ROUTE[SHAMU_ROUTE.size() - 1]
+	return not shamu.is_scripted_moving() and Vector2(shamu.global_position.x - stop.x, shamu.global_position.z - stop.z).length() < 0.8
 
 
 func _take_bag() -> void:
+	if step != Step.BAG:
+		return
 	_set_step(Step.DONE)
 	await _wait_dialogue()
+	Cutscene.begin(get_tree())
+	party.sabi.face_direction(party.shamu.global_position - party.sabi.global_position)
+	party.shamu.face_direction(Vector3(-1, 0, 0))
+	await Cutscene.wait(get_tree(), 0.5)
 	await _play_dialogue("prologue_p03_bag")
+	Cutscene.end(get_tree())
+	party.release_companion()
 	GameManager.set_story_flag("prologue_hideout_done")
 	captions.play(["두 사람은 그날 밤, 외곽 산업단지로 향했다."])
 	await captions.finished

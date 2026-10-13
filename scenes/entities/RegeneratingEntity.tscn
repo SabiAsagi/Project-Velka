@@ -18,15 +18,15 @@ shape = SubResource("Shape_entity")
 
 [node name="Sprite3D" type="Sprite3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 0)
-modulate = Color(0.55, 0.08, 0.1, 1)
+modulate = Color(0.62, 0.1, 0.12, 1)
 texture = ExtResource("2_texture")
 pixel_size = 0.0045
 billboard = 2
 alpha_cut = 1
-shaded = true
+shaded = false
 
 [node name="Glow" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0)
 light_color = Color(0.9, 0.1, 0.1, 1)
 light_energy = 1.2
-omni_range = 3.0
+omni_range = 4.0

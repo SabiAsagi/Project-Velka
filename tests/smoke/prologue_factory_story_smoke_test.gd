@@ -113,13 +113,24 @@ func _run() -> void:
 	await _wait_dialogue("prologue_p04_rejoin_radio", 4.0)
 	_check(_dm.current_dialogue_id == "prologue_p04_rejoin_radio", "경비를 모두 재우면 사비가 무전으로 들어오겠다고 한다")
 	await _finish_dialogue()
-	await _finish_captions()
-	await _wait_dialogue("prologue_p04_rejoin", 4.0)
+	var walked := 0.0
+	var last_sabi: Vector3 = sabi_node.global_position
+	var t_in := 0.0
+	while not (_dm.is_dialogue_active and _dm.current_dialogue_id == "prologue_p04_rejoin") and t_in < 6.0:
+		await physics_frame
+		t_in += 1.0 / Engine.physics_ticks_per_second
+		var step_len: float = sabi_node.global_position.distance_to(last_sabi)
+		if step_len < 0.5:
+			walked += step_len
+		last_sabi = sabi_node.global_position
+	_check(_dm.current_dialogue_id == "prologue_p04_rejoin" and _bars_shown(), "합류는 컷씬으로 이어진다 (화면 위아래 검은 띠)")
+	_check(walked > 1.5, "사비가 순간이동하지 않고 걸어 들어온다 (%.1fm)" % walked)
 	_check(not _party.solo and sabi_node.global_position.distance_to(_member().global_position) < 3.0 and sabi_node.process_mode != Node.PROCESS_MODE_DISABLED,
 			"사비가 샤무 옆으로 합류한다")
 	_check(not bool(_line_radio()), "합류한 뒤 사비의 대사는 무전이 아니다")
 	await _finish_dialogue()
-	await _seconds(0.3)
+	await _seconds(0.6)
+	_check(not _bars_shown() and not _gm.is_exploration_locked(), "합류 대화가 끝나면 다시 움직일 수 있다 (검은 띠 %s, 잠금 %s)" % [_bars_shown(), _gm.is_exploration_locked()])
 	_check(_objective().contains("보안실 단말"), "합류하면 사비로 보안실 단말 (%s)" % _objective())
 
 	# --- 보안실 단말(사비) -> 봉쇄문(샤무) ---
@@ -192,16 +203,27 @@ func _run() -> void:
 	await _seconds(0.4)
 	ok = await _walk([Vector3(21.0, -3.75, 17.8), Vector3(14.0, -3.75, 17.8)], 12.0)
 	_check(ok or _dm.is_dialogue_active, "현실에서 막혀 있던 서쪽 벽이 열려 변질된 통로로 들어간다")
-	await _wait_dialogue("prologue_p06_encounter", 3.0)
+	await _wait_dialogue("prologue_p06_encounter", 10.0)
 	_check(_dm.current_dialogue_id == "prologue_p06_encounter", "통로 가운데에서 개체와 조우한다")
 	var encounter = _world.get_node("FirstEncounter")
+	var entity = encounter.entities[0]
+	var sabi = _party.sabi
+	var shamu = _party.shamu
+	_check(_bars_shown() and entity.sprite.modulate.a > 0.95, "조우는 컷씬으로: 개체가 어둠 속에서 드러난다 (화면 위아래 검은 띠)")
+	_check(_flat(sabi.global_position, entity.global_position) > _flat(shamu.global_position, entity.global_position) + 0.8,
+			"사비는 샤무 뒤로 물러서고 샤무가 앞에 나선다")
 	var t := 0.0
-	while encounter.phase != "defeat" and t < 45.0:
+	var saw_hurt_cutscene := false
+	while encounter.phase != "defeat" and t < 75.0:
 		if _dm.is_dialogue_active:
 			_dm.show_next_line()
+		if encounter.phase == "sabi_hurt" and _bars_shown():
+			saw_hurt_cutscene = true
 		await _seconds(0.1)
 		t += 0.1
+	_check(saw_hurt_cutscene, "사비가 대신 맞는 장면도 컷씬으로 이어진다")
 	_check(encounter.phase == "defeat", "공격할수록 빨라지는 개체에게 사비가 다치고, 결국 패배한다 (%s)" % encounter.phase)
+	_check(encounter.entities.size() == 3 and is_equal_approx(Engine.time_scale, 1.0), "어둠 속에서 개체가 늘어나고, 느린 화면은 원래대로 돌아온다")
 	root.get_node("/root/FailureManager").continue_after_failure()
 	await _seconds(1.5)
 	var captions = _scene.get_node("CaptionSequence")
@@ -313,6 +335,16 @@ func _hack() -> void:
 	if game:
 		game.solve()
 	await _seconds(1.3)
+
+
+func _flat(a: Vector3, b: Vector3) -> float:
+	return Vector2(a.x - b.x, a.z - b.z).length()
+
+
+## 컷씬 레터박스(화면 위아래 검은 띠)가 보이는지
+func _bars_shown() -> bool:
+	var bars := _scene.get_node_or_null("CutsceneBars")
+	return bars != null and (bars.get_node("Top") as ColorRect).offset_bottom > 1.0
 
 
 func _wait_dialogue(dialogue_id: String, limit: float = 3.0) -> void:

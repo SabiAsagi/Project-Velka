@@ -266,16 +266,60 @@ func _sabi_joins() -> void:
 		await get_tree().create_timer(0.2).timeout
 	_busy = true
 	await _play_once("prologue_p04_rejoin_radio")
-	captions.play(["잠시 뒤.", "사비가 샤무가 지나온 길을 따라 들어온다."])
-	await captions.finished
 	GameManager.set_story_flag("p04_sabi_joined", true)
-	_sync_party()
+	await _sabi_walks_in()
 	FailureManager.save_checkpoint("rejoin", "사비 합류", party.get_active_member().global_position)
 	await _play_once("prologue_p04_rejoin")
+	Cutscene.end(get_tree())
 	if hud and hud.has_method("show_notice"):
 		hud.show_notice("사비 합류 — 다시 Q로 바꿀 수 있다", Color(0.55, 0.85, 0.92), 4.0)
 	_busy = false
 	_refresh_objective()
+
+
+## 합류 컷씬: 잠시 뒤 사비가 어둠 속에서 걸어 들어와 샤무 옆에 선다 (순간이동 대신).
+## 샤무 주변에서 가장 트인 쪽으로 몇 m 떨어진 곳에 사비를 두고, 샤무 곁까지 걷게 한다.
+func _sabi_walks_in() -> void:
+	var shamu: PartyMember = party.get_active_member()
+	Cutscene.begin(get_tree())
+	await Cutscene.wait(get_tree(), 0.8)
+	var dir := _open_direction(shamu)
+	var stand := shamu.global_position + dir * 1.1
+	var entry := shamu.global_position + dir * 4.0
+	if dir == Vector3.ZERO:
+		stand = _spot_near(shamu)
+		entry = stand
+	party.end_solo(entry)
+	var sabi: PartyMember = party.sabi
+	SfxBank.play_at(sabi, entry, "footstep", -8.0, 1.05, 14.0)
+	await sabi.walk_path([stand], 2.6)
+	sabi.face_direction(-dir if dir != Vector3.ZERO else shamu.global_position - sabi.global_position)
+	shamu.face_direction(dir if dir != Vector3.ZERO else sabi.global_position - shamu.global_position)
+	await Cutscene.wait(get_tree(), 0.3)
+
+
+## member 주변 8방향 중 4m 넘게 트인 방향 (벽·물건 없이 같은 바닥이 이어지는 쪽). 없으면 ZERO
+func _open_direction(member: Node3D) -> Vector3:
+	var space := member.get_world_3d().direct_space_state
+	var origin := member.global_position + Vector3.UP * 0.9
+	var best := Vector3.ZERO
+	var best_len := 0.0
+	for k in 8:
+		var a := TAU * k / 8.0
+		var d := Vector3(cos(a), 0.0, sin(a))
+		var q := PhysicsRayQueryParameters3D.create(origin, origin + d * 4.6, 1)
+		var hit := space.intersect_ray(q)
+		var length := origin.distance_to(hit.position) if not hit.is_empty() else 4.6
+		if length < 4.5 or length <= best_len:
+			continue
+		# 들어올 자리에 바닥이 있어야 한다 (계단 구멍·층 끝 아님)
+		var foot := member.global_position + d * 4.0
+		var down := PhysicsRayQueryParameters3D.create(foot + Vector3.UP * 0.8, foot + Vector3.DOWN * 0.6, 1)
+		if space.intersect_ray(down).is_empty():
+			continue
+		best = d
+		best_len = length
+	return best
 
 
 ## member 옆의 비어 있는 자리 (합류할 사람이 설 곳)

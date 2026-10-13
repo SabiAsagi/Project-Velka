@@ -13,6 +13,7 @@ extends RefCounted
 #   bell      : 학교 종 (딩-동-댕-동)
 #   siren     : 공장 경보 사이렌 (반복)
 #   breath    : 숨이 차서 헐떡이는 소리 (들숨·날숨 세 번)
+#   hit       : 둔탁하게 치는 소리 + 젖은 것이 뒤틀리는 소리 (개체를 쳤을 때)
 
 const RATE := 22050
 
@@ -134,6 +135,20 @@ static func _make(sfx_name: String) -> AudioStreamWAV:
 					var env := minf(1.0, u * 300.0) * exp(-u * 1.5)
 					v += (sin(TAU * f * u) + 0.4 * sin(TAU * f * 2.76 * u) * exp(-u * 4.0) + 0.25 * sin(TAU * f * 5.4 * u) * exp(-u * 9.0)) * env
 				s[i] = clampf(v * 0.32, -1.0, 1.0)
+		"hit":
+			s = _buffer(0.55)
+			var lp := 0.0
+			for i in s.size():
+				var t := float(i) / RATE
+				lp = lerpf(lp, rng.randf_range(-1, 1), 0.3)
+				var thud := _thump(t, 0.0, 62.0) * 1.3
+				var crack := lp * exp(-t * 40.0) * 0.9
+				# 뒤틀리며 되돌아가는 낮은 꾸르륵 (조금 늦게)
+				var u := t - 0.12
+				var squelch := 0.0
+				if u > 0.0:
+					squelch = sin(TAU * (90.0 + 60.0 * sin(u * 38.0)) * u) * exp(-u * 7.0) * 0.45
+				s[i] = clampf(thud + crack + squelch, -1.0, 1.0)
 		"breath":
 			# 헐떡임: 걸러낸 잡음을 짧은 들숨·긴 날숨 세 쌍으로 끊는다
 			s = _buffer(2.1)

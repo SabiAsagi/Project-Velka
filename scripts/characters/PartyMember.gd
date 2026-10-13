@@ -31,6 +31,8 @@ signal controlled_changed(is_controlled: bool)
 @onready var vitals: CharacterVitals = get_node_or_null("Vitals")
 
 signal attacked(targets: Array)
+## 연출용 이동(walk_path)이 끝났다
+signal scripted_move_finished
 
 var is_controlled: bool = false:
 	set(val):
@@ -72,6 +74,10 @@ var _attack_cooldown: float = 0.0
 # 발소리: 마지막 발소리 뒤로 걸은 거리, 달리기 소음 쿨다운
 var _stride_left: float = 0.0
 var _noise_cooldown: float = 0.0
+# 연출용 이동: 남은 길, 속도, 걸린 시간
+var _script_path: Array[Vector3] = []
+var _script_speed: float = 0.0
+var _script_stuck: float = 0.0
 
 var is_hidden: bool = false
 var is_threatened: bool = false
@@ -144,7 +150,10 @@ func _physics_process(delta: float) -> void:
 		_update_animation()
 		return
 
-	if is_controlled:
+	if is_scripted_moving():
+		is_sprinting = false
+		_process_scripted_move(delta)
+	elif is_controlled:
 		_process_player_input(delta)
 	else:
 		is_sprinting = false
@@ -183,7 +192,7 @@ func _update_footsteps(delta: float) -> void:
 	_stride_left -= ground_speed * delta
 	if _stride_left > 0.0:
 		return
-	var running := is_sprinting or (not is_controlled and ground_speed > speed * 1.35)
+	var running := is_sprinting or ((not is_controlled or is_scripted_moving()) and ground_speed > speed * 1.35)
 	_stride_left = float(cfg.get("run_stride" if running else "walk_stride", 1.3 if running else 0.95))
 	var volume := float(cfg.get("walk_volume_db", -17.0))
 	if not is_controlled:
@@ -198,6 +207,62 @@ func _update_footsteps(delta: float) -> void:
 		# 규칙 구역의 '뛰지 마십시오'는 따로 잡으므로 여기서는 알리지 않는다
 		if NoiseEvents.emit(get_tree(), global_position, float(sprint_cfg.get("noise_radius", 7.0)), self, false) > 0:
 			footstep_noise_count += 1
+
+
+## 연출용: 정해진 길(points)을 따라 스스로 걷는다. 조작 입력·동행 AI보다 우선한다.
+## move_speed 가 걷기 속도보다 확실히 빠르면 달리기 애니메이션을 쓴다.
+## `await member.walk_path([...])` 로 도착까지 기다릴 수 있다.
+func walk_path(points: Array, move_speed: float = -1.0) -> void:
+	_script_path.clear()
+	for p in points:
+		_script_path.append(p)
+	_script_speed = move_speed if move_speed > 0.0 else speed
+	_script_stuck = 0.0
+	if _script_path.is_empty():
+		return
+	await scripted_move_finished
+
+
+func is_scripted_moving() -> bool:
+	return not _script_path.is_empty()
+
+
+## 연출용 이동을 그 자리에서 멈춘다.
+func stop_scripted_move() -> void:
+	if _script_path.is_empty():
+		return
+	_script_path.clear()
+	velocity.x = 0.0
+	velocity.z = 0.0
+	scripted_move_finished.emit()
+
+
+func _process_scripted_move(delta: float) -> void:
+	var pos := global_position
+	var target: Vector3 = _script_path[0]
+	var flat := Vector2(target.x - pos.x, target.z - pos.z)
+	if flat.length() < 0.3:
+		_script_path.pop_front()
+		if _script_path.is_empty():
+			velocity.x = 0.0
+			velocity.z = 0.0
+			apply_gravity_and_slide(delta)
+			scripted_move_finished.emit()
+			return
+		target = _script_path[0]
+		flat = Vector2(target.x - pos.x, target.z - pos.z)
+	var dir := Vector3(flat.x, 0.0, flat.y).normalized()
+	velocity.x = move_toward(velocity.x, dir.x * _script_speed, acceleration * delta)
+	velocity.z = move_toward(velocity.z, dir.z * _script_speed, acceleration * delta)
+	face_direction(dir)
+	apply_gravity_and_slide(delta)
+	# 무언가에 걸려 한동안 못 움직이면 다음 지점으로 옮긴다 (연출이 멈추지 않게)
+	var moved := Vector2(global_position.x - pos.x, global_position.z - pos.z).length()
+	_script_stuck = _script_stuck + delta if moved < _script_speed * delta * 0.2 else 0.0
+	if _script_stuck > 1.0:
+		_script_stuck = 0.0
+		global_position = target
+		velocity = Vector3.ZERO
 
 
 func _process_player_input(delta: float) -> void:
@@ -265,7 +330,7 @@ func _update_animation() -> void:
 	var ground_speed := Vector2(velocity.x, velocity.z).length()
 	var is_moving := ground_speed > 0.3
 	# 동행(AI)은 달리기 입력이 없으므로 걷기 속도보다 확실히 빠르면 달리기 시트를 쓴다
-	var is_running := is_sprinting or (not is_controlled and ground_speed > speed * 1.35)
+	var is_running := is_sprinting or ((not is_controlled or is_scripted_moving()) and ground_speed > speed * 1.35)
 	CharacterSpriteAnimator.play(sprite, is_moving, _facing_resolver.facing, _facing_resolver.facing_right,
 			1.0, is_running, ground_speed)
 

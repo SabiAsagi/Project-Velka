@@ -2,8 +2,8 @@ extends SceneTree
 
 # 프로젝트 벨카 - 프롤로그 아지트 이야기 스모크 테스트
 # 실행: godot --headless --path . -s res://tests/smoke/prologue_hideout_story_smoke_test.gd
-# P-02 의뢰인 대화 -> 사진 노이즈 -> 몽타주 -> 조사 보드 분석(사비) -> 두 사람 대화 -> 장비 가방(샤무) -> 끝
-# 순서대로 진행되는지, 캐릭터 조건(보드=사비, 가방=샤무)과 틀린 답 힌트가 동작하는지 검사한다.
+# P-02 의뢰인 대화 -> 사진 노이즈 -> 몽타주 -> 조사 보드 분석(사비) -> 두 사람 대화 -> 샤무가 혼자 내려가는 컷씬 -> 사비로 따라감 -> 끝
+# 순서대로 진행되는지, 캐릭터 조건(보드=사비)과 틀린 답 힌트, 컷씬과 플레이 전환이 동작하는지 검사한다.
 
 const SCENE := "res://scenes/chapters/Prologue_Hideout.tscn"
 
@@ -69,6 +69,9 @@ func _run() -> void:
 	await _seconds(1.2)
 	_party.request_switch()
 	await _seconds(0.4)
+	# 실제 플레이처럼 보드 앞에 선다
+	_party.teleport_party(Vector3(4.6, 3.85, 1.6))
+	await _seconds(0.3)
 	_inspect("InvestigationBoard")
 	await _finish_dialogue()
 	await _seconds(0.2)
@@ -125,21 +128,44 @@ func _run() -> void:
 	await _seconds(0.3)
 	_check(_dm.current_dialogue_id == "prologue_p03_talk", "좌표를 확인하면 두 사람 대화가 이어진다")
 	await _finish_dialogue()
-	await _seconds(0.3)
-	_check(_scene.get_step() == 4, "다음 목표는 장비 가방")
+	await _seconds(0.6)
 
-	# --- 장비 가방: 사비는 챙기지 못하고, 샤무가 챙기면 끝 ---
-	_inspect("GearBag")
-	await _finish_dialogue()
-	await _seconds(0.3)
-	_check(_scene.get_step() == 4, "사비로는 장비 가방 단계가 끝나지 않는다")
-	await _seconds(1.2)
-	_party.request_switch()
-	await _seconds(0.4)
-	_inspect("GearBag")
-	await _finish_dialogue()
-	await _seconds(0.3)
-	_check(_dm.current_dialogue_id == "prologue_p03_bag", "샤무로 가방을 챙기면 마지막 대화가 나온다")
+	# --- 컷씬: 샤무가 한숨 쉬고 혼자 계단으로 간다 ---
+	var sabi = _party.sabi
+	var shamu = _party.shamu
+	var camera = _scene.get_node("FollowCamera")
+	_check(_bars_shown() and _gm.is_exploration_locked(),
+			"대화 뒤 컷씬이 이어진다 (화면 위아래 검은 띠, 조작 잠금)")
+	_check(_scene.get_step() == 3, "컷씬 중에는 아직 다음 단계가 아니다")
+	var start_shamu: Vector3 = shamu.global_position
+	var t := 0.0
+	var camera_followed_shamu := false
+	while _scene.get_step() != 4 and t < 14.0:
+		camera_followed_shamu = camera_followed_shamu or camera.target == shamu
+		await physics_frame
+		t += 1.0 / Engine.physics_ticks_per_second
+	_check(camera_followed_shamu and shamu.global_position.distance_to(start_shamu) > 4.0,
+			"샤무가 혼자 걸어가고 카메라가 샤무를 따라간다 (%.1fm)" % shamu.global_position.distance_to(start_shamu))
+	_check(_scene.get_step() == 4 and shamu.global_position.y < 3.3, "샤무가 계단을 내려가기 시작하면 다음 단계가 된다")
+	await _seconds(0.6)
+	_check(not _gm.is_exploration_locked() and camera.target == sabi and not _bars_shown(),
+			"컷씬이 끝나면 카메라가 사비에게 돌아오고 조작이 풀린다")
+	_check(not _party.request_switch() and _member() == sabi, "샤무가 혼자 움직이는 동안은 조작을 바꿀 수 없다")
+	t = 0.0
+	while shamu.is_scripted_moving() and t < 15.0:
+		await _seconds(0.2)
+		t += 0.2
+	var bag_spot: Vector3 = _scene.SHAMU_ROUTE[_scene.SHAMU_ROUTE.size() - 1]
+	_check(shamu.global_position.y < 0.5 and Vector2(shamu.global_position.x - bag_spot.x, shamu.global_position.z - bag_spot.z).length() < 0.8,
+			"샤무는 혼자 1층 장비 벽까지 내려간다 (%s)" % shamu.global_position)
+	_check(_scene.get_step() == 4 and not _dm.is_dialogue_active, "사비가 따라가기 전에는 장면이 이어지지 않는다")
+
+	# --- 사비로 샤무를 따라 내려간다 ---
+	var route: Array = _scene.SHAMU_ROUTE.slice(0, _scene.SHAMU_ROUTE.size() - 1)
+	var ok := await _walk(route, camera)
+	await _seconds(0.5)
+	_check(ok, "사비가 계단을 내려가 장비 벽 쪽으로 걸어간다")
+	_check(_dm.current_dialogue_id == "prologue_p03_bag" and _bars_shown(), "샤무에게 가까이 가면 마지막 대화가 나온다")
 	await _finish_dialogue()
 	await _seconds(1.0)
 	while captions.is_playing():
@@ -148,6 +174,8 @@ func _run() -> void:
 	await _seconds(0.8)
 	_check(_scene.get_step() == 5 and _gm.get_story_flag("prologue_hideout_done"), "아지트 파트가 끝난다 (prologue_hideout_done)")
 	_check(not _gm.is_exploration_locked(), "끝난 뒤에는 다시 움직일 수 있다")
+	_check(_party.hold_reason.is_empty() and int(shamu.companion_ai.current_state) == 0,
+			"끝나면 샤무가 다시 따라온다")
 
 	print("")
 	print("RESULT passed=%d failed=%d" % [_passes, _failures.size()])
@@ -163,6 +191,52 @@ func _member():
 ## 조사 대상을 지금 조작 캐릭터로 조사한다 (위치는 상관없이 바로 호출)
 func _inspect(node_name: String) -> void:
 	_scene.get_node("HideoutWorld/Inspectables/" + node_name).interact(_member())
+
+
+## 컷씬 레터박스(화면 위아래 검은 띠)가 보이는지
+func _bars_shown() -> bool:
+	var bars := _scene.get_node_or_null("CutsceneBars")
+	return bars != null and (bars.get_node("Top") as ColorRect).offset_bottom > 1.0
+
+
+## 조작 캐릭터를 지점들로 걷게 한다 (카메라 기준 입력)
+func _walk(points: Array, camera: Node3D, timeout_each: float = 12.0) -> bool:
+	var member = _member()
+	for point in points:
+		var elapsed := 0.0
+		var arrived := false
+		while elapsed < timeout_each:
+			if _dm.is_dialogue_active:
+				_set_input(0.0, 0.0)
+				return true
+			var offset: Vector3 = point - member.global_position
+			offset.y = 0.0
+			if offset.length() < 0.35:
+				arrived = true
+				break
+			var direction := offset.normalized()
+			var right := camera.global_basis.x
+			right.y = 0.0
+			right = right.normalized()
+			var forward := -camera.global_basis.z
+			forward.y = 0.0
+			forward = forward.normalized()
+			_set_input(direction.dot(right), -direction.dot(forward))
+			await physics_frame
+			elapsed += 1.0 / Engine.physics_ticks_per_second
+		_set_input(0.0, 0.0)
+		if not arrived:
+			print("    (도착 실패: 목표 %s, 현재 %s)" % [point, member.global_position])
+			return false
+	return true
+
+
+func _set_input(x: float, y: float) -> void:
+	for pair in [["move_right", maxf(x, 0.0)], ["move_left", maxf(-x, 0.0)], ["move_down", maxf(y, 0.0)], ["move_up", maxf(-y, 0.0)]]:
+		if pair[1] > 0.001:
+			Input.action_press(pair[0], pair[1])
+		else:
+			Input.action_release(pair[0])
 
 
 ## 진행 중인 대화를 끝까지 넘긴다 (선택지는 없다)
