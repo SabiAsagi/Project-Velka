@@ -199,7 +199,8 @@ def offices(B):
         for h in (0.95, 1.65):
             B.box(p, "monitor", x, x + 1.0, h, h + 0.6, 0.05, 0.12, tag="monitor")
             B.box(p, "screen_on", x + 0.05, x + 0.95, h + 0.05, h + 0.55, 0.12, 0.125, tag="screen")
-    B.box(p, "chair_office", 27.5, 28.1, 0.0, 1.1, 1.5, 2.1, True, tag="chair")
+    # 의자는 단말 앞(조사 자리)을 비워 두고 옆으로 밀어 둔다
+    B.box(p, "chair_office", 29.9, 30.5, 0.0, 1.1, 1.5, 2.1, True, tag="chair")
     B.box(p, "file_box", 32.4, 33.6, 0.0, 1.8, 1.0, 3.0, True, tag="cabinet")
     # 휴게실: 테이블, 자판기, 사물함
     B.box(p, "table_top", 23.5, 25.5, 0.72, 0.76, 16.0, 17.2, True, tag="table")

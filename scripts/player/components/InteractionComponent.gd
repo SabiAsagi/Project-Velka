@@ -16,6 +16,8 @@ signal focus_changed(interactable: InteractableBase)
 @export var floor_band: Vector2 = Vector2(-1.4, 2.6)
 
 const SABI_COLOR := Color(0.27, 0.63, 0.71)
+## 시야선 검사에서 조사 지점과 이만큼 가까운 곳에서 막힌 것은 무시한다 (m)
+const LOS_SLACK := 0.6
 const SHAMU_COLOR := Color(0.85, 0.64, 0.21)
 
 var current_interactable: InteractableBase = null
@@ -140,7 +142,11 @@ func _has_line_of_sight(player: Node3D, interactable: InteractableBase) -> bool:
 	if result.is_empty():
 		return true
 	var collider := result.get("collider") as Node
-	return collider == interactable or (collider != null and interactable.is_ancestor_of(collider))
+	if collider == interactable or (collider != null and interactable.is_ancestor_of(collider)):
+		return true
+	# 조사 지점 바로 앞에서 막혔다면 (단말 앞 의자·책상 모서리 등) 보이는 것으로 본다
+	var hit: Vector3 = result.get("position", from)
+	return hit.distance_to(to) <= LOS_SLACK
 
 
 func _refresh_prompt(force: bool = false) -> void:

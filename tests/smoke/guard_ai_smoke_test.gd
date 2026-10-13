@@ -58,6 +58,24 @@ func _run() -> void:
 	var mid: float = reach[reach.size() / 2]
 	_check(mid < 2.6 and mid < _guard.detection_range - 1.0, "손전등 시야는 벽을 뚫지 않고 벽에서 끊긴다 (%.2fm)" % mid)
 
+	# --- 샤무 제압: 정면에서 치면 버티고 쫓는다 / 등 뒤에서 치면 쓰러진다 ---
+	var shamu_m = _party.shamu
+	var front_ok: bool
+	_place_guard(Vector3(4.0, Y, 10.6), Vector3(1, 0, 0))
+	shamu_m.global_position = Vector3(5.2, Y, 10.6)        # 정면 (시야 안)
+	front_ok = not _guard.can_be_taken_down_by(shamu_m)
+	_guard.take_hit(shamu_m)
+	_check(front_ok and not _guard.is_down and _guard.current_state == _guard.AnomalyState.CHASE,
+			"정면에서 치면 쓰러지지 않고 바로 쫓는다 (무조건 제압 불가)")
+	await _reset()
+	_guard.set_state(_guard.AnomalyState.PATROL)
+	shamu_m.global_position = Vector3(2.8, Y, 10.6)        # 등 뒤
+	_check(_guard.can_be_taken_down_by(shamu_m), "눈치채지 못한 경비원은 등 뒤에서 제압할 수 있다")
+	_guard.set_state(_guard.AnomalyState.CHASE)
+	_check(not _guard.can_be_taken_down_by(shamu_m), "쫓는 중인 경비원은 등 뒤에서도 제압할 수 없다")
+	await _reset()
+	shamu_m.global_position = Vector3(-8.0, Y, 20.0)
+
 	# --- 의심: 시야 끝에서 잠깐 -> "?" 만, 사라지면 확인하러 온다 ---
 	_place_guard(Vector3(4.0, Y, 10.6), Vector3(1, 0, 0))
 	_party.teleport_party(Vector3(10.6, Y, 10.6))

@@ -78,7 +78,10 @@ func _run() -> void:
 
 	# --- 보안실 경비원 제압(샤무) -> 보안실 단말(사비) ---
 	await _as("shamu")
-	_world.get_node("Guards/GuardSecurity").take_hit(_party.get_active_member())
+	var sec_guard = _world.get_node("Guards/GuardSecurity")
+	var sec_face: Vector3 = sec_guard.get("_facing_direction")
+	_party.get_active_member().global_position = sec_guard.global_position - sec_face.normalized() * 1.0   # 모니터를 보는 경비원의 등 뒤
+	sec_guard.take_hit(_party.get_active_member())
 	await _seconds(0.4)
 	_check(_objective().contains("보안실 단말"), "경비원을 제압하면 보안실 단말 해킹이 목표가 된다 (%s)" % _objective())
 	await _as("sabi")
