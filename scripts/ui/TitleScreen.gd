@@ -20,9 +20,18 @@ const MARKER_TEXT := "V"
 @onready var title_label: TextureRect = $HeaderContainer/Wordmark
 
 var _markers: Dictionary = {}   # Button -> Label("V")
+## 불러오기 (저장 칸 고르기 — 이어하기 바로 아래)
+var load_btn: Button
 
 
 func _ready() -> void:
+	load_btn = Button.new()
+	load_btn.name = "LoadButton"
+	load_btn.text = "불러오기"
+	load_btn.custom_minimum_size = Vector2(0, 62)
+	load_btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	continue_btn.get_parent().add_child(load_btn)
+	continue_btn.get_parent().move_child(load_btn, continue_btn.get_index() + 1)
 	_apply_style()
 	# 세이브 파일 존재 여부에 따른 이어하기 버튼 활성화
 	var has_save = SaveManager.has_save_file()
@@ -34,6 +43,11 @@ func _ready() -> void:
 		if not chapter.is_empty():
 			_add_side_note(continue_btn, SceneManager.chapter_title(chapter))
 
+	load_btn.disabled = not SaveManager.has_any_slot()
+	if load_btn.disabled:
+		load_btn.modulate = Color(1, 1, 1, 0.45)
+	load_btn.pressed.connect(func(): PauseMenu.open_save_load(SaveLoadScreen.MODE_LOAD))
+	PauseMenu.get_save_load().closed.connect(_on_save_load_closed)
 	new_game_btn.pressed.connect(_on_new_game_pressed)
 	continue_btn.pressed.connect(_on_continue_pressed)
 	settings_btn.pressed.connect(_on_settings_pressed)
@@ -53,6 +67,11 @@ func _ready() -> void:
 	_fade_in()
 
 
+func _on_save_load_closed() -> void:
+	if is_inside_tree() and load_btn:
+		load_btn.grab_focus()
+
+
 func _unhandled_input(event: InputEvent) -> void:
 	if credits_panel.visible and (event.is_action_pressed("ui_cancel") or event.is_action_pressed("ui_accept")):
 		get_viewport().set_input_as_handled()
@@ -65,7 +84,7 @@ func _apply_style() -> void:
 	$Motto.add_theme_font_override("font", VelkaStyle.spaced(VelkaStyle.sans(), 3))
 	version_label.add_theme_font_override("font", VelkaStyle.sans())
 	$HeaderContainer/SubtitleLabel.add_theme_font_override("font", VelkaStyle.spaced(VelkaStyle.sans_medium(), 9))
-	for b in [continue_btn, new_game_btn, settings_btn, credits_btn, exit_btn]:
+	for b in [continue_btn, load_btn, new_game_btn, settings_btn, credits_btn, exit_btn]:
 		_style_menu_button(b as Button)
 	_build_key_hints()
 

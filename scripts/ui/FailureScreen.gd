@@ -99,11 +99,12 @@ func _to_title() -> void:
 
 func _on_load_pressed() -> void:
 	load_requested.emit()
+	PauseMenu.open_save_load(SaveLoadScreen.MODE_LOAD)
 
 
-## 저장 슬롯이 하나라도 있는지 (저장 · 불러오기 화면이 생기면 SaveManager 가 알려 준다)
+## 저장 칸이 하나라도 있는지
 func _has_save_slots() -> bool:
-	return SaveManager.has_method("has_any_slot") and bool(SaveManager.call("has_any_slot"))
+	return SaveManager.has_any_slot()
 
 
 func _place_name() -> String:

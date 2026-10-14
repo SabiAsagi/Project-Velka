@@ -156,6 +156,9 @@ func change_scene(target_path: String, with_fade: bool = true, duration: float =
 		tween_loading.tween_property(loading, "modulate:a", 0.0, LOADING_FADE)
 		await tween_loading.finished
 		loading.queue_free()
+	# 자동 저장 칸의 화면 캡처는 장면이 다 보인 뒤에 (로딩 화면이 찍히지 않게)
+	if not chapter.is_empty() and autosave_enabled:
+		SaveManager.capture_auto_preview()
 
 	if with_fade:
 		var tween_in = create_tween()
@@ -257,6 +260,7 @@ func chapter_title(chapter: String) -> String:
 func start_new_game() -> void:
 	print("[SceneManager] 새 게임 시작")
 	GameManager.reset_game_state()
+	SaveManager.play_seconds = 0.0
 	change_scene(SCENE_NEW_GAME)
 
 
@@ -269,6 +273,16 @@ func continue_game() -> void:
 	var success = SaveManager.load_game()
 	if success:
 		change_scene(STORY_SCENES.get(GameManager.current_chapter, SCENE_SCHOOL))
+
+
+## 저장 칸을 불러온다: 진행을 읽고 그 장(챕터)의 시작 지점으로 (0 = 자동 저장)
+func load_slot(slot: int) -> bool:
+	if get_tree().paused:
+		get_tree().paused = false
+	if not SaveManager.load_from_slot(slot):
+		return false
+	change_scene(STORY_SCENES.get(GameManager.current_chapter, SCENE_SCHOOL))
+	return true
 
 
 ## 프롤로그 처음(아지트)으로 이동

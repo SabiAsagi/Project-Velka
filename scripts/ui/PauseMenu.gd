@@ -2,8 +2,11 @@ extends CanvasLayer
 
 # 프로젝트 벨카 - 일시정지 메뉴 (Autoload)
 # 게임 중 ESC(pause 액션)로 열고 닫는다. 열려 있는 동안 씬 트리를 멈춘다.
-# 버튼: 계속하기 / 조사 기록(Tab 수첩) / 설정(SettingsMenu 재사용) / 타이틀로 / 게임 종료 (뒤의 둘은 확인을 한 번 더 받는다)
-# 머리에 지금 장소(장 이름 + 구역)를 보여 준다. 기본 디자인 0.1 시안 02.
+# 버튼: 계속하기 / 저장 · 불러오기 / 조사 기록(Tab 수첩) / 설정(SettingsMenu 재사용) / 타이틀로 / 게임 종료
+#   (타이틀로 · 게임 종료는 확인을 한 번 더 받는다)
+# 머리에 지금 장소(장 이름 + 구역)를 보여 준다. 기본 디자인 0.2 시안 08.
+# 저장 · 불러오기 화면(SaveLoadScreen)은 여기서 하나만 만들어 두고, 타이틀 · 게임 오버도 open_save_load 로 쓴다.
+# 메뉴가 뜨기 직전의 화면을 캡처해 두었다가 저장할 때 미리보기로 남긴다.
 # 수첩·대화처럼 ESC를 먼저 쓰는 창이 있으면 그 창이 입력을 소비하므로 여기까지 오지 않는다.
 
 signal opened()
@@ -25,6 +28,9 @@ var _settings: Control
 var _place_label: Label
 var _zone_label: Label
 var _pending_action: Callable = Callable()
+var _save_load: SaveLoadScreen
+## 메뉴가 뜨기 직전의 게임 화면 (저장 미리보기)
+var _snapshot: Image = null
 
 
 func _ready() -> void:
@@ -49,6 +55,7 @@ func can_open() -> bool:
 func open() -> void:
 	if is_open() or not can_open():
 		return
+	_snapshot = SaveManager.capture_screen()
 	_show_buttons()
 	_refresh_place()
 	_settings.visible = false
@@ -67,8 +74,23 @@ func close() -> void:
 	closed.emit()
 
 
+## 저장 · 불러오기 화면을 연다. mode "save"(일시정지 중) / "load"(타이틀 · 게임 오버)
+func open_save_load(mode: String = SaveLoadScreen.MODE_LOAD) -> void:
+	_save_load.open(mode, _snapshot if mode == SaveLoadScreen.MODE_SAVE else null)
+
+
+func is_save_load_open() -> bool:
+	return _save_load != null and _save_load.is_open()
+
+
+func get_save_load() -> SaveLoadScreen:
+	return _save_load
+
+
 func _unhandled_input(event: InputEvent) -> void:
 	if not event.is_action_pressed("pause"):
+		return
+	if is_save_load_open():
 		return
 	if is_open():
 		get_viewport().set_input_as_handled()
@@ -178,6 +200,7 @@ func _build_ui() -> void:
 	_buttons.add_theme_constant_override("separation", 6)
 	stack.add_child(_buttons)
 	_resume_button = _add_button(_buttons, "Resume", "계속하기", close)
+	_add_button(_buttons, "SaveLoad", "저장 · 불러오기", func(): open_save_load(SaveLoadScreen.MODE_SAVE))
 	_add_button(_buttons, "Journal", "조사 기록", _open_journal)
 	_add_button(_buttons, "Settings", "설정", _on_settings_pressed)
 	_add_button(_buttons, "Title", "타이틀로 돌아가기", func(): _ask("타이틀 화면으로 돌아갈까요?\n마지막 저장 이후 진행은 사라집니다.", _go_to_title))
@@ -212,6 +235,11 @@ func _build_ui() -> void:
 	_settings.visible = false
 	_root.add_child(_settings)
 	_settings.connect("closed", _on_settings_closed)
+
+	_save_load = SaveLoadScreen.new()
+	_save_load.name = "SaveLoad"
+	add_child(_save_load)
+	_save_load.closed.connect(func(): if is_open(): _buttons.get_node("SaveLoad").grab_focus())
 
 
 ## 지금 장소: 장(챕터) 이름 + 구역 이름
