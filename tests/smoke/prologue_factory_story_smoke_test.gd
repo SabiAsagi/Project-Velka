@@ -103,7 +103,7 @@ func _run() -> void:
 	_check(hall_guard.notice_grace > 0.0 and _flat(hall_guard.global_position, _member().global_position) > 4.0,
 			"재시작 직후 경비원은 잠깐 알아채지 못하고, 다시 시작한 자리에서 먼 쪽에서 순찰한다 (%.1fm)" % _flat(hall_guard.global_position, _member().global_position))
 
-	_check(_objective().contains("모두 제압") and _objective().contains("3명"), "샤무 혼자인 동안 목표: 경비원 모두 제압 (%s)" % _objective())
+	_check(_objective().contains("모두 기절") and _objective().contains("3명"), "샤무 혼자인 동안 목표: 경비원 모두 기절 (%s)" % _objective())
 
 	# --- 사무동 도착 (구역 진입): 사비의 말은 무전 ---
 	_party.teleport_party(Vector3(24.0, 0.05, 11.0))
@@ -117,7 +117,7 @@ func _run() -> void:
 			"샤무 혼자서는 단말을 열 수 없다 (사비 담당)")
 	await _finish_dialogue()
 
-	# --- 경비원을 모두 제압 -> 사비 합류 ---
+	# --- 경비원을 모두 기절시킴 -> 사비 합류 ---
 	_knock(_world.get_node("Guards/GuardSecurity"))
 	await _seconds(0.4)
 	var radio_box = _scene.get_node("PrototypeHUD").get_node_or_null("RadioFeed")
@@ -128,7 +128,7 @@ func _run() -> void:
 	_check(_party.solo and _objective().contains("1명"), "한 명 남았다 (%s)" % _objective())
 	_knock(_world.get_node("Guards/GuardEast"))
 	await _wait_dialogue("prologue_p04_rejoin_radio", 4.0)
-	_check(_dm.current_dialogue_id == "prologue_p04_rejoin_radio", "경비를 모두 재우면 사비가 무전으로 들어오겠다고 한다")
+	_check(_dm.current_dialogue_id == "prologue_p04_rejoin_radio", "경비를 모두 기절시키면 사비가 무전으로 들어오겠다고 한다")
 	await _finish_dialogue()
 	var walked := 0.0
 	var last_sabi: Vector3 = sabi_node.global_position
@@ -215,6 +215,10 @@ func _run() -> void:
 	await _seconds(0.3)
 	_check(_objective().contains("돌아가자"), "목표: 들어왔던 출입구로 돌아가기 (%s)" % _objective())
 	await _as("sabi")
+	# 계단 중간(아직 다 올라가지 않음)에서는 벽 대사가 나오지 않는다
+	_party.teleport_party(Vector3(31.8, -2.0, 17.6))
+	await _seconds(0.6)
+	_check(not _flag("p05_structure_seen") and not _dm.is_dialogue_active, "계단을 다 올라가기 전에는 막힌 벽 대사가 나오지 않는다")
 	_party.teleport_party(Vector3(31.8, 0.05, 14.0))
 	await _seconds(0.6)
 	await _wait_dialogue("prologue_p05_changed", 3.0)

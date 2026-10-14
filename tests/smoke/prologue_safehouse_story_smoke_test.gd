@@ -125,6 +125,20 @@ func _run() -> void:
 	await _finish_captions()
 	await _seconds(0.3)
 	_check(_flag("prologue_done"), "브리핑이 끝나면 프롤로그 종료")
+	var card: Node = _scene.get_node_or_null("TitleCard")
+	_check(card != null, "프롤로그가 끝나면 '프롤로그 종료' 대신 본편 타이틀 카드가 뜬다")
+	if card:
+		var texts := []
+		for label in card.find_children("*", "Label", true, false):
+			texts.append((label as Label).text)
+		_check("프로젝트 벨카" in texts and "무진고등학교" in texts, "타이틀 카드: 게임 제목 → 제1장 무진고등학교 (%s)" % ", ".join(texts))
+		var done := [false]
+		card.finished.connect(func(): done[0] = true)
+		var waited := 0.0
+		while not done[0] and waited < 15.0:
+			await _seconds(0.2)
+			waited += 0.2
+		_check(done[0], "타이틀 카드가 끝난다 (%.1f초)" % waited)
 
 	# --- P-10 선택 2: 협회를 아직 믿지 않는다 (대화만 다시 본다) ---
 	trust = _gm.sabi_shamu_trust

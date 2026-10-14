@@ -10,6 +10,20 @@
         "text_sabi": "'학교폭력 OUT'. 그림 속 학생들도 얼굴이 없어.",
         "text_shamu": "원래 이런 그림이야?"
       }
+    ],
+    "duo_lines": [
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "worried",
+        "shamu_emotion": "neutral",
+        "text": "'학교폭력 OUT'. 그림 속 학생들도 얼굴이 없어."
+      },
+      {
+        "speaker": "shamu",
+        "sabi_emotion": "worried",
+        "shamu_emotion": "serious",
+        "text": "원래 이런 그림이야?"
+      }
     ]
   },
   "poster_sports": {
@@ -22,6 +36,20 @@
         "text": "",
         "text_sabi": "한마음 체육대회. 날짜 칸이 비어 있어.",
         "text_shamu": "해마다 하는 거면 날짜는 적어 두지."
+      }
+    ],
+    "duo_lines": [
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "한마음 체육대회. 날짜 칸이 비어 있어."
+      },
+      {
+        "speaker": "shamu",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "serious",
+        "text": "해마다 하는 거면 날짜는 적어 두지."
       }
     ]
   },
@@ -36,6 +64,20 @@
         "text_sabi": "'제27회 무진제'. 학교 이름이 무진…?",
         "text_shamu": "처음 듣는 학교네."
       }
+    ],
+    "duo_lines": [
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "'제27회 무진제'. 학교 이름이 무진…?"
+      },
+      {
+        "speaker": "shamu",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "처음 듣는 학교네."
+      }
     ]
   },
   "poster_nosmoking": {
@@ -48,6 +90,20 @@
         "text": "",
         "text_sabi": "금연 학교. 이건 어디나 똑같네.",
         "text_shamu": "여기서 담배 피우는 놈 있으면 그게 더 무섭겠다."
+      }
+    ],
+    "duo_lines": [
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "금연 학교. 이건 어디나 똑같네."
+      },
+      {
+        "speaker": "shamu",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "smug",
+        "text": "여기서 담배 피우는 놈 있으면 그게 더 무섭겠다."
       }
     ]
   },
@@ -62,6 +118,20 @@
         "text_sabi": "'10월 독서의 달'. 오늘이 10월이었나…",
         "text_shamu": "여기 날짜는 믿지 마."
       }
+    ],
+    "duo_lines": [
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "'10월 독서의 달'. 오늘이 10월이었나…"
+      },
+      {
+        "speaker": "shamu",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "serious",
+        "text": "여기 날짜는 믿지 마."
+      }
     ]
   },
   "poster_recycle": {
@@ -74,6 +144,20 @@
         "text": "",
         "text_sabi": "분리배출 안내. 꼼꼼하다.",
         "text_shamu": "괴이세계도 분리수거는 하는구나."
+      }
+    ],
+    "duo_lines": [
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "분리배출 안내. 꼼꼼하다."
+      },
+      {
+        "speaker": "shamu",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "smug",
+        "text": "괴이세계도 분리수거는 하는구나."
       }
     ]
   },
@@ -88,6 +172,20 @@
         "text_sabi": "진로·진학 박람회. 장소는 강당, 시간 칸은 지워져 있어.",
         "text_shamu": "지워진 게 많네, 이 학교."
       }
+    ],
+    "duo_lines": [
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "serious",
+        "shamu_emotion": "neutral",
+        "text": "진로·진학 박람회. 장소는 강당, 시간 칸은 지워져 있어."
+      },
+      {
+        "speaker": "shamu",
+        "sabi_emotion": "serious",
+        "shamu_emotion": "serious",
+        "text": "지워진 게 많네, 이 학교."
+      }
     ]
   },
   "poster_missing": {
@@ -100,6 +198,20 @@
         "text": "",
         "text_sabi": "'찾습니다'. 사진 칸이 비어 있어. 이름도, 학년도.",
         "text_shamu": "누굴 찾는지도 모르는 전단이라."
+      }
+    ],
+    "duo_lines": [
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "worried",
+        "shamu_emotion": "neutral",
+        "text": "'찾습니다'. 사진 칸이 비어 있어. 이름도, 학년도."
+      },
+      {
+        "speaker": "shamu",
+        "sabi_emotion": "worried",
+        "shamu_emotion": "serious",
+        "text": "누굴 찾는지도 모르는 전단이라."
       }
     ]
   }

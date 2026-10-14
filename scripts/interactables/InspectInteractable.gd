@@ -5,9 +5,10 @@ class_name InspectInteractable
 # 프로젝트 벨카 - 조사 오브젝트
 # data/inspectables/*.json 에서 inspect_id 항목을 읽어 짧은 독백/대화로 보여준다.
 # 대사 speaker를 "inspector"로 두면 조사한 캐릭터(사비/샤무)가 화자가 된다.
-# 사람(NPC, "npc" 그룹 또는 데이터의 "joint": true)과의 대화는 두 사람이 함께 한다:
-#   text_sabi / text_shamu 가 둘 다 있는 inspector 대사는 조사한 쪽이 먼저, 동료가 이어서 답한다.
-#   (한 사람만 이야기하고 다음으로 넘어가 버리지 않게 — 단, 동료가 따로 떨어져 있으면 혼자)
+# 동료가 곁에 있으면 두 사람이 함께 이야기한다 (누가 먼저 조사하든 같은 대화가 이어서 나온다):
+#   duo_lines / repeat_duo_lines / otherworld_duo_lines / otherworld_repeat_duo_lines 가 있으면 그것을 쓴다.
+#   없으면 text_sabi / text_shamu 가 둘 다 있는 inspector 대사를 사비 -> 샤무 순서로 이어 붙인다.
+#   동료가 떨어져 있거나(6m 넘게) 혼자 잠입 중이면 조사한 캐릭터 혼자 말한다. 데이터에 "joint": false 면 늘 혼자.
 # 두 번째 조사부터는 repeat_lines가 있으면 그것을 사용한다.
 # 이계 상태에서는 otherworld_lines / otherworld_prompt가 있으면 그것을 우선한다 (조사 횟수도 따로 센다).
 # 규칙 연동: discovers_rules(배열)는 조사하면 수첩에 등록, violates_rule은 조사 자체가 규칙 위반.
@@ -63,9 +64,15 @@ func _on_interact(player: Node3D) -> void:
 		repeat_key = "otherworld_repeat_lines"
 	else:
 		_inspect_count += 1
+	var used_key := "otherworld_lines" if otherworld else "lines"
 	if not first_time and _entry.has(repeat_key):
 		source = _entry[repeat_key]
-	DialogueManager.start_dialogue_data("inspect_" + inspect_id, _resolve_lines(source, player))
+		used_key = repeat_key
+	# 함께 이야기하는 판이 있으면 그것을 쓴다 (lines -> duo_lines, repeat_lines -> repeat_duo_lines ...)
+	var joint := _is_joint_talk()
+	if joint and _entry.has(used_key.replace("lines", "duo_lines")):
+		source = _entry[used_key.replace("lines", "duo_lines")]
+	DialogueManager.start_dialogue_data("inspect_" + inspect_id, _resolve_lines(source, player, joint))
 	var prefix := "otherworld_" if otherworld else ""
 	var character := _character_id_of(player)
 	for rule_id in _entry.get(prefix + "discovers_rules", []):
@@ -79,10 +86,8 @@ func _on_interact(player: Node3D) -> void:
 	inspected.emit(inspect_id, player, first_time)
 
 
-func _resolve_lines(source: Array, inspector: Node3D) -> Array:
+func _resolve_lines(source: Array, inspector: Node3D, joint: bool = false) -> Array:
 	var inspector_id := _character_id_of(inspector)
-	var other_id := "sabi" if inspector_id == "shamu" else "shamu"
-	var joint := _is_joint_talk()
 	var result: Array = []
 	for raw in source:
 		if not raw is Dictionary:
@@ -90,20 +95,18 @@ func _resolve_lines(source: Array, inspector: Node3D) -> Array:
 		var line: Dictionary = (raw as Dictionary).duplicate(true)
 		if String(line.get("speaker", "")) == "inspector":
 			line["speaker"] = inspector_id
-			var own := String(line.get("text_" + inspector_id, ""))
-			var other := String(line.get("text_" + other_id, ""))
-			if joint and not own.is_empty() and not other.is_empty():
-				# 함께 대화: 조사한 쪽이 답하고, 동료도 이어서 답한다
-				line["text"] = own
+			var sabi_text := String(line.get("text_sabi", ""))
+			var shamu_text := String(line.get("text_shamu", ""))
+			if joint and not sabi_text.is_empty() and not shamu_text.is_empty():
+				# 함께 대화: 누가 조사했든 사비 -> 샤무 순서로 이어서
 				line.erase("text_sabi")
 				line.erase("text_shamu")
-				line["speaker_name"] = SPEAKER_NAMES[inspector_id]
-				result.append(line)
-				var reply: Dictionary = line.duplicate(true)
-				reply["speaker"] = other_id
-				reply["speaker_name"] = SPEAKER_NAMES[other_id]
-				reply["text"] = other
-				result.append(reply)
+				for who in ["sabi", "shamu"]:
+					var part: Dictionary = line.duplicate(true)
+					part["speaker"] = who
+					part["speaker_name"] = SPEAKER_NAMES[who]
+					part["text"] = sabi_text if who == "sabi" else shamu_text
+					result.append(part)
 				continue
 		var speaker := String(line.get("speaker", "system"))
 		if not line.has("speaker_name"):
@@ -112,9 +115,9 @@ func _resolve_lines(source: Array, inspector: Node3D) -> Array:
 	return result
 
 
-## 사람과의 대화라 두 사람이 함께 하는가 (동료가 곁에 있을 때만)
+## 두 사람이 함께 이야기하는가 (동료가 곁에 있을 때만)
 func _is_joint_talk() -> bool:
-	if not (is_in_group("npc") or bool(_entry.get("joint", false))):
+	if not bool(_entry.get("joint", true)):
 		return false
 	var party := get_tree().get_first_node_in_group("player_party")
 	if party == null or bool(party.get("solo")):

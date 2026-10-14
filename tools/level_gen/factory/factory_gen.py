@@ -43,6 +43,7 @@ START = (-7.0, 0.05, 14.0)
 # 전이(P-05) 뒤에만 있는 지하 통로: 생산동 아래로 서쪽으로 뻗는다 (P-06 첫 개체 조우 장소)
 OW_DOOR = (17.0, 18.6)
 OW_CORRIDOR = Rect(4.0, 16.4, HALL_X - WT, 19.2)
+OW_NEAR_WALL_H = 0.9       # 통로 북쪽(카메라 쪽) 벽 높이
 
 EXTRA_MATS = {
     "fac_wall_out": ((0.36, 0.37, 0.36), {}),
@@ -247,12 +248,14 @@ def otherworld(B):
     B.box(a1, "wall_b1_flood", 31.1, 32.5, 0.0, 2.3, 12.45, 12.55, True, g, "wall")
     r = OW_CORRIDOR
     B.box(ab, "floor_b1_old", r.x0, r.x1, B1 - SLAB, B1, r.z0, r.z1, True, g, "floor")
-    for z0, z1 in ((r.z0 - WT, r.z0), (r.z1, r.z1 + WT)):
-        B.box(ab, "wall_b1_flood", r.x0 - WT, r.x1, B1, -SLAB, z0, z1, True, g, "wall")
+    # 남쪽(카메라 반대편)·서쪽 끝 벽은 천장까지, 북쪽(카메라 쪽) 벽은 허리 높이로 낮춘다
+    # (높은 벽이 좁은 통로 바닥을 거의 다 가려 통로가 땅에 묻힌 것처럼 보였다)
+    B.box(ab, "wall_b1_flood", r.x0 - WT, r.x1, B1, -SLAB, r.z0 - WT, r.z0, True, g, "wall")
+    B.box(ab, "wall_b1_flood", r.x0 - WT, r.x1, B1, B1 + OW_NEAR_WALL_H, r.z1, r.z1 + WT, True, g, "wall")
     B.box(ab, "wall_b1_flood", r.x0 - WT, r.x0, B1, -SLAB, r.z0, r.z1, True, g, "wall")
-    # 바닥에 고인 물, 벽을 따라 늘어진 배관
+    # 바닥에 고인 물, 남쪽 벽을 따라 늘어진 배관
     B.box(ab, "water", 7.0, 12.0, B1, B1 + 0.01, r.z0 + 0.4, r.z1 - 0.6, False, g, "puddle")
-    B.box(ab, "pipe", r.x0, r.x1, B1 + 2.9, B1 + 3.1, r.z1 - 0.3, r.z1 - 0.1, False, g, "pipe")
+    B.box(ab, "pipe", r.x0, r.x1, B1 + 2.9, B1 + 3.1, r.z0 + 0.1, r.z0 + 0.3, False, g, "pipe")
 
 
 # ---------------------------------------------------------------- 씬
@@ -355,9 +358,9 @@ def main():
                  "shamu_force_flag": "p04_side_forced",
                  "shamu_force_choice": "옆문을 뜯는다 — 빠르지만 사이렌·경비 증원, 보안 업체 출동까지 시간 제한"},
         "security": {"shamu_question": "사비, 보안망은 네 몫이야.",
-                     "solo_radio_line": "보안실 단말은 내가 직접 만져야 해. 경비부터 다 재워 줘. 그럼 바로 들어갈게."},
+                     "solo_radio_line": "보안실 단말은 내가 직접 만져야 해. 경비부터 다 기절시켜 줘. 그럼 바로 들어갈게."},
         "alarm": {"shamu_question": "사비, 경보 장치 부탁해.",
-                  "solo_radio_line": "경보 장치는 내가 직접 끌게. 경비를 다 재우면 들어갈 테니까 조금만 버텨."},
+                  "solo_radio_line": "경보 장치는 내가 직접 끌게. 경비를 다 기절시키면 들어갈 테니까 조금만 버텨."},
         "server": {"shamu_question": "사비, 영상 복원 부탁해.",
                    "solo_radio_line": "서버는 외부 망이랑 끊겨 있어. 내가 직접 가야 해."},
     }
@@ -457,7 +460,7 @@ def main():
 def write_chapter():
     x, y, z = START
     lines = [
-        "[gd_scene load_steps=11 format=3]", "",
+        "[gd_scene load_steps=12 format=3]", "",
         '[ext_resource type="Script" path="res://scripts/chapters/PrologueFactory.gd" id="1_script"]',
         '[ext_resource type="PackedScene" path="res://scenes/prologue/FactoryWorld.tscn" id="2_world"]',
         '[ext_resource type="PackedScene" path="res://scenes/characters/PlayerParty.tscn" id="3_party"]',
@@ -467,6 +470,7 @@ def write_chapter():
         '[ext_resource type="Script" path="res://scripts/ui/VitalsOverlay.gd" id="7_overlay"]',
         '[ext_resource type="Script" path="res://scripts/ui/FailureScreen.gd" id="8_failure"]',
         '[ext_resource type="Script" path="res://scripts/ui/CaptionSequence.gd" id="9_caption"]',
+        '[ext_resource type="Script" path="res://scripts/ui/Journal.gd" id="99_journal"]',
         "",
         '[node name="PrologueFactory" type="Node3D"]', 'script = ExtResource("1_script")', "",
         '[node name="FactoryWorld" parent="." node_paths=PackedStringArray("party", "camera") instance=ExtResource("2_world")]',
@@ -482,6 +486,8 @@ def write_chapter():
         'script = ExtResource("7_overlay")', 'party = NodePath("../PlayerParty")', "",
         '[node name="FailureScreen" type="CanvasLayer" parent="."]', 'script = ExtResource("8_failure")', "",
         '[node name="CaptionSequence" type="CanvasLayer" parent="."]', 'script = ExtResource("9_caption")', "",
+        # Tab 수첩 (협회 보고서 · 수칙서 · 인벤토리)
+        '[node name="Journal" type="CanvasLayer" parent="."]', 'script = ExtResource("99_journal")', "",
     ]
     path = os.path.join(ROOT, "scenes", "chapters", "Prologue_Factory.tscn")
     open(path, "w", encoding="utf-8", newline="\n").write("\n".join(lines))

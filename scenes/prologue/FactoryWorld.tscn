@@ -1,4 +1,4 @@
-[gd_scene load_steps=689 format=3]
+[gd_scene load_steps=690 format=3]
 
 [ext_resource type="Script" path="res://scripts/world/WorldPhaseController.gd" id="e1"]
 [ext_resource type="Script" path="res://scripts/world/ZoneArea.gd" id="e2"]
@@ -7962,7 +7962,7 @@ buffer = PackedFloat32Array(17.8, 0, 0, 12.9, 0, 0.2, 0, -3.9, 0, 0, 2.8, 17.8)
 transform_format = 1
 instance_count = 3
 mesh = SubResource("s502")
-buffer = PackedFloat32Array(18, 0, 0, 12.8, 0, 3.6, 0, -2, 0, 0, 0.2, 16.3, 18, 0, 0, 12.8, 0, 3.6, 0, -2, 0, 0, 0.2, 19.3, 0.2, 0, 0, 3.9, 0, 3.6, 0, -2, 0, 0, 2.8, 17.8)
+buffer = PackedFloat32Array(18, 0, 0, 12.8, 0, 3.6, 0, -2, 0, 0, 0.2, 16.3, 18, 0, 0, 12.8, 0, 0.9, 0, -3.35, 0, 0, 0.2, 19.3, 0.2, 0, 0, 3.9, 0, 3.6, 0, -2, 0, 0, 2.8, 17.8)
 
 [sub_resource type="BoxMesh" id="s507"]
 material = SubResource("s397")
@@ -7978,7 +7978,7 @@ buffer = PackedFloat32Array(5, 0, 0, 9.5, 0, 0.01, 0, -3.795, 0, 0, 1.8, 17.7)
 transform_format = 1
 instance_count = 1
 mesh = SubResource("s500")
-buffer = PackedFloat32Array(17.8, 0, 0, 12.9, 0, 0.2, 0, -0.8, 0, 0, 0.2, 19)
+buffer = PackedFloat32Array(17.8, 0, 0, 12.9, 0, 0.2, 0, -0.8, 0, 0, 0.2, 16.6)
 
 [sub_resource type="ShaderMaterial" id="s510"]
 render_priority = 0
@@ -8314,6 +8314,9 @@ size = Vector3(17.8, 0.2, 2.8)
 size = Vector3(18, 3.6, 0.2)
 
 [sub_resource type="BoxShape3D" id="s601"]
+size = Vector3(18, 0.9, 0.2)
+
+[sub_resource type="BoxShape3D" id="s602"]
 size = Vector3(0.2, 3.6, 2.8)
 
 [node name="FactoryWorld" type="Node3D" node_paths=PackedStringArray("world_environment", "ambient")]
@@ -8646,7 +8649,7 @@ hack_prompt = "보안망 접속·삭제 자료 복구"
 requires_line = "경비원이 모니터 앞을 지키고 있어. 샤무가 뒤에서 조용히 처리해 줘야 단말에 손댈 수 있어."
 marker_height = 1.80
 shamu_question = "사비, 보안망은 네 몫이야."
-solo_radio_line = "보안실 단말은 내가 직접 만져야 해. 경비부터 다 재워 줘. 그럼 바로 들어갈게."
+solo_radio_line = "보안실 단말은 내가 직접 만져야 해. 경비부터 다 기절시켜 줘. 그럼 바로 들어갈게."
 
 [node name="InteractionPoint" type="Marker3D" parent="Interactables/SecurityTerminal"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 1.2)
@@ -8661,7 +8664,7 @@ hack_prompt = "경보 장치 해제"
 requires_line = ""
 marker_height = 1.80
 shamu_question = "사비, 경보 장치 부탁해."
-solo_radio_line = "경보 장치는 내가 직접 끌게. 경비를 다 재우면 들어갈 테니까 조금만 버텨."
+solo_radio_line = "경보 장치는 내가 직접 끌게. 경비를 다 기절시키면 들어갈 테니까 조금만 버텨."
 
 [node name="InteractionPoint" type="Marker3D" parent="Interactables/AlarmPanel"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1, 1.1)
@@ -9499,9 +9502,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.8, -2, 16.3)
 shape = SubResource("s600")
 
 [node name="S_3" type="CollisionShape3D" parent="Buildings/factory/B1/Arch/Collision_3"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.8, -2, 19.3)
-shape = SubResource("s600")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.8, -3.35, 19.3)
+shape = SubResource("s601")
 
 [node name="S_4" type="CollisionShape3D" parent="Buildings/factory/B1/Arch/Collision_3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.9, -2, 17.8)
-shape = SubResource("s601")
+shape = SubResource("s602")

@@ -89,7 +89,7 @@ func _run() -> void:
 	await _input_frames()
 
 	# --- 규칙 수첩이 열려 있으면 ESC는 수첩만 닫는다 ---
-	var notebook: Node = current_scene.get_node("RuleNotebook")
+	var notebook: Node = current_scene.get_node("Journal")
 	notebook.open()
 	await _input_frames()
 	_press_key(KEY_ESCAPE)

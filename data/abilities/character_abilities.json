@@ -5,7 +5,8 @@
     "cooldown": 8.0,
     "radius": 9.0,
     "duration": 6.0,
-    "pulse_seconds": 0.9
+    "pulse_seconds": 0.9,
+    "ping_seconds": 2.0
   },
   "distract": {
     "name": "주의 끌기",

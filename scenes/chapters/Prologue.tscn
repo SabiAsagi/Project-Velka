@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3]
+[gd_scene load_steps=23 format=3]
 
 [ext_resource type="Script" path="res://scripts/chapters/Prologue.gd" id="1_script"]
 [ext_resource type="PackedScene" path="res://scenes/characters/PlayerParty.tscn" id="2_party"]
@@ -11,6 +11,7 @@
 [ext_resource type="Script" path="res://scripts/interactables/BreakableObstacle.gd" id="8_break"]
 [ext_resource type="Script" path="res://scripts/interactables/SpyVisionTarget.gd" id="9_spy"]
 [ext_resource type="PackedScene" path="res://scenes/entities/TrainingStalker.tscn" id="10_stalker"]
+[ext_resource type="Script" path="res://scripts/ui/Journal.gd" id="99_journal"]
 [sub_resource type="Environment" id="Environment_prologue"]
 background_mode = 1
 background_color = Color(0.035, 0.045, 0.06, 1)
@@ -339,3 +340,6 @@ target = NodePath("../PlayerParty/Sabi")
 party = NodePath("../PlayerParty")
 
 [node name="DialogueBox" parent="." instance=ExtResource("5_dialogue")]
+
+[node name="Journal" type="CanvasLayer" parent="."]
+script = ExtResource("99_journal")

@@ -11,11 +11,14 @@ extends CanvasLayer
 #   - 인물 대사는 「」 로 감싸고, 서술(system)은 초상화·이름표 없이 흐린 글씨
 #   - "radio": true 인 대사는 무전: 이름표에 "· 무전", 잡음, 초상화가 푸르스름하다
 #   - 타자기 효과, 클릭/E 로 넘기기, 화면 흔들림(shake), 선택지, BBCode ([shake] [wave] [color] [b])
-# 초상화를 새로 그리면 assets/characters/portraits/<id>_<표정>.png 로 넣고 PORTRAIT_FILES 에 추가한다.
+# 초상화를 새로 그리면 assets/characters/portraits/<id>_<표정>.png 로 넣고 PORTRAIT_FILES 에 추가한 뒤
+# tools/portraits/make_dialogue_portraits.py 로 대화창용 사본(portraits/dialogue/)을 만든다.
 
 @export var typing_speed: float = 0.028 # 글자당 출력 속도(초)
 
-const PORTRAIT_DIR := "res://assets/characters/portraits/"
+## 대화창 전용 초상화 (원본을 액자 비율·2배 크기로 줄이고 구도를 맞춘 사본: tools/portraits/make_dialogue_portraits.py)
+## 원본(1254px 무손실)은 처음 읽는 데 장당 0.05~0.4초가 걸려 대화창이 뜨기 전에 화면이 멈췄다.
+const PORTRAIT_DIR := "res://assets/characters/portraits/dialogue/"
 const PORTRAIT_FILES := {
 	"sabi": {
 		"neutral": "sabi_neutral.png",

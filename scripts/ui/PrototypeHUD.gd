@@ -33,7 +33,7 @@ var overlay: Control
 const HudOverlay := preload("res://scripts/ui/HudOverlay.gd")
 const TENSION_FX_PATH := "res://scripts/ui/TensionFx.gd"
 var tension: Control
-const KEYS_TEXT := "WASD 이동   Shift 달리기   E 조사   F 능력   Space 공격   R 수첩   Q 전환   C 기다려/따라와   ESC 메뉴"
+const KEYS_TEXT := "WASD 이동   Shift 달리기   E 조사   F 능력   Space 공격   Tab 수첩   Q 전환   C 기다려/따라와   ESC 메뉴"
 
 
 func _ready() -> void:

@@ -60,6 +60,8 @@ func _run() -> void:
 	_check(code_trace.is_revealed and danger.is_revealed and rule_trace.is_revealed, "반경 안의 단서·위험·규칙 흔적이 모두 드러난다")
 	_check(code_trace.get_color() != danger.get_color() and danger.get_color() != rule_trace.get_color(), "분류마다 다른 색으로 표시된다")
 	_check(_gm.get_story_flag("spyvision_backdoor_code", false), "발견 기록이 스토리 플래그에 남는다")
+	var pings: Array = get_root().find_children("AbilityPing", "Node3D", true, false)
+	_check(pings.size() >= 1, "반경 안의 괴이·조사할 거리 위치가 잠깐 떠오른다")
 	_check(code_inspect.can_interact(sabi), "발견한 단서는 조사 가능해진다")
 	_check(not sabi.ability.try_activate(), "쿨타임 중에는 다시 발동되지 않는다")
 

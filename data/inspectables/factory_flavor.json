@@ -25,6 +25,46 @@
         "text_sabi": "자판기 불빛이 붉어. 진열된 음료 이름이 전부 읽을 수 없는 글자야.",
         "text_shamu": "마실 생각 없어. 저건 절대."
       }
+    ],
+    "duo_lines": [
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "serious",
+        "shamu_emotion": "neutral",
+        "text": "자판기 불이 아직 들어와 있어. 폐쇄된 공장인데 누가 전기를 계속 대고 있는 거지?"
+      },
+      {
+        "speaker": "shamu",
+        "sabi_emotion": "serious",
+        "shamu_emotion": "smug",
+        "text": "동전 넣으면 나오려나."
+      },
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "serious",
+        "shamu_emotion": "smug",
+        "text": "……샤무."
+      },
+      {
+        "speaker": "shamu",
+        "sabi_emotion": "serious",
+        "shamu_emotion": "neutral",
+        "text": "농담이야."
+      }
+    ],
+    "otherworld_duo_lines": [
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "worried",
+        "shamu_emotion": "serious",
+        "text": "자판기 불빛이 붉어. 음료 이름이 전부 읽을 수 없는 글자야."
+      },
+      {
+        "speaker": "shamu",
+        "sabi_emotion": "worried",
+        "shamu_emotion": "serious",
+        "text": "마실 생각 없어. 저건 절대."
+      }
     ]
   },
   "fac_lounge_table": {
@@ -53,6 +93,40 @@
         "text_sabi": "탁자 위가 깨끗해. 조금 전까지 있던 컵이 전부 없어졌어.",
         "text_shamu": "치운 사람이 없는데 치워졌네."
       }
+    ],
+    "duo_lines": [
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "식은 커피랑 컵라면 용기. 경비원들 야식인가 봐."
+      },
+      {
+        "speaker": "shamu",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "smug",
+        "text": "야식으로 라면이라니. 너였으면 밥이라도 지어 왔겠지."
+      },
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "gentle_smile",
+        "shamu_emotion": "smug",
+        "text": "근무 중엔 따뜻한 걸 먹어야 졸리지 않아."
+      }
+    ],
+    "otherworld_duo_lines": [
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "worried",
+        "shamu_emotion": "serious",
+        "text": "탁자 위가 깨끗해. 조금 전까지 있던 컵이 전부 없어졌어."
+      },
+      {
+        "speaker": "shamu",
+        "sabi_emotion": "worried",
+        "shamu_emotion": "serious",
+        "text": "치운 사람이 없는데 치워졌네."
+      }
     ]
   },
   "fac_sofa": {
@@ -70,6 +144,20 @@
         "text": "",
         "text_sabi": "누가 여기서 쪽잠을 잤나 봐. 담요가 구겨져 있어.",
         "text_shamu": "경비 서다 졸았나. 운 좋은 날이었겠네."
+      }
+    ],
+    "duo_lines": [
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "누가 여기서 쪽잠을 잤나 봐. 담요가 구겨져 있어."
+      },
+      {
+        "speaker": "shamu",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "smug",
+        "text": "경비 서다 졸았나. 운 좋은 날이었겠네."
       }
     ]
   },
@@ -89,6 +177,20 @@
         "text_sabi": "작업복 사물함. 이름표가 전부 뜯겨 있어.",
         "text_shamu": "흔적 지우는 데는 꼼꼼하네."
       }
+    ],
+    "duo_lines": [
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "serious",
+        "shamu_emotion": "neutral",
+        "text": "작업복 사물함. 이름표가 전부 뜯겨 있어."
+      },
+      {
+        "speaker": "shamu",
+        "sabi_emotion": "serious",
+        "shamu_emotion": "serious",
+        "text": "흔적 지우는 데는 꼼꼼하네."
+      }
     ]
   },
   "fac_cabinet": {
@@ -106,6 +208,26 @@
         "text": "",
         "text_sabi": "출입 기록 바인더. 마지막 장이 찢겨 나갔어.",
         "text_shamu": "누가 먼저 다녀갔다는 거네."
+      }
+    ],
+    "duo_lines": [
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "serious",
+        "shamu_emotion": "neutral",
+        "text": "출입 기록 바인더. 마지막 장이 찢겨 나갔어."
+      },
+      {
+        "speaker": "shamu",
+        "sabi_emotion": "serious",
+        "shamu_emotion": "serious",
+        "text": "누가 먼저 다녀갔다는 거네."
+      },
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "worried",
+        "shamu_emotion": "serious",
+        "text": "찢은 자국이 아직 하얘. 오래되지 않았어."
       }
     ]
   },
@@ -140,7 +262,21 @@
       ],
       "post": true,
       "color": "#7a1612"
-    }
+    },
+    "duo_lines": [
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "serious",
+        "shamu_emotion": "neutral",
+        "text": "'관계자 외 출입금지'. 폐쇄했다면서 표지판은 새것이야."
+      },
+      {
+        "speaker": "shamu",
+        "sabi_emotion": "serious",
+        "shamu_emotion": "serious",
+        "text": "새로 붙였다는 건, 아직 누가 관리한다는 거지."
+      }
+    ]
   },
   "fac_sign_safety": {
     "pos": [
@@ -182,7 +318,35 @@
         0.95
       ],
       "color": "#1d4a2a"
-    }
+    },
+    "duo_lines": [
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "serious",
+        "shamu_emotion": "neutral",
+        "text": "무재해 기록판이 '0일'에서 멈춰 있어."
+      },
+      {
+        "speaker": "shamu",
+        "sabi_emotion": "serious",
+        "shamu_emotion": "serious",
+        "text": "마지막 날에 뭔가 있었다는 얘기네."
+      }
+    ],
+    "otherworld_duo_lines": [
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "worried",
+        "shamu_emotion": "serious",
+        "text": "숫자가 바뀌었어. '무재해 -1일'."
+      },
+      {
+        "speaker": "shamu",
+        "sabi_emotion": "worried",
+        "shamu_emotion": "surprised",
+        "text": "하루를 빼 간 거야? 누가?"
+      }
+    ]
   },
   "fac_sign_b1": {
     "pos": [
@@ -213,6 +377,20 @@
         1.7,
         0.65
       ]
-    }
+    },
+    "duo_lines": [
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "'자료 보존실 →'. 화살표가 서버실 쪽이야."
+      },
+      {
+        "speaker": "shamu",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "annoyed",
+        "text": "보존이 아니라 갈아 버리던데."
+      }
+    ]
   }
 }

@@ -133,7 +133,7 @@ def write_chapter():
         '[ext_resource type="PackedScene" path="res://scenes/cameras/FollowCamera.tscn" id="4_camera"]',
         '[ext_resource type="PackedScene" path="res://scenes/ui/PrototypeHUD.tscn" id="5_hud"]',
         '[ext_resource type="PackedScene" path="res://scenes/ui/DialogueBox.tscn" id="6_dialogue"]',
-        '[ext_resource type="Script" path="res://scripts/ui/RuleNotebook.gd" id="7_notebook"]',
+        '[ext_resource type="Script" path="res://scripts/ui/Journal.gd" id="7_journal"]',
         '[ext_resource type="Script" path="res://scripts/ui/FailureScreen.gd" id="8_failure"]',
         '[ext_resource type="Script" path="res://scripts/ui/VitalsOverlay.gd" id="9_overlay"]',
         "",
@@ -149,7 +149,7 @@ def write_chapter():
         '[node name="DialogueBox" parent="." instance=ExtResource("6_dialogue")]', "",
         '[node name="VitalsOverlay" type="CanvasLayer" parent="." node_paths=PackedStringArray("party")]',
         'script = ExtResource("9_overlay")', 'party = NodePath("../PlayerParty")', "",
-        '[node name="RuleNotebook" type="CanvasLayer" parent="."]', 'script = ExtResource("7_notebook")', "",
+        '[node name="Journal" type="CanvasLayer" parent="."]', 'script = ExtResource("7_journal")', "",
         '[node name="FailureScreen" type="CanvasLayer" parent="."]', 'script = ExtResource("8_failure")', "",
     ]
     path = os.path.join(ROOT, "scenes", "chapters", "Chapter1_School.tscn")

@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="Script" path="res://scripts/chapters/PrologueSafehouse.gd" id="1_script"]
 [ext_resource type="PackedScene" path="res://scenes/prologue/SafehouseWorld.tscn" id="2_world"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" path="res://scenes/ui/DialogueBox.tscn" id="6_dialogue"]
 [ext_resource type="Script" path="res://scripts/ui/VitalsOverlay.gd" id="7_overlay"]
 [ext_resource type="Script" path="res://scripts/ui/CaptionSequence.gd" id="8_caption"]
+[ext_resource type="Script" path="res://scripts/ui/Journal.gd" id="99_journal"]
 
 [node name="PrologueSafehouse" type="Node3D"]
 script = ExtResource("1_script")
@@ -35,3 +36,6 @@ party = NodePath("../PlayerParty")
 
 [node name="CaptionSequence" type="CanvasLayer" parent="."]
 script = ExtResource("8_caption")
+
+[node name="Journal" type="CanvasLayer" parent="."]
+script = ExtResource("99_journal")
