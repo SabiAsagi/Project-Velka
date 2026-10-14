@@ -1,25 +1,25 @@
 class_name VelkaStyle
 
 # 프로젝트 벨카 - UI 공통 스타일 (색·글꼴·패널)
-# 기본 디자인 0.1 ("서로 다른 빛, 하나의 균열"): 먹색 바탕, 바랜 흰 글자, 사비(청록)·샤무(금빛) 강조, 위험은 탁한 적색.
-# 색은 디자인 토큰(Belka_Design_v0.1/design-tokens.json)을 따른다.
+# 기본 디자인 0.2 ("서로 다른 빛, 하나의 균열"): 먹색 바탕, 바랜 흰 글자, 사비(청록 #45A1B5)·샤무(금빛 #D9A336) 강조, 위험은 탁한 적색.
+# 색은 디자인 토큰(Project_Velka_Design_v0.2/design-tokens.json)을 따른다.
 # 글꼴: 메뉴·본문·UI = Pretendard, 게임 속 문서·서술 = 나눔명조, 손글씨 메모 = 나눔펜, 기록·단말 = 나눔고딕코딩 (assets/fonts, OFL)
 
-const INK := Color("#E8E5DD")                  # 기본 글자 (바랜 흰색)
+const INK := Color("#ECE7DB")                  # 기본 글자 (바랜 흰색)
 const INK_DIM := Color("#A8B3BA")              # 보조 글자
 const BG := Color(0.063, 0.09, 0.114, 0.95)    # 패널 바탕 (#10171D)
 const BG_DEEP := Color("#101318")              # 화면 바탕 (먹색)
 const BG_SOFT := Color(0.09, 0.12, 0.15, 0.9)
 const LINE := Color("#53616B")                 # 테두리
-const PAPER := Color("#E8E2D2")                # 문서 종이
+const PAPER := Color("#E6DFCD")                # 문서 종이
 const PAPER_INK := Color("#26313A")            # 문서 글자
 const RED := Color(0.78, 0.13, 0.12)           # 붉은 실 (사건 보드)
 const RED_SOFT := Color(0.95, 0.5, 0.42)
 const DANGER := Color("#C96666")               # 위험·삭제
-const FOCUS := Color("#58C6BE")                # 선택·포커스 (청록 = 사비의 빛)
-const ACCENT := Color("#D8B85B")               # 강조·섹션 제목 (금빛 = 샤무의 빛)
-const SABI := Color("#58C6BE")
-const SHAMU := Color("#D8B85B")
+const FOCUS := Color("#45A1B5")                # 선택·포커스 (청록 = 사비의 빛)
+const ACCENT := Color("#D9A336")               # 강조·섹션 제목 (금빛 = 샤무의 빛)
+const SABI := Color("#45A1B5")
+const SHAMU := Color("#D9A336")
 const GOOD := Color(0.62, 0.86, 0.7)
 const TERMINAL := Color(0.42, 0.95, 0.62)
 

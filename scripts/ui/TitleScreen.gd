@@ -127,42 +127,95 @@ static func _keycap(text: String) -> PanelContainer:
 	return cap
 
 
-## 제작진 (data/ui/credits.json): 화면 가운데 패널. 글꼴 라이선스 고지를 겸한다.
+## 제작진 (data/ui/credits.json, 시안 19): 전체 화면. 로고 · 역할별 이름 표 · 엔진·서체·에셋 고지.
 func _build_credits() -> void:
 	var data = JSON.parse_string(FileAccess.get_file_as_string(CREDITS_PATH)) if FileAccess.file_exists(CREDITS_PATH) else null
 	var shade := ColorRect.new()
-	shade.color = Color(0.02, 0.025, 0.035, 0.82)
+	shade.color = Color(0.04, 0.05, 0.065, 0.93)
 	shade.set_anchors_preset(Control.PRESET_FULL_RECT)
 	credits_panel.add_child(shade)
-	var panel := PanelContainer.new()
-	var box := VelkaStyle.panel_style(VelkaStyle.LINE, VelkaStyle.BG, 0)
-	box.set_content_margin_all(48)
-	panel.add_theme_stylebox_override("panel", box)
-	panel.set_anchors_preset(Control.PRESET_CENTER)
-	panel.custom_minimum_size = Vector2(980, 0)
-	credits_panel.add_child(panel)
+	var head := VelkaStyle.label("PROJECT VELKA / CREDITS", VelkaStyle.spaced(VelkaStyle.sans_medium(), 5), 15, VelkaStyle.INK_DIM)
+	head.position = Vector2(84, 74)
+	credits_panel.add_child(head)
+	var back := Button.new()
+	back.text = "타이틀로"
+	back.flat = true
+	back.focus_mode = Control.FOCUS_NONE
+	back.add_theme_font_override("font", VelkaStyle.sans())
+	back.add_theme_font_size_override("font_size", 20)
+	back.add_theme_color_override("font_color", VelkaStyle.INK)
+	back.anchor_left = 1.0
+	back.anchor_right = 1.0
+	back.offset_left = -220
+	back.offset_right = -84
+	back.offset_top = 58
+	back.offset_bottom = 102
+	back.pressed.connect(_close_credits)
+	credits_panel.add_child(back)
+
+	var center := CenterContainer.new()
+	center.set_anchors_preset(Control.PRESET_FULL_RECT)
+	credits_panel.add_child(center)
 	var column := VBoxContainer.new()
-	column.add_theme_constant_override("separation", 14)
-	panel.add_child(column)
-	column.add_child(VelkaStyle.label("CREDITS", VelkaStyle.spaced(VelkaStyle.sans_medium(), 6), 16, VelkaStyle.INK_DIM))
-	column.add_child(VelkaStyle.label("제작진", VelkaStyle.sans_bold(), 40, VelkaStyle.INK))
+	column.custom_minimum_size = Vector2(1160, 0)
+	column.add_theme_constant_override("separation", 0)
+	center.add_child(column)
+	var logo := TextureRect.new()
+	logo.texture = ($HeaderContainer/Wordmark as TextureRect).texture
+	logo.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	logo.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	logo.custom_minimum_size = Vector2(0, 170)
+	column.add_child(logo)
+	var title := VelkaStyle.label("제작진", VelkaStyle.spaced(VelkaStyle.serif(), 6), 44, VelkaStyle.INK)
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	column.add_child(title)
+	column.add_child(_gap(30))
 	if data is Dictionary:
-		for section in data.get("sections", []):
-			var gap := Control.new()
-			gap.custom_minimum_size.y = 8
-			column.add_child(gap)
-			column.add_child(VelkaStyle.label(String(section.get("title", "")), VelkaStyle.spaced(VelkaStyle.sans_semibold(), 3), 19, VelkaStyle.ACCENT))
-			for line in section.get("lines", []):
-				column.add_child(VelkaStyle.label(String(line), VelkaStyle.sans(), 21, VelkaStyle.INK))
+		for pair in data.get("roles", []):
+			var row := HBoxContainer.new()
+			row.custom_minimum_size = Vector2(0, 58)
+			var role := VelkaStyle.label(String(pair[0]), VelkaStyle.sans(), 21, VelkaStyle.INK)
+			role.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			role.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+			role.custom_minimum_size.y = 58
+			row.add_child(role)
+			var name_label := VelkaStyle.label(String(pair[1]), VelkaStyle.sans(), 21, VelkaStyle.INK)
+			name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			name_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+			name_label.custom_minimum_size.y = 58
+			row.add_child(name_label)
+			column.add_child(row)
+			var line := ColorRect.new()
+			line.color = Color(VelkaStyle.LINE, 0.6)
+			line.custom_minimum_size = Vector2(0, 1)
+			column.add_child(line)
+		column.add_child(_gap(30))
+		for notice in data.get("notices", []):
+			var l := VelkaStyle.label(String(notice), VelkaStyle.sans(), 16, VelkaStyle.INK_DIM)
+			l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			column.add_child(l)
+			column.add_child(_gap(6))
 		if data.has("note"):
-			column.add_child(VelkaStyle.label(String(data["note"]), VelkaStyle.sans(), 16, VelkaStyle.INK_DIM))
+			var n := VelkaStyle.label(String(data["note"]), VelkaStyle.sans(), 15, Color(VelkaStyle.INK_DIM, 0.75))
+			n.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			column.add_child(n)
 	var foot := HBoxContainer.new()
 	foot.add_theme_constant_override("separation", 10)
+	foot.anchor_top = 1.0
+	foot.anchor_bottom = 1.0
+	foot.offset_left = 84
+	foot.offset_right = 400
+	foot.offset_top = -92
+	foot.offset_bottom = -60
 	foot.add_child(_keycap("Esc"))
-	foot.add_child(VelkaStyle.label("돌아가기", VelkaStyle.sans(), 17, VelkaStyle.INK_DIM))
-	column.add_child(foot)
-	# 가운데 정렬 (크기가 정해진 뒤)
-	panel.resized.connect(func(): panel.position = (size - panel.size) * 0.5)
+	foot.add_child(VelkaStyle.label("타이틀로", VelkaStyle.sans(), 17, VelkaStyle.INK_DIM))
+	credits_panel.add_child(foot)
+
+
+func _gap(height: float) -> Control:
+	var c := Control.new()
+	c.custom_minimum_size = Vector2(0, height)
+	return c
 
 
 func _fade_in() -> void:

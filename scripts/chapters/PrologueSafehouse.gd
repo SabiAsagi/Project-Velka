@@ -14,8 +14,9 @@ signal objective_changed(text: String)
 
 const OBJECTIVE_COLOR := Color(0.95, 0.85, 0.45)
 ## 프롤로그가 끝나면 띄우는 다음 장 제목 (TitleCard)
-const NEXT_CHAPTER_NUMBER := "제1장"
+const NEXT_CHAPTER_NUMBER := "제 1 장"
 const NEXT_CHAPTER_TITLE := "무진고등학교"
+const NEXT_CHAPTER_SUBTITLE := "안내문을 읽어 주세요."
 const TALK_FLAGS := {"npc_seo": "talked_seo", "npc_han": "talked_han", "npc_yu": "talked_yu"}
 ## 단계별 NPC 위치 (단계 이름 -> {노드 이름: 위치}). 이전 단계 위치는 뒤 단계가 덮어쓴다.
 const STAGE_POSITIONS := {
@@ -206,7 +207,7 @@ func _briefing() -> void:
 	await captions.finished
 	GameManager.set_story_flag("prologue_done", true)
 	# "프롤로그 종료" 대신 본편이 시작되는 타이틀 (게임 제목 → 제1장)
-	var card := TitleCard.play(get_tree(), NEXT_CHAPTER_NUMBER, NEXT_CHAPTER_TITLE)
+	var card := TitleCard.play(get_tree(), NEXT_CHAPTER_NUMBER, NEXT_CHAPTER_TITLE, NEXT_CHAPTER_SUBTITLE)
 	await card.finished
 	_busy = false
 	_refresh_objective()

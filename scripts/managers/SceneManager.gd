@@ -6,6 +6,7 @@ extends CanvasLayer
 # 씬 파일은 ResourceLoader 의 백그라운드 스레드로 읽는다: 페이드 아웃 동안 이미 읽기 시작하고,
 # 이야기 씬에 들어가면 다음 이야기 씬을 미리 읽어 둔다 (큰 씬을 동기 load() 하면 한 프레임이 수백 ms~1초 이상 멈춘다).
 # 시작할 때 절차적 효과음(SfxBank)과 대화창 초상화도 백그라운드에서 미리 만들어/읽어 둔다.
+# 이야기 장면으로 갈 때는 페이드 뒤 로딩 화면(LoadingScreen, 실제 읽기 진행률)을 띄운다.
 
 const SCENE_TITLE := "res://scenes/ui/TitleScreen.tscn"
 const SCENE_HIDEOUT := "res://scenes/chapters/Prologue_Hideout.tscn"
@@ -33,6 +34,9 @@ const CHAPTER_TITLES := {
 const DIALOGUE_BOX_SCRIPT := preload("res://scripts/ui/DialogueBox.gd")
 ## 새 씬이 첫 프레임을 그리고 난 뒤 페이드 인을 시작하기까지 기다리는 프레임 수 (씬 _ready 의 부하가 페이드 인에 겹치지 않게)
 const SETTLE_FRAMES := 2
+## 로딩 화면: 나타나고 사라지는 시간, 최소로 보여 주는 시간 (너무 짧게 번쩍이지 않게)
+const LOADING_FADE := 0.2
+const LOADING_MIN_SECONDS := 0.6
 ## 장면 전환 중 탐색 잠금 이름
 const TRANSITION_LOCK := "scene_transition"
 ## 이야기 씬에 들어온 뒤 다음 이야기 씬을 미리 읽기 시작하기까지의 시간(초)
@@ -96,8 +100,25 @@ func change_scene(target_path: String, with_fade: bool = true, duration: float =
 		tween_out.tween_property(_fade_rect, "modulate:a", 1.0, duration)
 		await tween_out.finished
 
-	var packed := await _await_scene(target_path)
+	# 이야기 장면으로 갈 때는 검은 화면 위에 로딩 화면 (실제 읽기 진행률)
+	var loading: LoadingScreen = null
+	var loading_started := Time.get_ticks_msec()
+	if with_fade and not chapter_of_scene(target_path).is_empty():
+		loading = LoadingScreen.new()
+		add_child(loading)
+		loading.setup(chapter_of_scene(target_path))
+		loading.modulate.a = 0.0
+		create_tween().tween_property(loading, "modulate:a", 1.0, LOADING_FADE)
+
+	var packed := await _await_scene(target_path, loading)
+	if loading:
+		loading.set_progress(1.0)
+		var shown := (Time.get_ticks_msec() - loading_started) / 1000.0
+		if shown < LOADING_MIN_SECONDS:
+			await get_tree().create_timer(LOADING_MIN_SECONDS - shown).timeout
 	if packed == null:
+		if loading:
+			loading.queue_free()
 		push_error("[SceneManager] 씬 읽기 실패: %s" % target_path)
 		_is_transitioning = false
 		GameManager.set_exploration_lock(TRANSITION_LOCK, false)
@@ -130,6 +151,12 @@ func change_scene(target_path: String, with_fade: bool = true, duration: float =
 	if not chapter.is_empty() and autosave_enabled:
 		SaveManager.save_game()
 
+	if loading:
+		var tween_loading := create_tween()
+		tween_loading.tween_property(loading, "modulate:a", 0.0, LOADING_FADE)
+		await tween_loading.finished
+		loading.queue_free()
+
 	if with_fade:
 		var tween_in = create_tween()
 		tween_in.tween_property(_fade_rect, "modulate:a", 0.0, duration)
@@ -158,13 +185,16 @@ func _request_scene(scene_path: String) -> void:
 
 ## 읽기가 끝날 때까지 프레임마다 기다렸다가 PackedScene 을 돌려준다 (기다리는 동안 게임 루프는 멈추지 않는다).
 ## 읽기에 실패하면 null.
-func _await_scene(scene_path: String) -> PackedScene:
+func _await_scene(scene_path: String, loading: LoadingScreen = null) -> PackedScene:
 	if _prefetched.has(scene_path):
 		var ready_scene: PackedScene = _prefetched[scene_path]
 		_prefetched.erase(scene_path)
 		return ready_scene
+	var progress: Array = []
 	while true:
-		var status := ResourceLoader.load_threaded_get_status(scene_path)
+		var status := ResourceLoader.load_threaded_get_status(scene_path, progress)
+		if loading and not progress.is_empty():
+			loading.set_progress(float(progress[0]) * 0.97)
 		if status == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
 			await get_tree().process_frame
 			continue
