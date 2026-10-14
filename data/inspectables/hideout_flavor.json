@@ -441,7 +441,7 @@
         "shamu_emotion": "neutral",
         "text": "",
         "text_sabi": "샤무 침대. 이불이 각 잡혀 있어.",
-        "text_shamu": "군대 습관 아니고 그냥 성격이야."
+        "text_shamu": "아침에 일어나면 바로 개. 흐트러져 있으면 신경 쓰여."
       }
     ],
     "duo_lines": [
@@ -455,7 +455,7 @@
         "speaker": "shamu",
         "sabi_emotion": "neutral",
         "shamu_emotion": "neutral",
-        "text": "군대 습관 아니고 그냥 성격이야."
+        "text": "흐트러져 있으면 신경 쓰여. 그냥 성격이야."
       },
       {
         "speaker": "sabi",
