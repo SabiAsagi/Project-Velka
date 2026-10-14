@@ -154,6 +154,21 @@ static func top_accent(width: float = 78.0) -> Control:
 	return holder
 
 
+## 키 안내용 키캡 ("Tab", "E", "Esc" …)
+static func keycap(text: String, size: int = 17) -> PanelContainer:
+	var cap := PanelContainer.new()
+	var box := panel_style(Color(INK_DIM, 0.7), Color(0, 0, 0, 0.35), 3)
+	box.content_margin_top = 2
+	box.content_margin_bottom = 2
+	box.content_margin_left = 8
+	box.content_margin_right = 8
+	cap.add_theme_stylebox_override("panel", box)
+	cap.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	cap.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	cap.add_child(label(text, sans(), size, INK))
+	return cap
+
+
 ## 작은 정사각형 버튼 (단말·보드의 닫기 등)
 static func style_small_button(b: Button, accent: Color = INK_DIM) -> void:
 	b.add_theme_font_override("font", sans())

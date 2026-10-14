@@ -23,21 +23,28 @@ var objective_log: Array[String] = []
 var hp_label: Label
 var effects_label: Label
 var partner_label: Label
-var _notice_box: VBoxContainer
 var _warning_panel: PanelContainer
 var _warning_label: Label
 var _warning_tween: Tween
 var _radio_box: VBoxContainer
-## 제한 시간 표시 (위 가운데). id -> Label
-var _timer_box: VBoxContainer
-var _timer_labels: Dictionary = {}
+## 제한 시간 표시 (위 가운데). id -> 패널, id -> 표시 문자열
+var _timer_box: HBoxContainer
+var _timer_panels: Dictionary = {}
+var _timer_texts: Dictionary = {}
 ## 새 HUD 화면 (기존 라벨들은 값만 갱신하고 숨겨 둔다 — 테스트·디버그용)
 var overlay: Control
+var _dialogue_fade: Control
+var _dialogue_fade_tween: Tween
 
 const HudOverlay := preload("res://scripts/ui/HudOverlay.gd")
 const TENSION_FX_PATH := "res://scripts/ui/TensionFx.gd"
 var tension: Control
-const KEYS_TEXT := "WASD 이동   Shift 달리기   E 조사   F 능력   Space 공격   Tab 수첩   Q 전환   C 기다려/따라와   ESC 메뉴"
+## 왼쪽 아래 키 안내 (기본 디자인 0.2 시안 02)
+const KEYS := [["Tab", "조사 기록"], ["E", "조사"], ["F", "능력"], ["Q", "전환"], ["C", "대기 / 따라와"],
+		["Shift", "달리기"], ["Space", "공격"], ["Esc", "일시정지"]]
+## 알림 머리말 색
+const NOTICE_INFO := VelkaStyle.SABI
+const NOTICE_DANGER := VelkaStyle.DANGER
 
 
 func _ready() -> void:
@@ -47,11 +54,21 @@ func _ready() -> void:
 	$MarginContainer.visible = false
 	interaction_panel.visible = false
 	_build_survival_ui()
+	# 대화 중에는 탐색 HUD를 흐리게 (컷씬은 overlay 자체를, 대화는 이 묶음을 흐린다 — 서로 덮어쓰지 않게)
+	_dialogue_fade = Control.new()
+	_dialogue_fade.name = "DialogueFade"
+	_dialogue_fade.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_dialogue_fade.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_dialogue_fade)
+	move_child(_dialogue_fade, 0)
 	overlay = HudOverlay.new()
-	add_child(overlay)
-	move_child(overlay, 0)
-	overlay.set_keys(KEYS_TEXT)
+	_dialogue_fade.add_child(overlay)
+	if not DialogueManager.dialogue_started.is_connected(_on_dialogue_started):
+		DialogueManager.dialogue_started.connect(_on_dialogue_started)
+		DialogueManager.dialogue_completed.connect(_on_dialogue_completed)
+	overlay.set_keys(KEYS)
 	_build_radio_feed()
+	_refresh_place.call_deferred()
 	if not RuleManager.rule_discovered.is_connected(_on_rule_discovered):
 		RuleManager.rule_discovered.connect(_on_rule_discovered)
 		RuleManager.rule_violated.connect(_on_rule_violated)
@@ -76,6 +93,21 @@ func _ready() -> void:
 		_bind_player(player)
 	# 긴장 연출은 부가 효과라 맨 마지막에 붙인다 (실패해도 HUD·조사 안내는 동작한다)
 	_add_tension_fx()
+
+
+func _on_dialogue_started(_id: String) -> void:
+	_fade_for_dialogue(0.0)
+
+
+func _on_dialogue_completed(_id: String) -> void:
+	_fade_for_dialogue(1.0)
+
+
+func _fade_for_dialogue(alpha: float) -> void:
+	if _dialogue_fade_tween:
+		_dialogue_fade_tween.kill()
+	_dialogue_fade_tween = create_tween()
+	_dialogue_fade_tween.tween_property(_dialogue_fade, "modulate:a", alpha, 0.25)
 
 
 func _add_tension_fx() -> void:
@@ -162,23 +194,26 @@ func _update_vitals_display() -> void:
 	if pv:
 		var pname := "샤무" if partner.character_type == GameManager.CharacterType.SHAMU else "사비"
 		var ptext := "동료 %s  체력 %d / %d" % [pname, ceili(pv.hp), roundi(pv.max_hp)]
+		var mode := "follow"
 		if bool(party.get("solo")):
 			ptext += "  (밖에서 무전 중)"
+			mode = "radio"
 		elif party.has_method("is_companion_waiting") and party.is_companion_waiting():
 			ptext += "  (대기 중 — C: 따라와)"
+			mode = "wait"
 		var pstatus: Array = pv.status_names()
 		if not pstatus.is_empty():
 			ptext += "  " + "·".join(pstatus)
 		partner_label.text = ptext
 		partner_label.modulate = Color(1.0, 0.45, 0.4) if pv.hp / maxf(pv.max_hp, 1.0) <= 0.3 else Color(0.7, 0.75, 0.8)
-		overlay.set_partner(ptext, pv.hp / maxf(pv.max_hp, 1.0) <= 0.3)
+		overlay.set_partner_vitals(pv, mode, pstatus)
 	else:
-		overlay.set_partner("", false)
+		overlay.set_partner_vitals(null, "")
 
 
-## 화면 위쪽 가운데 알림 (규칙 발견·위반, 체크포인트)
+## 알림 (기본 디자인 0.2: 오른쪽 알림 카드). "목표: …" 는 오른쪽 위 목표 칸에 고정한다.
+## 문구 앞머리로 머리말을 고른다: 수첩 기록 → "기록 갱신"(Tab 안내), 규칙 위반, 체크포인트, 그 밖은 색으로 "알림"/"경고".
 func show_notice(text: String, color: Color = Color(0.9, 0.93, 0.96), seconds: float = 3.0) -> void:
-	# "목표: …" 는 오른쪽 위 목표 칸에 고정한다
 	if text.begins_with("목표: "):
 		var goal := text.substr(4)
 		overlay.set_objective(goal)
@@ -186,47 +221,63 @@ func show_notice(text: String, color: Color = Color(0.9, 0.93, 0.96), seconds: f
 			objective_log.append(goal)
 			objective_set.emit(goal)
 		return
-	var label := Label.new()
-	label.text = text
-	label.modulate = color
-	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	label.add_theme_font_override("font", VelkaStyle.serif_bold())
-	label.add_theme_font_size_override("font_size", 21)
-	label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.85))
-	label.add_theme_constant_override("outline_size", 6)
-	_notice_box.add_child(label)
-	var tween := label.create_tween()
-	tween.tween_interval(seconds)
-	tween.tween_property(label, "modulate:a", 0.0, 0.6)
-	tween.tween_callback(label.queue_free)
+	if text.begins_with("수첩에 기록됨 — "):
+		var title := text.trim_prefix("수첩에 기록됨 — ")
+		overlay.notify("기록 갱신", "%s%s 기록했습니다." % [title, object_particle(title)], NOTICE_INFO, seconds, "Tab", "조사 기록에서 확인")
+	elif text.begins_with("수첩에 "):
+		overlay.notify("기록 갱신", text.trim_prefix("수첩에 "), NOTICE_INFO, seconds, "Tab", "조사 기록에서 확인")
+	elif text.begins_with("규칙 위반"):
+		overlay.notify("규칙 위반", text.trim_prefix("규칙 위반").strip_edges(), NOTICE_DANGER, seconds)
+	elif text.begins_with("체크포인트 — "):
+		overlay.notify("체크포인트", text.trim_prefix("체크포인트 — "), VelkaStyle.GOOD, seconds)
+	else:
+		var danger := color.r > 0.9 and color.g < 0.6
+		overlay.notify("경고" if danger else "알림", text, NOTICE_DANGER if danger else color, seconds)
 
 
-## 무전 (흐르는 자막): 왼쪽 아래에 잠깐 떴다 사라진다. 게임은 멈추지 않는다.
+## 목적격 조사: 받침이 있으면 "을", 없으면 "를" (한글이 아니면 "을(를)")
+static func object_particle(word: String) -> String:
+	if word.is_empty():
+		return "을(를)"
+	var code := word.unicode_at(word.length() - 1)
+	if code < 0xAC00 or code > 0xD7A3:
+		return "을(를)"
+	return "을" if (code - 0xAC00) % 28 != 0 else "를"
+
+
+## 무전 (흐르는 자막): 아래 가운데에 잠깐 떴다 사라진다. 게임은 멈추지 않는다. (시안 02 "무전 수신")
 func radio(speaker: String, text: String, seconds: float = 4.5) -> void:
 	if _radio_box == null:
 		return
 	var names := {"sabi": "사비", "shamu": "샤무", "kwon": "권지혁"}
-	var colors := {"sabi": Color(0.55, 0.85, 0.92), "shamu": Color(0.98, 0.8, 0.42)}
+	var colors := {"sabi": VelkaStyle.SABI, "shamu": VelkaStyle.SHAMU}
+	var color: Color = colors.get(speaker, VelkaStyle.INK_DIM)
 	var panel := PanelContainer.new()
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.02, 0.04, 0.05, 0.82)
-	style.border_color = Color(colors.get(speaker, Color(0.7, 0.75, 0.8)), 0.8)
+	var style := VelkaStyle.panel_style(color, Color(0.063, 0.09, 0.114, 0.9), 0, 0)
 	style.border_width_left = 3
-	style.set_content_margin_all(10)
-	style.content_margin_left = 14
+	style.content_margin_left = 28
+	style.content_margin_right = 28
+	style.content_margin_top = 16
+	style.content_margin_bottom = 20
 	panel.add_theme_stylebox_override("panel", style)
+	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 10)
+	panel.add_child(box)
+	box.add_child(VelkaStyle.label("무전 수신", VelkaStyle.spaced(VelkaStyle.sans(), 3), 14, VelkaStyle.INK_DIM))
 	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 12)
-	panel.add_child(row)
-	row.add_child(VelkaStyle.label("무전 · " + String(names.get(speaker, speaker)), VelkaStyle.mono_bold(), 18, colors.get(speaker, Color(0.8, 0.85, 0.9))))
-	var body := VelkaStyle.label(text, VelkaStyle.serif(), 20, Color(0.9, 0.92, 0.94))
+	row.add_theme_constant_override("separation", 16)
+	box.add_child(row)
+	row.add_child(VelkaStyle.label(String(names.get(speaker, speaker)), VelkaStyle.sans_semibold(), 22, color))
+	var body := VelkaStyle.label(text, VelkaStyle.sans_medium(), 22, VelkaStyle.INK)
 	body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	body.custom_minimum_size = Vector2(460, 0)
+	body.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_child(body)
 	_radio_box.add_child(panel)
-	while _radio_box.get_child_count() > 3:
-		_radio_box.get_child(0).queue_free()
-		_radio_box.remove_child(_radio_box.get_child(0))
+	while _radio_box.get_child_count() > 2:
+		var old := _radio_box.get_child(0)
+		_radio_box.remove_child(old)
+		old.queue_free()
 	SfxBank.play(self, "static", -20.0, 1.4)
 	var tween := panel.create_tween()
 	tween.tween_interval(seconds)
@@ -234,57 +285,93 @@ func radio(speaker: String, text: String, seconds: float = 4.5) -> void:
 	tween.tween_callback(panel.queue_free)
 
 
-## 제한 시간 표시 (캐릭터 카드 아래): id 별로 한 줄 ("보안 업체 출동까지  2:31"). 15초 아래면 붉게 깜빡인다.
+## 제한 시간 표시 (위 가운데 패널, 시안 02 "다음 종까지 03:24"): id 별로 한 칸. 15초 아래면 붉게 깜빡인다.
 func set_timer(id: String, caption: String, seconds_left: float) -> void:
 	if _timer_box == null:
-		_timer_box = VBoxContainer.new()
+		_timer_box = HBoxContainer.new()
 		_timer_box.name = "MissionTimers"
 		_timer_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		# 캐릭터 카드 바로 아래 (위 가운데 알림 줄과 겹치지 않게)
-		_timer_box.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
-		_timer_box.offset_left = 24
-		_timer_box.offset_right = 560
-		_timer_box.offset_top = 226
-		_timer_box.alignment = BoxContainer.ALIGNMENT_BEGIN
+		_timer_box.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
+		_timer_box.offset_left = -400
+		_timer_box.offset_right = 400
+		_timer_box.offset_top = 48
+		_timer_box.alignment = BoxContainer.ALIGNMENT_CENTER
+		_timer_box.add_theme_constant_override("separation", 16)
 		add_child(_timer_box)
-	var label: Label = _timer_labels.get(id)
-	if label == null:
-		label = VelkaStyle.label("", VelkaStyle.mono(), 24, VelkaStyle.INK)
-		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
-		label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.9))
-		label.add_theme_constant_override("outline_size", 6)
-		_timer_box.add_child(label)
-		_timer_labels[id] = label
+	var panel: PanelContainer = _timer_panels.get(id)
+	if panel == null:
+		panel = _make_timer_panel(id)
+		_timer_box.add_child(panel)
+		_timer_panels[id] = panel
 	var left := maxf(seconds_left, 0.0)
-	label.text = "%s  %d:%02d" % [caption, int(left) / 60, int(left) % 60]
+	var clock := "%02d:%02d" % [int(left) / 60, int(left) % 60]
+	_timer_texts[id] = "%s  %s" % [caption, clock]
+	var cap_label := panel.get_child(0).get_child(0) as Label
+	var time_label := panel.get_child(0).get_child(1) as Label
+	cap_label.text = caption
+	time_label.text = clock
 	var urgent := left <= 15.0
 	var blink := urgent and fmod(left, 1.0) > 0.5
-	label.add_theme_color_override("font_color", Color(1.0, 0.35, 0.3) if urgent else Color(1.0, 0.82, 0.45))
-	label.modulate.a = 0.55 if blink else 1.0
+	time_label.add_theme_color_override("font_color", VelkaStyle.DANGER if urgent else VelkaStyle.ACCENT)
+	(panel.get_theme_stylebox("panel") as StyleBoxFlat).border_color = VelkaStyle.DANGER if urgent else VelkaStyle.LINE
+	time_label.modulate.a = 0.55 if blink else 1.0
+
+
+func _make_timer_panel(id: String) -> PanelContainer:
+	var panel := PanelContainer.new()
+	panel.name = id
+	var style := VelkaStyle.panel_style(VelkaStyle.LINE, Color(0.063, 0.09, 0.114, 0.9), 0, 1)
+	style.content_margin_left = 40
+	style.content_margin_right = 40
+	style.content_margin_top = 18
+	style.content_margin_bottom = 16
+	panel.add_theme_stylebox_override("panel", style)
+	panel.custom_minimum_size = Vector2(260, 0)
+	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 4)
+	panel.add_child(box)
+	var cap := VelkaStyle.label("", VelkaStyle.spaced(VelkaStyle.sans(), 2), 15, VelkaStyle.INK)
+	cap.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	box.add_child(cap)
+	var time := VelkaStyle.label("", VelkaStyle.spaced(VelkaStyle.sans_medium(), 8), 40, VelkaStyle.ACCENT)
+	time.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	box.add_child(time)
+	return panel
 
 
 func clear_timer(id: String) -> void:
-	var label: Label = _timer_labels.get(id)
-	if label:
-		label.queue_free()
-		_timer_labels.erase(id)
+	var panel: PanelContainer = _timer_panels.get(id)
+	if panel:
+		panel.queue_free()
+		_timer_panels.erase(id)
+		_timer_texts.erase(id)
 
 
+## "보안 업체 출동까지  02:31" (없으면 빈 문자열)
 func get_timer_text(id: String) -> String:
-	var label: Label = _timer_labels.get(id)
-	return label.text if label else ""
+	return String(_timer_texts.get(id, ""))
+
+
+## 지금 장면의 장소 이름 (장 이름의 "·" 뒤) → 목표 칸 아래 장소 줄
+func _refresh_place() -> void:
+	var scene := get_tree().current_scene if is_inside_tree() else null
+	var chapter := SceneManager.chapter_of_scene(scene.scene_file_path) if scene else ""
+	var title := SceneManager.chapter_title(chapter) if not chapter.is_empty() else ""
+	overlay.set_place(title.get_slice("·", 1).strip_edges() if title.contains("·") else title)
 
 
 func _build_radio_feed() -> void:
 	_radio_box = VBoxContainer.new()
 	_radio_box.name = "RadioFeed"
-	_radio_box.add_theme_constant_override("separation", 6)
+	_radio_box.add_theme_constant_override("separation", 8)
 	_radio_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_radio_box.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_LEFT)
-	_radio_box.offset_left = 24
-	_radio_box.offset_right = 700
-	_radio_box.offset_top = -250
-	_radio_box.offset_bottom = -70
+	_radio_box.set_anchors_and_offsets_preset(Control.PRESET_CENTER_BOTTOM)
+	_radio_box.offset_left = -370
+	_radio_box.offset_right = 580
+	_radio_box.offset_top = -260
+	_radio_box.offset_bottom = -130
+	_radio_box.grow_vertical = Control.GROW_DIRECTION_BEGIN
 	_radio_box.alignment = BoxContainer.ALIGNMENT_END
 	add_child(_radio_box)
 
@@ -292,7 +379,7 @@ func _build_radio_feed() -> void:
 ## RuleZone이 부른다: 알고 있는 규칙이 적용되는 곳에 들어왔을 때 경고
 func show_rule_warning(rule_id: String, text: String) -> void:
 	var rule := RuleManager.get_rule(rule_id)
-	_warning_label.text = "⚠  %s\n%s" % [String(rule.get("title", "")), text]
+	_warning_label.text = "규칙 주의 · %s\n%s" % [String(rule.get("title", "")), text]
 	_warning_panel.visible = true
 	_warning_panel.modulate.a = 1.0
 	if _warning_tween:
@@ -344,33 +431,27 @@ func _build_survival_ui() -> void:
 	vbox.add_child(effects_label)
 	vbox.move_child(effects_label, status_label.get_index() + 1)
 	hint_label.text = "이동 WASD  달리기 Shift  조사 E  능력 F  공격 Space  수첩 R  전환 Q  대기/따라와 C"
-	_notice_box = VBoxContainer.new()
-	_notice_box.name = "NoticeBox"
-	_notice_box.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
-	_notice_box.offset_left = -400
-	_notice_box.offset_right = 400
-	_notice_box.offset_top = 92
-	_notice_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(_notice_box)
 	_warning_panel = PanelContainer.new()
 	_warning_panel.name = "RuleWarning"
 	_warning_panel.visible = false
 	_warning_panel.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
 	_warning_panel.offset_left = -330
 	_warning_panel.offset_right = 330
-	_warning_panel.offset_top = 150
-	var style := StyleBoxFlat.new()
-	style.bg_color = Color(0.12, 0.02, 0.02, 0.88)
-	style.border_color = Color(0.85, 0.2, 0.18)
-	style.set_border_width_all(1)
-	style.border_width_left = 4
-	style.set_content_margin_all(14)
+	_warning_panel.offset_top = 190
+	_warning_panel.grow_horizontal = Control.GROW_DIRECTION_BOTH
+	var style := VelkaStyle.panel_style(VelkaStyle.DANGER, Color(0.12, 0.04, 0.05, 0.92), 0, 1)
+	style.border_width_left = 3
+	style.content_margin_left = 24
+	style.content_margin_right = 24
+	style.content_margin_top = 14
+	style.content_margin_bottom = 16
 	_warning_panel.add_theme_stylebox_override("panel", style)
 	_warning_label = Label.new()
 	_warning_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_warning_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	_warning_label.add_theme_font_override("font", VelkaStyle.serif())
-	_warning_label.add_theme_font_size_override("font_size", 19)
+	_warning_label.add_theme_font_override("font", VelkaStyle.sans_medium())
+	_warning_label.add_theme_font_size_override("font_size", 21)
+	_warning_label.add_theme_color_override("font_color", VelkaStyle.INK)
 	_warning_panel.add_child(_warning_label)
 	add_child(_warning_panel)
 
