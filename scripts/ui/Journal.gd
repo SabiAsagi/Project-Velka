@@ -1,6 +1,6 @@
 extends CanvasLayer
 
-# 프로젝트 벨카 - 조사 기록 수첩 (Tab) — 기본 디자인 0.1 시안 04~06 · 11
+# 프로젝트 벨카 - 조사 기록 수첩 (Tab) — 기본 디자인 0.2 시안 04~07 · 24~28
 # 탭 4개: 목표·확인 / 맵 규칙서 / 협회 보고서 / 수집 기록. R(옛 규칙 수첩 키)은 맵 규칙서 탭을 바로 연다.
 #   - 목표·확인: 이 장면에서 받은 목표(지금 목표 + 지나온 목표)와, 알게 된 규칙 중 직접 확인한 수.
 #   - 규칙서·보고서: 왼쪽 문서 목록 + 오른쪽 종이 문서. 문서와 쪽은 data/journal/documents.json 에 있고,
@@ -9,8 +9,11 @@ extends CanvasLayer
 #   - 규칙서 문서(ruleset)는 본문을 RuleManager 규칙 데이터에서 그린다. 알게 된 규칙에만 상태 표시가 붙는다:
 #     진행(미확인·협회 기록 / 추정 / 확정) · 진위(확정된 뒤에만: 정상 / 조건부 / 오염) · 위반 결과.
 #   - 필기(사비 메모, 샤무 코멘트, 보고서의 "> [소속 / 이름] …" 줄)는 종이 오른쪽 여백에 각자의 손글씨로 남는다.
+#     인물별 손글씨는 HANDS (assets/fonts/hand/, tools/fonts/rebuild_handwriting.py 로 만든 부분 글꼴).
+#     서명은 "이름 / 소속" (사비·샤무는 "— 이름"), 협회장의 필기는 상자 안에 남는다.
 #     '정자체 보기'를 켜면 손글씨를 읽기 쉬운 글꼴로 보여 준다.
-#   - 수집 기록은 InventoryManager.items 목록 (설명은 data/journal/items.json).
+#   - 수집 기록: 입수한 문서(규칙서·협회 자료) 카드 + 미발견 카드, 소지품 카드 (설명은 data/journal/items.json).
+#     문서 카드를 누르면 그 문서를 연다.
 # 열려 있는 동안에는 탐색 입력이 잠긴다. 키: Tab / Esc 닫기, Q E 또는 1~4 탭, ← → (A D) 쪽, ↑ ↓ 문서, 휠 · W S 스크롤.
 
 signal opened()
@@ -38,15 +41,28 @@ const CHIP_INK := "#3c4650"
 const VERACITY_INK := {"정상": "#2f6b4c", "조건부": "#8a6512", "오염": "#9b2c22"}
 const VIOLATION_INK := "#8e2b1f"
 const ASSOCIATION_INK := "#26597a"
-## 필기 글꼴·잉크 (작성자별로 늘 같은 필체). 사비 = 단정한 펜, 샤무 = 거친 붓, 협회 사람들 = 둥근 손글씨
-const HAND_SABI := {"font": "res://assets/fonts/NanumPenScript-Regular.ttf", "ink": "#2f5a63", "name": "사비"}
-const HAND_SHAMU := {"font": "res://assets/fonts/NanumBrushScript-Regular.ttf", "ink": "#7c4e40", "name": "샤무"}
-const HAND_ASSOCIATION := {"font": "res://assets/fonts/Gaegu-Regular.ttf", "ink": "#4f5878", "name": ""}
+## 인물별 손글씨 (기본 디자인 0.2): 글꼴 · 잉크 · 이름 · 소속. 필기 서명의 이름으로 고른다.
+const HAND_DIR := "res://assets/fonts/hand/"
+const HANDS := {
+	"sabi": {"font": HAND_DIR + "Sabi-Hand.ttf", "ink": "#326B7A", "name": "사비 아사기", "dept": ""},
+	"shamu": {"font": HAND_DIR + "Shamu-Hand.ttf", "ink": "#8A592E", "name": "카즈네 샤무", "dept": ""},
+	"kwon": {"font": HAND_DIR + "Kwon-Hand.ttf", "ink": "#4A575D", "name": "권지혁", "dept": "전투대응부"},
+	"baek": {"font": HAND_DIR + "Baek-Hand.ttf", "ink": "#6B576D", "name": "백윤서", "dept": "협회장", "boxed": true},
+	"seo": {"font": HAND_DIR + "Seo-Hand.ttf", "ink": "#5B6C4F", "name": "서유림", "dept": "보호관리부"},
+	"yu": {"font": HAND_DIR + "Yu-Hand.ttf", "ink": "#375C69", "name": "유가온", "dept": "정보조사부"},
+	"han": {"font": HAND_DIR + "Han-Hand.ttf", "ink": "#8A6242", "name": "한재윤", "dept": "기술지원부"},
+}
+const HAND_SABI: Dictionary = HANDS["sabi"]
+const HAND_SHAMU: Dictionary = HANDS["shamu"]
+## 이름이 정해진 인물이 아닌 협회 대원(기록관리팀 등)의 필기
+const HAND_ASSOCIATION := {"font": "res://assets/fonts/Gaegu-Regular.ttf", "ink": "#4f5878", "name": "", "dept": ""}
 ## 문단 사이의 좁은 빈 줄 (빈 줄 하나를 통째로 넣으면 너무 벌어진다)
 const GAP := "[font_size=10] [/font_size]\n"
 
 ## 손글씨를 정자체로 보기 (접근성 설정과 같은 값)
 static var print_handwriting: bool = false
+## 대체 글꼴을 붙인 손글씨 글꼴. 리소스 캐시는 아무도 잡고 있지 않으면 비워지므로 여기서 잡아 둔다.
+static var _hand_fonts: Array[Font] = []
 
 var _docs: Array = []
 var _item_info: Dictionary = {}
@@ -74,6 +90,7 @@ var _page_title: Label
 var _body: RichTextLabel
 var _notes_column: Control
 var _notes: RichTextLabel
+var _notes_head: Label
 var _empty_label: Label
 var _prev_button: Button
 var _next_button: Button
@@ -84,12 +101,14 @@ var _goal_list: VBoxContainer
 var _fact_count: Label
 var _fact_total: Label
 var _fact_bar: ProgressBar
+var _fact_chips: HBoxContainer
 var _inventory_view: ScrollContainer
 var _inventory_box: VBoxContainer
 
 
 func _ready() -> void:
 	layer = 40
+	prepare_hand_fonts()
 	_load_data()
 	_build()
 	_root.visible = false
@@ -295,6 +314,38 @@ func get_page_text() -> String:
 	if _body == null:
 		return ""
 	return _body.text + ("\n" + _notes.text if _notes and _notes_column.visible else "")
+
+
+## 손글씨 부분 글꼴에 없는 기호(화살표·괄호 등)는 Pretendard 로 보이게 한다. 글꼴 리소스는 캐시되므로
+## BBCode [font=경로] 로 불러도 같은 리소스(같은 대체 글꼴)를 쓴다.
+static func prepare_hand_fonts() -> void:
+	var paths: Array = [HAND_ASSOCIATION["font"]]
+	for hand in HANDS.values():
+		paths.append(hand["font"])
+	for path in paths:
+		var f := load(String(path)) as Font
+		if f == null:
+			continue
+		if f.fallbacks.is_empty():
+			f.fallbacks = [VelkaStyle.sans()]
+		if not _hand_fonts.has(f):
+			_hand_fonts.append(f)
+
+
+## 필기 서명 "소속 / 이름" 에서 인물의 손글씨를 고른다 (이름이 정해진 인물이 아니면 협회 공용 필체)
+static func hand_for_signer(signer: String) -> Dictionary:
+	for hand in HANDS.values():
+		if signer.contains(String(hand["name"])):
+			return hand
+	return HAND_ASSOCIATION
+
+
+## "소속 / 이름" → "이름 / 소속" (시안 0.2 서명 표기)
+static func signature(signer: String) -> String:
+	var parts := signer.split("/", false)
+	if parts.size() == 2:
+		return "%s / %s" % [parts[1].strip_edges(), parts[0].strip_edges()]
+	return signer.strip_edges()
 
 
 ## 손글씨 ↔ 정자체
@@ -531,15 +582,15 @@ func _tab_count(tab: int) -> String:
 		Tab.GOALS:
 			return "%02d" % _objective_log().size()
 		Tab.COLLECTION:
-			return "%02d" % InventoryManager.items.size()
+			return "%02d" % (get_documents("rulebook").size() + get_documents("report").size() + InventoryManager.items.size())
 	return "%02d" % get_documents(TAB_KINDS[tab]).size()
 
 
-## 머리말: FIELD RECORD / CHAPTER, 장소 이름 / 지금 구역
+## 머리말: PROJECT VELKA / FIELD RECORD / CHAPTER, 장소 이름 / 지금 구역
 func _render_header() -> void:
 	var scene := get_tree().current_scene
 	var chapter := SceneManager.chapter_of_scene(scene.scene_file_path) if scene else ""
-	_chapter_label.text = "FIELD RECORD / " + ("PROLOGUE" if chapter.begins_with("Prologue") else "CHAPTER 01" if chapter.begins_with("Chapter1") else "FIELD")
+	_chapter_label.text = "PROJECT VELKA / FIELD RECORD / " + ("PROLOGUE" if chapter.begins_with("Prologue") else "CHAPTER 01" if chapter.begins_with("Chapter1") else "FIELD")
 	var title := SceneManager.chapter_title(chapter) if not chapter.is_empty() else "현장"
 	if title.contains("·"):
 		title = title.get_slice("·", 1).strip_edges()
@@ -557,7 +608,8 @@ func _rebuild_list(docs: Array) -> void:
 	for doc in docs:
 		var id := String(doc["id"])
 		var pages := get_pages(id).size()
-		var head := ("문서 · %d쪽" % pages) + ("  ●" if _doc_has_unread(id) else "")
+		var head := ("수칙서 · %d쪽" % pages) if _tab == Tab.RULEBOOK else ("MJ-%02d · 입수본" % (_docs.find(doc) + 1))
+		head += "  ●" if _doc_has_unread(id) else ""
 		var card := _list_card("Doc_" + id, head, String(doc["title"]), id == selected or (selected.is_empty() and doc == docs[0]), false)
 		card.pressed.connect(func(): select_document(id))
 		_list_box.add_child(card)
@@ -629,6 +681,7 @@ func _render_page(doc: Dictionary) -> void:
 	var notes: Array = []
 	_body.text = _page_bbcode(doc, page, notes)
 	_body.scroll_to_line(0)
+	_notes_head.text = "여백에 남은 필기" if is_rulebook else "필기 원문 · 작성자 구분"
 	_notes.text = _notes_bbcode(notes)
 	_notes.scroll_to_line(0)
 	_notes_column.visible = not notes.is_empty()
@@ -664,7 +717,7 @@ func _line_bbcode(line: String, head_ink: String, notes: Array) -> String:
 		# 대원이 남긴 필기: "> [3팀장 / 강윤] 내용" -> 여백에 손글씨로
 		var close := line.find("]")
 		var who := line.substr(3, close - 3).strip_edges()
-		notes.append({"hand": HAND_ASSOCIATION, "text": line.substr(close + 1).strip_edges(), "sign": who})
+		notes.append({"hand": hand_for_signer(who), "text": line.substr(close + 1).strip_edges(), "sign": signature(who)})
 		return ""
 	if line.begins_with("> "):
 		return "[indent][color=%s][font_size=%d]%s[/font_size][/color][/indent]\n%s" % [QUOTE_INK, BODY_SIZE - 2, _esc(line.substr(2)), GAP]
@@ -739,23 +792,27 @@ func _chip(text: String, ink: String) -> String:
 func _collect_memos(r: Dictionary, number: int, notes: Array) -> void:
 	var tag := ("%d. " % number) if number > 0 else ""
 	if r.get("memo_unlocked_sabi", false) and not String(r.get("sabi_memo", "")).is_empty():
-		notes.append({"hand": HAND_SABI, "text": tag + String(r["sabi_memo"]), "sign": "사비"})
+		notes.append({"hand": HAND_SABI, "text": tag + String(r["sabi_memo"]), "sign": "— " + String(HAND_SABI["name"])})
 	if r.get("memo_unlocked_shamu", false) and not String(r.get("shamu_comment", "")).is_empty():
-		notes.append({"hand": HAND_SHAMU, "text": tag + String(r["shamu_comment"]), "sign": "샤무"})
+		notes.append({"hand": HAND_SHAMU, "text": tag + String(r["shamu_comment"]), "sign": "— " + String(HAND_SHAMU["name"])})
 
 
-## 여백 필기: 작성자별 글꼴·잉크 + "— 서명". 정자체 보기면 모두 Pretendard.
+## 여백 필기: 작성자별 글꼴·잉크 + 오른쪽 아래 서명(작은 고딕). 협회장 필기는 상자 안에. 정자체 보기면 모두 Pretendard.
 func _notes_bbcode(notes: Array) -> String:
 	var out := ""
 	for i in notes.size():
 		var note: Dictionary = notes[i]
 		var hand: Dictionary = note["hand"]
 		var font_path := VelkaStyle.FONT_SANS if print_handwriting else String(hand["font"])
-		var size := 21 if print_handwriting else NOTE_SIZE
+		var size := 22 if print_handwriting else NOTE_SIZE
+		var text := "[font=%s][font_size=%d][color=%s]%s[/color][/font_size][/font]" % [font_path, size, hand["ink"], _esc(String(note["text"]))]
+		var sign := "[right][font=%s][font_size=15][color=#5e6870]%s[/color][/font_size][/font][/right]" % [VelkaStyle.FONT_SANS, _esc(String(note["sign"]))]
+		if bool(hand.get("boxed", false)):
+			out += "[table=1][cell border=#26313a66 padding=14,10,14,10]%s\n%s[/cell][/table]\n" % [text, sign]
+			continue
 		if i > 0:
 			out += "[color=#00000033]┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄┄[/color]\n"
-		out += "[font=%s][font_size=%d][color=%s]%s[/color][/font_size][/font]\n" % [font_path, size, hand["ink"], _esc(String(note["text"]))]
-		out += "[right][font=%s][font_size=%d][color=%s]— %s[/color][/font_size][/font][/right]\n" % [font_path, size - 6 if not print_handwriting else 16, hand["ink"], _esc(String(note["sign"]))]
+		out += text + "\n" + sign + "\n"
 	return out
 
 
@@ -770,10 +827,12 @@ func _render_goals() -> void:
 	for child in _goal_list.get_children():
 		_goal_list.remove_child(child)
 		child.queue_free()
-	# 지나온 목표 (지금 목표는 위에 크게 보이므로 뺀다)
+	# 진행 기록: 지금 목표(▶) 다음에 지나온 목표(✓)를 최근 것부터
+	if not log.is_empty():
+		_goal_list.add_child(_goal_row(String(log[-1]), true))
 	for i in range(log.size() - 2, -1, -1):
 		_goal_list.add_child(_goal_row(String(log[i]), false))
-	_goal_list.get_parent().get_parent().get_child(_goal_list.get_parent().get_index() - 1).visible = log.size() > 1
+	_goal_list.get_parent().get_parent().get_child(_goal_list.get_parent().get_index() - 1).visible = not log.is_empty()
 	var known := 0
 	var verified := 0
 	for r in RuleManager.get_all_rules():
@@ -785,53 +844,193 @@ func _render_goals() -> void:
 	_fact_total.text = "/ %02d 규칙 확인" % known
 	_fact_bar.max_value = maxi(known, 1)
 	_fact_bar.value = verified
+	for c in _fact_chips.get_children():
+		_fact_chips.remove_child(c)
+		c.queue_free()
+	var doc_count := 0
+	for doc in _docs:
+		if _unlocked.has(String(doc["id"])):
+			doc_count += 1
+	if doc_count > 0:
+		_fact_chips.add_child(_tag("문서 확보 %d" % doc_count, VelkaStyle.FOCUS))
+	if known > 0:
+		_fact_chips.add_child(_tag("현장 대조 중" if verified < known else "대조 완료", VelkaStyle.ACCENT))
 
 
+## 목표 한 줄: 체크 상자(지금 목표 ▶ 금빛 / 지난 목표 ✓ 청록) + 글 + 아래 구분선
 func _goal_row(text: String, current: bool) -> Control:
+	var wrap := VBoxContainer.new()
+	wrap.add_theme_constant_override("separation", 16)
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 18)
-	var mark := VelkaStyle.label("▶" if current else "✓", VelkaStyle.sans(), 20, VelkaStyle.ACCENT if current else VelkaStyle.FOCUS)
-	mark.custom_minimum_size = Vector2(28, 0)
+	wrap.add_child(row)
+	var accent := VelkaStyle.ACCENT if current else VelkaStyle.FOCUS
+	var mark := PanelContainer.new()
+	var ms := VelkaStyle.panel_style(accent, Color(accent, 0.12), 0, 1)
+	ms.set_content_margin_all(0)
+	mark.add_theme_stylebox_override("panel", ms)
+	mark.custom_minimum_size = Vector2(26, 26)
+	mark.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	var glyph := VelkaStyle.label("▶" if current else "✓", VelkaStyle.sans(), 14 if current else 17, accent)
+	glyph.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	glyph.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	mark.add_child(glyph)
 	row.add_child(mark)
-	var l := VelkaStyle.label(text, VelkaStyle.sans_semibold() if current else VelkaStyle.sans(), 24, VelkaStyle.ACCENT if current else Color(VelkaStyle.INK, 0.75))
+	var l := VelkaStyle.label(text, VelkaStyle.sans_semibold(), 24, VelkaStyle.ACCENT if current else Color(VelkaStyle.INK, 0.8))
 	l.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_child(l)
-	return row
+	wrap.add_child(_rule_line())
+	return wrap
 
 
+## 작은 테두리 칩 (확인한 사실 칸)
+func _tag(text: String, color: Color) -> PanelContainer:
+	var chip := PanelContainer.new()
+	var cs := VelkaStyle.panel_style(Color(color, 0.7), Color(color, 0.08), 0, 1)
+	cs.content_margin_left = 10
+	cs.content_margin_right = 10
+	cs.content_margin_top = 3
+	cs.content_margin_bottom = 4
+	chip.add_theme_stylebox_override("panel", cs)
+	chip.add_child(VelkaStyle.label(text, VelkaStyle.sans(), 16, color))
+	return chip
+
+
+## 수집 기록 (시안 07): 입수한 문서 카드 + 미발견 카드, 그 아래 소지품 카드
 func _render_inventory() -> void:
 	for child in _inventory_box.get_children():
 		_inventory_box.remove_child(child)
 		child.queue_free()
+	# 입수한 자료
+	var docs: Array = []
+	var locked := 0
+	for doc in _docs:
+		if _unlocked.has(String(doc["id"])):
+			docs.append(doc)
+		else:
+			locked += 1
+	_inventory_box.add_child(_section_head("입수한 자료", docs.size()))
+	var grid := _card_grid()
+	_inventory_box.add_child(grid)
+	for doc in docs:
+		var id := String(doc["id"])
+		var kind := String(doc.get("kind", ""))
+		var card := _collection_card("Doc_" + id, "규칙서" if kind == "rulebook" else "협회 자료", String(doc["title"]),
+				"%s\n열람할 수 있는 쪽 %d" % [String(doc.get("subtitle", "")), get_pages(id).size()], true)
+		card.pressed.connect(func(): _open_document(id))
+		grid.add_child(card)
+	if locked > 0:
+		grid.add_child(_locked_card(locked))
+	if docs.is_empty() and locked == 0:
+		_inventory_box.add_child(VelkaStyle.label("아직 입수한 자료가 없다.", VelkaStyle.sans(), 22, VelkaStyle.INK_DIM))
+
+	# 소지품
 	var items: Array = InventoryManager.items
-	var head := VelkaStyle.label("소지품  %d" % items.size(), VelkaStyle.spaced(VelkaStyle.sans_semibold(), 3), 19, VelkaStyle.ACCENT)
+	_inventory_box.add_child(_spacer(10))
+	var head := _section_head("소지품", items.size())
+	head.add_child(VelkaStyle.label("손전등 배터리  %d%%" % roundi(InventoryManager.battery_level / maxf(InventoryManager.max_battery, 1.0) * 100.0),
+			VelkaStyle.sans(), 18, VelkaStyle.INK_DIM))
 	_inventory_box.add_child(head)
-	var battery := VelkaStyle.label("손전등 배터리   %d%%" % roundi(InventoryManager.battery_level / maxf(InventoryManager.max_battery, 1.0) * 100.0),
-			VelkaStyle.sans(), 22, VelkaStyle.INK_DIM)
-	_inventory_box.add_child(battery)
 	if items.is_empty():
-		var empty := VelkaStyle.label("가진 물건이 없다.", VelkaStyle.sans(), 24, VelkaStyle.INK_DIM)
+		var empty := VelkaStyle.label("가진 물건이 없다.", VelkaStyle.sans(), 22, VelkaStyle.INK_DIM)
 		empty.name = "EmptyInventory"
 		_inventory_box.add_child(empty)
 		return
+	var item_grid := _card_grid()
+	_inventory_box.add_child(item_grid)
 	for item in items:
 		var name_text := String(item)
-		var row := PanelContainer.new()
-		row.name = "Item_" + name_text
-		var style := VelkaStyle.panel_style(VelkaStyle.LINE, Color("#141c22"), 0)
-		style.set_content_margin_all(20)
-		row.add_theme_stylebox_override("panel", style)
-		var box := VBoxContainer.new()
-		box.add_theme_constant_override("separation", 6)
-		row.add_child(box)
-		box.add_child(VelkaStyle.label(name_text, VelkaStyle.sans_semibold(), 26, VelkaStyle.INK))
 		var desc := String(_item_info.get(name_text, {}).get("description", ""))
-		if not desc.is_empty():
-			var d := VelkaStyle.label(desc, VelkaStyle.sans(), 21, VelkaStyle.INK_DIM)
-			d.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-			box.add_child(d)
-		_inventory_box.add_child(row)
+		var card := _collection_card("Item_" + name_text, "소지품", name_text, desc, false)
+		item_grid.add_child(card)
+
+
+## 문서 카드를 누르면 그 문서가 있는 탭에서 연다
+func _open_document(document_id: String) -> void:
+	var doc := _doc_by_id(document_id)
+	show_tab(Tab.RULEBOOK if String(doc.get("kind", "")) == "rulebook" else Tab.REPORT)
+	select_document(document_id)
+
+
+func _section_head(title: String, count: int) -> HBoxContainer:
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 14)
+	row.add_child(VelkaStyle.label("%s  %02d" % [title, count], VelkaStyle.spaced(VelkaStyle.sans_semibold(), 2), 18, VelkaStyle.ACCENT))
+	return row
+
+
+func _card_grid() -> GridContainer:
+	var grid := GridContainer.new()
+	grid.columns = 2
+	grid.add_theme_constant_override("h_separation", 24)
+	grid.add_theme_constant_override("v_separation", 22)
+	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	return grid
+
+
+## 자료 카드: 종류 칩 + 제목 + 설명
+func _collection_card(card_name: String, kind: String, title: String, desc: String, clickable: bool) -> Button:
+	var card := Button.new()
+	card.name = card_name
+	card.focus_mode = Control.FOCUS_NONE
+	card.mouse_filter = Control.MOUSE_FILTER_STOP if clickable else Control.MOUSE_FILTER_IGNORE
+	card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	card.custom_minimum_size = Vector2(0, 200)
+	var box := VelkaStyle.panel_style(VelkaStyle.LINE, Color("#16242a"), 0, 1)
+	var hover := VelkaStyle.panel_style(VelkaStyle.FOCUS, Color("#1b2d33"), 0, 1)
+	for state in ["normal", "disabled", "focus"]:
+		card.add_theme_stylebox_override(state, box)
+	for state in ["hover", "pressed"]:
+		card.add_theme_stylebox_override(state, hover if clickable else box)
+	var column := VBoxContainer.new()
+	column.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	column.offset_left = 24
+	column.offset_right = -24
+	column.offset_top = 24
+	column.add_theme_constant_override("separation", 12)
+	column.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	card.add_child(column)
+	var chip := PanelContainer.new()
+	var cs := VelkaStyle.panel_style(Color(VelkaStyle.FOCUS, 0.6) if kind != "소지품" else Color(VelkaStyle.ACCENT, 0.6), Color(0, 0, 0, 0.2), 0, 1)
+	cs.content_margin_left = 10
+	cs.content_margin_right = 10
+	cs.content_margin_top = 2
+	cs.content_margin_bottom = 3
+	chip.add_theme_stylebox_override("panel", cs)
+	chip.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	chip.add_child(VelkaStyle.label(kind, VelkaStyle.sans(), 15, VelkaStyle.INK))
+	column.add_child(chip)
+	var t := VelkaStyle.label(title, VelkaStyle.sans_bold(), 24, VelkaStyle.INK)
+	t.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	column.add_child(t)
+	if not desc.strip_edges().is_empty():
+		var d := VelkaStyle.label(desc.strip_edges(), VelkaStyle.sans(), 18, VelkaStyle.INK_DIM)
+		d.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		column.add_child(d)
+	for c in column.get_children():
+		(c as Control).mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return card
+
+
+## 미발견 카드 (점선 테두리)
+func _locked_card(count: int) -> Control:
+	var card := DashedPanel.new()
+	card.name = "LockedDocs"
+	card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	card.custom_minimum_size = Vector2(0, 200)
+	card.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var column := VBoxContainer.new()
+	column.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	column.offset_left = 24
+	column.offset_right = -24
+	column.offset_top = 26
+	column.add_theme_constant_override("separation", 12)
+	card.add_child(column)
+	column.add_child(VelkaStyle.label("미발견  %d" % count, VelkaStyle.sans(), 16, VelkaStyle.INK_DIM))
+	column.add_child(VelkaStyle.label("아직 확보하지 않은 자료", VelkaStyle.sans_medium(), 23, Color(VelkaStyle.INK_DIM, 0.85)))
+	column.add_child(VelkaStyle.label("내용을 확인할 수 없습니다.", VelkaStyle.sans(), 18, VelkaStyle.INK_DIM))
+	return card
 
 
 func _scroll_body(amount: float) -> void:
@@ -1103,7 +1302,8 @@ func _build_doc_view() -> Control:
 	var notes_box := VBoxContainer.new()
 	notes_box.add_theme_constant_override("separation", 8)
 	notes_frame.add_child(notes_box)
-	notes_box.add_child(VelkaStyle.label("여백에 남은 필기", VelkaStyle.sans(), 15, Color("#5e6870")))
+	_notes_head = VelkaStyle.label("여백에 남은 필기", VelkaStyle.sans(), 15, Color("#5e6870"))
+	notes_box.add_child(_notes_head)
 	_notes = RichTextLabel.new()
 	_notes.name = "Notes"
 	_notes.bbcode_enabled = true
@@ -1176,7 +1376,7 @@ func _build_goals_view() -> Control:
 	_goal_now.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	main.add_child(_goal_now)
 	main.add_child(_spacer(18))
-	main.add_child(VelkaStyle.label("지나온 목표", VelkaStyle.spaced(VelkaStyle.sans_medium(), 3), 17, VelkaStyle.INK_DIM))
+	main.add_child(VelkaStyle.label("진행 기록", VelkaStyle.spaced(VelkaStyle.sans_medium(), 3), 17, VelkaStyle.INK_DIM))
 	var scroll := ScrollContainer.new()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
@@ -1199,6 +1399,9 @@ func _build_goals_view() -> Control:
 	side.add_theme_constant_override("separation", 12)
 	side_frame.add_child(side)
 	side.add_child(VelkaStyle.label("확인한 사실", VelkaStyle.sans_semibold(), 22, VelkaStyle.INK))
+	_fact_chips = HBoxContainer.new()
+	_fact_chips.add_theme_constant_override("separation", 8)
+	side.add_child(_fact_chips)
 	var count_row := HBoxContainer.new()
 	count_row.add_theme_constant_override("separation", 12)
 	side.add_child(count_row)
@@ -1232,12 +1435,13 @@ func _build_inventory_view() -> Control:
 	var margin := MarginContainer.new()
 	margin.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	for side in ["left", "right"]:
-		margin.add_theme_constant_override("margin_" + side, 56)
-	margin.add_theme_constant_override("margin_top", 36)
+		margin.add_theme_constant_override("margin_" + side, 40)
+	margin.add_theme_constant_override("margin_top", 32)
+	margin.add_theme_constant_override("margin_bottom", 32)
 	_inventory_view.add_child(margin)
 	_inventory_box = VBoxContainer.new()
 	_inventory_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_inventory_box.add_theme_constant_override("separation", 14)
+	_inventory_box.add_theme_constant_override("separation", 18)
 	margin.add_child(_inventory_box)
 	return _inventory_view
 
@@ -1297,3 +1501,21 @@ func _spacer(height: float) -> Control:
 	var c := Control.new()
 	c.custom_minimum_size = Vector2(0, height)
 	return c
+
+
+## 점선 테두리 상자 (수집 기록의 미발견 카드)
+class DashedPanel extends Control:
+	func _draw() -> void:
+		var c := Color(VelkaStyle.LINE, 0.9)
+		var dash := 6.0
+		var gap := 4.0
+		var corners := [Vector2(0.5, 0.5), Vector2(size.x - 0.5, 0.5), Vector2(size.x - 0.5, size.y - 0.5), Vector2(0.5, size.y - 0.5)]
+		for i in 4:
+			var a: Vector2 = corners[i]
+			var b: Vector2 = corners[(i + 1) % 4]
+			var length := a.distance_to(b)
+			var dir := (b - a) / maxf(length, 0.001)
+			var t := 0.0
+			while t < length:
+				draw_line(a + dir * t, a + dir * minf(t + dash, length), c, 1.0)
+				t += dash + gap

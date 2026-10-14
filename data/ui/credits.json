@@ -8,7 +8,8 @@
   ],
   "notices": [
     "엔진: Godot Engine — MIT 라이선스 (© Godot Engine contributors)",
-    "서체: Pretendard · Nanum Myeongjo · Nanum Pen Script · Nanum Brush Script · Gaegu — SIL Open Font License 1.1",
+    "서체: Pretendard · Nanum Myeongjo · Nanum Gothic Coding — SIL Open Font License 1.1",
+    "손글씨: Single Day · Nanum Brush Script · Poor Story · Hi Melody · Gamja Flower · Nanum Pen Script · Gaegu — SIL Open Font License 1.1",
     "3D 에셋: Kenney Furniture Kit · City Kit 외 — CC0 1.0"
   ],
   "note": "각 저작권 고지와 라이선스 원문은 assets/fonts 와 assets/third_party 에 동봉되어 있습니다."
