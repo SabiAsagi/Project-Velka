@@ -60,6 +60,10 @@ static func slow_motion(tree: SceneTree, time_scale: float = 0.3, seconds: float
 
 
 static func shake(tree: SceneTree, strength: float = 0.25, seconds: float = 0.4) -> void:
+	# 접근성: 화면 효과 줄이기
+	var settings := tree.root.get_node_or_null("SettingsManager")
+	if settings and settings.reduce_effects():
+		strength *= 0.25
 	var camera := tree.root.get_viewport().get_camera_3d()
 	if camera == null:
 		return
@@ -86,6 +90,11 @@ static func flash(tree: SceneTree, color: Color, fade_in: float = 0.05, hold: fl
 	var scene := tree.current_scene
 	if scene == null:
 		return
+	# 접근성: 화면 효과 줄이기 — 밝은 번쩍임은 옅고 느리게 (암전은 그대로)
+	var settings := tree.root.get_node_or_null("SettingsManager")
+	if settings and settings.reduce_effects() and color.v > 0.2:
+		color.a *= 0.4
+		fade_in = maxf(fade_in, 0.2)
 	var layer := CanvasLayer.new()
 	layer.layer = BARS_LAYER + 1
 	scene.add_child(layer)

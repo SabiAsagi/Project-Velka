@@ -59,6 +59,8 @@ const NPC_SILHOUETTES := {
 }
 const NAME_COLORS := {"sabi": Color(0.55, 0.85, 0.92), "shamu": Color(0.98, 0.8, 0.42)}
 const BOX_HEIGHT := 250.0
+## 대사 글자 크기 (접근성 '대화 글자 크기'로 배율이 곱해진다)
+const BODY_FONT_SIZE := 34
 const SIDE := 40.0
 const BOTTOM := 28.0
 ## 초상화 액자 (대화창 안쪽 왼쪽). 모든 표정·인물이 이 창 안에서 같은 방식으로 잘린다.
@@ -139,6 +141,11 @@ func _on_dialogue_started(_dialogue_id: String) -> void:
 	root_container.visible = true
 	choices_container.visible = false
 	_current_speaker = ""
+	# 설정: 글자 속도(게임) · 글자 크기(접근성)
+	typing_speed = SettingsManager.text_seconds_per_char()
+	var size := roundi(BODY_FONT_SIZE * SettingsManager.text_scale())
+	dialogue_label.add_theme_font_size_override("bold_font_size", size)
+	dialogue_label.add_theme_font_size_override("normal_font_size", size)
 
 
 func _on_dialogue_completed(_dialogue_id: String) -> void:
@@ -290,7 +297,7 @@ func _on_choices_presented(choices: Array) -> void:
 		var btn := Button.new()
 		btn.text = "  ▶  " + String(choice_data.get("text", "선택지"))
 		btn.custom_minimum_size = Vector2(560, 54)
-		VelkaStyle.style_button(btn, VelkaStyle.RED_SOFT, 25)
+		VelkaStyle.style_button(btn, VelkaStyle.FOCUS, 25)
 		var normal := VelkaStyle.panel_style(Color(0.75, 0.75, 0.78, 0.7), Color(0.02, 0.02, 0.03, 0.88), 0, 1)
 		var hot := VelkaStyle.panel_style(Color(0.95, 0.95, 0.97), Color(0.18, 0.05, 0.05, 0.92), 0, 1)
 		hot.border_width_left = 4
@@ -396,8 +403,8 @@ func _build() -> void:
 	dialogue_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	dialogue_label.add_theme_font_override("normal_font", VelkaStyle.serif())
 	dialogue_label.add_theme_font_override("bold_font", VelkaStyle.serif_bold())
-	dialogue_label.add_theme_font_size_override("bold_font_size", 34)
-	dialogue_label.add_theme_font_size_override("normal_font_size", 34)
+	dialogue_label.add_theme_font_size_override("bold_font_size", BODY_FONT_SIZE)
+	dialogue_label.add_theme_font_size_override("normal_font_size", BODY_FONT_SIZE)
 	dialogue_label.add_theme_constant_override("line_separation", 10)
 	_text_margin.add_child(dialogue_label)
 	next_indicator = Label.new()

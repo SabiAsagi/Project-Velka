@@ -15,10 +15,12 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 [application]
 
 config/name="Project Velka"
-config/version="0.23.0"
+config/version="0.24.0"
 config/description="2.5D Mystery Horror Game with 2-character switching system."
 run/main_scene="res://scenes/ui/TitleScreen.tscn"
 config/features=PackedStringArray("4.7", "Forward Plus")
+config/icon="res://assets/branding/v_mark.png"
+config/windows_native_icon="res://assets/branding/belka.ico"
 
 [audio]
 
@@ -139,3 +141,7 @@ wear_horror_scale={
 "type": "float",
 "value": 1.0
 }
+
+[gui]
+
+theme/custom_font="res://assets/fonts/Pretendard-Regular.ttf"

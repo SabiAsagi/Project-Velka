@@ -1,15 +1,25 @@
 extends Control
 
-# 프로젝트 벨카 - 타이틀 화면 컨트롤러
-# 새 게임(프롤로그 아지트부터), 이어하기(저장된 챕터의 처음부터), 환경 설정, 게임 종료를 제어합니다.
+# 프로젝트 벨카 - 타이틀 화면 컨트롤러 (기본 디자인 0.1 시안 01)
+# 오른쪽은 대표 일러스트(사비·샤무와 균열), 왼쪽은 로고와 메뉴.
+# 이어하기(저장된 챕터의 처음부터) · 새 게임(프롤로그 아지트부터) · 설정 · 제작진 · 종료.
+# 선택된 메뉴는 청록 막대와 V 표시로 보여 준다 (키보드·마우스 모두).
+
+const CREDITS_PATH := "res://data/ui/credits.json"
+const MENU_FONT_SIZE := 30
+const MARKER_TEXT := "V"
 
 @onready var new_game_btn: Button = $MenuContainer/VBoxContainer/NewGameButton
 @onready var continue_btn: Button = $MenuContainer/VBoxContainer/ContinueButton
 @onready var settings_btn: Button = $MenuContainer/VBoxContainer/SettingsButton
+@onready var credits_btn: Button = $MenuContainer/VBoxContainer/CreditsButton
 @onready var exit_btn: Button = $MenuContainer/VBoxContainer/ExitButton
 @onready var settings_menu: Control = $SettingsMenu
+@onready var credits_panel: Control = $Credits
 @onready var version_label: Label = $VersionLabel
-@onready var title_label: Label = $HeaderContainer/TitleLabel
+@onready var title_label: TextureRect = $HeaderContainer/Wordmark
+
+var _markers: Dictionary = {}   # Button -> Label("V")
 
 
 func _ready() -> void:
@@ -18,57 +28,151 @@ func _ready() -> void:
 	var has_save = SaveManager.has_save_file()
 	continue_btn.disabled = not has_save
 	if not has_save:
-		continue_btn.modulate = Color(0.6, 0.6, 0.6, 0.5)
+		continue_btn.modulate = Color(1, 1, 1, 0.45)
 	else:
 		var chapter := SaveManager.peek_chapter()
 		if not chapter.is_empty():
-			continue_btn.text = "이어하기 — %s" % SceneManager.chapter_title(chapter)
+			_add_side_note(continue_btn, SceneManager.chapter_title(chapter))
 
-	# 버튼 시그널 연결
 	new_game_btn.pressed.connect(_on_new_game_pressed)
 	continue_btn.pressed.connect(_on_continue_pressed)
 	settings_btn.pressed.connect(_on_settings_pressed)
+	credits_btn.pressed.connect(_on_credits_pressed)
 	exit_btn.pressed.connect(_on_exit_pressed)
 
 	settings_menu.visible = false
 	settings_menu.closed.connect(_on_settings_closed)
+	_build_credits()
 
-	# 기본 포커스 설정
 	if has_save:
 		continue_btn.grab_focus()
 	else:
 		new_game_btn.grab_focus()
 
-	# 버전 (왼쪽 아래, project.godot 의 버전을 그대로 보여 준다)
-	version_label.text = VelkaStyle.version_text() + "  ·  프롤로그 개발판  (Godot 4.7)"
-	version_label.offset_right = 600.0
-
-	# 타이틀 미세 펄스 애니메이션
-	var tween = create_tween().set_loops()
-	tween.tween_property(title_label, "modulate:a", 0.85, 1.5)
-	tween.tween_property(title_label, "modulate:a", 1.0, 1.5)
+	version_label.text = VelkaStyle.version_text() + "  ·  프롤로그 개발판"
+	_fade_in()
 
 
-## 미스터리 호러 톤: 명조 제목, 붉은 선, 글자만 있는 메뉴 버튼 (VelkaStyle)
+func _unhandled_input(event: InputEvent) -> void:
+	if credits_panel.visible and (event.is_action_pressed("ui_cancel") or event.is_action_pressed("ui_accept")):
+		get_viewport().set_input_as_handled()
+		_close_credits()
+
+
+## 시안의 톤: Pretendard 메뉴, 선택 시 청록 막대 + V 표시, 글자 간격을 넓힌 작은 영문
 func _apply_style() -> void:
-	title_label.add_theme_font_override("font", VelkaStyle.serif_bold())
-	title_label.add_theme_font_size_override("font_size", 76)
-	var subtitle := get_node_or_null("HeaderContainer/SubtitleLabel") as Label
-	if subtitle:
-		subtitle.add_theme_font_override("font", VelkaStyle.mono())
-		subtitle.add_theme_font_size_override("font_size", 20)
-		subtitle.add_theme_color_override("font_color", Color(VelkaStyle.RED_SOFT, 0.85))
-		var line := ColorRect.new()
-		line.color = Color(VelkaStyle.RED, 0.7)
-		line.custom_minimum_size = Vector2(420, 2)
-		line.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
-		subtitle.get_parent().add_child(line)
-		subtitle.get_parent().move_child(line, subtitle.get_index())
-	var labels := {new_game_btn: "새 게임", continue_btn: "이어하기", settings_btn: "환경 설정", exit_btn: "게임 종료"}
-	for b in labels:
-		(b as Button).text = labels[b]
-		VelkaStyle.style_button(b, VelkaStyle.RED_SOFT, 28)
-	version_label.add_theme_font_override("font", VelkaStyle.mono())
+	$HeaderContainer/TaglineLabel.add_theme_font_override("font", VelkaStyle.spaced(VelkaStyle.sans(), 5))
+	$Motto.add_theme_font_override("font", VelkaStyle.spaced(VelkaStyle.sans(), 3))
+	version_label.add_theme_font_override("font", VelkaStyle.sans())
+	$HeaderContainer/SubtitleLabel.add_theme_font_override("font", VelkaStyle.spaced(VelkaStyle.sans_medium(), 9))
+	for b in [continue_btn, new_game_btn, settings_btn, credits_btn, exit_btn]:
+		_style_menu_button(b as Button)
+	_build_key_hints()
+
+
+func _style_menu_button(b: Button) -> void:
+	VelkaStyle.style_button(b, VelkaStyle.FOCUS, MENU_FONT_SIZE, VelkaStyle.sans_medium())
+	b.add_theme_color_override("font_color", Color(VelkaStyle.INK, 0.86))
+	b.add_theme_color_override("font_disabled_color", Color(VelkaStyle.INK_DIM, 0.7))
+	for state in ["normal", "disabled", "hover", "focus", "pressed"]:
+		var box := (b.get_theme_stylebox(state) as StyleBoxFlat).duplicate() as StyleBoxFlat
+		box.content_margin_left = 46
+		b.add_theme_stylebox_override(state, box)
+	# 선택 표시 "V" (포커스·마우스오버일 때만 보인다)
+	var marker := VelkaStyle.label(MARKER_TEXT, VelkaStyle.sans(), 22, VelkaStyle.FOCUS)
+	marker.position = Vector2(14, 0)
+	marker.size = Vector2(24, b.custom_minimum_size.y)
+	marker.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	marker.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	marker.visible = false
+	b.add_child(marker)
+	_markers[b] = marker
+	b.focus_entered.connect(func(): marker.visible = true)
+	b.focus_exited.connect(func(): marker.visible = false)
+	b.mouse_entered.connect(func():
+		if not b.disabled:
+			b.grab_focus())
+
+
+## 메뉴 오른쪽에 붙는 작은 보조 문구 (이어하기 옆의 챕터 이름)
+func _add_side_note(b: Button, text: String) -> void:
+	var note := VelkaStyle.label(text, VelkaStyle.sans(), 17, VelkaStyle.INK_DIM)
+	note.position = Vector2(210, 0)
+	note.size = Vector2(260, b.custom_minimum_size.y)
+	note.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	note.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	b.add_child(note)
+
+
+## 왼쪽 아래 조작 안내: [↑ ↓] 선택  [Enter] 확인
+func _build_key_hints() -> void:
+	var hints := $KeyHints as HBoxContainer
+	for pair in [["↑ ↓", "선택"], ["Enter", "확인"]]:
+		hints.add_child(_keycap(pair[0]))
+		var l := VelkaStyle.label(pair[1], VelkaStyle.sans(), 17, VelkaStyle.INK_DIM)
+		l.custom_minimum_size.x = 64
+		hints.add_child(l)
+
+
+static func _keycap(text: String) -> PanelContainer:
+	var cap := PanelContainer.new()
+	var box := VelkaStyle.panel_style(Color(VelkaStyle.INK_DIM, 0.7), Color(0, 0, 0, 0.35), 3)
+	box.content_margin_top = 3
+	box.content_margin_bottom = 3
+	box.content_margin_left = 9
+	box.content_margin_right = 9
+	cap.add_theme_stylebox_override("panel", box)
+	cap.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	cap.add_child(VelkaStyle.label(text, VelkaStyle.sans(), 16, VelkaStyle.INK))
+	return cap
+
+
+## 제작진 (data/ui/credits.json): 화면 가운데 패널. 글꼴 라이선스 고지를 겸한다.
+func _build_credits() -> void:
+	var data = JSON.parse_string(FileAccess.get_file_as_string(CREDITS_PATH)) if FileAccess.file_exists(CREDITS_PATH) else null
+	var shade := ColorRect.new()
+	shade.color = Color(0.02, 0.025, 0.035, 0.82)
+	shade.set_anchors_preset(Control.PRESET_FULL_RECT)
+	credits_panel.add_child(shade)
+	var panel := PanelContainer.new()
+	var box := VelkaStyle.panel_style(VelkaStyle.LINE, VelkaStyle.BG, 0)
+	box.set_content_margin_all(48)
+	panel.add_theme_stylebox_override("panel", box)
+	panel.set_anchors_preset(Control.PRESET_CENTER)
+	panel.custom_minimum_size = Vector2(980, 0)
+	credits_panel.add_child(panel)
+	var column := VBoxContainer.new()
+	column.add_theme_constant_override("separation", 14)
+	panel.add_child(column)
+	column.add_child(VelkaStyle.label("CREDITS", VelkaStyle.spaced(VelkaStyle.sans_medium(), 6), 16, VelkaStyle.INK_DIM))
+	column.add_child(VelkaStyle.label("제작진", VelkaStyle.sans_bold(), 40, VelkaStyle.INK))
+	if data is Dictionary:
+		for section in data.get("sections", []):
+			var gap := Control.new()
+			gap.custom_minimum_size.y = 8
+			column.add_child(gap)
+			column.add_child(VelkaStyle.label(String(section.get("title", "")), VelkaStyle.spaced(VelkaStyle.sans_semibold(), 3), 19, VelkaStyle.ACCENT))
+			for line in section.get("lines", []):
+				column.add_child(VelkaStyle.label(String(line), VelkaStyle.sans(), 21, VelkaStyle.INK))
+		if data.has("note"):
+			column.add_child(VelkaStyle.label(String(data["note"]), VelkaStyle.sans(), 16, VelkaStyle.INK_DIM))
+	var foot := HBoxContainer.new()
+	foot.add_theme_constant_override("separation", 10)
+	foot.add_child(_keycap("Esc"))
+	foot.add_child(VelkaStyle.label("돌아가기", VelkaStyle.sans(), 17, VelkaStyle.INK_DIM))
+	column.add_child(foot)
+	# 가운데 정렬 (크기가 정해진 뒤)
+	panel.resized.connect(func(): panel.position = (size - panel.size) * 0.5)
+
+
+func _fade_in() -> void:
+	$Background.modulate.a = 0.0
+	$HeaderContainer.modulate.a = 0.0
+	$MenuContainer.modulate.a = 0.0
+	var tween := create_tween().set_parallel()
+	tween.tween_property($Background, "modulate:a", 1.0, 1.4)
+	tween.tween_property($HeaderContainer, "modulate:a", 1.0, 0.9).set_delay(0.3)
+	tween.tween_property($MenuContainer, "modulate:a", 1.0, 0.7).set_delay(0.6)
 
 
 func _on_new_game_pressed() -> void:
@@ -88,6 +192,16 @@ func _on_settings_pressed() -> void:
 
 func _on_settings_closed() -> void:
 	settings_btn.grab_focus()
+
+
+func _on_credits_pressed() -> void:
+	credits_panel.visible = true
+	credits_btn.release_focus()
+
+
+func _close_credits() -> void:
+	credits_panel.visible = false
+	credits_btn.grab_focus()
 
 
 func _on_exit_pressed() -> void:
