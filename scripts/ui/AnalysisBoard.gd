@@ -26,6 +26,10 @@ const CARD_SIZE := Vector2(196, 150)
 const MEMO_X := 1104.0
 const TYPE_NAMES := {"call": "기록", "cctv": "CCTV", "news": "신문 스크랩", "doc": "문서",
 		"screen": "접속 로그", "map": "지도", "namecard": "명함", "photo": "사진"}
+## 카드 왼쪽 위 종류 표기 (기본 디자인 0.2 시안 18: "RECORD / 02")
+const TYPE_TAGS := {"call": "CALL", "cctv": "CCTV", "news": "NEWS", "doc": "DOC",
+		"screen": "LOG", "map": "MAP", "namecard": "CARD", "photo": "PHOTO"}
+const SABI_HAND_FONT := "res://assets/fonts/hand/Sabi-Hand.ttf"
 const MARK_COLOR := "#b3201b"
 const KEY_COLOR := "#5a4528"
 
@@ -480,7 +484,7 @@ func _show_card_zoom(card: Dictionary) -> void:
 		_zoom_box.add_child(VelkaStyle.label("밑줄 친 글자를 누르면 단서로 표시한다", VelkaStyle.mono(), 14, Color(0.45, 0.42, 0.38)))
 	var comment := String(card.get("comment", ""))
 	if not comment.is_empty():
-		var c := VelkaStyle.label("✎ " + comment, VelkaStyle.hand(), 27, Color(0.2, 0.36, 0.42))
+		var c := VelkaStyle.label("✎ " + comment, VelkaStyle.font(AnalysisBoard.SABI_HAND_FONT), 27, Color(0.2, 0.36, 0.42))
 		c.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		c.custom_minimum_size = Vector2(660, 0)
 		_zoom_box.add_child(c)
@@ -533,7 +537,7 @@ func _show_map_pin() -> void:
 	map.clickable = true
 	map.spot_clicked.connect(pin_location)
 	_zoom_box.add_child(map)
-	var tip := VelkaStyle.label("붉은 점을 클릭해 핀을 꽂자.", VelkaStyle.hand(), 26, VelkaStyle.RED)
+	var tip := VelkaStyle.label("붉은 점을 클릭해 핀을 꽂자.", VelkaStyle.font(AnalysisBoard.SABI_HAND_FONT), 26, VelkaStyle.RED)
 	_zoom_box.add_child(tip)
 	_say(String(pin.get("prompt", "")), VelkaStyle.INK)
 	_zoom.visible = true
@@ -617,8 +621,8 @@ func _add_memo(title: String, text: String) -> void:
 	var box := VBoxContainer.new()
 	box.add_theme_constant_override("separation", 0)
 	note.add_child(box)
-	box.add_child(VelkaStyle.label(title, VelkaStyle.hand(), 27, VelkaStyle.RED))
-	var body := VelkaStyle.label(text, VelkaStyle.hand(), 21, Color(0.18, 0.15, 0.1))
+	box.add_child(VelkaStyle.label(title, VelkaStyle.font(AnalysisBoard.SABI_HAND_FONT), 27, VelkaStyle.RED))
+	var body := VelkaStyle.label(text, VelkaStyle.font(AnalysisBoard.SABI_HAND_FONT), 21, Color(0.18, 0.15, 0.1))
 	body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	body.custom_minimum_size = Vector2(250, 0)
 	box.add_child(body)
@@ -626,7 +630,7 @@ func _add_memo(title: String, text: String) -> void:
 	_memo_count.text = "찾은 연결  %d / %d" % [_found.size(), step_count()]
 
 
-func _say(text: String, color: Color = VelkaStyle.INK) -> void:
+func _say(text: String, color: Color = Color("#8fc7d1")) -> void:
 	if _feedback:
 		_feedback.text = text
 		_feedback.add_theme_color_override("font_color", color)
@@ -671,28 +675,32 @@ func _build_ui() -> void:
 	_frame.size = DESIGN
 	_root.add_child(_frame)
 
-	# 머리: 종이 띠 제목 + 도움말
-	var head := VelkaStyle.label(String(_data.get("title", "사건 보드")), VelkaStyle.serif_bold(), 30, VelkaStyle.INK)
-	head.position = Vector2(24, 14)
+	# 머리: PROJECT VELKA / INVESTIGATION + 보드 이름, 오른쪽에 도움말 · 생각 정리
+	var kicker := VelkaStyle.label("PROJECT VELKA / INVESTIGATION", VelkaStyle.spaced(VelkaStyle.sans_medium(), 5), 13, VelkaStyle.INK_DIM)
+	kicker.position = Vector2(24, 4)
+	_frame.add_child(kicker)
+	var head := VelkaStyle.label(String(_data.get("title", "사건 보드")), VelkaStyle.sans_bold(), 30, VelkaStyle.INK)
+	head.position = Vector2(24, 22)
 	_frame.add_child(head)
-	var help := VelkaStyle.label("클릭: 펼쳐 보기  ·  카드끼리 끌어다 놓기: 실 잇기  ·  ESC: 닫기",
-			VelkaStyle.mono(), 15, VelkaStyle.INK_DIM)
-	help.position = Vector2(DESIGN.x - 900, 30)
+	var help := VelkaStyle.label("클릭: 펼쳐 보기  ·  카드끼리 끌어다 놓기: 실 잇기  ·  Esc: 닫기",
+			VelkaStyle.sans(), 15, VelkaStyle.INK_DIM)
+	help.position = Vector2(DESIGN.x - 910, 34)
 	help.size = Vector2(700, 20)
 	help.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	_frame.add_child(help)
 	var hint_button := Button.new()
 	hint_button.name = "HintButton"
 	hint_button.text = "생각 정리 (H)"
-	VelkaStyle.style_small_button(hint_button, VelkaStyle.SABI)
-	hint_button.position = Vector2(DESIGN.x - 190, 22)
+	VelkaStyle.style_small_button(hint_button, VelkaStyle.FOCUS)
+	hint_button.add_theme_color_override("font_color", VelkaStyle.INK)
+	hint_button.position = Vector2(DESIGN.x - 190, 24)
 	hint_button.pressed.connect(func(): ask_hint())
 	_frame.add_child(hint_button)
 
 	# 나무 액자 + 코르크
 	var wood := Panel.new()
 	var ws := StyleBoxFlat.new()
-	ws.bg_color = Color(0.22, 0.13, 0.07)
+	ws.bg_color = Color("#4a3220")
 	ws.set_corner_radius_all(3)
 	ws.shadow_color = Color(0, 0, 0, 0.6)
 	ws.shadow_size = 14
@@ -713,6 +721,7 @@ func _build_ui() -> void:
 		card.card_id = String(c.get("id", ""))
 		card.type = String(c.get("type", "doc"))
 		card.title = String(c.get("title", ""))
+		card.number = _cards.size() + 1
 		card.preview = String(c.get("detail", ""))
 		var sz: Array = c.get("size", [CARD_SIZE.x, CARD_SIZE.y])
 		card.size = Vector2(float(sz[0]), float(sz[1]))
@@ -732,10 +741,10 @@ func _build_ui() -> void:
 	_cork.add_child(_strings)
 
 	# 오른쪽: 메모
-	var memo_head := VelkaStyle.label("메모", VelkaStyle.serif_bold(), 24, VelkaStyle.INK)
+	var memo_head := VelkaStyle.label("메모", VelkaStyle.sans_bold(), 24, VelkaStyle.INK)
 	memo_head.position = Vector2(MEMO_X + 6, 66)
 	_frame.add_child(memo_head)
-	_memo_count = VelkaStyle.label("찾은 연결  0 / %d" % step_count(), VelkaStyle.mono(), 15, VelkaStyle.INK_DIM)
+	_memo_count = VelkaStyle.label("찾은 연결  0 / %d" % step_count(), VelkaStyle.sans(), 15, VelkaStyle.ACCENT)
 	_memo_count.position = Vector2(MEMO_X + 76, 74)
 	_frame.add_child(_memo_count)
 	var scroll := ScrollContainer.new()
@@ -749,7 +758,7 @@ func _build_ui() -> void:
 	scroll.add_child(_memo_list)
 
 	# 아래: 사비 한마디
-	_feedback = VelkaStyle.label("", VelkaStyle.hand(), 30, VelkaStyle.INK)
+	_feedback = VelkaStyle.label("", VelkaStyle.font(SABI_HAND_FONT), 28, Color("#8fc7d1"))
 	_feedback.position = Vector2(24, 738)
 	_feedback.size = Vector2(DESIGN.x - 48, 46)
 	_feedback.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -794,13 +803,13 @@ func _build_ui() -> void:
 ## 코르크 바탕 (점박이 무늬, 매번 같은 무늬)
 class Cork extends Control:
 	func _draw() -> void:
-		draw_rect(Rect2(Vector2.ZERO, size), Color(0.55, 0.38, 0.22))
+		draw_rect(Rect2(Vector2.ZERO, size), Color(0.47, 0.33, 0.2))
 		var rng := RandomNumberGenerator.new()
 		rng.seed = 7
 		for i in 2600:
 			var p := Vector2(rng.randf() * size.x, rng.randf() * size.y)
 			var shade := rng.randf_range(-0.12, 0.1)
-			draw_circle(p, rng.randf_range(0.8, 2.4), Color(0.55 + shade, 0.38 + shade, 0.22 + shade * 0.6, 0.8))
+			draw_circle(p, rng.randf_range(0.8, 2.4), Color(0.47 + shade, 0.33 + shade, 0.2 + shade * 0.6, 0.8))
 		# 오래 붙어 있던 메모 자국
 		for i in 7:
 			var r := Rect2(rng.randf() * (size.x - 80), rng.randf() * (size.y - 60), rng.randf_range(50, 90), rng.randf_range(40, 70))
@@ -814,6 +823,7 @@ class Cork extends Control:
 ## 증거 카드
 class Card extends Control:
 	var card_id := ""
+	var number := 0
 	var type := "doc"
 	var title := ""
 	var preview := ""
@@ -859,12 +869,15 @@ class Card extends Control:
 		draw_rect(r, paper)
 		var art := Rect2(10, 22, size.x - 20, size.y - 64)
 		_draw_art(art)
-		var f := VelkaStyle.hand()
-		draw_string(f, Vector2(10, size.y - 14), title, HORIZONTAL_ALIGNMENT_LEFT, size.x - 20, 24, VelkaStyle.PAPER_INK)
+		# 종류 / 번호 (왼쪽 위) · 확인 여부 (오른쪽 위) · 제목 (아래, 명조)
+		var tag := "%s / %02d" % [String(AnalysisBoard.TYPE_TAGS.get(type, "FILE")), number]
+		# 가운데 핀과 겹치지 않게 왼쪽 절반 안에서만
+		draw_string(VelkaStyle.spaced(VelkaStyle.sans_medium(), 1), Vector2(10, 16), tag, HORIZONTAL_ALIGNMENT_LEFT, size.x * 0.5 - 18, 10, Color("#5e6870"))
+		draw_string(VelkaStyle.serif_bold(), Vector2(10, size.y - 14), title, HORIZONTAL_ALIGNMENT_LEFT, size.x - 20, 20, VelkaStyle.PAPER_INK)
 		if inspected:
-			draw_string(VelkaStyle.mono(), Vector2(size.x - 52, 18), "확인함", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color(0.2, 0.45, 0.3))
+			draw_string(VelkaStyle.sans(), Vector2(size.x - 44, 16), "확인함", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("#2f6b4c"))
 		else:
-			draw_string(VelkaStyle.mono(), Vector2(size.x - 64, 18), "살펴보기", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color(0.6, 0.25, 0.2))
+			draw_string(VelkaStyle.sans(), Vector2(size.x - 54, 16), "살펴보기", HORIZONTAL_ALIGNMENT_LEFT, -1, 11, Color("#8e2b1f"))
 		# 표시한 단서: 카드 아래쪽에 붉은 쪽지
 		var y := size.y - 44.0
 		for i in mini(marked.size(), 2):
@@ -892,7 +905,7 @@ class Card extends Control:
 					if y > a.end.y - 2:
 						break
 					draw_string(mono, Vector2(a.position.x + 5, y), line, HORIZONTAL_ALIGNMENT_LEFT, a.size.x - 8, 8,
-							VelkaStyle.TERMINAL if screen else Color(0.25, 0.25, 0.25))
+							Color("#8cc9d1") if screen else Color(0.25, 0.25, 0.25))
 					y += 10
 			"cctv":
 				draw_rect(a, Color(0.08, 0.09, 0.1))
@@ -902,7 +915,7 @@ class Card extends Control:
 					draw_rect(fr, Color(0.22, 0.24, 0.24))
 					draw_circle(fr.position + Vector2(w * 0.5, fr.size.y * 0.42), 5, Color(0.12, 0.12, 0.12))
 					draw_rect(Rect2(fr.position + Vector2(w * 0.5 - 6, fr.size.y * 0.5), Vector2(12, fr.size.y * 0.45)), Color(0.12, 0.12, 0.12))
-					draw_string(mono, Vector2(fr.position.x + 2, a.end.y - 4), ["23:41", "23:39", "23:42"][i], HORIZONTAL_ALIGNMENT_LEFT, -1, 9, VelkaStyle.TERMINAL)
+					draw_string(mono, Vector2(fr.position.x + 2, a.end.y - 4), ["23:41", "23:39", "23:42"][i], HORIZONTAL_ALIGNMENT_LEFT, -1, 9, VelkaStyle.ACCENT)
 				for k in range(0, int(a.size.y), 3):
 					draw_line(Vector2(a.position.x, a.position.y + k), Vector2(a.end.x, a.position.y + k), Color(0, 0, 0, 0.18))
 			"news":
@@ -1004,7 +1017,7 @@ class StringLayer extends Control:
 		draw_rect(Rect2(r.position + Vector2(3, 4), r.size), Color(0, 0, 0, 0.35 * a))
 		draw_rect(r, Color(0.98, 0.9, 0.52, a))
 		draw_line(r.position + Vector2(8, 22), r.position + Vector2(r.size.x - 8, 22), Color(0.85, 0.72, 0.35, 0.6 * a), 1.0)
-		var font := VelkaStyle.hand()
+		var font := VelkaStyle.font(AnalysisBoard.SABI_HAND_FONT)
 		var title := String(m["title"])
 		var fs := 26
 		var w := font.get_string_size(title, HORIZONTAL_ALIGNMENT_LEFT, -1, fs).x
@@ -1083,7 +1096,7 @@ class MapArt extends Control:
 				ci.draw_line(pts[k], pts[k + 1], Color(0.75, 0.15, 0.12, 0.65), 1.4)
 			ci.draw_circle(from, 2.2, Color(0.75, 0.15, 0.12))
 		# 후보 지점
-		var f := VelkaStyle.hand()
+		var f := VelkaStyle.font(AnalysisBoard.SABI_HAND_FONT)
 		for s in spot_list:
 			var p: Vector2 = at.call(float(s["pos"][0]), float(s["pos"][1]))
 			if labels:
