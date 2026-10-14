@@ -36,6 +36,11 @@ signal scripted_move_finished
 
 ## 캐릭터 스프라이트 렌더 레이어 (WorldPhaseController.CHARACTER_RENDER_LAYER 와 같은 값)
 const CHARACTER_RENDER_LAYER := 19
+## 캐릭터만 비추는 보조광: 카메라 쪽에서 얼굴·옷을 살짝 밝혀, 어두운 곳에서 캐릭터가 새까맣게 묻히지 않게 한다.
+## 캐릭터 레이어에만 닿으므로 주변 바닥·벽은 밝아지지 않는다.
+const FILL_LIGHT_ENERGY := 0.7
+const FILL_LIGHT_RANGE := 3.2
+const FILL_LIGHT_DISTANCE := 1.6
 
 var is_controlled: bool = false:
 	set(val):
@@ -81,6 +86,7 @@ var _noise_cooldown: float = 0.0
 var _script_path: Array[Vector3] = []
 var _script_speed: float = 0.0
 var _script_stuck: float = 0.0
+var _fill_light: OmniLight3D = null
 
 var is_hidden: bool = false
 var is_threatened: bool = false
@@ -101,10 +107,42 @@ func _ready() -> void:
 	# 캐릭터 전용 렌더 레이어 (이계의 붉은 비상등이 캐릭터를 물들이지 않게: WorldPhaseController)
 	if sprite:
 		sprite.layers = 1 << (CHARACTER_RENDER_LAYER - 1)
+		_make_fill_light()
 	if companion_ai:
 		companion_ai.init(self)
 	if vitals:
 		vitals.changed.connect(func(_v): stats_changed.emit(character_type, heart_rate, mental_strength))
+
+
+func _make_fill_light() -> void:
+	_fill_light = OmniLight3D.new()
+	_fill_light.name = "CharacterFill"
+	_fill_light.light_color = Color(0.92, 0.94, 1.0)
+	_fill_light.light_energy = FILL_LIGHT_ENERGY
+	_fill_light.light_specular = 0.0
+	_fill_light.omni_range = FILL_LIGHT_RANGE
+	_fill_light.omni_attenuation = 1.4
+	_fill_light.shadow_enabled = false
+	_fill_light.light_cull_mask = 1 << (CHARACTER_RENDER_LAYER - 1)
+	_fill_light.top_level = true
+	add_child(_fill_light)
+	_place_fill_light()
+
+
+## 보조광을 캐릭터 가슴 높이에서 카메라 쪽으로 조금 띄운다 (스프라이트 정면을 비추도록)
+func _place_fill_light() -> void:
+	if _fill_light == null:
+		return
+	var center := global_position + Vector3.UP * 0.9
+	var camera := get_viewport().get_camera_3d() if is_inside_tree() else null
+	var toward := Vector3(0.3, 0.6, 0.75)
+	if camera:
+		toward = camera.global_position - center
+	_fill_light.global_position = center + toward.normalized() * FILL_LIGHT_DISTANCE
+
+
+func _process(_delta: float) -> void:
+	_place_fill_light()
 
 
 func _unhandled_input(event: InputEvent) -> void:

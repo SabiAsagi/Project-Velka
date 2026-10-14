@@ -15,6 +15,20 @@
         "text_sabi": "붕대랑 진통제, 이름 모를 약병이 줄지어 있어.",
         "text_shamu": "이 동네엔 약국도 없겠지."
       }
+    ],
+    "duo_lines": [
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "붕대랑 진통제, 이름 모를 약병이 줄지어 있어."
+      },
+      {
+        "speaker": "shamu",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "serious",
+        "text": "이 동네엔 약국도 없겠지."
+      }
     ]
   },
   "sh_hack_pad": {
@@ -32,6 +46,26 @@
         "text": "",
         "text_sabi": "내 해킹 패드! 화면에 긁힌 자국이 하나 늘었어…",
         "text_shamu": "공장에서 굴려서 그래."
+      }
+    ],
+    "duo_lines": [
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "sad",
+        "shamu_emotion": "neutral",
+        "text": "내 해킹 패드! 화면에 긁힌 자국이 하나 늘었어…"
+      },
+      {
+        "speaker": "shamu",
+        "sabi_emotion": "sad",
+        "shamu_emotion": "smug",
+        "text": "공장에서 굴려서 그래."
+      },
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "serious",
+        "shamu_emotion": "smug",
+        "text": "굴린 건 샤무잖아."
       }
     ]
   },
@@ -51,6 +85,20 @@
         "text_sabi": "샤무 무기 케이스. 꼼꼼하게 닦여 있어.",
         "text_shamu": "멀쩡하대. 문제는 안 먹힌다는 거고."
       }
+    ],
+    "duo_lines": [
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "샤무 무기 케이스. 꼼꼼하게 닦여 있어."
+      },
+      {
+        "speaker": "shamu",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "annoyed",
+        "text": "멀쩡하대. 문제는 안 먹힌다는 거고."
+      }
     ]
   },
   "sh_reception": {
@@ -68,6 +116,20 @@
         "text": "",
         "text_sabi": "구청 민원실 창구였나 봐. '번호표를 뽑아 주세요'가 그대로야.",
         "text_shamu": "번호표 뽑을 사람도 없는데."
+      }
+    ],
+    "duo_lines": [
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "구청 민원실 창구였나 봐. '번호표를 뽑아 주세요'가 그대로야."
+      },
+      {
+        "speaker": "shamu",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "smug",
+        "text": "번호표 뽑을 사람도 없는데."
       }
     ]
   },
@@ -87,6 +149,20 @@
         "text_sabi": "구조·목격 기록. 날짜 칸이 전부 '??'로 적혀 있어.",
         "text_shamu": "여기도 시간이 엉망이라는 거네."
       }
+    ],
+    "duo_lines": [
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "serious",
+        "shamu_emotion": "neutral",
+        "text": "구조·목격 기록. 날짜 칸이 전부 '??'로 적혀 있어."
+      },
+      {
+        "speaker": "shamu",
+        "sabi_emotion": "serious",
+        "shamu_emotion": "serious",
+        "text": "여기도 시간이 엉망이라는 거네."
+      }
     ]
   },
   "sh_floor_map": {
@@ -104,6 +180,26 @@
         "text": "",
         "text_sabi": "학교 배치도. 본관, 별관, 강당… 빨간 핀이 잔뜩 꽂혀 있어.",
         "text_shamu": "핀 하나가 사람 하나라는 건 아니겠지."
+      }
+    ],
+    "duo_lines": [
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "serious",
+        "shamu_emotion": "neutral",
+        "text": "학교 배치도. 본관, 별관, 강당… 빨간 핀이 잔뜩 꽂혀 있어."
+      },
+      {
+        "speaker": "shamu",
+        "sabi_emotion": "serious",
+        "shamu_emotion": "serious",
+        "text": "핀 하나가 사람 하나라는 건 아니겠지."
+      },
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "worried",
+        "shamu_emotion": "serious",
+        "text": "……아니었으면 좋겠어."
       }
     ]
   },
@@ -123,6 +219,20 @@
         "text_sabi": "학교 교지가 연도별로 꽂혀 있어. 협회장실에 왜 이게…",
         "text_shamu": "학교에 무슨 집착이래."
       }
+    ],
+    "duo_lines": [
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "serious",
+        "shamu_emotion": "neutral",
+        "text": "학교 교지가 연도별로 꽂혀 있어. 협회장실에 왜 이게…"
+      },
+      {
+        "speaker": "shamu",
+        "sabi_emotion": "serious",
+        "shamu_emotion": "annoyed",
+        "text": "학교에 무슨 집착이래."
+      }
     ]
   },
   "sh_emblem": {
@@ -140,6 +250,20 @@
         "text": "",
         "text_sabi": "학교 교기…? 협회장실에 걸려 있어.",
         "text_shamu": "물어볼 거 하나 늘었네."
+      }
+    ],
+    "duo_lines": [
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "surprised",
+        "shamu_emotion": "neutral",
+        "text": "학교 교기…? 협회장실에 걸려 있어."
+      },
+      {
+        "speaker": "shamu",
+        "sabi_emotion": "surprised",
+        "shamu_emotion": "serious",
+        "text": "물어볼 거 하나 늘었네."
       }
     ]
   },
@@ -159,6 +283,26 @@
         "text_sabi": "협회 대원 우비랑 랜턴이 걸려 있어.",
         "text_shamu": "우비는 왜. 여기 비 와?"
       }
+    ],
+    "duo_lines": [
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "협회 대원 우비랑 랜턴이 걸려 있어."
+      },
+      {
+        "speaker": "shamu",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "surprised",
+        "text": "우비는 왜. 여기 비 와?"
+      },
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "gentle_smile",
+        "shamu_emotion": "surprised",
+        "text": "물어보면 알려 줄까."
+      }
     ]
   },
   "sh_gear_bag": {
@@ -176,6 +320,20 @@
         "text": "",
         "text_sabi": "샤무 가방. 구조팀이 챙겨 왔나 봐.",
         "text_shamu": "버리고 왔으면 화냈을 거야."
+      }
+    ],
+    "duo_lines": [
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "gentle_smile",
+        "shamu_emotion": "neutral",
+        "text": "샤무 가방. 구조팀이 챙겨 왔나 봐."
+      },
+      {
+        "speaker": "shamu",
+        "sabi_emotion": "gentle_smile",
+        "shamu_emotion": "smug",
+        "text": "버리고 왔으면 화냈을 거야."
       }
     ]
   }

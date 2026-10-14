@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3]
+[gd_scene load_steps=11 format=3]
 
 [ext_resource type="Script" path="res://scripts/chapters/PrologueHideout.gd" id="1_script"]
 [ext_resource type="PackedScene" path="res://scenes/prologue/HideoutWorld.tscn" id="2_world"]
@@ -9,6 +9,7 @@
 [ext_resource type="Script" path="res://scripts/ui/VitalsOverlay.gd" id="7_overlay"]
 [ext_resource type="Script" path="res://scripts/ui/AnalysisBoard.gd" id="8_board"]
 [ext_resource type="Script" path="res://scripts/ui/CaptionSequence.gd" id="9_caption"]
+[ext_resource type="Script" path="res://scripts/ui/Journal.gd" id="99_journal"]
 
 [node name="PrologueHideout" type="Node3D"]
 script = ExtResource("1_script")
@@ -39,3 +40,6 @@ script = ExtResource("8_board")
 
 [node name="CaptionSequence" type="CanvasLayer" parent="."]
 script = ExtResource("9_caption")
+
+[node name="Journal" type="CanvasLayer" parent="."]
+script = ExtResource("99_journal")

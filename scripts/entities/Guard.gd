@@ -505,7 +505,7 @@ func _knock_down(animate: bool) -> void:
 		var tween := create_tween().set_parallel()
 		tween.tween_property(body_root, "rotation", target_rot, 0.35).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN)
 		tween.tween_property(body_root, "position", target_pos, 0.35)
-		AbilityFx.spawn_text(get_tree().current_scene, global_position + Vector3.UP * 1.8, "제압", Color(0.95, 0.72, 0.25), 0.8)
+		AbilityFx.spawn_text(get_tree().current_scene, global_position + Vector3.UP * 1.8, "기절", Color(0.95, 0.72, 0.25), 0.8)
 		SfxBank.play_at(self, global_position, "crash", -8.0, 1.6)
 	else:
 		body_root.rotation = target_rot

@@ -66,7 +66,10 @@ func _run() -> void:
 	_gm.reset_game_state()
 	title = current_scene
 	var continue_btn: Button = title.get_node("MenuContainer/VBoxContainer/ContinueButton")
-	_check(not continue_btn.disabled and continue_btn.text.contains("폐쇄 공장"), "이어하기 버튼에 저장된 챕터가 보인다 (%s)" % continue_btn.text)
+	var side_notes := []
+	for note in continue_btn.find_children("*", "Label", false, false):
+		side_notes.append((note as Label).text)
+	_check(not continue_btn.disabled and " ".join(side_notes).contains("폐쇄 공장"), "이어하기 옆에 저장된 챕터가 보인다 (%s)" % " ".join(side_notes))
 	continue_btn.pressed.emit()
 	await _seconds(2.0)
 	_check(current_scene.name == "PrologueFactory", "이어하기는 저장된 챕터(공장)의 처음으로 간다 (%s)" % current_scene.name)

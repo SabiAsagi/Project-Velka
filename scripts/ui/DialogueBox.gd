@@ -11,11 +11,14 @@ extends CanvasLayer
 #   - 인물 대사는 「」 로 감싸고, 서술(system)은 초상화·이름표 없이 흐린 글씨
 #   - "radio": true 인 대사는 무전: 이름표에 "· 무전", 잡음, 초상화가 푸르스름하다
 #   - 타자기 효과, 클릭/E 로 넘기기, 화면 흔들림(shake), 선택지, BBCode ([shake] [wave] [color] [b])
-# 초상화를 새로 그리면 assets/characters/portraits/<id>_<표정>.png 로 넣고 PORTRAIT_FILES 에 추가한다.
+# 초상화를 새로 그리면 assets/characters/portraits/<id>_<표정>.png 로 넣고 PORTRAIT_FILES 에 추가한 뒤
+# tools/portraits/make_dialogue_portraits.py 로 대화창용 사본(portraits/dialogue/)을 만든다.
 
 @export var typing_speed: float = 0.028 # 글자당 출력 속도(초)
 
-const PORTRAIT_DIR := "res://assets/characters/portraits/"
+## 대화창 전용 초상화 (원본을 액자 비율·2배 크기로 줄이고 구도를 맞춘 사본: tools/portraits/make_dialogue_portraits.py)
+## 원본(1254px 무손실)은 처음 읽는 데 장당 0.05~0.4초가 걸려 대화창이 뜨기 전에 화면이 멈췄다.
+const PORTRAIT_DIR := "res://assets/characters/portraits/dialogue/"
 const PORTRAIT_FILES := {
 	"sabi": {
 		"neutral": "sabi_neutral.png",
@@ -56,6 +59,8 @@ const NPC_SILHOUETTES := {
 }
 const NAME_COLORS := {"sabi": Color(0.55, 0.85, 0.92), "shamu": Color(0.98, 0.8, 0.42)}
 const BOX_HEIGHT := 250.0
+## 대사 글자 크기 (접근성 '대화 글자 크기'로 배율이 곱해진다)
+const BODY_FONT_SIZE := 34
 const SIDE := 40.0
 const BOTTOM := 28.0
 ## 초상화 액자 (대화창 안쪽 왼쪽). 모든 표정·인물이 이 창 안에서 같은 방식으로 잘린다.
@@ -136,6 +141,11 @@ func _on_dialogue_started(_dialogue_id: String) -> void:
 	root_container.visible = true
 	choices_container.visible = false
 	_current_speaker = ""
+	# 설정: 글자 속도(게임) · 글자 크기(접근성)
+	typing_speed = SettingsManager.text_seconds_per_char()
+	var size := roundi(BODY_FONT_SIZE * SettingsManager.text_scale())
+	dialogue_label.add_theme_font_size_override("bold_font_size", size)
+	dialogue_label.add_theme_font_size_override("normal_font_size", size)
 
 
 func _on_dialogue_completed(_dialogue_id: String) -> void:
@@ -287,7 +297,7 @@ func _on_choices_presented(choices: Array) -> void:
 		var btn := Button.new()
 		btn.text = "  ▶  " + String(choice_data.get("text", "선택지"))
 		btn.custom_minimum_size = Vector2(560, 54)
-		VelkaStyle.style_button(btn, VelkaStyle.RED_SOFT, 25)
+		VelkaStyle.style_button(btn, VelkaStyle.FOCUS, 25)
 		var normal := VelkaStyle.panel_style(Color(0.75, 0.75, 0.78, 0.7), Color(0.02, 0.02, 0.03, 0.88), 0, 1)
 		var hot := VelkaStyle.panel_style(Color(0.95, 0.95, 0.97), Color(0.18, 0.05, 0.05, 0.92), 0, 1)
 		hot.border_width_left = 4
@@ -393,8 +403,8 @@ func _build() -> void:
 	dialogue_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	dialogue_label.add_theme_font_override("normal_font", VelkaStyle.serif())
 	dialogue_label.add_theme_font_override("bold_font", VelkaStyle.serif_bold())
-	dialogue_label.add_theme_font_size_override("bold_font_size", 34)
-	dialogue_label.add_theme_font_size_override("normal_font_size", 34)
+	dialogue_label.add_theme_font_size_override("bold_font_size", BODY_FONT_SIZE)
+	dialogue_label.add_theme_font_size_override("normal_font_size", BODY_FONT_SIZE)
 	dialogue_label.add_theme_constant_override("line_separation", 10)
 	_text_margin.add_child(dialogue_label)
 	next_indicator = Label.new()

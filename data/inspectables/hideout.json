@@ -10,6 +10,26 @@
         "text_sabi": "통화 기록, CCTV 시간, 마지막 접속... 아직 안 이어지는 게 더 많아.",
         "text_shamu": "의뢰 거절해 놓고 이건 왜 계속 붙이고 있는 건데."
       }
+    ],
+    "duo_lines": [
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "serious",
+        "shamu_emotion": "neutral",
+        "text": "통화 기록, CCTV 시간, 마지막 접속… 아직 안 이어지는 게 더 많아."
+      },
+      {
+        "speaker": "shamu",
+        "sabi_emotion": "serious",
+        "shamu_emotion": "annoyed",
+        "text": "의뢰 거절해 놓고 이건 왜 계속 붙이고 있는 건데."
+      },
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "determined",
+        "shamu_emotion": "annoyed",
+        "text": "거절한 거랑 궁금한 건 다른 문제야."
+      }
     ]
   },
   "hideout_monitors": {
@@ -22,6 +42,26 @@
         "text": "모니터 여섯 대에 복원 중인 파일과 지도가 떠 있다. 책상 위에 해킹 패드가 연결되어 있다.",
         "text_sabi": "삭제된 영상 복원 23퍼센트. 밤새 돌리면 끝나겠다.",
         "text_shamu": "화면이 여섯 개인데 하나도 못 알아보겠어."
+      }
+    ],
+    "duo_lines": [
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "삭제된 영상 복원 23퍼센트. 밤새 돌리면 끝나겠다."
+      },
+      {
+        "speaker": "shamu",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "annoyed",
+        "text": "화면이 여섯 개인데 하나도 못 알아보겠어."
+      },
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "gentle_smile",
+        "shamu_emotion": "annoyed",
+        "text": "샤무는 밥 먹고 일찍 자. 이건 내가 볼게."
       }
     ]
   },
@@ -36,6 +76,20 @@
         "text_sabi": "......방금 이 사람 얼굴, 지지직거린 것 같았는데.",
         "text_shamu": "찾는 의뢰가 아니라던 그거. 손대지 마."
       }
+    ],
+    "duo_lines": [
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "worried",
+        "shamu_emotion": "neutral",
+        "text": "……방금 이 사람 얼굴, 지지직거린 것 같았는데."
+      },
+      {
+        "speaker": "shamu",
+        "sabi_emotion": "worried",
+        "shamu_emotion": "serious",
+        "text": "찾는 의뢰가 아니라던 그거. 손대지 마."
+      }
     ]
   },
   "hideout_gear_bag": {
@@ -48,6 +102,20 @@
         "text": "샤무의 장비 가방. 정리가 잘 되어 있고, 언제든 바로 들고 나갈 수 있게 꾸려져 있다.",
         "text_sabi": "샤무 가방은 항상 싸여 있어. 나는 이게 좋아.",
         "text_shamu": "언제 나가게 될지 모르니까. 특히 너랑 있으면."
+      }
+    ],
+    "duo_lines": [
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "gentle_smile",
+        "shamu_emotion": "neutral",
+        "text": "샤무 가방은 항상 싸여 있어. 나는 이게 좋아."
+      },
+      {
+        "speaker": "shamu",
+        "sabi_emotion": "gentle_smile",
+        "shamu_emotion": "smug",
+        "text": "언제 나가게 될지 모르니까. 특히 너랑 있으면."
       }
     ]
   }

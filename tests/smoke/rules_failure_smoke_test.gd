@@ -67,13 +67,15 @@ func _run() -> void:
 	sabi.vitals.hp = 100.0
 	await _seconds(0.2)
 
-	# --- 규칙 수첩 ---
-	var notebook = _scene.get_node("RuleNotebook")
-	var known: int = notebook.refresh()
+	# --- 규칙 수첩 (Journal: R은 수칙서 탭을 연다) ---
+	_gm.set_story_flag("c1_arrival_done", true)
+	var notebook = _scene.get_node("Journal")
+	var known: int = _rm.get_discovered_count()
 	_press("notebook")
 	await _input_frames()
-	_check(notebook.is_open() and _gm.is_exploration_locked(), "R로 규칙 수첩이 열리고 그동안 움직일 수 없다")
-	_check(known == _rm.get_discovered_count() and known > 0, "수첩에 규칙서로 이미 알던 규칙이 기록돼 있다 (%d개)" % known)
+	_check(notebook.is_open() and _gm.is_exploration_locked(), "R로 수첩(수칙서)이 열리고 그동안 움직일 수 없다")
+	_check(notebook.get_tab() == 1 and notebook.get_current_document_id() == "school_rulebook", "R은 무진고 안전수칙서 쪽을 연다")
+	_check(known > 0 and notebook.get_page_text().contains("교내 방송보다 우선"), "수칙서에 규칙서로 이미 알던 규칙이 적혀 있다 (%d개)" % known)
 	_press("notebook")
 	await _input_frames()
 	_check(not notebook.is_open() and not _gm.is_exploration_locked(), "R을 다시 누르면 닫힌다")
@@ -88,7 +90,11 @@ func _run() -> void:
 	_dm.finish_dialogue()
 	_check(_rm.get_discovered_count() == before + 3 and _rm.get_rule("RULE_BLACKBOARD_03")["discovered"], "이계 칠판을 조사하면 칠판 규칙 3개가 수첩에 기록된다")
 	_check(_rm.get_rule("RULE_BLACKBOARD_03")["memo_unlocked_sabi"], "조사한 캐릭터(사비)의 분석 메모가 열린다")
-	_check(notebook.refresh() == _rm.get_discovered_count(), "수첩 내용이 새 규칙을 반영한다")
+	var school_pages: Array = notebook.get_pages("school_rulebook")
+	var has_board_page := false
+	for page in school_pages:
+		has_board_page = has_board_page or (page.get("categories", []) as Array).has("blackboard")
+	_check(has_board_page, "수첩 수칙서에 새로 알게 된 칠판 수칙 쪽이 추가된다")
 
 	# --- 알고 있는 규칙 구역 경고 + 위반 ---
 	_party.teleport_party(Vector3(8.0, 7.65, -56.6))

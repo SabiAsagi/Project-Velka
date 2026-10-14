@@ -13,6 +13,9 @@ extends Node3D
 signal objective_changed(text: String)
 
 const OBJECTIVE_COLOR := Color(0.95, 0.85, 0.45)
+## 프롤로그가 끝나면 띄우는 다음 장 제목 (TitleCard)
+const NEXT_CHAPTER_NUMBER := "제1장"
+const NEXT_CHAPTER_TITLE := "무진고등학교"
 const TALK_FLAGS := {"npc_seo": "talked_seo", "npc_han": "talked_han", "npc_yu": "talked_yu"}
 ## 단계별 NPC 위치 (단계 이름 -> {노드 이름: 위치}). 이전 단계 위치는 뒤 단계가 덮어쓴다.
 const STAGE_POSITIONS := {
@@ -100,7 +103,7 @@ func _wake_in_bed() -> void:
 ## 지금 플래그로 다음 목표를 정한다
 func current_objective() -> String:
 	if _flag("prologue_done"):
-		return "프롤로그 종료 — 학교 구역 진입 준비"
+		return "제1장 — 무진고등학교로"
 	if _flag("sh_p11_done"):
 		return "브리핑룸으로 가자 (복도 북쪽)"
 	if _flag("sh_p10_done"):
@@ -195,13 +198,16 @@ func _two_talk() -> void:
 	_refresh_objective()
 
 
-## P-12: 학교 브리핑 -> 프롤로그 종료 -> 학교 챕터
+## P-12: 학교 브리핑 -> 본편 타이틀 -> 학교 챕터
 func _briefing() -> void:
 	_busy = true
 	await _play_once("prologue_p12_briefing")
-	captions.play(["멀리서 학교 종소리가 한 번 울린다.", "PROJECT VELKA — 프롤로그 종료"])
+	captions.play(["멀리서 학교 종소리가 한 번 울린다."])
 	await captions.finished
 	GameManager.set_story_flag("prologue_done", true)
+	# "프롤로그 종료" 대신 본편이 시작되는 타이틀 (게임 제목 → 제1장)
+	var card := TitleCard.play(get_tree(), NEXT_CHAPTER_NUMBER, NEXT_CHAPTER_TITLE)
+	await card.finished
 	_busy = false
 	_refresh_objective()
 	if not next_scene.is_empty():

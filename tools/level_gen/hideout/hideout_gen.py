@@ -42,6 +42,8 @@ EXTRA_MATS = {
     "hide_floor_2f": ((0.42, 0.3, 0.2), {}),             # 2층 마루
     "shutter": ((0.5, 0.52, 0.54), {"metallic": 0.4}),
     "van_body": ((0.68, 0.7, 0.72), {"metallic": 0.2}),
+    "jeep_teal": ((0.05, 0.42, 0.4), {"metallic": 0.35}),     # 두 사람의 청록색 지프
+    "jeep_black": ((0.05, 0.055, 0.06), {}),                  # 범퍼·휀더·지붕 프레임
     "rug": ((0.35, 0.16, 0.14), {}),
     "red_string": ((0.75, 0.05, 0.05), {}),
 }
@@ -186,19 +188,25 @@ def window(B, c, axis, fixed, a0, a1, y0, y1, inside=+1):
 
 def garage(B):
     p = lv("1F", "Props")
-    # 승합차 (셔터를 향해 주차, 앞이 남쪽)
-    x0, x1, z0, z1 = 2.0, 4.0, 1.0, 5.8
-    B.box(p, "van_body", x0, x1, 0.38, 1.25, z0, z1, True, tag="van")
-    B.box(p, "van_body", x0 + 0.03, x1 - 0.03, 1.25, 2.05, z0 + 0.9, z1, True, tag="van")
-    B.box(p, "car_glass", x0 + 0.08, x1 - 0.08, 1.3, 1.95, z0 + 0.86, z0 + 0.9, tag="van_glass")
-    for zz in (z0 + 1.6, z0 + 3.1):
-        for xx in (x0 - 0.005, x1 + 0.005):
-            B.box(p, "car_glass", xx - 0.01, xx + 0.01, 1.35, 1.85, zz, zz + 1.1, tag="van_glass")
-    for zz in (z0 + 0.8, z1 - 0.8):
-        for xx in (x0 + 0.1, x1 - 0.32):
-            B.box(p, "tire", xx, xx + 0.22, 0.0, 0.66, zz - 0.33, zz + 0.33, tag="tire")
-    B.box(p, "lamp_head", x0 + 0.15, x0 + 0.5, 0.85, 1.0, z0 - 0.02, z0, tag="van_light")
-    B.box(p, "lamp_head", x1 - 0.5, x1 - 0.15, 0.85, 1.0, z0 - 0.02, z0, tag="van_light")
+    # 청록색 지프 (셔터를 향해 주차, 앞이 남쪽): 각진 차체 + 뒤쪽 캐빈 + 스페어 타이어
+    x0, x1, z0, z1 = 2.1, 3.9, 1.3, 5.3
+    B.box(p, "jeep_teal", x0, x1, 0.42, 1.15, z0, z1, True, tag="jeep")                    # 차체
+    B.box(p, "jeep_teal", x0 + 0.05, x1 - 0.05, 1.15, 1.85, z0 + 1.5, z1 - 0.1, True, tag="jeep")   # 캐빈
+    B.box(p, "jeep_black", x0 - 0.02, x1 + 0.02, 1.85, 1.92, z0 + 1.45, z1 - 0.05, tag="jeep_roof")
+    B.box(p, "car_glass", x0 + 0.12, x1 - 0.12, 1.2, 1.78, z0 + 1.46, z0 + 1.5, tag="jeep_glass")   # 앞유리
+    for zz in (z0 + 1.8, z0 + 2.9):
+        for xx in (x0 + 0.04 - 0.005, x1 - 0.04 + 0.005):
+            B.box(p, "car_glass", xx - 0.01, xx + 0.01, 1.25, 1.7, zz, zz + 0.9, tag="jeep_glass")
+    B.box(p, "jeep_black", x0 - 0.05, x1 + 0.05, 0.35, 0.55, z0 - 0.12, z0 + 0.05, tag="bumper")
+    B.box(p, "jeep_black", x0 - 0.05, x1 + 0.05, 0.35, 0.55, z1 - 0.05, z1 + 0.1, tag="bumper")
+    B.box(p, "metal_dark", x0 + 0.35, x1 - 0.35, 0.62, 1.0, z0 - 0.02, z0, tag="grille")
+    for zz in (z0 + 0.75, z1 - 0.75):
+        for xx in (x0 - 0.12, x1 - 0.18):
+            B.box(p, "tire", xx, xx + 0.3, 0.0, 0.76, zz - 0.38, zz + 0.38, tag="tire")
+            B.box(p, "jeep_black", xx - 0.02, xx + 0.32, 0.76, 0.86, zz - 0.45, zz + 0.45, tag="fender")
+    B.box(p, "tire", (x0 + x1) / 2 - 0.36, (x0 + x1) / 2 + 0.36, 0.55, 1.27, z1 + 0.1, z1 + 0.36, tag="spare_tire")
+    B.box(p, "lamp_head", x0 + 0.15, x0 + 0.45, 0.8, 1.0, z0 - 0.02, z0, tag="jeep_light")
+    B.box(p, "lamp_head", x1 - 0.45, x1 - 0.15, 0.8, 1.0, z0 - 0.02, z0, tag="jeep_light")
     B.box(p, "mat_dark", x0 + 0.3, x1 - 0.3, 0.002, 0.006, z0 + 1.0, z1 - 1.0, tag="stain")
 
     # 장비 벽 (서쪽 벽, 카메라 쪽을 향함): 타공판 + 장비 + 철제 사물함 + 장비 가방
@@ -440,7 +448,7 @@ def main():
 def write_chapter():
     x, y, z = SPAWN
     lines = [
-        "[gd_scene load_steps=10 format=3]", "",
+        "[gd_scene load_steps=11 format=3]", "",
         '[ext_resource type="Script" path="res://scripts/chapters/PrologueHideout.gd" id="1_script"]',
         '[ext_resource type="PackedScene" path="res://scenes/prologue/HideoutWorld.tscn" id="2_world"]',
         '[ext_resource type="PackedScene" path="res://scenes/characters/PlayerParty.tscn" id="3_party"]',
@@ -450,6 +458,7 @@ def write_chapter():
         '[ext_resource type="Script" path="res://scripts/ui/VitalsOverlay.gd" id="7_overlay"]',
         '[ext_resource type="Script" path="res://scripts/ui/AnalysisBoard.gd" id="8_board"]',
         '[ext_resource type="Script" path="res://scripts/ui/CaptionSequence.gd" id="9_caption"]',
+        '[ext_resource type="Script" path="res://scripts/ui/Journal.gd" id="99_journal"]',
         "",
         '[node name="PrologueHideout" type="Node3D"]', 'script = ExtResource("1_script")', "",
         '[node name="HideoutWorld" parent="." node_paths=PackedStringArray("party", "camera") instance=ExtResource("2_world")]',
@@ -465,6 +474,8 @@ def write_chapter():
         'script = ExtResource("7_overlay")', 'party = NodePath("../PlayerParty")', "",
         '[node name="AnalysisBoard" type="CanvasLayer" parent="."]', 'script = ExtResource("8_board")', "",
         '[node name="CaptionSequence" type="CanvasLayer" parent="."]', 'script = ExtResource("9_caption")', "",
+        # Tab 수첩 (협회 보고서 · 수칙서 · 인벤토리)
+        '[node name="Journal" type="CanvasLayer" parent="."]', 'script = ExtResource("99_journal")', "",
     ]
     path = os.path.join(ROOT, "scenes", "chapters", "Prologue_Hideout.tscn")
     open(path, "w", encoding="utf-8", newline="\n").write("\n".join(lines))

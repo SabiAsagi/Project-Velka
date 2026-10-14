@@ -271,7 +271,7 @@ def main():
 def write_chapter():
     x, y, z = START
     lines = [
-        "[gd_scene load_steps=10 format=3]", "",
+        "[gd_scene load_steps=11 format=3]", "",
         '[ext_resource type="Script" path="res://scripts/chapters/PrologueSafehouse.gd" id="1_script"]',
         '[ext_resource type="PackedScene" path="res://scenes/prologue/SafehouseWorld.tscn" id="2_world"]',
         '[ext_resource type="PackedScene" path="res://scenes/characters/PlayerParty.tscn" id="3_party"]',
@@ -280,6 +280,7 @@ def write_chapter():
         '[ext_resource type="PackedScene" path="res://scenes/ui/DialogueBox.tscn" id="6_dialogue"]',
         '[ext_resource type="Script" path="res://scripts/ui/VitalsOverlay.gd" id="7_overlay"]',
         '[ext_resource type="Script" path="res://scripts/ui/CaptionSequence.gd" id="8_caption"]',
+        '[ext_resource type="Script" path="res://scripts/ui/Journal.gd" id="99_journal"]',
         "",
         '[node name="PrologueSafehouse" type="Node3D"]', 'script = ExtResource("1_script")', "",
         '[node name="SafehouseWorld" parent="." node_paths=PackedStringArray("party", "camera") instance=ExtResource("2_world")]',
@@ -294,6 +295,8 @@ def write_chapter():
         '[node name="VitalsOverlay" type="CanvasLayer" parent="." node_paths=PackedStringArray("party")]',
         'script = ExtResource("7_overlay")', 'party = NodePath("../PlayerParty")', "",
         '[node name="CaptionSequence" type="CanvasLayer" parent="."]', 'script = ExtResource("8_caption")', "",
+        # Tab 수첩 (협회 보고서 · 수칙서 · 인벤토리)
+        '[node name="Journal" type="CanvasLayer" parent="."]', 'script = ExtResource("99_journal")', "",
     ]
     path = os.path.join(ROOT, "scenes", "chapters", "Prologue_Safehouse.tscn")
     open(path, "w", encoding="utf-8", newline="\n").write("\n".join(lines))

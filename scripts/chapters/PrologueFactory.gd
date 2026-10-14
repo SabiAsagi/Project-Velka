@@ -28,6 +28,9 @@ signal objective_changed(text: String)
 
 const OBJECTIVE_COLOR := Color(0.95, 0.85, 0.45)
 const DONE_FLAG := "prologue_factory_p04_done"
+## 계단 꼭대기 판정: 1층 바닥에서 이 높이 위, 계단 위 봉쇄문 앞 평면 (x, z)
+const STAIR_TOP_Y := -0.7
+const STAIR_TOP_AREA := Rect2(30.6, 12.5, 2.6, 3.4)
 const GUARD_SCENE := preload("res://scenes/entities/Guard.tscn")
 const GUARD_NAV := Rect2(-10.5, -0.5, 45, 23)
 ## 경보가 울린 자리 (강제로 뜯은 문)
@@ -42,7 +45,7 @@ const ALARM_SECONDS := 14.0
 const SABI_POST := Vector3(-7.5, 0.05, 4.0)
 ## 잠입을 시작하면 여기(옆문 안쪽)를 체크포인트로 저장한다 — 들키면 샤무 혼자 여기서 다시 시작
 const INFILTRATION_CHECKPOINT := Vector3(1.6, 0.05, 10.0)
-const SOLO_REASON := "사비는 밖에서 무전으로 돕고 있다 — 경비를 모두 재우면 들어온다"
+const SOLO_REASON := "사비는 밖에서 무전으로 돕고 있다 — 경비를 모두 기절시키면 들어온다"
 ## 경비가 "?" 를 띄웠을 때 무전 경고 사이 간격(초)
 const WARN_COOLDOWN := 9.0
 ## 사비가 들어오는 옆문 바깥·안쪽 (정문 쪽에서 문을 지나 들어온다)
@@ -117,19 +120,27 @@ func _process(delta: float) -> void:
 	var y: float = (member as Node3D).global_position.y
 	for guard in world.get_node("Guards").get_children():
 		(guard as Node3D).visible = absf((guard as Node3D).global_position.y - y) < 2.0
+	# P-05: 계단을 끝까지 올라가 막힌 벽 앞에 섰을 때만 "구조가 바뀌었어" (계단 아래에서 미리 뜨지 않게)
+	if _flag("p05_started") and not _flag("p05_structure_seen") and not _busy and _at_stair_top(member as Node3D):
+		_structure_changed()
+
+
+## 계단 꼭대기(1층 높이, 막힌 봉쇄문 앞)에 섰는지
+func _at_stair_top(member: Node3D) -> bool:
+	var p := member.global_position
+	return p.y > STAIR_TOP_Y and p.x > STAIR_TOP_AREA.position.x and p.x < STAIR_TOP_AREA.end.x \
+			and p.z > STAIR_TOP_AREA.position.y and p.z < STAIR_TOP_AREA.end.y
 
 
 func _on_zone_entered(zone_id: String, _member: Node3D, _zone: Node) -> void:
 	if zone_id == "fac_hall" and _solo() and not _hall_hint_done:
 		_hall_hint_done = true
-		_radio("생산동이야. 빛이 지나간 다음에 움직여. 등 뒤로 붙으면 재울 수 있어.")
+		_radio("생산동이야. 빛이 지나간 다음에 움직여. 등 뒤로 붙으면 기절시킬 수 있어.")
 	if zone_id == "fac_corridor" and not _flag("p04_reached_office"):
 		GameManager.set_story_flag("p04_reached_office", true)
 	if zone_id.begins_with("fac_b1") and not _flag("p05_started") and not _flag("p04_b1_entered"):
 		GameManager.set_story_flag("p04_b1_entered", true)
 		_arm_timers()
-	elif zone_id == "fac_stairs" and _flag("p05_started") and not _flag("p05_structure_seen") and not _busy:
-		_structure_changed()
 
 
 func _on_flag_set(flag_name: String, value: Variant) -> void:
@@ -172,12 +183,12 @@ func current_objective() -> String:
 	if not (_flag("p04_gate_hacked") or _flag("p04_side_forced")):
 		return "사비로 마당의 외부 보안 단말을 열자 — 조용한 길 (샤무로 옆문을 뜯으면 빠르지만 경보·시간 제한)"
 	if _solo():
-		return "경비원을 들키지 않고 모두 제압하자 — 다 재우면 사비가 들어온다 (%d명 남음)" % guards_left()
+		return "경비원을 들키지 않고 모두 기절시키자 — 다 기절하면 사비가 들어온다 (%d명 남음)" % guards_left()
 	if not _flag("p04_reached_office"):
 		return "경비원의 손전등 빛을 피해 생산동을 지나 사무동으로 가자 (들키면 끝)"
 	if not _flag("broken_basement_door"):
 		if not _flag("guard_down_security"):
-			return "보안실 경비원을 샤무로 뒤에서 제압하자 (Space)"
+			return "보안실 경비원을 샤무로 뒤에서 기절시키자 (Space)"
 		if not _flag("p04_security_hacked"):
 			return "사비로 보안실 단말에서 보안망에 접속하자"
 		return "샤무로 계단실 봉쇄문을 강제로 열자"
@@ -271,7 +282,7 @@ func _on_guard_down(_guard_id: String) -> void:
 		return
 	var left := guards_left()
 	if left > 0:
-		_radio("한 명 재웠네. 남은 경비 %d명." % left)
+		_radio("한 명 기절했어. 남은 경비 %d명." % left)
 		_refresh_objective()
 	else:
 		await _sabi_joins()

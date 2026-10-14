@@ -6,13 +6,21 @@ class_name SpyVisionAbility
 # 사비 주변으로 청록 파동을 퍼뜨려 반경 안의 SpyVisionTarget(단서·위험·규칙 흔적)을 잠시 드러낸다.
 # 한 번 드러난 단서는 '발견' 상태로 남아 연결된 조사 대상이 계속 활성화된다.
 # 사비의 시야이므로 조작이 샤무로 넘어가면 즉시 꺼진다.
+# 파동이 닿은 반경 안의 경비원·괴이·조사할 거리는 그 순간의 위치가 잠깐 떠올랐다 사라진다 (벽 너머도).
 
 const VISION_COLOR := Color(0.35, 0.9, 1.0)
 const OVERLAY_SHADER := preload("res://assets/shaders/spy_vision_overlay.gdshader")
+const PING_GUARD_COLOR := Color(1.0, 0.55, 0.3)
+const PING_ANOMALY_COLOR := Color(1.0, 0.32, 0.28)
+const PING_ITEM_COLOR := Color(0.35, 0.9, 1.0)
+## 이 높이 차이보다 먼 대상(다른 층)은 표시하지 않는다
+const PING_FLOOR_GAP := 2.2
 
 var radius: float = 9.0
 var duration: float = 6.0
 var pulse_seconds: float = 0.9
+## 위치 표시가 떠 있는 시간 (초)
+var ping_seconds: float = 2.0
 
 var _time_left: float = 0.0
 var _revealed: Array[SpyVisionTarget] = []
@@ -25,6 +33,7 @@ func _ready() -> void:
 	radius = float(config.get("radius", radius))
 	duration = float(config.get("duration", duration))
 	pulse_seconds = float(config.get("pulse_seconds", pulse_seconds))
+	ping_seconds = float(config.get("ping_seconds", ping_seconds))
 
 
 func _process(delta: float) -> void:
@@ -60,6 +69,43 @@ func _activate() -> void:
 			# 파동이 닿는 순간에 맞춰 순서대로 드러낸다.
 			(target as SpyVisionTarget).reveal(member, distance / radius * pulse_seconds)
 			_revealed.append(target)
+	_ping_positions()
+
+
+## 반경 안의 경비원·괴이·조사할 거리 위치를 잠깐 띄운다 (파동이 닿는 순서대로)
+func _ping_positions() -> void:
+	var scene := get_tree().current_scene
+	if scene == null:
+		return
+	var origin := member.global_position
+	for node in get_tree().get_nodes_in_group("anomaly"):
+		var body := node as Node3D
+		if body == null or not body.is_visible_in_tree() or body.get("is_down") == true:
+			continue
+		var distance := _ping_distance(origin, body.global_position)
+		if distance < 0.0:
+			continue
+		var is_guard := body is Guard
+		var text := "경비" if is_guard else "괴이"
+		var color := PING_GUARD_COLOR if is_guard else PING_ANOMALY_COLOR
+		AbilityFx.spawn_ping(scene, body.global_position, color, text, distance / radius * pulse_seconds, ping_seconds)
+	for node in get_tree().get_nodes_in_group("interactable"):
+		var item := node as InteractableBase
+		if item == null or not item.available or item.was_used or not item.show_marker or not item.is_visible_in_tree():
+			continue
+		var point := item.global_position
+		var distance := _ping_distance(origin, point)
+		if distance < 0.0:
+			continue
+		AbilityFx.spawn_ping(scene, point, PING_ITEM_COLOR, "◇", distance / radius * pulse_seconds, ping_seconds, false, 0.4)
+
+
+## 같은 층·반경 안이면 수평 거리, 아니면 -1
+func _ping_distance(origin: Vector3, point: Vector3) -> float:
+	if absf(point.y - origin.y) > PING_FLOOR_GAP:
+		return -1.0
+	var distance := Vector2(point.x - origin.x, point.z - origin.z).length()
+	return distance if distance <= radius else -1.0
 
 
 func _end_vision() -> void:

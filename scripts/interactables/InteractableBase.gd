@@ -8,6 +8,11 @@ enum HighlightLevel { NONE, NEARBY, FOCUSED }
 
 const HIGHLIGHT_SHADER := preload("res://assets/shaders/interactable_highlight.gdshader")
 const MARKER_COLOR_INSPECTED := Color(0.62, 0.64, 0.68)
+## 대상이 됐을 때 윤곽선 밝기
+const FOCUS_INTENSITY := 1.35
+## 강조가 서서히 켜지고 꺼지는 시간 (초). 갑자기 번쩍 뜨지 않게 한다.
+const FADE_IN_TIME := 0.35
+const FADE_OUT_TIME := 0.2
 
 static var _spark_mesh: QuadMesh = null
 
@@ -28,6 +33,13 @@ var _highlight_level: HighlightLevel = HighlightLevel.NONE
 var _highlight_color: Color = Color(0.27, 0.63, 0.71)
 var _highlight_material: ShaderMaterial = null
 var _marker: CPUParticles3D = null
+## 윤곽선 밝기 비율 (0~1), 반짝임 밝기 비율 (0~1). 트윈으로 서서히 바뀐다.
+var _outline_fade: float = 0.0
+var _marker_fade: float = 0.0
+var _marker_alpha: float = 1.0
+var _marker_rgb: Color = Color.WHITE
+var _outline_tween: Tween = null
+var _marker_tween: Tween = null
 
 
 func _ready() -> void:
@@ -86,13 +98,44 @@ func _apply_highlight() -> void:
 	if focused and _highlight_material == null:
 		_highlight_material = ShaderMaterial.new()
 		_highlight_material.shader = HIGHLIGHT_SHADER
-		# 떠 있는 표식이 없으니 윤곽을 더 또렷하게
-		_highlight_material.set_shader_parameter("intensity", 1.35)
+		_set_outline_fade(0.0)
 	if _highlight_material:
 		_highlight_material.set_shader_parameter("glow_color", _highlight_color)
-	for geometry in _get_highlight_targets():
-		geometry.material_overlay = _highlight_material if focused else null
+	if focused:
+		for geometry in _get_highlight_targets():
+			geometry.material_overlay = _highlight_material
+		_fade_outline(1.0, FADE_IN_TIME)
+	elif _highlight_material:
+		# 서서히 꺼진 뒤 윤곽선을 뗀다 (그 사이 다시 대상이 되면 떼지 않는다)
+		_fade_outline(0.0, FADE_OUT_TIME)
 	_update_marker()
+
+
+func _fade_outline(target: float, duration: float) -> void:
+	if _outline_tween:
+		_outline_tween.kill()
+	if not is_inside_tree():
+		_set_outline_fade(target)
+		_clear_outline_if_off()
+		return
+	_outline_tween = create_tween()
+	_outline_tween.tween_method(_set_outline_fade, _outline_fade, target, duration * absf(target - _outline_fade))
+	if target <= 0.0:
+		_outline_tween.tween_callback(_clear_outline_if_off)
+
+
+func _set_outline_fade(value: float) -> void:
+	_outline_fade = value
+	if _highlight_material:
+		_highlight_material.set_shader_parameter("intensity", FOCUS_INTENSITY * value)
+
+
+func _clear_outline_if_off() -> void:
+	if _highlight_level == HighlightLevel.FOCUSED:
+		return
+	for geometry in _get_highlight_targets():
+		if geometry.material_overlay == _highlight_material:
+			geometry.material_overlay = null
 
 
 func _get_highlight_targets() -> Array[GeometryInstance3D]:
@@ -111,9 +154,8 @@ func _update_marker() -> void:
 		return
 	var hide := _highlight_level == HighlightLevel.NONE or (_highlight_level == HighlightLevel.NEARBY and not show_nearby_marker)
 	if hide:
-		if _marker:
-			_marker.emitting = false
-			_marker.visible = false
+		if _marker and _marker.visible:
+			_fade_marker(0.0, FADE_OUT_TIME)
 		return
 	var targets := _get_highlight_targets()
 	if _marker == null:
@@ -136,11 +178,40 @@ func _update_marker() -> void:
 	var amount := (18 if strong else 12) if focused else (3 if was_used else 6)
 	if _marker.amount != amount:
 		_marker.amount = amount
-	_marker.color = Color(color, 1.0 if focused else (0.4 if was_used else 0.7))
+	_marker_rgb = color
+	_marker_alpha = 1.0 if focused else (0.4 if was_used else 0.7)
+	_set_marker_fade(_marker_fade)
 	_marker.scale_amount_min = (0.1 if strong else 0.08) if focused else 0.05
 	_marker.scale_amount_max = (0.17 if strong else 0.13) if focused else 0.085
 	_marker.visible = true
 	_marker.emitting = true
+	_fade_marker(1.0, FADE_IN_TIME)
+
+
+func _fade_marker(target: float, duration: float) -> void:
+	if _marker_tween:
+		_marker_tween.kill()
+	if not is_inside_tree():
+		_set_marker_fade(target)
+		_hide_marker_if_off()
+		return
+	_marker_tween = create_tween()
+	_marker_tween.tween_method(_set_marker_fade, _marker_fade, target, duration * absf(target - _marker_fade))
+	if target <= 0.0:
+		_marker_tween.tween_callback(_hide_marker_if_off)
+
+
+func _set_marker_fade(value: float) -> void:
+	_marker_fade = value
+	if _marker:
+		_marker.color = Color(_marker_rgb, _marker_alpha * value)
+
+
+func _hide_marker_if_off() -> void:
+	if _marker == null or _marker_fade > 0.0:
+		return
+	_marker.emitting = false
+	_marker.visible = false
 
 
 func _make_sparkle() -> CPUParticles3D:

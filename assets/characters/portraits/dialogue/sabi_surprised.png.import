@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d1togti5450of"
-path="res://.godot/imported/Sabi_Surprise.png-22ca26ae293faf0595458915b95573a2.ctex"
+uid="uid://df5rdnmn7ovnh"
+path="res://.godot/imported/sabi_surprised.png-78fe43fe6c1e0297a659f1112f7419fa.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://캐릭터/표정/Sabi_Surprise.png"
-dest_files=["res://.godot/imported/Sabi_Surprise.png-22ca26ae293faf0595458915b95573a2.ctex"]
+source_file="res://assets/characters/portraits/dialogue/sabi_surprised.png"
+dest_files=["res://.godot/imported/sabi_surprised.png-78fe43fe6c1e0297a659f1112f7419fa.ctex"]
 
 [params]
 

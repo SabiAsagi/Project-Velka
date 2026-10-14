@@ -7,6 +7,8 @@ const SETTINGS_FILE_PATH := "user://settings.cfg"
 
 signal settings_changed()
 
+const JOURNAL_SCRIPT := preload("res://scripts/ui/Journal.gd")
+
 var config: ConfigFile = ConfigFile.new()
 
 # 기본 설정값
@@ -22,6 +24,14 @@ var current_settings: Dictionary = {
 		"sfx_volume": 0.8,
 		"muted": false
 	},
+	"game": {
+		"text_speed": 1 # 대화 글자 속도: 0 느리게, 1 보통, 2 빠르게, 3 바로 전부
+	},
+	"accessibility": {
+		"print_handwriting": false, # 손글씨(수첩 필기)를 읽기 쉬운 글꼴로
+		"reduce_effects": false, # 화면 흔들림·번쩍임 줄이기
+		"text_size": 0 # 대화 글자 크기: 0 기본, 1 크게, 2 아주 크게
+	},
 	"controls": {
 		"move_left": KEY_A,
 		"move_right": KEY_D,
@@ -31,6 +41,10 @@ var current_settings: Dictionary = {
 		"interact": KEY_E
 	}
 }
+
+## 대화 글자 속도(글자당 초), 대화 글자 크기 배율 — 위 설정값의 번호 순서
+const TEXT_SPEEDS := [0.05, 0.028, 0.014, 0.0]
+const TEXT_SCALES := [1.0, 1.15, 1.3]
 
 const RESOLUTIONS := [
 	Vector2i(1920, 1080),
@@ -53,7 +67,7 @@ func load_settings() -> void:
 		save_settings()
 		return
 
-	for section in ["display", "audio", "controls"]:
+	for section in ["display", "audio", "game", "accessibility", "controls"]:
 		if config.has_section(section):
 			for key in current_settings[section]:
 				if config.has_section_key(section, key):
@@ -75,6 +89,27 @@ func apply_all_settings() -> void:
 	apply_display_settings()
 	apply_audio_settings()
 	apply_control_settings()
+	apply_accessibility_settings()
+
+
+## 접근성 설정 적용 (수첩 손글씨 → 정자체)
+func apply_accessibility_settings() -> void:
+	JOURNAL_SCRIPT.print_handwriting = bool(current_settings["accessibility"]["print_handwriting"])
+
+
+## 대화 글자당 출력 시간 (초). 0이면 한 번에 전부
+func text_seconds_per_char() -> float:
+	return float(TEXT_SPEEDS[clampi(int(current_settings["game"]["text_speed"]), 0, TEXT_SPEEDS.size() - 1)])
+
+
+## 대화 글자 크기 배율
+func text_scale() -> float:
+	return float(TEXT_SCALES[clampi(int(current_settings["accessibility"]["text_size"]), 0, TEXT_SCALES.size() - 1)])
+
+
+## 화면 흔들림·번쩍임을 줄일지
+func reduce_effects() -> bool:
+	return bool(current_settings["accessibility"]["reduce_effects"])
 
 
 ## 화면 설정 적용

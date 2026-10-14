@@ -13,6 +13,11 @@ enum RuleStatus {
 
 const DEFAULT_RULES_PATH = "res://data/rules/school_rules.json"
 
+## 협회 브리핑으로 미리 알게 된 규칙의 출처. 플레이어가 직접 확인하기 전까지 "확인됨"이 아니라 "협회 기록"으로 표시한다.
+const SOURCE_ASSOCIATION := "association"
+const STATUS_TEXT := {0: "미확인", 1: "확인됨", 2: "추측", 3: "괴이 수칙", 4: "모순"}
+const ASSOCIATION_TEXT := "협회 기록"
+
 ## 규칙서 메인 저장소 (Key: rule_id, Value: Dictionary)
 var rule_book: Dictionary = {}
 
@@ -85,6 +90,10 @@ func load_rules_from_file(file_path: String) -> bool:
 		
 		# 상태 문자열을 enum 값으로 변환
 		var status_val = _parse_status(r.get("status", "UNKNOWN"))
+		# 처음부터 알고 있는 "확인됨" 규칙은 협회가 알려 준 것일 뿐 플레이어가 검증하지 않았다 -> 미확인 + 협회 출처
+		var from_association: bool = bool(r.get("discovered", false)) and status_val == RuleStatus.CONFIRMED
+		if from_association:
+			status_val = RuleStatus.UNKNOWN
 		
 		var rule_entry = {
 			"id": r_id,
@@ -101,7 +110,7 @@ func load_rules_from_file(file_path: String) -> bool:
 			"memo_unlocked_sabi": bool(r.get("discovered", false)),
 			"memo_unlocked_shamu": bool(r.get("discovered", false)),
 			"strikes": 0,
-			"source": "rulebook" if bool(r.get("discovered", false)) else "",
+			"source": SOURCE_ASSOCIATION if from_association else ("rulebook" if bool(r.get("discovered", false)) else ""),
 		}
 		rule_book[r_id] = rule_entry
 	
@@ -125,6 +134,22 @@ func _parse_status(status_str: Variant) -> int:
 			return RuleStatus.ERROR
 		_:
 			return RuleStatus.UNKNOWN
+
+
+## 화면에 보여 줄 상태 이름. 협회 기록이고 아직 검증 전이면 "협회 기록", 아니면 상태 이름
+func status_text(rule_id: String) -> String:
+	var r: Dictionary = rule_book.get(rule_id, {})
+	if r.is_empty():
+		return ""
+	var status := int(r.get("status", 0))
+	if status == RuleStatus.UNKNOWN and String(r.get("source", "")) == SOURCE_ASSOCIATION:
+		return ASSOCIATION_TEXT
+	return String(STATUS_TEXT.get(status, "?"))
+
+
+## 플레이어가 직접 확인한(상태가 정해진) 규칙인가. 미확인·협회 기록이면 false
+func is_verified(rule_id: String) -> bool:
+	return int(rule_book.get(rule_id, {}).get("status", 0)) != RuleStatus.UNKNOWN
 
 
 ## 규칙 단건 조회

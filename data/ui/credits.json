@@ -1,0 +1,12 @@
+{
+  "sections": [
+    {"title": "제작", "lines": ["기획 · 시나리오 · 아트 디렉션 — SabiAsagi"]},
+    {"title": "엔진", "lines": ["Godot Engine — MIT 라이선스 (© Godot Engine contributors)"]},
+    {"title": "글꼴", "lines": [
+      "Pretendard — SIL Open Font License 1.1 (© Kil Hyung-jin)",
+      "나눔명조 · 나눔펜 · 나눔고딕코딩 — SIL Open Font License 1.1 (© NAVER Corporation)"
+    ]},
+    {"title": "3D 에셋", "lines": ["Kenney — Furniture Kit, City Kit 외 (CC0 1.0)"]}
+  ],
+  "note": "글꼴 라이선스 원문: assets/fonts/OFL.txt, assets/fonts/Pretendard-LICENSE.txt"
+}

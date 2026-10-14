@@ -98,7 +98,22 @@ func _run() -> void:
 	if van:
 		van.interact(_member())
 		await process_frame
-	_check(van != null and dm.is_dialogue_active and dm.current_dialogue_id == "inspect_hide_van", "승합차를 조사하면 짧은 생각이 나온다")
+	_check(van != null and dm.is_dialogue_active and dm.current_dialogue_id == "inspect_hide_van", "지프를 조사하면 짧은 대화가 나온다")
+	var first_speakers := _speakers(dm)
+	while dm.is_dialogue_active:
+		dm.show_next_line()
+		await process_frame
+	# 티키타카: 샤무로 조사해도 같은 대화가 같은 순서로 이어진다 (둘이 가까이 있을 때)
+	if van:
+		_party.teleport_party((van as Node3D).global_position + Vector3(0.6, -0.9, 0.6))
+		await _seconds(0.3)
+		_party.request_switch()
+		await _seconds(0.2)
+		van.interact(_member())
+		await process_frame
+	var shamu_speakers := _speakers(dm)
+	_check("sabi" in first_speakers and "shamu" in first_speakers, "사물 조사는 두 사람이 주고받는 대화다 (%s)" % ", ".join(first_speakers))
+	_check(shamu_speakers == first_speakers, "샤무로 조사해도 같은 순서로 이어진다 (%s)" % ", ".join(shamu_speakers))
 	while dm.is_dialogue_active:
 		dm.show_next_line()
 		await process_frame
@@ -108,6 +123,13 @@ func _run() -> void:
 	for f in _failures:
 		print("  FAILED: ", f)
 	quit(1 if _failures.size() > 0 else 0)
+
+
+func _speakers(dm: Node) -> Array:
+	var result := []
+	for line in dm.get("_current_lines"):
+		result.append(String(line.get("speaker", "")))
+	return result
 
 
 func _member():

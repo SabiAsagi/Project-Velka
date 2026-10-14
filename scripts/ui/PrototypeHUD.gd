@@ -16,6 +16,10 @@ extends CanvasLayer
 @onready var interaction_label: Label = $InteractionPanel/InteractionLabel
 @onready var hint_label: Label = $MarginContainer/PanelContainer/VBoxContainer/HintLabel
 
+## 이 장면에서 받은 목표 (순서대로). Tab 수첩의 '목표·확인' 탭이 읽는다.
+signal objective_set(text: String)
+var objective_log: Array[String] = []
+
 var hp_label: Label
 var effects_label: Label
 var partner_label: Label
@@ -33,7 +37,7 @@ var overlay: Control
 const HudOverlay := preload("res://scripts/ui/HudOverlay.gd")
 const TENSION_FX_PATH := "res://scripts/ui/TensionFx.gd"
 var tension: Control
-const KEYS_TEXT := "WASD 이동   Shift 달리기   E 조사   F 능력   Space 공격   R 수첩   Q 전환   C 기다려/따라와   ESC 메뉴"
+const KEYS_TEXT := "WASD 이동   Shift 달리기   E 조사   F 능력   Space 공격   Tab 수첩   Q 전환   C 기다려/따라와   ESC 메뉴"
 
 
 func _ready() -> void:
@@ -176,7 +180,11 @@ func _update_vitals_display() -> void:
 func show_notice(text: String, color: Color = Color(0.9, 0.93, 0.96), seconds: float = 3.0) -> void:
 	# "목표: …" 는 오른쪽 위 목표 칸에 고정한다
 	if text.begins_with("목표: "):
-		overlay.set_objective(text.substr(4))
+		var goal := text.substr(4)
+		overlay.set_objective(goal)
+		if objective_log.is_empty() or objective_log[-1] != goal:
+			objective_log.append(goal)
+			objective_set.emit(goal)
 		return
 	var label := Label.new()
 	label.text = text
