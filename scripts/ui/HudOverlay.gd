@@ -93,6 +93,14 @@ func set_partner_vitals(vitals: Object, mode: String, effects: Array = []) -> vo
 			_partner.set_footer_text("가까운 위치에서 동행", "동행")
 
 
+## 높은 대비 설정을 다시 읽어 고정 칸(카드·목표·조사 안내) 바탕에 적용한다. 알림 카드는 만들 때 읽는다.
+func apply_contrast() -> void:
+	for panel in [_active, _partner, _objective_panel, _prompt_panel]:
+		var st := (panel as Control).get_theme_stylebox("panel") as StyleBoxFlat
+		if st:
+			st.bg_color = VelkaStyle.backdrop(CARD_BG)
+
+
 ## 예전 한 줄 동료 표시 (호환용 — 지금은 동행 카드가 대신한다)
 func set_partner(_text: String, _danger: bool) -> void:
 	pass
@@ -160,7 +168,7 @@ func set_prompt(text: String, shown: bool) -> void:
 ## 오른쪽 알림 카드: 작은 머리말 + 내용 (+ 키 안내). seconds 뒤 사라진다. 많이 쌓이면 오래된 것부터 지운다.
 func notify(caption: String, text: String, color: Color, seconds: float = 3.5, key: String = "", key_text: String = "") -> PanelContainer:
 	var card := PanelContainer.new()
-	var style := VelkaStyle.panel_style(color, CARD_BG, 0, 0)
+	var style := VelkaStyle.panel_style(color, VelkaStyle.backdrop(CARD_BG), 0, 0)
 	style.border_width_left = 3
 	style.content_margin_left = 22
 	style.content_margin_right = 22
@@ -257,7 +265,7 @@ func _build() -> void:
 
 	# 현재 목표 (오른쪽 위)
 	_objective_panel = PanelContainer.new()
-	var os := VelkaStyle.panel_style(VelkaStyle.ACCENT, CARD_BG, 0, 0)
+	var os := VelkaStyle.panel_style(VelkaStyle.ACCENT, VelkaStyle.backdrop(CARD_BG), 0, 0)
 	os.border_width_top = 2
 	os.content_margin_left = 24
 	os.content_margin_right = 24
@@ -299,7 +307,7 @@ func _build() -> void:
 
 	# 조사 안내 (아래 가운데, 캐릭터 머리 위쯤)
 	_prompt_panel = PanelContainer.new()
-	var ps := VelkaStyle.panel_style(Color(accent(), 0.8), CARD_BG, 0, 1)
+	var ps := VelkaStyle.panel_style(Color(accent(), 0.8), VelkaStyle.backdrop(CARD_BG), 0, 1)
 	ps.content_margin_left = 24
 	ps.content_margin_right = 24
 	ps.content_margin_top = 14
@@ -379,7 +387,7 @@ class CharacterCard extends PanelContainer:
 	func _init() -> void:
 		mouse_filter = Control.MOUSE_FILTER_IGNORE
 		custom_minimum_size = Vector2(CARD_WIDTH, 0)
-		var style := VelkaStyle.panel_style(VelkaStyle.LINE, CARD_BG, 0, 1)
+		var style := VelkaStyle.panel_style(VelkaStyle.LINE, VelkaStyle.backdrop(CARD_BG), 0, 1)
 		style.content_margin_left = 20
 		style.content_margin_right = 18
 		style.content_margin_top = 16

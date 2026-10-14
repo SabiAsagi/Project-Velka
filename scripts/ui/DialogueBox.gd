@@ -194,6 +194,9 @@ func _apply_text_settings() -> void:
 	var size := roundi(BODY_FONT_SIZE * SettingsManager.text_scale())
 	dialogue_label.add_theme_font_size_override("bold_font_size", size)
 	dialogue_label.add_theme_font_size_override("normal_font_size", size)
+	# 높은 대비: 대화창 바탕 불투명
+	(text_panel.get_theme_stylebox("panel") as StyleBoxFlat).bg_color = VelkaStyle.backdrop(BOX_BG)
+	(_name_tag.get_theme_stylebox("panel") as StyleBoxFlat).bg_color = VelkaStyle.backdrop(BOX_BG)
 
 
 func _on_dialogue_completed(_dialogue_id: String) -> void:
@@ -234,7 +237,7 @@ func _on_line_started(line: Dictionary) -> void:
 
 	# 본문: 서술은 흐리게
 	dialogue_label.text = raw_text
-	dialogue_label.add_theme_color_override("default_color", VelkaStyle.INK_DIM if narration else VelkaStyle.INK)
+	dialogue_label.add_theme_color_override("default_color", VelkaStyle.INK_DIM if narration and not VelkaStyle.high_contrast() else VelkaStyle.INK)
 	dialogue_label.visible_characters = 0
 	_is_typing = true
 	_type_timer = 0.0

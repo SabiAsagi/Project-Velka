@@ -69,6 +69,8 @@ func _ready() -> void:
 	overlay.set_keys(KEYS)
 	_build_radio_feed()
 	_refresh_place.call_deferred()
+	if not SettingsManager.settings_changed.is_connected(overlay.apply_contrast):
+		SettingsManager.settings_changed.connect(overlay.apply_contrast)
 	if not RuleManager.rule_discovered.is_connected(_on_rule_discovered):
 		RuleManager.rule_discovered.connect(_on_rule_discovered)
 		RuleManager.rule_violated.connect(_on_rule_violated)
@@ -253,7 +255,7 @@ func radio(speaker: String, text: String, seconds: float = 4.5) -> void:
 	var colors := {"sabi": VelkaStyle.SABI, "shamu": VelkaStyle.SHAMU}
 	var color: Color = colors.get(speaker, VelkaStyle.INK_DIM)
 	var panel := PanelContainer.new()
-	var style := VelkaStyle.panel_style(color, Color(0.063, 0.09, 0.114, 0.9), 0, 0)
+	var style := VelkaStyle.panel_style(color, VelkaStyle.backdrop(Color(0.063, 0.09, 0.114, 0.9)), 0, 0)
 	style.border_width_left = 3
 	style.content_margin_left = 28
 	style.content_margin_right = 28
@@ -320,7 +322,7 @@ func set_timer(id: String, caption: String, seconds_left: float) -> void:
 func _make_timer_panel(id: String) -> PanelContainer:
 	var panel := PanelContainer.new()
 	panel.name = id
-	var style := VelkaStyle.panel_style(VelkaStyle.LINE, Color(0.063, 0.09, 0.114, 0.9), 0, 1)
+	var style := VelkaStyle.panel_style(VelkaStyle.LINE, VelkaStyle.backdrop(Color(0.063, 0.09, 0.114, 0.9)), 0, 1)
 	style.content_margin_left = 40
 	style.content_margin_right = 40
 	style.content_margin_top = 18

@@ -98,6 +98,14 @@ func continue_after_failure() -> void:
 	restart_from_checkpoint()
 
 
+## 실패 화면에서 '타이틀로'·'저장 기록 선택'을 고르면: 재시작 없이 실패 상태만 끝낸다 (곧 장면이 바뀐다)
+func abandon_failure() -> void:
+	if not is_failing:
+		return
+	_pending_restart = Callable()
+	_end_failure()
+
+
 func restart_from_checkpoint() -> void:
 	if checkpoint.is_empty() or _party == null:
 		_end_failure()

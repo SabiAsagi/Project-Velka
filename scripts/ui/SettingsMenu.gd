@@ -29,13 +29,18 @@ const CATEGORIES: Array[String] = ["화면", "소리", "조작", "게임", "접�
 const SECTION_TITLES: Array[String] = ["화면", "소리 크기", "조작 키", "대화", "읽기 · 시각 효과"]
 const TEXT_SPEED_NAMES: Array[String] = ["느리게", "보통", "빠르게", "바로 전부"]
 const TEXT_SIZE_NAMES: Array[String] = ["기본", "크게", "아주 크게"]
+## 바꿀 수 없는 키 (조작 탭 아래에 키캡으로 보인다)
+const FIXED_KEYS := [["조사 기록 열기 / 닫기", "Tab"], ["일시정지 / 뒤로", "Esc"], ["달리기", "Shift"], ["능력", "F"],
+		["공격", "Space"], ["동료 대기 / 따라와", "C"], ["대화 기록", "L"]]
 
 var _tabs: TabContainer
+var _category_hot: StyleBox
 var _category_buttons: Array[Button] = []
 var _text_speed_option: OptionButton
 var _text_size_option: OptionButton
 var _handwriting_check: CheckBox
 var _reduce_effects_check: CheckBox
+var _contrast_check: CheckBox
 
 
 func _ready() -> void:
@@ -111,6 +116,22 @@ func _init_controls_ui() -> void:
 		btn.pressed.connect(func(): _start_rebind(action_name, btn))
 		row.add_child(btn)
 
+		keybind_list.add_child(row)
+
+	# 바꿀 수 없는 키 (시안 22: 키캡으로만 보인다)
+	var head := VelkaStyle.label("고정 키", VelkaStyle.spaced(VelkaStyle.sans_semibold(), 4), 17, VelkaStyle.ACCENT)
+	var gap := Control.new()
+	gap.custom_minimum_size = Vector2(0, 18)
+	keybind_list.add_child(gap)
+	keybind_list.add_child(head)
+	for pair in FIXED_KEYS:
+		var row := HBoxContainer.new()
+		row.custom_minimum_size.y = 52
+		var label := VelkaStyle.label(String(pair[0]), VelkaStyle.sans(), 20, VelkaStyle.INK)
+		label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		row.add_child(label)
+		var cap := VelkaStyle.keycap(String(pair[1]), 17)
+		row.add_child(cap)
 		keybind_list.add_child(row)
 
 
@@ -360,6 +381,8 @@ func _category_column() -> Control:
 		button.focus_entered.connect(func(): _select_category(index))
 		list.add_child(button)
 		_category_buttons.append(button)
+		if _category_hot == null:
+			_category_hot = button.get_theme_stylebox("hover")
 	return frame
 
 
@@ -368,9 +391,16 @@ func _select_category(index: int) -> void:
 	for i in _category_buttons.size():
 		var b := _category_buttons[i]
 		var on := i == index
-		var normal := (b.get_theme_stylebox("hover") if on else StyleBoxEmpty.new()) as StyleBox
-		b.add_theme_stylebox_override("normal", normal)
+		var hot := _category_hot if _category_hot else b.get_theme_stylebox("hover")
+		var plain := StyleBoxEmpty.new()
+		plain.content_margin_left = hot.content_margin_left
+		plain.content_margin_right = hot.content_margin_right
+		# 선택된 분류만 강조한다 (키보드 포커스가 남은 버튼이 같이 강조되지 않게)
+		var normal: StyleBox = hot if on else plain
+		for state in ["normal", "focus"]:
+			b.add_theme_stylebox_override(state, normal)
 		b.add_theme_color_override("font_color", VelkaStyle.INK if on else Color(VelkaStyle.INK, 0.72))
+		b.add_theme_color_override("font_focus_color", VelkaStyle.INK if on else Color(VelkaStyle.INK, 0.72))
 
 
 func _add_section_title(tab: Control, title: String) -> void:
@@ -389,9 +419,7 @@ func _restyle(node: Node) -> void:
 		if child is OptionButton:
 			_style_option(child)
 		elif child is CheckBox:
-			(child as CheckBox).add_theme_font_override("font", VelkaStyle.sans())
-			(child as CheckBox).add_theme_font_size_override("font_size", 22)
-			(child as CheckBox).add_theme_color_override("font_color", VelkaStyle.INK)
+			VelkaStyle.style_checkbox(child)
 		elif child is Button:
 			VelkaStyle.style_small_button(child, VelkaStyle.INK)
 			(child as Button).add_theme_font_size_override("font_size", 19)
@@ -511,7 +539,15 @@ func _accessibility_tab() -> Control:
 		SettingsManager.current_settings["accessibility"]["reduce_effects"] = on
 		SettingsManager.save_settings())
 	rows.add_child(_row("화면 효과 줄이기", "화면 흔들림과 번쩍임을 약하게", _reduce_effects_check))
-	var note := VelkaStyle.label("규칙의 상태는 색과 함께 글자로도 표시합니다.", VelkaStyle.sans(), 18, VelkaStyle.ACCENT)
+	_contrast_check = CheckBox.new()
+	_contrast_check.name = "HighContrast"
+	_contrast_check.text = "사용"
+	_contrast_check.toggled.connect(func(on):
+		SettingsManager.current_settings["accessibility"]["high_contrast"] = on
+		SettingsManager.save_settings()
+		SettingsManager.settings_changed.emit())
+	rows.add_child(_row("높은 대비", "HUD · 대화창 바탕을 불투명하게, 흐린 글자를 밝게", _contrast_check))
+	var note := VelkaStyle.label("상태는 색상과 문구 · 형태로 함께 표시합니다.", VelkaStyle.sans(), 18, VelkaStyle.ACCENT)
 	rows.add_child(_spacer(26))
 	rows.add_child(note)
 	return tab
@@ -543,6 +579,7 @@ func _refresh_extra_values() -> void:
 	_text_size_option.select(int(SettingsManager.current_settings["accessibility"]["text_size"]))
 	_handwriting_check.set_pressed_no_signal(bool(SettingsManager.current_settings["accessibility"]["print_handwriting"]))
 	_reduce_effects_check.set_pressed_no_signal(bool(SettingsManager.current_settings["accessibility"]["reduce_effects"]))
+	_contrast_check.set_pressed_no_signal(SettingsManager.high_contrast())
 
 
 func _line() -> ColorRect:
