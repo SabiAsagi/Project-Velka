@@ -55,8 +55,17 @@ func _run() -> void:
 	_gm.set_story_flag("prologue_hideout_done", true)
 	_gm.sabi_shamu_trust = 61.0
 	_sm.change_scene(_sm.SCENE_FACTORY)
+	await process_frame
+	_check(_gm.is_exploration_locked(), "장면이 바뀌는 페이드 동안에는 조사·상호작용이 잠긴다")
+	# 버그 재현: 페이드 직전에 물건을 조사해 대사가 시작된 채로 장면이 바뀌어도 (예전엔 공장에서 조작 불가)
+	var _dm: Node = root.get_node("/root/DialogueManager")
+	_dm.start_dialogue_data("inspect_leftover", [{"speaker": "system", "text": "검은 화면 뒤에 남은 조사 대사"}])
 	await _seconds(2.0)
 	_check(current_scene.name == "PrologueFactory" and _gm.current_chapter == "Prologue_Factory", "공장으로 넘어가면 챕터가 바뀐다")
+	_check(_dm.current_dialogue_id != "inspect_leftover", "이전 장면에서 끝나지 않은 대사는 새 장면으로 넘어오지 않는다 (%s)" % _dm.current_dialogue_id)
+	await _finish_dialogue()
+	await _seconds(0.6)
+	_check(not _gm.is_exploration_locked(), "공장에 도착해 첫 대화가 끝나면 조작할 수 있다 (잠금 %s)" % _gm.get("_exploration_locks"))
 	_check(_saved_chapter() == "Prologue_Factory", "공장에 들어가면 자동 저장된다 (%s)" % _saved_chapter())
 
 	# --- 타이틀 -> 이어하기 -> 공장 (신뢰도·플래그 복원) ---

@@ -33,6 +33,8 @@ const CHAPTER_TITLES := {
 const DIALOGUE_BOX_SCRIPT := preload("res://scripts/ui/DialogueBox.gd")
 ## 새 씬이 첫 프레임을 그리고 난 뒤 페이드 인을 시작하기까지 기다리는 프레임 수 (씬 _ready 의 부하가 페이드 인에 겹치지 않게)
 const SETTLE_FRAMES := 2
+## 장면 전환 중 탐색 잠금 이름
+const TRANSITION_LOCK := "scene_transition"
 ## 이야기 씬에 들어온 뒤 다음 이야기 씬을 미리 읽기 시작하기까지의 시간(초)
 const PREFETCH_DELAY := 2.0
 
@@ -82,6 +84,8 @@ func change_scene(target_path: String, with_fade: bool = true, duration: float =
 		return
 	_is_transitioning = true
 	scene_transition_started.emit(target_path)
+	# 페이드 동안에는 조사·상호작용을 막는다 (검은 화면 뒤에서 대화가 시작돼 새 장면까지 남던 문제)
+	GameManager.set_exploration_lock(TRANSITION_LOCK, true)
 
 	# 페이드 아웃하는 동안 백그라운드에서 씬 파일을 읽는다 (이미 미리 읽어 뒀으면 바로 쓴다)
 	_request_scene(target_path)
@@ -96,6 +100,7 @@ func change_scene(target_path: String, with_fade: bool = true, duration: float =
 	if packed == null:
 		push_error("[SceneManager] 씬 읽기 실패: %s" % target_path)
 		_is_transitioning = false
+		GameManager.set_exploration_lock(TRANSITION_LOCK, false)
 		_fade_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		_fade_rect.modulate.a = 0.0
 		return
@@ -104,10 +109,15 @@ func change_scene(target_path: String, with_fade: bool = true, duration: float =
 	if not chapter.is_empty():
 		GameManager.change_chapter(chapter)
 
+	# 이전 장면이 남긴 대화·잠금은 새 장면으로 가져가지 않는다
+	DialogueManager.abort_dialogue()
+	GameManager.clear_exploration_locks()
+	GameManager.set_exploration_lock(TRANSITION_LOCK, true)
 	var err = get_tree().change_scene_to_packed(packed)
 	if err != OK:
 		push_error("[SceneManager] 씬 변경 실패: %s (에러 코드: %d)" % [target_path, err])
 		_is_transitioning = false
+		GameManager.set_exploration_lock(TRANSITION_LOCK, false)
 		_fade_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		_fade_rect.modulate.a = 0.0
 		return
@@ -127,6 +137,7 @@ func change_scene(target_path: String, with_fade: bool = true, duration: float =
 		_fade_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 	_is_transitioning = false
+	GameManager.set_exploration_lock(TRANSITION_LOCK, false)
 	scene_transition_finished.emit(target_path)
 	print("[SceneManager] 씬 전환 완료: %s" % target_path)
 	if not chapter.is_empty():
