@@ -197,7 +197,27 @@ func _tutorial_lines() -> Array:
 
 
 func _help_text() -> String:
-	return "클릭: 회로 돌리기   ·   방향키 + Space: 키보드   ·   ESC: 연결 끊기"
+	return "클릭: 회로 돌리기   ·   방향키 + Space: 키보드   ·   Esc: 연결 종료"
+
+
+func _kind_name() -> String:
+	return "회로 연결"
+
+
+func _guide() -> String:
+	return "입력 단자를 출력 단자까지 이어 주세요."
+
+
+func _side_title() -> String:
+	return "단자 대조"
+
+
+func _side_lines() -> Array:
+	return ["회로 조각을 눌러 회전하세요.", "서로 맞닿은 단자로만 신호가 이동합니다."]
+
+
+func _sabi_hint() -> String:
+	return "끝에서부터 거꾸로\n확인해도 될 것 같아."
 
 
 func _build_body(parent: Container) -> void:
@@ -251,28 +271,28 @@ class GridArt extends Control:
 
 	func _draw() -> void:
 		var o := origin()
-		var on := VelkaStyle.TERMINAL
-		var off := Color(0.2, 0.32, 0.27)
+		# 기본 디자인 0.2: 청록 선 · 금빛 마디, 어두운 청록 칸
+		var on := Color("#8cc9d1")
+		var off := Color("#3c5761")
+		var gold := VelkaStyle.ACCENT
 		# IN / OUT 단자
 		var in_y := o.y + (game.in_row + 0.5) * HackMinigame.TILE
 		var out_y := o.y + (game.out_row + 0.5) * HackMinigame.TILE
-		var in_lit := game.powered.has(game.in_row * game.cols)
-		draw_rect(Rect2(Vector2(2, in_y - 14), Vector2(34, 28)), Color(0.05, 0.2, 0.12))
-		draw_line(Vector2(36, in_y), Vector2(o.x, in_y), on, 8.0)
-		draw_string(VelkaStyle.mono_bold(), Vector2(5, in_y + 6), "IN", HORIZONTAL_ALIGNMENT_LEFT, -1, 18, on)
+		draw_line(Vector2(30, in_y), Vector2(o.x, in_y), on, 6.0)
+		draw_string(VelkaStyle.sans_medium(), Vector2(0, in_y - 10), "IN", HORIZONTAL_ALIGNMENT_LEFT, -1, 17, gold)
 		var ox := o.x + game.cols * HackMinigame.TILE
 		var out_lit := game.is_solved
-		draw_line(Vector2(ox, out_y), Vector2(ox + 6, out_y), on if out_lit else off, 8.0)
-		draw_rect(Rect2(Vector2(ox + 6, out_y - 14), Vector2(36, 28)), Color(0.05, 0.2, 0.12) if out_lit else Color(0.18, 0.06, 0.06))
-		draw_string(VelkaStyle.mono_bold(), Vector2(ox + 8, out_y + 6), "OUT", HORIZONTAL_ALIGNMENT_LEFT, -1, 16, on if out_lit else VelkaStyle.RED_SOFT)
+		draw_line(Vector2(ox, out_y), Vector2(ox + 12, out_y), on if out_lit else off, 6.0)
+		draw_string(VelkaStyle.sans_medium(), Vector2(ox + 4, out_y - 10), "OUT", HORIZONTAL_ALIGNMENT_LEFT, -1, 17, gold if out_lit else VelkaStyle.INK_DIM)
 		for i in game.masks.size():
 			var cell := Vector2(i % game.cols, i / game.cols)
 			var r := Rect2(o + cell * HackMinigame.TILE, Vector2(HackMinigame.TILE, HackMinigame.TILE))
 			var lit := game.powered.has(i)
-			draw_rect(r.grow(-2), Color(0.04, 0.09, 0.07) if not lit else Color(0.05, 0.16, 0.1))
-			draw_rect(r.grow(-2), Color(0.12, 0.25, 0.18), false, 1.0)
+			draw_rect(r.grow(-4), Color("#13232a") if not lit else Color("#183039"))
+			draw_rect(r.grow(-4), Color("#2d4650"), false, 1.0)
+			draw_string(VelkaStyle.sans(), r.position + Vector2(10, 20), "%02d" % (i + 1), HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color(VelkaStyle.INK_DIM, 0.8))
 			if i == _hover or Vector2i(cell) == cursor:
-				draw_rect(r.grow(-3), Color(0.6, 1.0, 0.75, 0.5), false, 2.0)
+				draw_rect(r.grow(-4), Color(gold, 0.75), false, 2.0)
 			var c := r.get_center()
 			var ang: float = _spin.get(i, 0.0)
 			var col := on if lit else off
@@ -283,7 +303,6 @@ class GridArt extends Control:
 				if m & bit:
 					var d := Vector2(HackMinigame.DIRS[bit]).rotated(ang)
 					if lit:
-						draw_line(c, c + d * HackMinigame.TILE * 0.5, Color(on.r, on.g, on.b, 0.25), 16.0)
-					draw_line(c, c + d * HackMinigame.TILE * 0.5, col, 8.0)
-			draw_circle(c, 7.0, col)
-			draw_circle(c, 3.0, Color(0.02, 0.05, 0.04))
+						draw_line(c, c + d * HackMinigame.TILE * 0.5, Color(on.r, on.g, on.b, 0.2), 14.0)
+					draw_line(c, c + d * HackMinigame.TILE * 0.5, col, 6.0)
+			draw_circle(c, 9.0, gold if lit else Color(gold, 0.45))

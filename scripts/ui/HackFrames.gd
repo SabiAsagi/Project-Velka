@@ -99,7 +99,27 @@ func _tutorial_lines() -> Array:
 
 
 func _help_text() -> String:
-	return "프레임 두 개를 차례로 클릭: 자리 바꾸기   ·   ESC: 연결 끊기"
+	return "프레임 두 개를 차례로 클릭: 자리 바꾸기   ·   Esc: 연결 종료"
+
+
+func _kind_name() -> String:
+	return "영상 프레임 대조"
+
+
+func _guide() -> String:
+	return "순서가 뒤섞인 CCTV 프레임을 시간 순서대로 맞춰 주세요."
+
+
+func _side_title() -> String:
+	return "영상 비교"
+
+
+func _side_lines() -> Array:
+	return ["인물의 위치와 시각 표시를", "앞뒤 프레임과 비교하세요.", "두 프레임을 차례로 누르면 자리가 바뀝니다."]
+
+
+func _sabi_hint() -> String:
+	return "시각이 깨진 칸은\n걸어간 거리로 맞춰 보자."
 
 
 func _refresh() -> void:
@@ -127,7 +147,7 @@ func _build_body(parent: Container) -> void:
 	for i in frame_count:
 		var v := FrameArt.new()
 		v.total = frame_count
-		v.custom_minimum_size = Vector2(250, 180)
+		v.custom_minimum_size = Vector2(280, 196)
 		v.gui_input.connect(func(e):
 			if e is InputEventMouseButton and e.pressed and e.button_index == MOUSE_BUTTON_LEFT:
 				click_slot(i))
@@ -167,7 +187,7 @@ class FrameArt extends Control:
 			# 문틈에서 새어 나오는 빛
 			draw_rect(Rect2(vp + Vector2(-20, -26), Vector2(4, 44)), Color(0.75, 0.75, 0.6, 0.6))
 		# 천장 등
-		draw_circle(Vector2(size.x * 0.4, 14), 5, Color(0.8, 0.85, 0.75, 0.5 + 0.3 * sin(_t * 3.0 + order)))
+		draw_circle(Vector2(size.x * 0.4, 44), 5, Color(0.8, 0.85, 0.75, 0.5 + 0.3 * sin(_t * 3.0 + order)))
 		# 걸어가는 사람: 앞(왼쪽)에서 문 쪽으로 점점 작아진다
 		if not last:
 			var k := float(order) / maxf(1.0, total - 2.0)
@@ -190,10 +210,10 @@ class FrameArt extends Control:
 		var ts := "23:41:%02d" % seconds
 		if corrupted_time:
 			ts = "23:4█:" + ("█" + str(seconds % 10) if order % 2 == 0 else "██")
-		draw_string(VelkaStyle.mono_bold(), Vector2(8, size.y - 10), ts, HORIZONTAL_ALIGNMENT_LEFT, -1, 18, VelkaStyle.TERMINAL)
-		draw_string(VelkaStyle.mono(), Vector2(8, 22), "CAM-B1  #%d" % (slot + 1), HORIZONTAL_ALIGNMENT_LEFT, -1, 15, Color(0.7, 0.75, 0.7))
+		draw_string(VelkaStyle.sans_medium(), Vector2(12, size.y - 12), ts, HORIZONTAL_ALIGNMENT_LEFT, -1, 18, VelkaStyle.ACCENT)
+		draw_string(VelkaStyle.sans(), Vector2(12, 24), "CAM 01 · FRAME %02d" % (slot + 1), HORIZONTAL_ALIGNMENT_LEFT, -1, 15, Color(VelkaStyle.INK, 0.85))
 		draw_circle(Vector2(size.x - 14, 16), 5, Color(0.9, 0.15, 0.1, 0.5 + 0.5 * sin(_t * 4.0)))
 		if selected:
-			draw_rect(r.grow(-2), VelkaStyle.TERMINAL, false, 4.0)
+			draw_rect(r.grow(-2), VelkaStyle.ACCENT, false, 3.0)
 		else:
-			draw_rect(r, Color(0.25, 0.35, 0.3), false, 1.0)
+			draw_rect(r, Color("#2d4650"), false, 2.0)

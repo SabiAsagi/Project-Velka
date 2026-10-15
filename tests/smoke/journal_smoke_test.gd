@@ -146,10 +146,10 @@ func _run() -> void:
 	_check(page1.contains("급식 메뉴가 전날과 완전히 같다면") and page1.contains("식판을 받지 마십시오"), "급식실 쪽에는 규칙 원문이 모두 실린다 (아직 모르는 규칙 포함)")
 	_check(_count(page1, "위반 결과") == 1, "상태 표시는 알게 된 규칙에만 붙는다 (%d개)" % _count(page1, "위반 결과"))
 	_check(page1.contains("— 사비") and (_journal.get("_notes_column") as Control).visible, "알게 된 규칙의 사비 메모는 여백에 사비 필체로 남는다")
-	_check(page1.contains("NanumPenScript"), "사비 메모는 사비의 손글씨 글꼴이다")
+	_check(page1.contains("Sabi-Hand.ttf"), "사비 메모는 사비의 손글씨 글꼴이다 (assets/fonts/hand/)")
 	_check(not page1.contains(" 확정 "), "직접 확인하지 않은 규칙은 확정이 아니다")
 	_journal.set_print_handwriting(true)
-	_check(not _journal.get_page_text().contains("NanumPenScript"), "정자체 보기를 켜면 필기를 읽기 쉬운 글꼴로 보여 준다")
+	_check(not _journal.get_page_text().contains("Sabi-Hand.ttf"), "정자체 보기를 켜면 필기를 읽기 쉬운 글꼴로 보여 준다")
 	_journal.set_print_handwriting(false)
 	_rm.update_rule_status("RULE_CAFETERIA_01", 1)
 	await _input_frames()
@@ -170,16 +170,34 @@ func _run() -> void:
 	_journal.show_tab(2)
 	_journal.select_document("school_report")
 	_check(_journal.get_page_text().contains("현장 목적"), "학교 보고서 첫 쪽에 운용 안내가 보인다")
-	_check(_journal.get_page_text().contains("— 기록관리팀 / 백서린"), "보고서의 대원 필기는 여백에 서명과 함께 남는다")
+	_check(_journal.get_page_text().contains("백서린 / 기록관리팀"), "보고서의 대원 필기는 여백에 '이름 / 소속' 서명과 함께 남는다")
+	var journal_script: GDScript = _journal.get_script()
+	_check(String(journal_script.hand_for_signer("정보조사부 / 유가온")["font"]).ends_with("Yu-Hand.ttf")
+			and String(journal_script.hand_for_signer("협회장 / 백윤서")["font"]).ends_with("Baek-Hand.ttf")
+			and bool(journal_script.hand_for_signer("협회장 / 백윤서").get("boxed", false))
+			and String(journal_script.hand_for_signer("기록관리팀 / 백서린")["font"]).ends_with("Gaegu-Regular.ttf"),
+			"협회 인물은 이름으로 각자의 손글씨를 고르고(협회장은 상자), 그 밖의 대원은 공용 필체")
+	var hand_font := load("res://assets/fonts/hand/Shamu-Hand.ttf") as Font
+	_check(hand_font != null and not hand_font.fallbacks.is_empty(), "손글씨 글꼴에 없는 기호는 기본 글꼴로 대신한다")
 
-	# --- 인벤토리 ---
+	# --- 수집 기록 ---
 	_journal.show_tab(3)
 	await _input_frames()
 	var box: VBoxContainer = _journal.get("_inventory_box")
+	var doc_card := box.find_child("Doc_school_rulebook", true, false) as Button
+	_check(doc_card != null and box.find_child("Doc_school_report", true, false) != null, "수집 기록에 입수한 문서가 카드로 보인다")
+	_check(box.find_child("LockedDocs", true, false) == null or _has_label_containing(box.find_child("LockedDocs", true, false), "미발견"),
+			"입수하지 않은 문서는 '미발견' 카드로만 보인다")
+	if doc_card:
+		doc_card.pressed.emit()
+		await _input_frames()
+		_check(_journal.get_tab() == 1 and _journal.get_current_document_id() == "school_rulebook", "문서 카드를 누르면 그 문서가 열린다")
+		_journal.show_tab(3)
+		await _input_frames()
 	_check(box.get_node_or_null("EmptyInventory") != null, "소지품이 없으면 빈 상태 문구가 보인다")
 	_inv.add_item("구급상자")
 	await _input_frames()
-	var row = box.get_node_or_null("Item_구급상자")
+	var row = box.find_child("Item_구급상자", true, false)
 	_check(row != null and box.get_node_or_null("EmptyInventory") == null, "인벤토리 탭에 추가한 아이템이 보인다")
 	_check(row != null and _has_label_containing(row, "체력을 크게 회복"), "아이템 설명이 함께 보인다")
 	_inv.remove_item("구급상자")

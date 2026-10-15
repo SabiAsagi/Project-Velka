@@ -134,6 +134,19 @@ func choose_option(choice_index: int) -> void:
 		show_next_line()
 
 
+## 장면이 바뀔 때 끝나지 않은 대화를 조용히 버린다 (신호 없음 — 이전 장면의 처리가 다시 돌지 않게).
+## 버리지 않으면 새 장면에서도 '대화 중'으로 남아 조작이 막히고, 새 장면의 첫 대화가 시작되지 않는다.
+func abort_dialogue() -> void:
+	if not is_dialogue_active:
+		return
+	print("[DialogueManager] 장면 전환으로 대화 중단: %s" % current_dialogue_id)
+	is_dialogue_active = false
+	_waiting_for_choice = false
+	_current_lines.clear()
+	_current_line_index = 0
+	_current_choices.clear()
+
+
 ## 대화 강제 또는 정상 종료
 func finish_dialogue() -> void:
 	if not is_dialogue_active:

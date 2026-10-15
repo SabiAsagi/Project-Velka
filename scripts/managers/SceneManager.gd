@@ -6,6 +6,7 @@ extends CanvasLayer
 # 씬 파일은 ResourceLoader 의 백그라운드 스레드로 읽는다: 페이드 아웃 동안 이미 읽기 시작하고,
 # 이야기 씬에 들어가면 다음 이야기 씬을 미리 읽어 둔다 (큰 씬을 동기 load() 하면 한 프레임이 수백 ms~1초 이상 멈춘다).
 # 시작할 때 절차적 효과음(SfxBank)과 대화창 초상화도 백그라운드에서 미리 만들어/읽어 둔다.
+# 이야기 장면으로 갈 때는 페이드 뒤 로딩 화면(LoadingScreen, 실제 읽기 진행률)을 띄운다.
 
 const SCENE_TITLE := "res://scenes/ui/TitleScreen.tscn"
 const SCENE_HIDEOUT := "res://scenes/chapters/Prologue_Hideout.tscn"
@@ -33,6 +34,11 @@ const CHAPTER_TITLES := {
 const DIALOGUE_BOX_SCRIPT := preload("res://scripts/ui/DialogueBox.gd")
 ## 새 씬이 첫 프레임을 그리고 난 뒤 페이드 인을 시작하기까지 기다리는 프레임 수 (씬 _ready 의 부하가 페이드 인에 겹치지 않게)
 const SETTLE_FRAMES := 2
+## 로딩 화면: 나타나고 사라지는 시간, 최소로 보여 주는 시간 (너무 짧게 번쩍이지 않게)
+const LOADING_FADE := 0.2
+const LOADING_MIN_SECONDS := 0.6
+## 장면 전환 중 탐색 잠금 이름
+const TRANSITION_LOCK := "scene_transition"
 ## 이야기 씬에 들어온 뒤 다음 이야기 씬을 미리 읽기 시작하기까지의 시간(초)
 const PREFETCH_DELAY := 2.0
 
@@ -82,6 +88,8 @@ func change_scene(target_path: String, with_fade: bool = true, duration: float =
 		return
 	_is_transitioning = true
 	scene_transition_started.emit(target_path)
+	# 페이드 동안에는 조사·상호작용을 막는다 (검은 화면 뒤에서 대화가 시작돼 새 장면까지 남던 문제)
+	GameManager.set_exploration_lock(TRANSITION_LOCK, true)
 
 	# 페이드 아웃하는 동안 백그라운드에서 씬 파일을 읽는다 (이미 미리 읽어 뒀으면 바로 쓴다)
 	_request_scene(target_path)
@@ -92,10 +100,28 @@ func change_scene(target_path: String, with_fade: bool = true, duration: float =
 		tween_out.tween_property(_fade_rect, "modulate:a", 1.0, duration)
 		await tween_out.finished
 
-	var packed := await _await_scene(target_path)
+	# 이야기 장면으로 갈 때는 검은 화면 위에 로딩 화면 (실제 읽기 진행률)
+	var loading: LoadingScreen = null
+	var loading_started := Time.get_ticks_msec()
+	if with_fade and not chapter_of_scene(target_path).is_empty():
+		loading = LoadingScreen.new()
+		add_child(loading)
+		loading.setup(chapter_of_scene(target_path))
+		loading.modulate.a = 0.0
+		create_tween().tween_property(loading, "modulate:a", 1.0, LOADING_FADE)
+
+	var packed := await _await_scene(target_path, loading)
+	if loading:
+		loading.set_progress(1.0)
+		var shown := (Time.get_ticks_msec() - loading_started) / 1000.0
+		if shown < LOADING_MIN_SECONDS:
+			await get_tree().create_timer(LOADING_MIN_SECONDS - shown).timeout
 	if packed == null:
+		if loading:
+			loading.queue_free()
 		push_error("[SceneManager] 씬 읽기 실패: %s" % target_path)
 		_is_transitioning = false
+		GameManager.set_exploration_lock(TRANSITION_LOCK, false)
 		_fade_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		_fade_rect.modulate.a = 0.0
 		return
@@ -104,10 +130,15 @@ func change_scene(target_path: String, with_fade: bool = true, duration: float =
 	if not chapter.is_empty():
 		GameManager.change_chapter(chapter)
 
+	# 이전 장면이 남긴 대화·잠금은 새 장면으로 가져가지 않는다
+	DialogueManager.abort_dialogue()
+	GameManager.clear_exploration_locks()
+	GameManager.set_exploration_lock(TRANSITION_LOCK, true)
 	var err = get_tree().change_scene_to_packed(packed)
 	if err != OK:
 		push_error("[SceneManager] 씬 변경 실패: %s (에러 코드: %d)" % [target_path, err])
 		_is_transitioning = false
+		GameManager.set_exploration_lock(TRANSITION_LOCK, false)
 		_fade_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		_fade_rect.modulate.a = 0.0
 		return
@@ -120,6 +151,15 @@ func change_scene(target_path: String, with_fade: bool = true, duration: float =
 	if not chapter.is_empty() and autosave_enabled:
 		SaveManager.save_game()
 
+	if loading:
+		var tween_loading := create_tween()
+		tween_loading.tween_property(loading, "modulate:a", 0.0, LOADING_FADE)
+		await tween_loading.finished
+		loading.queue_free()
+	# 자동 저장 칸의 화면 캡처는 장면이 다 보인 뒤에 (로딩 화면이 찍히지 않게)
+	if not chapter.is_empty() and autosave_enabled:
+		SaveManager.capture_auto_preview()
+
 	if with_fade:
 		var tween_in = create_tween()
 		tween_in.tween_property(_fade_rect, "modulate:a", 0.0, duration)
@@ -127,6 +167,7 @@ func change_scene(target_path: String, with_fade: bool = true, duration: float =
 		_fade_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 	_is_transitioning = false
+	GameManager.set_exploration_lock(TRANSITION_LOCK, false)
 	scene_transition_finished.emit(target_path)
 	print("[SceneManager] 씬 전환 완료: %s" % target_path)
 	if not chapter.is_empty():
@@ -147,13 +188,16 @@ func _request_scene(scene_path: String) -> void:
 
 ## 읽기가 끝날 때까지 프레임마다 기다렸다가 PackedScene 을 돌려준다 (기다리는 동안 게임 루프는 멈추지 않는다).
 ## 읽기에 실패하면 null.
-func _await_scene(scene_path: String) -> PackedScene:
+func _await_scene(scene_path: String, loading: LoadingScreen = null) -> PackedScene:
 	if _prefetched.has(scene_path):
 		var ready_scene: PackedScene = _prefetched[scene_path]
 		_prefetched.erase(scene_path)
 		return ready_scene
+	var progress: Array = []
 	while true:
-		var status := ResourceLoader.load_threaded_get_status(scene_path)
+		var status := ResourceLoader.load_threaded_get_status(scene_path, progress)
+		if loading and not progress.is_empty():
+			loading.set_progress(float(progress[0]) * 0.97)
 		if status == ResourceLoader.THREAD_LOAD_IN_PROGRESS:
 			await get_tree().process_frame
 			continue
@@ -216,6 +260,7 @@ func chapter_title(chapter: String) -> String:
 func start_new_game() -> void:
 	print("[SceneManager] 새 게임 시작")
 	GameManager.reset_game_state()
+	SaveManager.play_seconds = 0.0
 	change_scene(SCENE_NEW_GAME)
 
 
@@ -228,6 +273,16 @@ func continue_game() -> void:
 	var success = SaveManager.load_game()
 	if success:
 		change_scene(STORY_SCENES.get(GameManager.current_chapter, SCENE_SCHOOL))
+
+
+## 저장 칸을 불러온다: 진행을 읽고 그 장(챕터)의 시작 지점으로 (0 = 자동 저장)
+func load_slot(slot: int) -> bool:
+	if get_tree().paused:
+		get_tree().paused = false
+	if not SaveManager.load_from_slot(slot):
+		return false
+	change_scene(STORY_SCENES.get(GameManager.current_chapter, SCENE_SCHOOL))
+	return true
 
 
 ## 프롤로그 처음(아지트)으로 이동

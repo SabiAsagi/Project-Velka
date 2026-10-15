@@ -1,25 +1,25 @@
 class_name VelkaStyle
 
 # 프로젝트 벨카 - UI 공통 스타일 (색·글꼴·패널)
-# 기본 디자인 0.1 ("서로 다른 빛, 하나의 균열"): 먹색 바탕, 바랜 흰 글자, 사비(청록)·샤무(금빛) 강조, 위험은 탁한 적색.
-# 색은 디자인 토큰(Belka_Design_v0.1/design-tokens.json)을 따른다.
+# 기본 디자인 0.2 ("서로 다른 빛, 하나의 균열"): 먹색 바탕, 바랜 흰 글자, 사비(청록 #45A1B5)·샤무(금빛 #D9A336) 강조, 위험은 탁한 적색.
+# 색은 디자인 토큰(Project_Velka_Design_v0.2/design-tokens.json)을 따른다.
 # 글꼴: 메뉴·본문·UI = Pretendard, 게임 속 문서·서술 = 나눔명조, 손글씨 메모 = 나눔펜, 기록·단말 = 나눔고딕코딩 (assets/fonts, OFL)
 
-const INK := Color("#E8E5DD")                  # 기본 글자 (바랜 흰색)
+const INK := Color("#ECE7DB")                  # 기본 글자 (바랜 흰색)
 const INK_DIM := Color("#A8B3BA")              # 보조 글자
 const BG := Color(0.063, 0.09, 0.114, 0.95)    # 패널 바탕 (#10171D)
 const BG_DEEP := Color("#101318")              # 화면 바탕 (먹색)
 const BG_SOFT := Color(0.09, 0.12, 0.15, 0.9)
 const LINE := Color("#53616B")                 # 테두리
-const PAPER := Color("#E8E2D2")                # 문서 종이
+const PAPER := Color("#E6DFCD")                # 문서 종이
 const PAPER_INK := Color("#26313A")            # 문서 글자
 const RED := Color(0.78, 0.13, 0.12)           # 붉은 실 (사건 보드)
 const RED_SOFT := Color(0.95, 0.5, 0.42)
 const DANGER := Color("#C96666")               # 위험·삭제
-const FOCUS := Color("#58C6BE")                # 선택·포커스 (청록 = 사비의 빛)
-const ACCENT := Color("#D8B85B")               # 강조·섹션 제목 (금빛 = 샤무의 빛)
-const SABI := Color("#58C6BE")
-const SHAMU := Color("#D8B85B")
+const FOCUS := Color("#45A1B5")                # 선택·포커스 (청록 = 사비의 빛)
+const ACCENT := Color("#D9A336")               # 강조·섹션 제목 (금빛 = 샤무의 빛)
+const SABI := Color("#45A1B5")
+const SHAMU := Color("#D9A336")
 const GOOD := Color(0.62, 0.86, 0.7)
 const TERMINAL := Color(0.42, 0.95, 0.62)
 
@@ -152,6 +152,75 @@ static func top_accent(width: float = 78.0) -> Control:
 	line.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	holder.add_child(line)
 	return holder
+
+
+## 높은 대비(접근성)일 때는 반투명 바탕을 불투명하게
+static func backdrop(c: Color) -> Color:
+	var tree := Engine.get_main_loop() as SceneTree
+	var sm := tree.root.get_node_or_null("SettingsManager") if tree else null
+	if sm and sm.has_method("high_contrast") and sm.high_contrast():
+		return Color(c, 1.0)
+	return c
+
+
+static func high_contrast() -> bool:
+	var tree := Engine.get_main_loop() as SceneTree
+	var sm := tree.root.get_node_or_null("SettingsManager") if tree else null
+	return sm != null and sm.has_method("high_contrast") and sm.high_contrast()
+
+
+## 체크박스 상자 (시안 21 · 25): 꺼짐 = 밝은 네모, 켜짐 = 청록 네모 + 흰 체크. 한 번 만들어 둔다.
+static var _check_icons: Array[Texture2D] = []
+
+
+static func style_checkbox(cb: CheckBox, size: int = 22) -> void:
+	if _check_icons.is_empty():
+		_check_icons = [_check_icon(size, false), _check_icon(size, true)]
+	for state in ["unchecked", "unchecked_disabled"]:
+		cb.add_theme_icon_override(state, _check_icons[0])
+	for state in ["checked", "checked_disabled"]:
+		cb.add_theme_icon_override(state, _check_icons[1])
+	cb.add_theme_constant_override("h_separation", 14)
+	cb.add_theme_font_override("font", sans())
+	cb.add_theme_font_size_override("font_size", 22)
+	for c in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color", "font_hover_pressed_color"]:
+		cb.add_theme_color_override(c, INK)
+
+
+static func _check_icon(size: int, on: bool) -> Texture2D:
+	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
+	img.fill(FOCUS if on else INK)
+	if on:
+		# 흰 체크 (두 선분, 굵기 2px)
+		var pts := [Vector2(size * 0.22, size * 0.52), Vector2(size * 0.42, size * 0.72), Vector2(size * 0.78, size * 0.3)]
+		for seg in 2:
+			var a: Vector2 = pts[seg]
+			var b: Vector2 = pts[seg + 1]
+			var steps := int(a.distance_to(b) * 3.0)
+			for i in steps + 1:
+				var p := a.lerp(b, float(i) / maxf(steps, 1))
+				for dx: int in [-1, 0, 1]:
+					for dy: int in [-1, 0, 1]:
+						var x: int = int(p.x) + dx
+						var y: int = int(p.y) + dy
+						if x >= 0 and y >= 0 and x < size and y < size and absi(dx) + absi(dy) <= 1:
+							img.set_pixel(x, y, Color.WHITE)
+	return ImageTexture.create_from_image(img)
+
+
+## 키 안내용 키캡 ("Tab", "E", "Esc" …)
+static func keycap(text: String, size: int = 17) -> PanelContainer:
+	var cap := PanelContainer.new()
+	var box := panel_style(Color(INK_DIM, 0.7), Color(0, 0, 0, 0.35), 3)
+	box.content_margin_top = 2
+	box.content_margin_bottom = 2
+	box.content_margin_left = 8
+	box.content_margin_right = 8
+	cap.add_theme_stylebox_override("panel", box)
+	cap.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	cap.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	cap.add_child(label(text, sans(), size, INK))
+	return cap
 
 
 ## 작은 정사각형 버튼 (단말·보드의 닫기 등)

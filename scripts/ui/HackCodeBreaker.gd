@@ -121,7 +121,33 @@ func _tutorial_lines() -> Array:
 
 
 func _help_text() -> String:
-	return "숫자 키 / 클릭: 입력   ·   Backspace: 지우기   ·   Enter: 넣기   ·   ESC: 연결 끊기"
+	return "숫자 키 / 클릭: 입력   ·   Backspace: 지우기   ·   Enter: 확인   ·   Esc: 연결 종료"
+
+
+func _kind_name() -> String:
+	return "암호 대조"
+
+
+func _guide() -> String:
+	return "서로 다른 숫자 네 자리 접속 암호를 맞혀 주세요."
+
+
+func _side_title() -> String:
+	return "시도 기록"
+
+
+func _side_lines() -> Array:
+	return ["●  숫자와 자리가 모두 맞음", "○  숫자는 있는데 자리가 다름", "·  없는 숫자"]
+
+
+func _sabi_hint() -> String:
+	return "아무거나 막 누르지 마.\n맞은 자리부터 고정하자."
+
+
+func _build_side(parent: VBoxContainer) -> void:
+	_history_box = VBoxContainer.new()
+	_history_box.add_theme_constant_override("separation", 6)
+	parent.add_child(_history_box)
 
 
 func _pegs(exact: int, near: int) -> String:
@@ -141,59 +167,64 @@ func _add_history_row(guess: Array, exact: int, near: int) -> void:
 		return
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 22)
-	row.add_child(VelkaStyle.label("%02d" % history.size(), VelkaStyle.mono(), 20, VelkaStyle.INK_DIM))
-	row.add_child(VelkaStyle.label("  ".join(guess.map(func(x): return str(x))), VelkaStyle.mono_bold(), 26, VelkaStyle.INK))
-	var pegs := VelkaStyle.label(_pegs(exact, near), VelkaStyle.mono_bold(), 26, VelkaStyle.TERMINAL if exact == DIGITS else Color(0.95, 0.75, 0.35))
+	row.add_child(VelkaStyle.label("%02d" % history.size(), VelkaStyle.sans(), 18, VelkaStyle.INK_DIM))
+	row.add_child(VelkaStyle.label("  ".join(guess.map(func(x): return str(x))), VelkaStyle.sans_semibold(), 24, VelkaStyle.INK))
+	var pegs := VelkaStyle.label(_pegs(exact, near), VelkaStyle.sans_semibold(), 24, VelkaStyle.FOCUS if exact == DIGITS else VelkaStyle.ACCENT)
 	row.add_child(pegs)
 	_history_box.add_child(row)
 
 
 func _build_body(parent: Container) -> void:
 	var col := VBoxContainer.new()
-	col.add_theme_constant_override("separation", 18)
-	col.custom_minimum_size = Vector2(560, 0)
+	col.add_theme_constant_override("separation", 26)
 	parent.add_child(col)
 	# 입력 칸
 	var slots := HBoxContainer.new()
-	slots.add_theme_constant_override("separation", 14)
+	slots.add_theme_constant_override("separation", 18)
+	slots.alignment = BoxContainer.ALIGNMENT_CENTER
 	col.add_child(slots)
 	_slots.clear()
 	for i in DIGITS:
 		var p := PanelContainer.new()
-		p.add_theme_stylebox_override("panel", VelkaStyle.panel_style(Color(0.2, 0.6, 0.4), Color(0.0, 0.08, 0.05), 4, 2))
-		p.custom_minimum_size = Vector2(76, 88)
-		var l := VelkaStyle.label("_", VelkaStyle.mono_bold(), 50, VelkaStyle.TERMINAL)
+		p.add_theme_stylebox_override("panel", VelkaStyle.panel_style(VelkaStyle.LINE, Color("#13232a"), 0, 1))
+		p.custom_minimum_size = Vector2(100, 104)
+		var l := VelkaStyle.label("_", VelkaStyle.sans_medium(), 46, VelkaStyle.INK)
 		l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		l.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		p.add_child(l)
 		slots.add_child(p)
 		_slots.append(l)
-	_tries_label = VelkaStyle.label("", VelkaStyle.mono(), 20, VelkaStyle.RED_SOFT)
-	_tries_label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	slots.add_child(_tries_label)
-	# 숫자판
+	# 숫자판 (전화기 배치)
+	var pad_center := CenterContainer.new()
+	col.add_child(pad_center)
 	var pad := GridContainer.new()
-	pad.columns = 6
-	pad.add_theme_constant_override("h_separation", 8)
-	pad.add_theme_constant_override("v_separation", 8)
-	col.add_child(pad)
-	for d in [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]:
+	pad.columns = 3
+	pad.add_theme_constant_override("h_separation", 12)
+	pad.add_theme_constant_override("v_separation", 12)
+	pad_center.add_child(pad)
+	for d in [1, 2, 3, 4, 5, 6, 7, 8, 9]:
 		pad.add_child(_key(str(d), press_digit.bind(d)))
 	pad.add_child(_key("←", backspace))
-	pad.add_child(_key("넣기", func(): submit()))
-	# 기록
-	col.add_child(VelkaStyle.label("시도 기록", VelkaStyle.mono_bold(), 18, VelkaStyle.INK_DIM))
-	_history_box = VBoxContainer.new()
-	_history_box.add_theme_constant_override("separation", 4)
-	col.add_child(_history_box)
+	pad.add_child(_key("0", press_digit.bind(0)))
+	pad.add_child(_key("확인", func(): submit()))
+	_tries_label = VelkaStyle.label("", VelkaStyle.sans(), 19, VelkaStyle.INK_DIM)
+	_tries_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	col.add_child(_tries_label)
 
 
 func _key(text: String, action: Callable) -> Button:
 	var b := Button.new()
 	b.text = text
-	b.custom_minimum_size = Vector2(80, 54)
-	VelkaStyle.style_small_button(b, VelkaStyle.TERMINAL)
-	b.add_theme_font_size_override("font_size", 24)
+	b.custom_minimum_size = Vector2(102, 68)
+	b.add_theme_font_override("font", VelkaStyle.sans_medium())
+	b.add_theme_font_size_override("font_size", 30 if text.length() == 1 else 26)
+	for c in ["font_color", "font_hover_color", "font_pressed_color"]:
+		b.add_theme_color_override(c, VelkaStyle.INK)
+	var normal := VelkaStyle.panel_style(VelkaStyle.LINE, Color("#18303a"), 0, 1)
+	var hot := VelkaStyle.panel_style(VelkaStyle.FOCUS, Color("#22424c"), 0, 1)
+	b.add_theme_stylebox_override("normal", normal)
+	for state in ["hover", "pressed", "focus"]:
+		b.add_theme_stylebox_override(state, hot)
 	b.focus_mode = Control.FOCUS_NONE
 	b.pressed.connect(action)
 	return b

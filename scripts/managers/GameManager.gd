@@ -83,6 +83,14 @@ func is_exploration_locked() -> bool:
 	return DialogueManager.is_dialogue_active or not _exploration_locks.is_empty()
 
 
+## 장면을 바꿀 때 이전 장면이 남긴 잠금을 모두 푼다 (SceneManager 가 부른다)
+func clear_exploration_locks() -> void:
+	var was_locked := not _exploration_locks.is_empty()
+	_exploration_locks.clear()
+	if was_locked:
+		exploration_lock_changed.emit(false)
+
+
 ## 연출 등으로 탐색 입력을 잠그거나 해제한다. reason 별로 관리되어 중첩 잠금이 가능하다.
 func set_exploration_lock(reason: String, locked: bool) -> void:
 	var was_locked := not _exploration_locks.is_empty()

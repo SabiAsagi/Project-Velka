@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://c8q6i4gnjjjtr"
-path="res://.godot/imported/belka_wordmark.png-4c371f5e1f7e15bf7ada233d26443809.ctex"
+uid="uid://by8ale8x3r8gs"
+path="res://.godot/imported/project_velka_logo.png-dc32d25525369c2130a2d165c161832d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/branding/belka_wordmark.png"
-dest_files=["res://.godot/imported/belka_wordmark.png-4c371f5e1f7e15bf7ada233d26443809.ctex"]
+source_file="res://assets/branding/project_velka_logo.png"
+dest_files=["res://.godot/imported/project_velka_logo.png-dc32d25525369c2130a2d165c161832d.ctex"]
 
 [params]
 

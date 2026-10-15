@@ -1,0 +1,69 @@
+{
+  "text_files": 192,
+  "characters": 1086,
+  "fonts": [
+    {
+      "file": "Sabi-Hand.ttf",
+      "family": "PVHandSabi",
+      "source": "SingleDay-Regular.ttf",
+      "source_name": "Single Day",
+      "glyphs": 1435,
+      "bytes": 216188,
+      "missing_in_original": "©°±·×–—•※←↑→↓↔≈─┄█■□▲△▶▷▼◀◇○●✎✓✦〈〉《》「」『』"
+    },
+    {
+      "file": "Shamu-Hand.ttf",
+      "family": "PVHandShamu",
+      "source": "NanumBrushScript-Regular.ttf",
+      "source_name": "Nanum Brush Script",
+      "glyphs": 1049,
+      "bytes": 735852,
+      "missing_in_original": "·–—•…※←↑→↓↔≈┄█■□▲△▶▷▼◀◇○●✎✓✦〈〉《》「」『』"
+    },
+    {
+      "file": "Kwon-Hand.ttf",
+      "family": "PVHandKwon",
+      "source": "PoorStory-Regular.ttf",
+      "source_name": "Poor Story",
+      "glyphs": 1051,
+      "bytes": 275012,
+      "missing_in_original": "–—•※←↑→↓↔≈┄█■□▲△▶▷▼◀◇○●✎✓✦〈〉《》「」『』"
+    },
+    {
+      "file": "Baek-Hand.ttf",
+      "family": "PVHandBaek",
+      "source": "HiMelody-Regular.ttf",
+      "source_name": "Hi Melody",
+      "glyphs": 1076,
+      "bytes": 799248,
+      "missing_in_original": "–—•≈┄█✎✓✦"
+    },
+    {
+      "file": "Seo-Hand.ttf",
+      "family": "PVHandSeo",
+      "source": "GamjaFlower-Regular.ttf",
+      "source_name": "Gamja Flower",
+      "glyphs": 1076,
+      "bytes": 782012,
+      "missing_in_original": "–—•≈┄█✎✓✦"
+    },
+    {
+      "file": "Yu-Hand.ttf",
+      "family": "PVHandYu",
+      "source": "NanumPenScript-Regular.ttf",
+      "source_name": "Nanum Pen Script",
+      "glyphs": 1049,
+      "bytes": 645696,
+      "missing_in_original": "·–—•…※←↑→↓↔≈┄█■□▲△▶▷▼◀◇○●✎✓✦〈〉《》「」『』"
+    },
+    {
+      "file": "Han-Hand.ttf",
+      "family": "PVHandHan",
+      "source": "Gaegu-Regular.ttf",
+      "source_name": "Gaegu",
+      "glyphs": 1042,
+      "bytes": 1165752,
+      "missing_in_original": "©°±·×–—•…※←↑→↓↔≈─┄█■□▲△▶▷▼◀◇○●✎✓✦〈〉《》「」『』～"
+    }
+  ]
+}

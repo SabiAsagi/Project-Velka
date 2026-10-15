@@ -25,11 +25,13 @@ var current_settings: Dictionary = {
 		"muted": false
 	},
 	"game": {
-		"text_speed": 1 # 대화 글자 속도: 0 느리게, 1 보통, 2 빠르게, 3 바로 전부
+		"text_speed": 1, # 대화 글자 속도: 0 느리게, 1 보통, 2 빠르게, 3 바로 전부
+		"auto_advance": false # 대화 자동 진행 (대화창 '자동'으로 켜고 끈다)
 	},
 	"accessibility": {
 		"print_handwriting": false, # 손글씨(수첩 필기)를 읽기 쉬운 글꼴로
 		"reduce_effects": false, # 화면 흔들림·번쩍임 줄이기
+		"high_contrast": false, # 높은 대비: HUD·대화창 바탕을 불투명하게, 흐린 글자를 밝게
 		"text_size": 0 # 대화 글자 크기: 0 기본, 1 크게, 2 아주 크게
 	},
 	"controls": {
@@ -103,6 +105,22 @@ func text_seconds_per_char() -> float:
 
 
 ## 대화 글자 크기 배율
+## 대화 자동 진행이 켜져 있는지
+func auto_advance() -> bool:
+	return bool(current_settings["game"].get("auto_advance", false))
+
+
+func set_auto_advance(on: bool) -> void:
+	current_settings["game"]["auto_advance"] = on
+	save_settings()
+	settings_changed.emit()
+
+
+## 높은 대비가 켜져 있는지
+func high_contrast() -> bool:
+	return bool(current_settings["accessibility"].get("high_contrast", false))
+
+
 func text_scale() -> float:
 	return float(TEXT_SCALES[clampi(int(current_settings["accessibility"]["text_size"]), 0, TEXT_SCALES.size() - 1)])
 

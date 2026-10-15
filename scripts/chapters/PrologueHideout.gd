@@ -34,6 +34,7 @@ const SHAMU_ROUTE := [
 ## 사비가 이만큼 가까이 오면 장비 벽 장면이 이어진다
 const FOLLOW_REACH := 3.0
 const HOLD_REASON := "샤무는 먼저 내려갔다. 따라가 보자."
+const LEAVING_LOCK := "hideout_leaving"
 
 ## 끄면 이야기를 진행하지 않고 맵만 돌아다닌다 (맵 확인·테스트용)
 @export var run_story: bool = true
@@ -168,14 +169,17 @@ func _take_bag() -> void:
 	party.shamu.face_direction(Vector3(-1, 0, 0))
 	await Cutscene.wait(get_tree(), 0.5)
 	await _play_dialogue("prologue_p03_bag")
+	# 공장으로 넘어갈 때까지 조작을 잠가 둔다 (자막이 걷힌 사이에 물건을 조사하면 대사가 검은 화면 뒤에 남았다)
+	GameManager.set_exploration_lock(LEAVING_LOCK, true)
 	Cutscene.end(get_tree())
 	party.release_companion()
 	GameManager.set_story_flag("prologue_hideout_done")
 	captions.play(["두 사람은 그날 밤, 외곽 산업단지로 향했다."])
 	await captions.finished
 	if not next_scene.is_empty():
-		SceneManager.change_scene(next_scene)
+		SceneManager.change_scene(next_scene)   # 장면이 바뀔 때 잠금도 함께 풀린다
 	else:
+		GameManager.set_exploration_lock(LEAVING_LOCK, false)
 		_objective("아지트 파트 끝 — 다음: 폐쇄 공장")
 
 
