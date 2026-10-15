@@ -675,8 +675,8 @@ func _build_ui() -> void:
 	_frame.size = DESIGN
 	_root.add_child(_frame)
 
-	# 머리: PROJECT VELKA / INVESTIGATION + 보드 이름, 오른쪽에 도움말 · 생각 정리
-	var kicker := VelkaStyle.label("PROJECT VELKA / INVESTIGATION", VelkaStyle.spaced(VelkaStyle.sans_medium(), 5), 13, VelkaStyle.INK_DIM)
+	# 머리: SABI / INVESTIGATION (진상 공개 뒤 PROJECT VELKA) + 보드 이름, 오른쪽에 도움말 · 생각 정리
+	var kicker := VelkaStyle.label(("PROJECT VELKA" if VelkaStyle.velka_revealed() else "SABI") + " / INVESTIGATION", VelkaStyle.spaced(VelkaStyle.sans_medium(), 5), 13, VelkaStyle.INK_DIM)
 	kicker.position = Vector2(24, 4)
 	_frame.add_child(kicker)
 	var head := VelkaStyle.label(String(_data.get("title", "사건 보드")), VelkaStyle.sans_bold(), 30, VelkaStyle.INK)

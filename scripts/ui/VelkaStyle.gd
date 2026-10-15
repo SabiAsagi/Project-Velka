@@ -154,6 +154,18 @@ static func top_accent(width: float = 78.0) -> Control:
 	return holder
 
 
+## 세계관 반전 플래그: 이 이야기 플래그가 서기 전까지 세계 안 화면(수첩 · 해킹 단말 · 사건 보드)의 머리말에는
+## "PROJECT VELKA"가 나오지 않는다 (프로젝트 벨카는 숨겨진 실험의 이름). 게임 밖 화면(타이틀 · 로딩 · 저장 · 게임 오버 ·
+## 제작진)의 PROJECT VELKA 는 게임 제목이라 늘 보인다. 기획서/02. 세계관 및 설정/타임라인.md
+const VELKA_REVEAL_FLAG := "project_velka_revealed"
+
+
+static func velka_revealed() -> bool:
+	var tree := Engine.get_main_loop() as SceneTree
+	var gm := tree.root.get_node_or_null("GameManager") if tree else null
+	return gm != null and bool(gm.get_story_flag(VELKA_REVEAL_FLAG, false))
+
+
 ## 높은 대비(접근성)일 때는 반투명 바탕을 불투명하게
 static func backdrop(c: Color) -> Color:
 	var tree := Engine.get_main_loop() as SceneTree
