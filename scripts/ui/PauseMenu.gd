@@ -56,6 +56,7 @@ func open() -> void:
 	if is_open() or not can_open():
 		return
 	_snapshot = SaveManager.capture_screen()
+	MenuFx.quiet()
 	_show_buttons()
 	_refresh_place()
 	_settings.visible = false
@@ -303,6 +304,12 @@ func _add_button(parent: Container, node_name: String, text: String, on_pressed:
 	button.text = text
 	button.custom_minimum_size = Vector2(0, 62)
 	VelkaStyle.style_button(button, VelkaStyle.FOCUS, 26, VelkaStyle.sans_medium())
+	# V 표시 자리를 비워 둔다 (시안 08: "V 계속하기")
+	for state in ["normal", "disabled", "hover", "focus", "pressed"]:
+		var box := (button.get_theme_stylebox(state) as StyleBoxFlat).duplicate() as StyleBoxFlat
+		box.content_margin_left = 44
+		button.add_theme_stylebox_override(state, box)
 	button.pressed.connect(on_pressed)
 	parent.add_child(button)
+	MenuFx.attach(button)
 	return button

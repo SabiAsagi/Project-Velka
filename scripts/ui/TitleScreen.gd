@@ -58,6 +58,7 @@ func _ready() -> void:
 	settings_menu.closed.connect(_on_settings_closed)
 	_build_credits()
 
+	MenuFx.quiet()
 	if has_save:
 		continue_btn.grab_focus()
 	else:
@@ -103,14 +104,10 @@ func _style_menu_button(b: Button) -> void:
 	marker.size = Vector2(24, b.custom_minimum_size.y)
 	marker.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	marker.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	marker.visible = false
 	b.add_child(marker)
 	_markers[b] = marker
-	b.focus_entered.connect(func(): marker.visible = true)
-	b.focus_exited.connect(func(): marker.visible = false)
-	b.mouse_entered.connect(func():
-		if not b.disabled:
-			b.grab_focus())
+	# 포커스 · 확정 효과 (청록 선 · 글자 밀림 · V · 오른쪽 균열선 · 소리) — MenuFx
+	MenuFx.attach(b, marker)
 
 
 ## 메뉴 오른쪽에 붙는 작은 보조 문구 (이어하기 옆의 챕터 이름)

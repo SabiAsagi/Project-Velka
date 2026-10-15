@@ -14,12 +14,14 @@ extends RefCounted
 #   siren     : 공장 경보 사이렌 (반복)
 #   breath    : 숨이 차서 헐떡이는 소리 (들숨·날숨 세 번)
 #   hit       : 둔탁하게 치는 소리 + 젖은 것이 뒤틀리는 소리 (개체를 쳤을 때)
+#   ui_tick   : 메뉴 포커스 이동 — 아주 짧은 마른 클릭 + 종이 스치는 잡음 (작게)
+#   ui_crack  : 메뉴 확정 — 유리가 짧게 갈라지는 소리 + 0.1초 라디오 잡음 + 낮은 저음
 
 const RATE := 22050
 ## 시작할 때 백그라운드에서 미리 합성해 두는 소리 (처음 쓸 때 메인 스레드가 멈추지 않게 한다)
 ## 합성이 오래 걸리는 것(bell 약 125ms, sting 45ms, drone 44ms)을 앞에 둔다.
 const PREWARM_NAMES := ["bell", "sting", "drone", "siren", "whisper", "breath", "crash", "heartbeat", "hit",
-	"suspicious", "static", "footstep"]
+	"suspicious", "static", "footstep", "ui_tick", "ui_crack"]
 
 static var _cache: Dictionary = {}
 ## _cache 는 메인 스레드와 미리 합성하는 작업 스레드가 함께 쓰므로 뮤텍스로 감싼다
@@ -117,6 +119,31 @@ static func _make(sfx_name: String) -> AudioStreamWAV:
 	rng.seed = hash(sfx_name)
 	var s := PackedFloat32Array()
 	match sfx_name:
+		"ui_tick":
+			s = _buffer(0.05)
+			var lp := 0.0
+			for i in s.size():
+				var t := float(i) / RATE
+				lp = lerpf(lp, rng.randf_range(-1, 1), 0.6)
+				var click := sin(TAU * 2400.0 * t) * exp(-t * 900.0)
+				s[i] = (click * 0.6 + lp * 0.25 * exp(-t * 120.0)) * 0.6
+		"ui_crack":
+			s = _buffer(0.3)
+			var lp := 0.0
+			for i in s.size():
+				var t := float(i) / RATE
+				# 유리 금: 높은 주파수 몇 개가 아주 빨리 사라진다 (조금씩 어긋나 시작)
+				var glass := 0.0
+				for k in 4:
+					var start := k * 0.012
+					if t >= start:
+						var tt := t - start
+						glass += sin(TAU * (3100.0 + k * 870.0) * tt) * exp(-tt * (110.0 + k * 30.0))
+				# 라디오 잡음 0.1초
+				lp = lerpf(lp, rng.randf_range(-1, 1), 0.7)
+				var radio := lp * (0.35 if t < 0.1 else 0.0) * (1.0 - t / 0.1 if t < 0.1 else 0.0)
+				var low := sin(TAU * 62.0 * t) * exp(-t * 14.0) * minf(1.0, t * 200.0)
+				s[i] = clampf(glass * 0.28 + radio + low * 0.45, -1.0, 1.0) * 0.8
 		"footstep":
 			s = _buffer(0.16)
 			var lp := 0.0
