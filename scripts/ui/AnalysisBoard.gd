@@ -529,7 +529,7 @@ func _show_map_pin() -> void:
 	_clear_zoom()
 	var pin: Dictionary = _data.get("pin", {})
 	_zoom_box.add_child(VelkaStyle.label("마지막 단계 · 지도에 핀 꽂기", VelkaStyle.mono(), 15, Color(0.45, 0.42, 0.38)))
-	_zoom_box.add_child(VelkaStyle.label("실종자들은 어디로 모이는가", VelkaStyle.serif_bold(), 30, VelkaStyle.PAPER_INK))
+	_zoom_box.add_child(VelkaStyle.label(String(pin.get("title", "어디로 이어지는가")), VelkaStyle.serif_bold(), 30, VelkaStyle.PAPER_INK))
 	_zoom_box.add_child(_hr())
 	var map := MapArt.new()
 	map.custom_minimum_size = Vector2(620, 330)
@@ -563,7 +563,7 @@ func _show_result() -> void:
 	row.alignment = BoxContainer.ALIGNMENT_END
 	row.add_child(ok)
 	_zoom_box.add_child(row)
-	_say("전부 거기서 끊겼어.", VelkaStyle.GOOD)
+	_say(String(_data.get("result_say", "전부 거기서 끊겼어.")), VelkaStyle.GOOD)
 	_zoom.visible = true
 	ok.grab_focus()
 

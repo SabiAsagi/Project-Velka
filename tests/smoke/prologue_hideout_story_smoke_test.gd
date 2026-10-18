@@ -2,7 +2,8 @@ extends SceneTree
 
 # 프로젝트 벨카 - 프롤로그 아지트 이야기 스모크 테스트
 # 실행: godot --headless --path . -s res://tests/smoke/prologue_hideout_story_smoke_test.gd
-# P-02 의뢰인 대화 -> 사진 노이즈 -> 몽타주 -> 조사 보드 분석(사비) -> 두 사람 대화 -> 샤무가 혼자 내려가는 컷씬 -> 사비로 따라감 -> 끝
+# P-02 의뢰인 대화 -> 의뢰인 정상 퇴장 -> 사진·의뢰 자료 조사 -> 자료 정리 몽타주 -> 조사 보드 분석(사비)
+# -> 두 사람 대화 -> 역할 나누기 컷씬(샤무가 장비 챙기러 먼저 내려감) -> 사비로 내려감 -> 출발 준비 대화 -> 끝
 # 순서대로 진행되는지, 캐릭터 조건(보드=사비)과 틀린 답 힌트, 컷씬과 플레이 전환이 동작하는지 검사한다.
 
 const SCENE := "res://scenes/chapters/Prologue_Hideout.tscn"
@@ -39,15 +40,17 @@ func _run() -> void:
 	_check(_dm.is_dialogue_active and _dm.current_dialogue_id == "prologue_p02_client", "시작하면 의뢰인 대화가 나온다")
 	_check(_scene.get_node("HideoutWorld/Client").visible, "대화 중에는 의뢰인 실루엣이 소파에 있다")
 	await _finish_dialogue()
-	await _seconds(1.2)
-	_check(not _scene.get_node("HideoutWorld/Client").visible, "대화가 끝나면 의뢰인이 나간다")
+	await _seconds(1.0)
+	_check(_bars_shown() and _scene.get_step() == 0, "의뢰인이 일어나 나가는 짧은 컷이 이어진다")
+	await _seconds(2.6)
+	_check(not _scene.get_node("HideoutWorld/Client").visible and not _gm.is_exploration_locked(), "암전 뒤 의뢰인 자리가 비고 조작이 돌아온다")
 	_check(_scene.get_step() == 1 and _gm.get_story_flag("prologue_p02_done"), "다음 목표는 테이블 사진 조사")
 
-	# --- 사진 노이즈 -> 몽타주 ---
+	# --- 사진·의뢰 자료 -> 자료 정리 몽타주 ---
 	_inspect("ClientPhotos")
 	await _finish_dialogue()
 	await _seconds(0.3)
-	_check(_dm.current_dialogue_id == "prologue_p02_photo", "사진을 조사하면 노이즈 장면이 이어진다")
+	_check(_dm.current_dialogue_id == "prologue_p02_photo", "사진을 확인하면 자료를 나누자는 대화가 이어진다")
 	await _finish_dialogue()
 	await _seconds(1.2)
 	var captions = _scene.get_node("CaptionSequence")
@@ -86,16 +89,16 @@ func _run() -> void:
 		board.inspect(String(c["id"]))
 	_check(board.is_zoom_open() and board.is_inspected("map"), "카드를 클릭하면 크게 펼쳐 볼 수 있다")
 	_check(not board.link("card_b", "cctv") and board.current_step() == 0, "틀린 연결은 단서가 되지 않는다")
-	_check(not board.link("parcel", "call_c") and board._feedback.text.contains("택배 기사"),
+	_check(not board.link("parcel", "call_c") and board._feedback.text.contains("9월 22일"),
 			"헷갈리는 증거를 이으면 왜 상관없는지 떠오른다 (%s)" % board._feedback.text)
-	board.toggle_mark("call_a", 0)
-	board.toggle_mark("call_c", 0)
-	_check(board.is_marked("call_c", 0) and board._feedback.text.contains("의뢰인 A 통화 기록"),
+	board.toggle_mark("call_c", 1)
+	board.toggle_mark("parcel", 0)
+	_check(board.is_marked("parcel", 0) and board._feedback.text.contains("업무 배정표"),
 			"두 증거에 같은 단서를 표시하면 알아챈다 (%s)" % board._feedback.text)
 	var h1: String = board.ask_hint()
 	var h2: String = board.ask_hint()
 	var h3: String = board.ask_hint()
-	_check(not h1.is_empty() and h1 != h2 and h3.contains("의뢰인 A 통화 기록") and h3.contains("의뢰인 C 통화 기록"),
+	_check(not h1.is_empty() and h1 != h2 and h3.contains("업무 배정표") and h3.contains("자료 인계 안내 메일"),
 			"생각을 정리할수록 힌트가 구체적이 된다 (%s)" % h3)
 	# 실제 마우스 입력: 이미 본 카드도 클릭하면 다시 펼쳐진다 / 끌어다 놓으면 실로 잇는다 / 펼친 화면의 버튼으로도 잇는다
 	board._close_zoom()
@@ -122,8 +125,9 @@ func _run() -> void:
 		memo_spots[str(m["pos"])] = true
 	_check(board._strings.memos.size() == links.size() and memo_spots.size() == links.size() and most <= 2,
 			"연결마다 단서 메모가 따로 꽂히고, 카드 하나에서 나가는 실은 많아야 두 가닥 (%d)" % most)
-	_check(not board.pin_location("plaza") and not board.is_solved(), "사람 많은 곳에 핀을 꽂으면 아니라고 한다")
-	_check(board.pin_location(String(data["pin"]["answer"])) and board.is_solved(), "산업단지 북측에 핀을 꽂으면 공통 좌표가 나온다")
+	_check(not board.pin_location("busstop") and not board.is_solved(), "지나간 곳(정류장)에 핀을 꽂으면 아니라고 한다")
+	_check(board.pin_location(String(data["pin"]["answer"])) and board.is_solved(), "북측 3구역 공장에 핀을 꽂으면 마지막 방문 장소가 나온다")
+	_check(board._feedback.text == String(data["result_say"]), "결과 화면의 한마디도 데이터에서 온다 (%s)" % board._feedback.text)
 	board.confirm_result()
 	await _seconds(0.3)
 	_check(_dm.current_dialogue_id == "prologue_p03_talk", "좌표를 확인하면 두 사람 대화가 이어진다")
@@ -136,6 +140,9 @@ func _run() -> void:
 	var camera = _scene.get_node("FollowCamera")
 	_check(_bars_shown() and _gm.is_exploration_locked(),
 			"대화 뒤 컷씬이 이어진다 (화면 위아래 검은 띠, 조작 잠금)")
+	await _seconds(0.3)
+	_check(_dm.current_dialogue_id == "prologue_p03_split", "샤무가 역할을 나누는 짧은 대화가 나온다 (%s)" % _dm.current_dialogue_id)
+	await _finish_dialogue()
 	_check(_scene.get_step() == 3, "컷씬 중에는 아직 다음 단계가 아니다")
 	var start_shamu: Vector3 = shamu.global_position
 	var t := 0.0
@@ -145,7 +152,7 @@ func _run() -> void:
 		await physics_frame
 		t += 1.0 / Engine.physics_ticks_per_second
 	_check(camera_followed_shamu and shamu.global_position.distance_to(start_shamu) > 4.0,
-			"샤무가 혼자 걸어가고 카메라가 샤무를 따라간다 (%.1fm)" % shamu.global_position.distance_to(start_shamu))
+			"샤무가 장비를 챙기러 걸어가고 카메라가 샤무를 따라간다 (%.1fm)" % shamu.global_position.distance_to(start_shamu))
 	_check(_scene.get_step() == 4 and shamu.global_position.y < 3.3, "샤무가 계단을 내려가기 시작하면 다음 단계가 된다")
 	await _seconds(0.6)
 	_check(not _gm.is_exploration_locked() and camera.target == sabi and not _bars_shown(),
@@ -176,6 +183,12 @@ func _run() -> void:
 	_check(not _gm.is_exploration_locked(), "끝난 뒤에는 다시 움직일 수 있다")
 	_check(_party.hold_reason.is_empty() and int(shamu.companion_ai.current_state) == 0,
 			"끝나면 샤무가 다시 따라온다")
+	# 보드를 푼 뒤에는 보드 조사 대사가 바뀐다 (after_flag)
+	_inspect("InvestigationBoard")
+	var board_lines: Array = _dm.get("_current_lines")
+	var board_text := " ".join(board_lines.map(func(l): return String(l.get("text", ""))))
+	_check(board_text.contains("공장에 갔다는 것까지"), "보드를 푼 뒤 다시 보면 확인된 것과 빈칸을 말한다 (%s)" % board_text)
+	await _finish_dialogue()
 
 	print("")
 	print("RESULT passed=%d failed=%d" % [_passes, _failures.size()])

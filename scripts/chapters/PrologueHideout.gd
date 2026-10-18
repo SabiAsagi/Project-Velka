@@ -1,29 +1,30 @@
 extends Node3D
 
 # 프로젝트 벨카 - 프롤로그 사비·샤무 아지트 컨트롤러
-# 시나리오 P-02(첫 번째 실종 의뢰) -> P-03(사라지는 의뢰인들)을 순서대로 진행한다.
-#   1. CLIENT  : 응접 공간에서 의뢰인(실루엣)과 대화. 거절하고 의뢰인이 나간다.
-#   2. PHOTO   : 테이블 위 사진을 조사하면 얼굴 위로 노이즈가 지나간다.
-#   3. MONTAGE : 검은 화면 자막 몽타주 (사라지는 의뢰인들).
-#   4. BOARD   : 사비로 조사 보드를 분석해 공통 좌표를 찾는다 (AnalysisBoard).
-#   5. BAG     : 두 사람 대화 뒤, 샤무가 한숨을 쉬고 혼자 1층 장비 벽으로 내려간다 (짧은 컷씬).
-#                조작이 돌아오면 사비로 샤무를 따라 내려가고, 가까이 가면 마지막 대화가 나온다.
+# 시나리오 P-02(찾아 달라는 사람) -> P-03(한 사람의 마지막 행적)을 순서대로 진행한다.
+#   1. CLIENT  : 응접 공간에서 의뢰인(실종자의 동료)과 대화. 수색 의뢰를 맡기고 정상적으로 떠난다
+#                (문 닫히는 소리와 짧은 암전 뒤 빈자리 — 소파에서 사라지는 것처럼 보이지 않게).
+#   2. PHOTO   : 테이블 위 실종자 사진과 의뢰 자료를 조사한다 (신원 확인, 필수).
+#   3. MONTAGE : 10~15초 자료 정리 몽타주 (한 사건의 자료를 나누고 대조하며 몇 시간이 지난다).
+#   4. BOARD   : 사비로 조사 보드를 분석해 마지막 방문 장소를 찾는다 (AnalysisBoard).
+#   5. BAG     : 두 사람 대화 뒤, 샤무가 역할을 나눠 먼저 1층 장비 벽으로 내려간다 (짧은 컷씬).
+#                조작이 돌아오면 사비로 내려가고, 가까이 가면 출발 준비 대화가 나온다.
 #   6. DONE    : 아지트 파트 끝 (다음: 폐쇄 공장).
 # 진행 상황은 GameManager 스토리 플래그(prologue_*)에 남긴다.
-# 설계: 기획서/04. 맵 및 환경/아지트_맵_상세.md, 기획서/05.스토리/게임 시나리오/01.프롤로그 게임 시나리오.docx
+# 설계: 기획서/04. 맵 및 환경/아지트_맵_상세.md, 기획서/05.스토리/게임 시나리오/프롤로그_도입_개정.md §5~§8
 
 signal step_changed(step: int)
 
 enum Step { CLIENT, PHOTO, MONTAGE, BOARD, BAG, DONE }
 
+## 자료 정리 몽타주 (한 사건의 자료만 다룬다 — 다른 실종자 기록을 한꺼번에 확보하는 연출은 넣지 않는다)
 const MONTAGE_LINES := [
-	"[뉴스] 연쇄 실종 사건을 조사하던 민간인 A 씨, 사흘째 연락 두절.",
-	"며칠 뒤. 두 번째 의뢰인이 손상된 파일을 들고 찾아왔다.\n두 사람은 이번에도 의뢰를 거절했다.",
-	"[뉴스] 실종 신고된 B 씨의 휴대전화, 외곽 도로변에서 발견.",
-	"발신자를 알 수 없는 암호화된 의뢰 메일.\n약속 장소에 세 번째 의뢰인은 나타나지 않았다.",
-	"확보해 둔 CCTV 영상이 하나씩 지워지기 시작했다.",
-	"사비의 조사 보드에 사진이 늘어 간다.",
+	"의뢰인 제공 · 관리 업체 회신 · 확인 필요.\n사비가 받은 자료에 표시를 나눈다.",
+	"원본은 그대로 두고 사본을 만든다.\n업무 날짜를 한 장씩 대조한다.",
+	"샤무는 지도에 들어갈 길과 나올 길을 긋고, 장비를 점검한다.",
+	"창밖이 어두워졌다.",
 ]
+const MONTAGE_SECONDS_PER_LINE := 3.4
 const OBJECTIVE_COLOR := Color(0.95, 0.85, 0.45)
 ## 보드 앞에서 1층 장비 벽까지 샤무가 걷는 길: 응접 공간 남쪽 → 식탁 북쪽 → 계단 위 → 계단 → 1층 장비 벽
 const SHAMU_ROUTE := [
@@ -33,7 +34,7 @@ const SHAMU_ROUTE := [
 ]
 ## 사비가 이만큼 가까이 오면 장비 벽 장면이 이어진다
 const FOLLOW_REACH := 3.0
-const HOLD_REASON := "샤무는 먼저 내려갔다. 따라가 보자."
+const HOLD_REASON := "샤무는 장비를 챙기러 먼저 내려갔다."
 const LEAVING_LOCK := "hideout_leaving"
 
 ## 끄면 이야기를 진행하지 않고 맵만 돌아다닌다 (맵 확인·테스트용)
@@ -71,7 +72,7 @@ func _ready() -> void:
 	await _client_leaves()
 	GameManager.set_story_flag("prologue_p02_done")
 	_set_step(Step.PHOTO)
-	_objective("응접 테이블 위의 사진을 살펴보자")
+	_objective("응접 테이블 위의 실종자 사진과 의뢰 자료를 살펴보자")
 
 
 ## 테스트·디버그용: 지금 단계 번호
@@ -82,7 +83,7 @@ func get_step() -> int:
 func _on_inspected(inspect_id: String, inspector: Node3D, _first_time: bool) -> void:
 	match [step, inspect_id]:
 		[Step.PHOTO, "hideout_client_photos"]:
-			_photo_noise()
+			_photo_checked()
 		[Step.BOARD, "hideout_board"]:
 			if _is_sabi(inspector):
 				await _wait_dialogue()
@@ -95,15 +96,18 @@ func _on_inspected(inspect_id: String, inspector: Node3D, _first_time: bool) -> 
 				_take_bag()
 
 
-func _photo_noise() -> void:
+## 사진·의뢰 자료 확인(조사 대사) → 자료를 나누자는 짧은 대화 → 자료 정리 몽타주
+func _photo_checked() -> void:
 	_set_step(Step.MONTAGE)
 	await _wait_dialogue()
-	captions.noise_flash(0.45)
 	await _play_dialogue("prologue_p02_photo")
-	GameManager.set_story_flag("prologue_photo_noise_seen")
+	GameManager.set_story_flag("prologue_photo_checked")
 	await get_tree().create_timer(0.4).timeout
+	var keep := captions.seconds_per_line
+	captions.seconds_per_line = MONTAGE_SECONDS_PER_LINE
 	captions.play(MONTAGE_LINES)
 	await captions.finished
+	captions.seconds_per_line = keep
 	GameManager.set_story_flag("prologue_montage_seen")
 	_set_step(Step.BOARD)
 	_objective("사비로 조사 보드를 분석하자 (욕실 옆 벽)")
@@ -116,11 +120,11 @@ func _on_board_solved() -> void:
 	await _play_dialogue("prologue_p03_talk")
 	await _shamu_heads_out()
 	_set_step(Step.BAG)
-	_objective("샤무를 따라가 보자 — 1층 장비 벽")
+	_objective("백업을 마치고 1층 장비 벽으로 내려가자 — 샤무가 기다린다")
 
 
-## 컷씬: 샤무가 한숨을 쉬고 혼자 계단으로 걸어간다. 카메라가 샤무를 따라가다가,
-## 샤무가 계단을 내려가기 시작하면 사비에게 돌아오고 조작이 풀린다 (샤무는 계속 장비 벽으로 간다).
+## 컷씬: 역할을 나누는 짧은 대화 뒤 샤무가 장비를 챙기러 먼저 계단으로 걸어간다 (화나서 자리를 뜨는 게 아니다).
+## 카메라가 샤무를 따라가다가, 샤무가 계단을 내려가기 시작하면 사비에게 돌아오고 조작이 풀린다.
 func _shamu_heads_out() -> void:
 	var sabi: PartyMember = party.sabi
 	var shamu: PartyMember = party.shamu
@@ -128,9 +132,9 @@ func _shamu_heads_out() -> void:
 		GameManager.switch_character(GameManager.CharacterType.SABI)
 	party.hold_companion(HOLD_REASON)
 	Cutscene.begin(get_tree())
-	await Cutscene.wait(get_tree(), 0.5)
-	Cutscene.bark(shamu, "하아…", VelkaStyle.SHAMU, 1.8)
-	await Cutscene.wait(get_tree(), 1.2)
+	await Cutscene.wait(get_tree(), 0.4)
+	await _play_dialogue("prologue_p03_split")
+	await Cutscene.wait(get_tree(), 0.3)
 	Cutscene.focus(get_tree(), shamu)
 	shamu.walk_path(SHAMU_ROUTE)
 	var t := 0.0
@@ -139,7 +143,7 @@ func _shamu_heads_out() -> void:
 		t += get_physics_process_delta_time()
 	Cutscene.focus(get_tree(), sabi)
 	await Cutscene.wait(get_tree(), 0.6)
-	Cutscene.bark(sabi, "(…화났나.)", VelkaStyle.SABI, 1.8)
+	Cutscene.bark(sabi, "(백업만 끝내고 내려가자.)", VelkaStyle.SABI, 2.0)
 	Cutscene.end(get_tree())
 
 
@@ -174,6 +178,7 @@ func _take_bag() -> void:
 	Cutscene.end(get_tree())
 	party.release_companion()
 	GameManager.set_story_flag("prologue_hideout_done")
+	_objective("장비를 확인하고 마지막 방문 장소로 출발하기")
 	captions.play(["두 사람은 그날 밤, 외곽 산업단지로 향했다."])
 	await captions.finished
 	if not next_scene.is_empty():
@@ -183,15 +188,23 @@ func _take_bag() -> void:
 		_objective("아지트 파트 끝 — 다음: 폐쇄 공장")
 
 
+## 의뢰인 퇴장: 일어나 인사하고 나간다. 걸어 나가는 연출 대신 짧은 암전 + 발소리·문 닫히는 소리 뒤 빈자리.
 func _client_leaves() -> void:
 	var client := world.get_node_or_null("Client") as Node3D
 	if client == null:
 		return
-	var tween := create_tween()
-	for mesh in client.find_children("*", "MeshInstance3D", true, false):
-		tween.parallel().tween_property(mesh, "transparency", 1.0, 0.8)
-	await tween.finished
+	Cutscene.begin(get_tree())
+	Cutscene.bark(party.sabi, "조심히 가세여.", VelkaStyle.SABI, 1.4)
+	await Cutscene.wait(get_tree(), 1.0)
+	Cutscene.flash(get_tree(), Color(0, 0, 0, 1), 0.35, 1.1, 0.45)
+	await Cutscene.wait(get_tree(), 0.4)
 	_set_client_visible(false)
+	for i in 3:
+		SfxBank.play(self, "footstep", -14.0, 0.9)
+		await Cutscene.wait(get_tree(), 0.22)
+	SfxBank.play(self, "punch", -16.0, 0.55)   # 문 닫히는 소리
+	await Cutscene.wait(get_tree(), 0.9)
+	Cutscene.end(get_tree())
 
 
 func _set_client_visible(shown: bool) -> void:

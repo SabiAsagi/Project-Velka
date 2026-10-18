@@ -11,6 +11,9 @@ class_name InspectInteractable
 #   동료가 떨어져 있거나(6m 넘게) 혼자 잠입 중이면 조사한 캐릭터 혼자 말한다. 데이터에 "joint": false 면 늘 혼자.
 # 두 번째 조사부터는 repeat_lines가 있으면 그것을 사용한다.
 # 이계 상태에서는 otherworld_lines / otherworld_prompt가 있으면 그것을 우선한다 (조사 횟수도 따로 센다).
+#   현실에서 먼저 조사해 둔 사물은 이계에서 처음 볼 때 otherworld_seen_lines 가 있으면 그것을 쓴다
+#   (전후 비교 대사 — 조사하지 않은 플레이어에게 바뀐 점을 소급해 알려 주지 않는다).
+# after_flag 이야기 플래그가 켜지면 (현실에서) after_lines 를 쓴다 (예: 사건 보드를 푼 뒤의 보드).
 # 규칙 연동: discovers_rules(배열)는 조사하면 수첩에 등록, violates_rule은 조사 자체가 규칙 위반.
 #   이계 전용은 otherworld_discovers_rules / otherworld_violates_rule.
 
@@ -68,6 +71,12 @@ func _on_interact(player: Node3D) -> void:
 	if not first_time and _entry.has(repeat_key):
 		source = _entry[repeat_key]
 		used_key = repeat_key
+	if otherworld and first_time and _inspect_count > 0 and _entry.has("otherworld_seen_lines"):
+		source = _entry["otherworld_seen_lines"]
+		used_key = "otherworld_seen_lines"
+	elif not otherworld and _entry.has("after_lines") and GameManager.get_story_flag(String(_entry.get("after_flag", "")), false):
+		source = _entry["after_lines"]
+		used_key = "after_lines"
 	# 함께 이야기하는 판이 있으면 그것을 쓴다 (lines -> duo_lines, repeat_lines -> repeat_duo_lines ...)
 	var joint := _is_joint_talk()
 	if joint and _entry.has(used_key.replace("lines", "duo_lines")):

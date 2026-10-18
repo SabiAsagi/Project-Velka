@@ -12,34 +12,40 @@
         "sabi_emotion": "neutral",
         "shamu_emotion": "neutral",
         "text": "",
-        "text_sabi": "우리 지프. 청록색이라 어디서든 눈에 띄는 게 흠이야.",
-        "text_shamu": "내 차야. 세차는 내가 해."
+        "text_sabi": "주소 찍어 뒀어. 입구는 두 군데야.",
+        "text_shamu": "들어가는 길만 보지 말고 주차할 데도 봐야지."
       }
     ],
     "duo_lines": [
       {
+        "speaker": "shamu",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "serious",
+        "text": "주소 찍었어?"
+      },
+      {
         "speaker": "sabi",
         "sabi_emotion": "neutral",
         "shamu_emotion": "neutral",
-        "text": "우리 지프. 청록색이라 어디 세워 둬도 눈에 띄는 게 흠이야."
+        "text": "엉. 입구는 두 군데야."
+      },
+      {
+        "speaker": "shamu",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "serious",
+        "text": "들어가는 길만 보지 말고 주차할 데도 봐."
+      },
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "serious",
+        "shamu_emotion": "neutral",
+        "text": "나오는 길 가까운 쪽으로."
       },
       {
         "speaker": "shamu",
         "sabi_emotion": "neutral",
         "shamu_emotion": "smug",
-        "text": "그래서 예쁘잖아. 세차도 내가 하고."
-      },
-      {
-        "speaker": "sabi",
-        "sabi_emotion": "gentle_smile",
-        "shamu_emotion": "smug",
-        "text": "그러면서 지난주엔 나 조수석에 안 태워 줬지. 기억해."
-      },
-      {
-        "speaker": "shamu",
-        "sabi_emotion": "gentle_smile",
-        "shamu_emotion": "annoyed",
-        "text": "…그건 네가 시트에 과자 부스러기 흘려서야."
+        "text": "그래. 오늘은 시트에 과자 흘리지 말고."
       }
     ]
   },
@@ -138,8 +144,8 @@
         "sabi_emotion": "neutral",
         "shamu_emotion": "neutral",
         "text": "",
-        "text_sabi": "납땜 냄새. 만들다 만 신호 증폭기가 그대로야.",
-        "text_shamu": "치우라고 했잖아."
+        "text_sabi": "신호 증폭기, 아직 케이스를 못 닫았어.",
+        "text_shamu": "현장에서 조립하지 말고, 완성된 것만 들고 가."
       }
     ],
     "duo_lines": [
@@ -147,19 +153,31 @@
         "speaker": "sabi",
         "sabi_emotion": "neutral",
         "shamu_emotion": "neutral",
-        "text": "만들다 만 신호 증폭기. 의뢰 끝나면 마저 해야지."
+        "text": "신호 증폭기, 아직 케이스를 못 닫았어."
+      },
+      {
+        "speaker": "shamu",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "serious",
+        "text": "그럼 완성된 것만 들고 가."
+      },
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "embarrassed",
+        "shamu_emotion": "neutral",
+        "text": "조금만 더 하면—"
       },
       {
         "speaker": "shamu",
         "sabi_emotion": "neutral",
         "shamu_emotion": "annoyed",
-        "text": "그 말 세 번째야. 납땜 냄새 배서 빨래도 냄새 나."
+        "text": "현장에서 조립하지 말고."
       },
       {
         "speaker": "sabi",
-        "sabi_emotion": "embarrassed",
-        "shamu_emotion": "annoyed",
-        "text": "…다음 주에 할게."
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "……엉."
       }
     ]
   },
@@ -296,8 +314,8 @@
         "sabi_emotion": "neutral",
         "shamu_emotion": "neutral",
         "text": "",
-        "text_sabi": "어제 끓여 둔 김치찌개 냄비가 그대로야. 또 안 데워 먹었구나.",
-        "text_shamu": "귀찮았어. 라면 끓이는 것도 귀찮았어."
+        "text_sabi": "샤무, 또 과자로 때웠지. 내려가기 전에 데워 줄게.",
+        "text_shamu": "과자도 먹은 거야."
       }
     ],
     "duo_lines": [
@@ -305,31 +323,31 @@
         "speaker": "sabi",
         "sabi_emotion": "serious",
         "shamu_emotion": "neutral",
-        "text": "어제 끓여 둔 김치찌개 냄비가 그대로야."
+        "text": "샤무, 밥은 먹었어?"
+      },
+      {
+        "speaker": "shamu",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "조금."
       },
       {
         "speaker": "sabi",
         "sabi_emotion": "serious",
         "shamu_emotion": "neutral",
-        "text": "샤무, 또 안 데워 먹었지."
+        "text": "과자는 밥 아니야."
       },
       {
         "speaker": "shamu",
-        "sabi_emotion": "serious",
+        "sabi_emotion": "neutral",
         "shamu_emotion": "annoyed",
-        "text": "…귀찮았어. 데우는 것도 귀찮았어."
+        "text": "그럼 왜 물어봐. 알고 있네."
       },
       {
         "speaker": "sabi",
-        "sabi_emotion": "determined",
-        "shamu_emotion": "annoyed",
-        "text": "그럼 저녁은 내가 데워 줄 테니까 앉아서 먹기만 해."
-      },
-      {
-        "speaker": "shamu",
-        "sabi_emotion": "determined",
+        "sabi_emotion": "gentle_smile",
         "shamu_emotion": "neutral",
-        "text": "응."
+        "text": "내려가기 전에 데워 줄게."
       }
     ]
   },
@@ -396,8 +414,8 @@
         "sabi_emotion": "neutral",
         "shamu_emotion": "neutral",
         "text": "",
-        "text_sabi": "내 서버. 의뢰인 자료 백업은 전부 여기 있어.",
-        "text_shamu": "저 팬 소리 때문에 밤에 잠을 못 자."
+        "text_sabi": "의뢰 자료는 여기에도 백업해 뒀어.",
+        "text_shamu": "현장에 들고 가는 건 사진하고 필요한 기록만이지?"
       }
     ],
     "duo_lines": [
@@ -405,25 +423,25 @@
         "speaker": "sabi",
         "sabi_emotion": "neutral",
         "shamu_emotion": "neutral",
-        "text": "내 서버. 의뢰인 자료 백업은 전부 여기 있어."
+        "text": "의뢰 자료는 여기에도 백업해 뒀어."
       },
       {
         "speaker": "shamu",
         "sabi_emotion": "neutral",
-        "shamu_emotion": "annoyed",
-        "text": "저 팬 소리 때문에 밤에 잠을 못 자."
+        "shamu_emotion": "serious",
+        "text": "현장에 들고 가는 건?"
       },
       {
         "speaker": "sabi",
-        "sabi_emotion": "gentle_smile",
-        "shamu_emotion": "annoyed",
-        "text": "자장가라고 생각해."
+        "sabi_emotion": "serious",
+        "shamu_emotion": "neutral",
+        "text": "사진하고 필요한 기록만."
       },
       {
         "speaker": "shamu",
-        "sabi_emotion": "gentle_smile",
-        "shamu_emotion": "annoyed",
-        "text": "자장가가 웅웅거리진 않아."
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "좋아. 남의 자료까지 통째로 잃어버리진 말자."
       }
     ]
   },
@@ -528,34 +546,34 @@
         "sabi_emotion": "neutral",
         "shamu_emotion": "neutral",
         "text": "",
-        "text_sabi": "읽다 만 책 더미. 전부 미스터리 소설.",
-        "text_shamu": "결말부터 읽는 사람이 무슨 미스터리야."
+        "text_sabi": "결말부터 봤어. 알고 읽으면 놓친 게 보이거든.",
+        "text_shamu": "또 결말부터 봤지."
       }
     ],
     "duo_lines": [
       {
-        "speaker": "sabi",
+        "speaker": "shamu",
         "sabi_emotion": "neutral",
+        "shamu_emotion": "smug",
+        "text": "또 결말부터 봤어?"
+      },
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "gentle_smile",
         "shamu_emotion": "neutral",
-        "text": "읽다 만 미스터리 소설 더미야."
+        "text": "알고 읽으면 놓친 게 보여."
       },
       {
         "speaker": "shamu",
         "sabi_emotion": "neutral",
-        "shamu_emotion": "smug",
-        "text": "넌 결말부터 읽잖아."
+        "shamu_emotion": "serious",
+        "text": "이번 건 결말 안 적혀 있거든."
       },
       {
         "speaker": "sabi",
         "sabi_emotion": "serious",
-        "shamu_emotion": "smug",
-        "text": "범인을 알고 읽으면 단서가 더 잘 보여."
-      },
-      {
-        "speaker": "shamu",
-        "sabi_emotion": "serious",
-        "shamu_emotion": "annoyed",
-        "text": "그게 미스터리냐."
+        "shamu_emotion": "neutral",
+        "text": "그러니까 기록부터 보는 거지."
       }
     ]
   }
