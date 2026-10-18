@@ -1,18 +1,9 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/ui/TitleScreen.gd" id="1_script"]
 [ext_resource type="PackedScene" path="res://scenes/ui/SettingsMenu.tscn" id="2_settings"]
 [ext_resource type="Texture2D" path="res://assets/branding/title_background.png" id="3_background"]
-[ext_resource type="Texture2D" path="res://assets/branding/project_velka_logo.png" id="4_wordmark"]
-
-[sub_resource type="Gradient" id="Gradient_left"]
-offsets = PackedFloat32Array(0, 0.32, 0.55, 1)
-colors = PackedColorArray(0.039, 0.047, 0.063, 0.97, 0.039, 0.047, 0.063, 0.82, 0.039, 0.047, 0.063, 0.2, 0.039, 0.047, 0.063, 0)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_left"]
-gradient = SubResource("Gradient_left")
-width = 256
-height = 4
+[ext_resource type="Script" path="res://scripts/ui/TitleMenuRow.gd" id="10_menu_row"]
 
 [node name="TitleScreen" type="Control"]
 layout_mode = 3
@@ -30,7 +21,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.063, 0.075, 0.094, 1)
+color = Color(0.031, 0.031, 0.039, 1)
 
 [node name="Background" type="TextureRect" parent="."]
 layout_mode = 1
@@ -43,60 +34,13 @@ texture = ExtResource("3_background")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="LeftShade" type="TextureRect" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-texture = SubResource("GradientTexture2D_left")
-expand_mode = 1
-stretch_mode = 0
-
-[node name="TopRule" type="ColorRect" parent="."]
-layout_mode = 0
-offset_left = 90.0
-offset_top = 84.0
-offset_right = 162.0
-offset_bottom = 86.0
-color = Color(0.345, 0.776, 0.745, 1)
-
-[node name="HeaderContainer" type="VBoxContainer" parent="."]
-layout_mode = 0
-offset_left = 135.0
-offset_top = 120.0
-offset_right = 640.0
-offset_bottom = 480.0
-theme_override_constants/separation = 10
-
-[node name="TaglineLabel" type="Label" parent="HeaderContainer"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.659, 0.702, 0.729, 1)
-theme_override_font_sizes/font_size = 19
-text = "서로 다른 빛, 하나의 균열"
-
-[node name="Wordmark" type="TextureRect" parent="HeaderContainer"]
-custom_minimum_size = Vector2(400, 287)
-layout_mode = 2
-size_flags_horizontal = 0
-texture = ExtResource("4_wordmark")
-expand_mode = 1
-stretch_mode = 5
-
-[node name="SubtitleLabel" type="Label" parent="HeaderContainer"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.91, 0.898, 0.867, 0.9)
-theme_override_font_sizes/font_size = 18
-text = "PROJECT VELKA"
-
 [node name="MenuContainer" type="Control" parent="."]
 layout_mode = 0
-offset_left = 135.0
-offset_top = 530.0
-offset_right = 545.0
-offset_bottom = 950.0
+offset_left = 99.2
+offset_top = 395.44
+offset_right = 403.2
+offset_bottom = 788.64
+mouse_filter = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MenuContainer"]
 layout_mode = 1
@@ -105,67 +49,42 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 3
 
 [node name="ContinueButton" type="Button" parent="MenuContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 62)
+custom_minimum_size = Vector2(0, 53.6)
 layout_mode = 2
 text = "이어하기"
 alignment = 0
+script = ExtResource("10_menu_row")
 
 [node name="NewGameButton" type="Button" parent="MenuContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 62)
+custom_minimum_size = Vector2(0, 53.6)
 layout_mode = 2
 text = "새 게임"
 alignment = 0
+script = ExtResource("10_menu_row")
 
 [node name="SettingsButton" type="Button" parent="MenuContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 62)
+custom_minimum_size = Vector2(0, 53.6)
 layout_mode = 2
-text = "설정"
+text = "환경 설정"
 alignment = 0
+script = ExtResource("10_menu_row")
 
 [node name="CreditsButton" type="Button" parent="MenuContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 62)
+custom_minimum_size = Vector2(0, 53.6)
 layout_mode = 2
 text = "제작진"
 alignment = 0
+script = ExtResource("10_menu_row")
 
 [node name="ExitButton" type="Button" parent="MenuContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 62)
+custom_minimum_size = Vector2(0, 53.6)
 layout_mode = 2
 text = "종료"
 alignment = 0
-
-[node name="KeyHints" type="HBoxContainer" parent="."]
-layout_mode = 1
-anchors_preset = 2
-anchor_top = 1.0
-anchor_bottom = 1.0
-offset_left = 90.0
-offset_top = -100.0
-offset_right = 700.0
-offset_bottom = -62.0
-grow_vertical = 0
-theme_override_constants/separation = 12
-
-[node name="Motto" type="Label" parent="."]
-layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -500.0
-offset_top = -104.0
-offset_right = -90.0
-offset_bottom = -78.0
-grow_horizontal = 0
-grow_vertical = 0
-theme_override_colors/font_color = Color(0.91, 0.898, 0.867, 0.85)
-theme_override_font_sizes/font_size = 17
-text = "끝까지, 함께."
-horizontal_alignment = 2
+script = ExtResource("10_menu_row")
 
 [node name="VersionLabel" type="Label" parent="."]
 layout_mode = 1
@@ -174,14 +93,12 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -700.0
-offset_top = -72.0
-offset_right = -90.0
-offset_bottom = -50.0
+offset_left = -688.0
+offset_top = -82.0
+offset_right = -88.0
+offset_bottom = -64.8
 grow_horizontal = 0
 grow_vertical = 0
-theme_override_colors/font_color = Color(0.659, 0.702, 0.729, 0.7)
-theme_override_font_sizes/font_size = 15
 text = "v0.0.0"
 horizontal_alignment = 2
 

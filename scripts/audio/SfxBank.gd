@@ -21,7 +21,7 @@ const RATE := 22050
 ## 시작할 때 백그라운드에서 미리 합성해 두는 소리 (처음 쓸 때 메인 스레드가 멈추지 않게 한다)
 ## 합성이 오래 걸리는 것(bell 약 125ms, sting 45ms, drone 44ms)을 앞에 둔다.
 const PREWARM_NAMES := ["bell", "sting", "drone", "siren", "whisper", "breath", "crash", "heartbeat", "hit",
-	"suspicious", "static", "footstep", "ui_tick", "ui_crack", "punch", "beep", "gun_click", "call_drop"]
+	"suspicious", "static", "footstep", "ui_tick", "ui_crack", "punch", "beep", "gun_click", "call_drop", "title_hover"]
 
 static var _cache: Dictionary = {}
 ## _cache 는 메인 스레드와 미리 합성하는 작업 스레드가 함께 쓰므로 뮤텍스로 감싼다
@@ -144,6 +144,20 @@ static func _make(sfx_name: String) -> AudioStreamWAV:
 				var radio := lp * (0.35 if t < 0.1 else 0.0) * (1.0 - t / 0.1 if t < 0.1 else 0.0)
 				var low := sin(TAU * 62.0 * t) * exp(-t * 14.0) * minf(1.0, t * 200.0)
 				s[i] = clampf(glass * 0.28 + radio + low * 0.45, -1.0, 1.0) * 0.8
+		"title_hover":
+			# 타이틀 메뉴 선택음 (피그마 시안 playHoverCue): 1400Hz 대역 잡음 0.18초 + 70→38Hz 낮은 쿵 0.28초
+			s = _buffer(0.3)
+			var lp := 0.0
+			var lp2 := 0.0
+			for i in s.size():
+				var t := float(i) / RATE
+				var white := rng.randf_range(-1, 1) * maxf(0.0, 1.0 - t / 0.18)
+				lp = lerpf(lp, white, 0.45)
+				lp2 = lerpf(lp2, lp, 0.12)
+				var band := (lp - lp2) * 0.05 * exp(-t * 26.0) * 6.0
+				var f := 70.0 * pow(38.0 / 70.0, minf(t / 0.25, 1.0))
+				var thud := sin(TAU * f * t) * 0.08 * exp(-t * 16.0) * minf(1.0, t * 400.0) * 6.0
+				s[i] = clampf(band + thud, -1.0, 1.0)
 		"punch":
 			# 사람을 제압하는 둔탁한 타격 (괴이 타격 hit 와 달리 꾸르륵이 없다)
 			s = _buffer(0.28)
