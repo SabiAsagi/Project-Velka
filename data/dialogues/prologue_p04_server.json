@@ -6,65 +6,119 @@
       "speaker_name": "",
       "sabi_emotion": "neutral",
       "shamu_emotion": "neutral",
-      "text": "사비가 서버에서 실종 당시의 영상을 복원한다."
-    },
-    {
-      "speaker": "system",
-      "speaker_name": "",
-      "sabi_emotion": "neutral",
-      "shamu_emotion": "neutral",
-      "text": "영상 속 인물은 평범한 복도에 서 있다."
-    },
-    {
-      "speaker": "system",
-      "speaker_name": "",
-      "sabi_emotion": "surprised",
-      "shamu_emotion": "surprised",
-      "text": "[shake rate=25.0 level=8]영상이 한 프레임 건너뛴다. 사람만 사라진다.[/shake]",
-      "shake": true
-    },
-    {
-      "speaker": "system",
-      "speaker_name": "",
-      "sabi_emotion": "neutral",
-      "shamu_emotion": "neutral",
-      "text": "다음 영상에서는 같은 복도가 비정상적으로 변질되어 있다."
-    },
-    {
-      "speaker": "shamu",
-      "speaker_name": "카즈네 샤무",
-      "sabi_emotion": "worried",
-      "shamu_emotion": "serious",
-      "text": "합성이야?"
+      "text": "복원한 일곱 장이 맞춘 순서대로 다시 재생된다. 10/09, 지하 복도.",
+      "cue": "replay_play"
     },
     {
       "speaker": "sabi",
       "speaker_name": "사비 아사기",
       "sabi_emotion": "serious",
-      "shamu_emotion": "serious",
-      "text": "원본이야."
+      "shamu_emotion": "neutral",
+      "text": "외부 영상하고 옷이 같아. 가방도."
     },
     {
       "speaker": "shamu",
       "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "이 사람이네."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "잠깐. 다시.",
+      "cue": "replay_alt"
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
       "sabi_emotion": "serious",
-      "shamu_emotion": "surprised",
-      "text": "그럼 이 사람은 어디로 간 건데?"
+      "shamu_emotion": "neutral",
+      "text": "가방을 내려놓고…… 이쪽으로 손을 뻗었어.",
+      "cue": "replay_reach"
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "그 다음은?"
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "neutral",
+      "text": "사람이 없어.",
+      "cue": "replay_empty"
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "다른 문으로 나간 거 아냐?"
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "neutral",
+      "text": "이어진 기록에는 안 보여. 이 사이에 무슨 일이 있었는지는 더 확인해야 해."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "방금까지 그냥 방 찾던 사람이잖아."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "sad",
+      "shamu_emotion": "neutral",
+      "text": "엉."
     },
     {
       "speaker": "system",
       "speaker_name": "",
       "sabi_emotion": "neutral",
       "shamu_emotion": "neutral",
-      "text": "사비가 촬영 정보를 확인하려 한다. 모니터 화면이 멈춘다. 시간 표시가 엉망으로 깨진다."
+      "text": "사비가 원본 파일과 촬영 정보를 저장한다.",
+      "cue": "replay_save"
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "neutral",
+      "text": "서류가방 위치부터 보자. 이 방이 여기서 어디였는지—"
     },
     {
       "speaker": "system",
       "speaker_name": "",
-      "sabi_emotion": "surprised",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "[shake rate=30.0 level=10][color=#d8e4e8]서버 팬 소리와 환풍기 소리가 한꺼번에 끊긴다. 모니터에 잔광만 남는다.[/color][/shake]",
+      "shake": true,
+      "cue": "replay_cut"
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
       "shamu_emotion": "surprised",
-      "text": "[shake rate=30.0 level=10][color=#d8e4e8]모든 조명이 꺼진다.[/color][/shake]",
-      "shake": true
+      "text": "사비?"
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "neutral",
+      "text": "나 여기 있어."
     }
   ]
 }

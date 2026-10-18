@@ -6,98 +6,161 @@
       "speaker_name": "",
       "sabi_emotion": "neutral",
       "shamu_emotion": "neutral",
-      "text": "테이블 위에 실종자 사진 여러 장이 놓여 있다. 맞은편 소파의 남자는 정부와 연계된 비공식 조사 담당자라고만 자신을 소개했다."
+      "text": "아지트 응접 테이블. 의뢰인이 스마트폰과 얇은 서류 봉투를 꺼낸다. 한 사람의 사진, 마지막 대화 사본, 업무 배정 자료가 테이블에 놓인다."
     },
     {
       "speaker": "client",
       "speaker_name": "의뢰인",
       "sabi_emotion": "neutral",
       "shamu_emotion": "neutral",
-      "text": "최근 발생한 연쇄 실종 사건을 조사해 주셨으면 합니다."
+      "text": "같이 일하던 사람을 찾고 있습니다. 이틀째 연락이 안 돼요."
     },
     {
       "speaker": "shamu",
       "speaker_name": "카즈네 샤무",
       "sabi_emotion": "neutral",
       "shamu_emotion": "serious",
-      "text": "경찰이나 정부가 할 일을 왜 우리한테 맡겨?"
+      "text": "실종 신고는?"
     },
     {
       "speaker": "client",
       "speaker_name": "의뢰인",
       "sabi_emotion": "neutral",
       "shamu_emotion": "neutral",
-      "text": "공식적인 방식으로 접근하기 어렵기 때문입니다."
+      "text": "했습니다. 제가 아는 건 전부 말씀드렸고요."
     },
     {
       "speaker": "sabi",
       "speaker_name": "사비 아사기",
       "sabi_emotion": "serious",
       "shamu_emotion": "neutral",
-      "text": "실종자들이 살아 있다고 생각해여?"
+      "text": "마지막으로 연락한 건 언제예여?"
     },
     {
-      "speaker": "system",
-      "speaker_name": "",
+      "speaker": "client",
+      "speaker_name": "의뢰인",
       "sabi_emotion": "neutral",
       "shamu_emotion": "neutral",
-      "text": "의뢰인은 바로 대답하지 못한다."
+      "text": "공장에 들어가기 직전입니다. 남아 있는 서류를 인계받으면 연락하겠다고 했어요."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "무슨 공장?"
+    },
+    {
+      "speaker": "client",
+      "speaker_name": "의뢰인",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "산업단지에 있는 가동 중단 시설입니다. 보관 자료를 옮기는 일이 아직 남아 있어서, 저희 쪽에서 사람이 갔습니다."
     },
     {
       "speaker": "sabi",
       "speaker_name": "사비 아사기",
-      "sabi_emotion": "sad",
+      "sabi_emotion": "serious",
       "shamu_emotion": "neutral",
-      "text": "찾는 의뢰가 아니네."
+      "text": "그날 그곳으로 갔다는 자료가 있어여?"
     },
     {
       "speaker": "client",
       "speaker_name": "의뢰인",
       "sabi_emotion": "neutral",
       "shamu_emotion": "neutral",
-      "text": "실종이 발생하는 원인을 확인해 주시면 됩니다."
-    },
-    {
-      "speaker": "shamu",
-      "speaker_name": "카즈네 샤무",
-      "sabi_emotion": "neutral",
-      "shamu_emotion": "serious",
-      "text": "장소는?"
-    },
-    {
-      "speaker": "client",
-      "speaker_name": "의뢰인",
-      "sabi_emotion": "neutral",
-      "shamu_emotion": "neutral",
-      "text": "계약 이후 공개됩니다."
-    },
-    {
-      "speaker": "shamu",
-      "speaker_name": "카즈네 샤무",
-      "sabi_emotion": "neutral",
-      "shamu_emotion": "serious",
-      "text": "먼저 들어간 사람은?"
-    },
-    {
-      "speaker": "client",
-      "speaker_name": "의뢰인",
-      "sabi_emotion": "neutral",
-      "shamu_emotion": "neutral",
-      "text": "그 부분도 아직 말씀드릴 수 없습니다."
-    },
-    {
-      "speaker": "shamu",
-      "speaker_name": "카즈네 샤무",
-      "sabi_emotion": "neutral",
-      "shamu_emotion": "annoyed",
-      "text": "그럼 안 해."
+      "text": "업무 배정표하고 안내 메일입니다. 회사 차량 기록도 가져왔어요."
     },
     {
       "speaker": "system",
       "speaker_name": "",
       "sabi_emotion": "neutral",
       "shamu_emotion": "neutral",
-      "text": "의뢰인은 높은 보수를 제시하지만, 두 사람은 끝내 거절한다. 의뢰인은 사진을 테이블에 둔 채 아지트를 나간다."
+      "text": "의뢰인이 서류를 한 장씩 펼친다."
+    },
+    {
+      "speaker": "client",
+      "speaker_name": "의뢰인",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "그런데 관리 업체에서는 출입 기록을 확인할 수 없다고 합니다. 담당자가 바뀌었다는 말만 하고요."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "그래서 원본 기록을 찾아 달라는 거야?"
+    },
+    {
+      "speaker": "client",
+      "speaker_name": "의뢰인",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "그 사람이 들어갔는지, 나왔는지라도요. 제게 연락도 안 하고 일을 그만둘 사람은 아닙니다."
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "neutral",
+      "text": "사비가 사진과 업무 날짜를 번갈아 확인한다."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "neutral",
+      "text": "자료는 원본 그대로 가져오셨어여?"
+    },
+    {
+      "speaker": "client",
+      "speaker_name": "의뢰인",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "네. 제가 가지고 있는 건 전부입니다."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "우리가 확인한 것하고, 아직 모르는 건 나눠서 얘기할 거야. 살아 있다고 약속할 수는 없어."
+    },
+    {
+      "speaker": "client",
+      "speaker_name": "의뢰인",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "……그래도 찾아봐 주셨으면 합니다."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "determined",
+      "shamu_emotion": "neutral",
+      "text": "마지막 행적부터 확인할게여."
+    },
+    {
+      "speaker": "client",
+      "speaker_name": "의뢰인",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "고맙습니다."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "neutral",
+      "text": "새로 연락이 오면 바로 알려주세여. 직접 공장에 다시 가시지는 말구여."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "필요한 자료가 더 있으면 연락할게."
     }
   ]
 }

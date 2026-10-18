@@ -6,116 +6,199 @@
         "speaker": "inspector",
         "sabi_emotion": "serious",
         "shamu_emotion": "neutral",
-        "text": "코르크 보드에 실종자 사진과 메모가 빼곡하다. 붉은 실이 몇 장을 잇고 있다.",
-        "text_sabi": "통화 기록, CCTV 시간, 마지막 접속... 아직 안 이어지는 게 더 많아.",
-        "text_shamu": "의뢰 거절해 놓고 이건 왜 계속 붙이고 있는 건데."
+        "text": "코르크 보드에 의뢰인이 남긴 사본이 꽂혀 있다.",
+        "text_sabi": "의뢰인 자료는 다 꽂아 뒀어. 누가 한 말인지, 기록인지부터 나누면 돼.",
+        "text_shamu": "자료를 연결하는 건 사비 담당. 난 들어갈 길을 볼게."
       }
     ],
     "duo_lines": [
       {
+        "speaker": "shamu",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "serious",
+        "text": "이 사진도 같은 사람이야?"
+      },
+      {
         "speaker": "sabi",
-        "sabi_emotion": "serious",
+        "sabi_emotion": "neutral",
         "shamu_emotion": "neutral",
-        "text": "통화 기록, CCTV 시간, 마지막 접속… 아직 안 이어지는 게 더 많아."
+        "text": "엉. 다른 날 찍힌 거."
       },
       {
         "speaker": "shamu",
-        "sabi_emotion": "serious",
-        "shamu_emotion": "annoyed",
-        "text": "의뢰 거절해 놓고 이건 왜 계속 붙이고 있는 건데."
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "serious",
+        "text": "그럼 날짜도 같이 붙여. 같은 날처럼 보이잖아."
       },
       {
         "speaker": "sabi",
-        "sabi_emotion": "determined",
-        "shamu_emotion": "annoyed",
-        "text": "거절한 거랑 궁금한 건 다른 문제야."
+        "sabi_emotion": "gentle_smile",
+        "shamu_emotion": "neutral",
+        "text": "맞네. 고칠게."
+      }
+    ],
+    "after_flag": "prologue_board_solved",
+    "after_lines": [
+      {
+        "speaker": "inspector",
+        "sabi_emotion": "serious",
+        "shamu_emotion": "neutral",
+        "text": "실종자의 마지막 방문 장소를 확인했다. 내부 기록은 현장에서 확보해야 한다.",
+        "text_sabi": "확인된 건 공장에 갔다는 것까지. 나머지는 아직 빈칸이야.",
+        "text_shamu": "여기서 더 붙일 건 없어. 나머지는 현장에서."
+      }
+    ],
+    "after_duo_lines": [
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "serious",
+        "shamu_emotion": "neutral",
+        "text": "확인된 건 공장에 갔다는 것까지. 나머지는 아직 빈칸이야."
+      },
+      {
+        "speaker": "shamu",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "serious",
+        "text": "그 빈칸 채우러 가는 거고."
       }
     ]
   },
   "hideout_monitors": {
-    "prompt": "모니터 확인하기",
+    "prompt": "모니터 살펴보기",
     "lines": [
       {
         "speaker": "inspector",
         "sabi_emotion": "neutral",
         "shamu_emotion": "neutral",
-        "text": "모니터 여섯 대에 복원 중인 파일과 지도가 떠 있다. 책상 위에 해킹 패드가 연결되어 있다.",
-        "text_sabi": "삭제된 영상 복원 23퍼센트. 밤새 돌리면 끝나겠다.",
-        "text_shamu": "화면이 여섯 개인데 하나도 못 알아보겠어."
+        "text": "모니터에 의뢰인이 넘겨준 파일 목록이 떠 있다. 원본, 사본, 작업본.",
+        "text_sabi": "제공받은 파일은 복사했어. 손댈 땐 작업본만 열면 돼.",
+        "text_shamu": "원본, 사본, 작업본…… 이름을 그렇게 붙여 놓으면 헷갈리지 않아?"
       }
     ],
     "duo_lines": [
       {
         "speaker": "sabi",
-        "sabi_emotion": "neutral",
+        "sabi_emotion": "serious",
         "shamu_emotion": "neutral",
-        "text": "삭제된 영상 복원 23퍼센트. 밤새 돌리면 끝나겠다."
+        "text": "원본은 안 건드려. 잘못 복원해도 다시 볼 수 있게."
+      },
+      {
+        "speaker": "shamu",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "serious",
+        "text": "그럼 날아가는 건?"
+      },
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "gentle_smile",
+        "shamu_emotion": "neutral",
+        "text": "내 잠."
       },
       {
         "speaker": "shamu",
         "sabi_emotion": "neutral",
         "shamu_emotion": "annoyed",
-        "text": "화면이 여섯 개인데 하나도 못 알아보겠어."
-      },
+        "text": "그건 좀 챙겨."
+      }
+    ],
+    "repeat_lines": [
       {
-        "speaker": "sabi",
-        "sabi_emotion": "gentle_smile",
-        "shamu_emotion": "annoyed",
-        "text": "샤무는 밥 먹고 일찍 자. 이건 내가 볼게."
+        "speaker": "system",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "외부 자료 정리가 끝났다. 공장 내부 기록은 아직 없다."
       }
     ]
   },
   "hideout_client_photos": {
-    "prompt": "테이블 위 사진 보기",
+    "prompt": "실종자 사진과 의뢰 자료 살펴보기",
     "lines": [
       {
+        "speaker": "system",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "의뢰인이 남긴 사본. 한 사람의 근무 사진과 업무 날짜, 마지막 대화가 묶여 있다."
+      },
+      {
         "speaker": "inspector",
-        "sabi_emotion": "worried",
+        "sabi_emotion": "serious",
         "shamu_emotion": "serious",
-        "text": "의뢰인이 두고 간 실종자 사진이다. 모두 평범한 사람들이다.",
-        "text_sabi": "......방금 이 사람 얼굴, 지지직거린 것 같았는데.",
-        "text_shamu": "찾는 의뢰가 아니라던 그거. 손대지 마."
+        "text": "",
+        "text_sabi": "사진 원본하고 촬영 날짜는 확인됐어. 이 사람부터 찾으면 돼.",
+        "text_shamu": "회색 코트, 오른손에 서류가방. 얼굴만 보지 말고 이런 것도 기억해 둬야지."
       }
     ],
     "duo_lines": [
       {
-        "speaker": "sabi",
-        "sabi_emotion": "worried",
+        "speaker": "system",
+        "sabi_emotion": "neutral",
         "shamu_emotion": "neutral",
-        "text": "……방금 이 사람 얼굴, 지지직거린 것 같았는데."
+        "text": "의뢰인이 남긴 사본. 한 사람의 근무 사진과 업무 날짜, 마지막 대화가 묶여 있다."
+      },
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "serious",
+        "shamu_emotion": "neutral",
+        "text": "이 가방, 다른 사진에도 있네."
       },
       {
         "speaker": "shamu",
-        "sabi_emotion": "worried",
+        "sabi_emotion": "neutral",
         "shamu_emotion": "serious",
-        "text": "찾는 의뢰가 아니라던 그거. 손대지 마."
+        "text": "매일 들고 다녔다잖아. 모서리 벗겨진 것도 같고."
+      },
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "serious",
+        "shamu_emotion": "neutral",
+        "text": "영상에서 얼굴이 안 보여도 알아볼 수 있겠다."
+      }
+    ],
+    "repeat_lines": [
+      {
+        "speaker": "system",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "실종자의 인상착의와 소지품을 수첩에 기록했다."
       }
     ]
   },
   "hideout_gear_bag": {
-    "prompt": "장비 가방 열어 보기",
+    "prompt": "장비 가방 살펴보기",
     "lines": [
       {
         "speaker": "inspector",
         "sabi_emotion": "neutral",
         "shamu_emotion": "neutral",
-        "text": "샤무의 장비 가방. 정리가 잘 되어 있고, 언제든 바로 들고 나갈 수 있게 꾸려져 있다.",
-        "text_sabi": "샤무 가방은 항상 싸여 있어. 나는 이게 좋아.",
-        "text_shamu": "언제 나가게 될지 모르니까. 특히 너랑 있으면."
+        "text": "무전기, 예비 전원, 응급 키트가 든 샤무의 장비 가방.",
+        "text_sabi": "무전, 예비 전원, 응급 키트. 현장에 들어가기 전에 확인해야 해.",
+        "text_shamu": "무기는 마지막 수단. 일단 사람부터 찾아야지."
       }
     ],
     "duo_lines": [
       {
         "speaker": "sabi",
-        "sabi_emotion": "gentle_smile",
+        "sabi_emotion": "neutral",
         "shamu_emotion": "neutral",
-        "text": "샤무 가방은 항상 싸여 있어. 나는 이게 좋아."
+        "text": "응급 키트도 넣었어?"
       },
       {
         "speaker": "shamu",
-        "sabi_emotion": "gentle_smile",
+        "sabi_emotion": "neutral",
         "shamu_emotion": "smug",
-        "text": "언제 나가게 될지 모르니까. 특히 너랑 있으면."
+        "text": "네 거까지."
+      },
+      {
+        "speaker": "sabi",
+        "sabi_emotion": "embarrassed",
+        "shamu_emotion": "neutral",
+        "text": "내가 챙기려고 했는데."
+      },
+      {
+        "speaker": "shamu",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "smug",
+        "text": "지금 생각났잖아."
       }
     ]
   }

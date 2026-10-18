@@ -586,11 +586,12 @@ func _tab_count(tab: int) -> String:
 	return "%02d" % get_documents(TAB_KINDS[tab]).size()
 
 
-## 머리말: PROJECT VELKA / FIELD RECORD / CHAPTER, 장소 이름 / 지금 구역
+## 머리말: 괴이저항단체 / FIELD RECORD / CHAPTER, 장소 이름 / 지금 구역
+## (프로젝트 벨카의 진상이 드러나면 — VelkaStyle.VELKA_REVEAL_FLAG — 기록의 머리가 조용히 PROJECT VELKA 로 바뀐다)
 func _render_header() -> void:
 	var scene := get_tree().current_scene
 	var chapter := SceneManager.chapter_of_scene(scene.scene_file_path) if scene else ""
-	_chapter_label.text = "PROJECT VELKA / FIELD RECORD / " + ("PROLOGUE" if chapter.begins_with("Prologue") else "CHAPTER 01" if chapter.begins_with("Chapter1") else "FIELD")
+	_chapter_label.text = ("PROJECT VELKA" if VelkaStyle.velka_revealed() else "괴이저항단체") + " / FIELD RECORD / " + ("PROLOGUE" if chapter.begins_with("Prologue") else "CHAPTER 01" if chapter.begins_with("Chapter1") else "FIELD")
 	var title := SceneManager.chapter_title(chapter) if not chapter.is_empty() else "현장"
 	if title.contains("·"):
 		title = title.get_slice("·", 1).strip_edges()

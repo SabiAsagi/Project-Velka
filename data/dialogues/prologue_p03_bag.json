@@ -6,35 +6,91 @@
       "speaker_name": "",
       "sabi_emotion": "neutral",
       "shamu_emotion": "neutral",
-      "text": "샤무가 장비 가방을 꺼내 어깨에 멘다."
+      "text": "샤무가 장비 가방의 잠금쇠를 확인하고, 사비에게 예비 배터리를 건넨다."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "단말."
     },
     {
       "speaker": "sabi",
       "speaker_name": "사비 아사기",
-      "sabi_emotion": "surprised",
+      "sabi_emotion": "neutral",
       "shamu_emotion": "neutral",
-      "text": "같이 가게?"
+      "text": "충전해써."
     },
     {
       "speaker": "shamu",
       "speaker_name": "카즈네 샤무",
-      "sabi_emotion": "surprised",
-      "shamu_emotion": "smug",
-      "text": "너 혼자 보내면 더 큰 사고 치니까."
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "무전."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "켜 봐."
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "이어피스에서 짧은 확인음이 들린다."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "들려?"
     },
     {
       "speaker": "sabi",
       "speaker_name": "사비 아사기",
       "sabi_emotion": "gentle_smile",
-      "shamu_emotion": "smug",
-      "text": "고마어."
+      "shamu_emotion": "neutral",
+      "text": "잘 들려."
     },
     {
       "speaker": "shamu",
       "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "영상 원본 확인하고, 사람 흔적 찾고. 이상하면 같이 빠져나온다."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "웅."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "annoyed",
+      "text": "이번엔 대답만 하지 말고."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
       "sabi_emotion": "gentle_smile",
-      "shamu_emotion": "cheerful_grin",
-      "text": "아직 출발 안 했어, 밥오."
+      "shamu_emotion": "neutral",
+      "text": "샤무 손 잡고 나올게."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "smug",
+      "text": "그 손으로 단말이나 잘 챙겨, 밥오."
     }
   ]
 }

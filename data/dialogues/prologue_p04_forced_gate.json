@@ -4,36 +4,38 @@
     {
       "speaker": "system",
       "speaker_name": "",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
       "text": "[shake rate=20.0 level=6][color=#ff6050]─── 사이렌 ───[/color][/shake]",
       "shake": true
     },
     {
       "speaker": "system",
       "speaker_name": "",
-      "text": "금속이 찢어지는 소리에 이어, 공장 전체에 사이렌이 울린다. 안쪽에서 발소리가 늘어난다."
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "금속이 찢어지는 소리에 이어 사이렌이 울린다. 안쪽에서 발소리가 늘어난다."
     },
     {
       "speaker": "sabi",
       "speaker_name": "사비 아사기",
-      "text": "……샤무.",
-      "sabi_emotion": "serious"
-    },
-    {
-      "speaker": "sabi",
-      "speaker_name": "사비 아사기",
-      "text": "경비가 늘었어. 다들 문 쪽으로 올 거야. 들키면 그걸로 끝이야."
-    },
-    {
-      "speaker": "sabi",
-      "speaker_name": "사비 아사기",
-      "text": "문이 뜯겼으니 나도 같이 들어갈게. 경보가 보안 업체로 넘어가기 전에 지하 경보 장치부터 꺼야 해. 서두르자."
+      "sabi_emotion": "surprised",
+      "shamu_emotion": "neutral",
+      "text": "경보가 보안 업체 쪽으로 넘어가고 있어."
     },
     {
       "speaker": "shamu",
       "speaker_name": "카즈네 샤무",
-      "sabi_emotion": "serious",
+      "sabi_emotion": "neutral",
       "shamu_emotion": "serious",
-      "text": "빨리 끝내자. 붙어 있어."
+      "text": "지금 들어와. 같이 이동하자."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "neutral",
+      "text": "지하 경보 장치부터 끌게. 기록 볼 시간이 줄었어. 경비 눈에 띄면 끝이야."
     }
   ]
 }

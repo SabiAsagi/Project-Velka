@@ -1,0 +1,61 @@
+{
+  "dialogue_id": "prologue_p01_open",
+  "lines": [
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "끝. 안쪽은 비었어."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "neutral",
+      "text": "장부는 저 보관함이야. 서버에도 사본이 있을 거고."
+    },
+    {
+      "speaker": "broker",
+      "speaker_name": "사무실 주인",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "다, 당신들 뭐야……! 여기가 어딘 줄 알고—"
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "smug",
+      "text": "알아. 그러니까 왔지.",
+      "cue": "shamu_glare"
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "neutral",
+      "text": "(잠금 두 개, 서버 단자 하나. 어디부터 할까.)",
+      "choices": [
+        {
+          "text": "보관함 — 전자식 잠금부터 푼다",
+          "outcome": {
+            "flags": {
+              "p01_first": "lock"
+            },
+            "next_dialogue": "prologue_p01_lock_first"
+          }
+        },
+        {
+          "text": "서버 — 사본 복사부터 건다",
+          "outcome": {
+            "flags": {
+              "p01_first": "server"
+            },
+            "next_dialogue": "prologue_p01_server_first"
+          }
+        }
+      ]
+    }
+  ]
+}

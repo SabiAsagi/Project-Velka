@@ -6,49 +6,70 @@
       "speaker_name": "",
       "sabi_emotion": "neutral",
       "shamu_emotion": "neutral",
-      "text": "계단을 올라왔는데, 부숴 놓았던 봉쇄문 자리에 매끈한 벽이 서 있다."
-    },
-    {
-      "speaker": "sabi",
-      "speaker_name": "사비 아사기",
-      "sabi_emotion": "worried",
-      "shamu_emotion": "surprised",
-      "text": "구조가 바뀌었어."
+      "text": "계단을 올라왔는데, 조금 전 지나온 봉쇄문이 있어야 할 자리에 벽이 있다."
     },
     {
       "speaker": "shamu",
       "speaker_name": "카즈네 샤무",
-      "sabi_emotion": "worried",
-      "shamu_emotion": "annoyed",
-      "text": "건물 구조가 몇 초 만에 바뀐다고?"
-    },
-    {
-      "speaker": "sabi",
-      "speaker_name": "사비 아사기",
-      "sabi_emotion": "sad",
-      "shamu_emotion": "annoyed",
-      "text": "나도 몰라."
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "여기였어."
     },
     {
       "speaker": "sabi",
       "speaker_name": "사비 아사기",
       "sabi_emotion": "serious",
-      "shamu_emotion": "serious",
-      "text": "……아래층 복도에 아까 없던 문이 있었어. 서쪽 벽."
+      "shamu_emotion": "neutral",
+      "text": "맞아. 계단 위에서 왼쪽."
     },
     {
       "speaker": "shamu",
       "speaker_name": "카즈네 샤무",
-      "sabi_emotion": "serious",
+      "sabi_emotion": "neutral",
       "shamu_emotion": "serious",
-      "text": "그게 출구라는 보장은?"
+      "text": "그럼 문은?"
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "사비가 손전등으로 벽의 모서리까지 훑는다. 숨은 문이나 잠금 장치처럼 보이지 않는다."
     },
     {
       "speaker": "sabi",
       "speaker_name": "사비 아사기",
-      "sabi_emotion": "determined",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "neutral",
+      "text": "문틀도 없어."
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "샤무가 들어온 쪽과 다른 길을 번갈아 본다."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "neutral",
+      "text": "……아래층 복도 서쪽에, 아까 없던 통로가 있었어."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
       "shamu_emotion": "serious",
-      "text": "없어. 근데 다른 길도 없어."
+      "text": "다른 길 확인하자. 떨어지지 말고."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "neutral",
+      "text": "샤무도 내 앞에서 너무 멀리 가지 마."
     }
   ]
 }

@@ -3,7 +3,9 @@ extends CanvasLayer
 class_name HackBase
 
 # 프로젝트 벨카 - 사비의 해킹 화면 공통 틀 (기본 디자인 0.2 시안 12 · 13 · 14 · 31 · 32 · 33)
-#   머리: PROJECT VELKA / ACCESS INTERFACE · 퍼즐 이름(_kind_name) · 안내 한 줄(_guide) · 단말 이름. 오른쪽 [Esc] 연결 종료
+#   머리: SABI // ACCESS INTERFACE · 퍼즐 이름(_kind_name) · 안내 한 줄(_guide) · 단말 이름. 오른쪽 [Esc] 연결 종료
+#         프로젝트 벨카 시설의 단말(project_terminal)이거나 진상이 드러난 뒤(VelkaStyle.velka_revealed)에는
+#         머리가 PROJECT VELKA / ACCESS INTERFACE 로 바뀐다 — 게임 제목이 세계 안에 처음 나타나는 반전
 #   추적 게이지: 시간이 지나면 차오른다. 다 차면 들켜서 연결이 끊기고(traced) 단말에서 소음이 난다.
 #   본문: 가운데 퍼즐(_build_body) | 오른쪽 칸 — 금빛 머리말(_side_title) · 설명(_side_lines) · 사비 손글씨 힌트(_sabi_hint)
 #         · 퍼즐별 추가(_build_side) · 상태 상자(_status) · 짧은 작업 로그
@@ -23,6 +25,8 @@ var is_solved := false
 var traced := false
 ## 추적 게이지가 다 차는 시간(초). 0이면 없음
 var trace_seconds := 0.0
+## 프로젝트 벨카 시설의 단말이면 true (머리말에 실험 이름이 그대로 뜬다)
+var project_terminal := false
 
 var _title := ""
 var _status: Label
@@ -245,7 +249,8 @@ func _build_ui() -> void:
 	titles.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	titles.add_theme_constant_override("separation", 8)
 	head.add_child(titles)
-	titles.add_child(VelkaStyle.label("PROJECT VELKA / ACCESS INTERFACE", VelkaStyle.spaced(VelkaStyle.sans_medium(), 5), 17, VelkaStyle.INK_DIM))
+	titles.add_child(VelkaStyle.label(header_text(), VelkaStyle.spaced(VelkaStyle.sans_medium(), 5), 17,
+			VelkaStyle.DANGER if project_terminal else VelkaStyle.INK_DIM))
 	var name_row := HBoxContainer.new()
 	name_row.add_theme_constant_override("separation", 18)
 	titles.add_child(name_row)
@@ -375,6 +380,11 @@ func _build_ui() -> void:
 	var help := VelkaStyle.label(_help_text(), VelkaStyle.sans(), 18, VelkaStyle.INK_DIM)
 	foot.add_child(help)
 	_maybe_show_tutorial(root)
+
+
+## 머리말: 평소 SABI // ACCESS INTERFACE, 벨카 시설 단말이거나 진상 공개 뒤에는 PROJECT VELKA
+func header_text() -> String:
+	return "PROJECT VELKA / ACCESS INTERFACE" if project_terminal or VelkaStyle.velka_revealed() else "SABI // ACCESS INTERFACE"
 
 
 ## 퍼즐 이름 (머리 큰 글자)

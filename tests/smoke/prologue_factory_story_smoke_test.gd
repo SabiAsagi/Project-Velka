@@ -181,13 +181,26 @@ func _run() -> void:
 	await _seconds(0.3)
 	_check(_objective().contains("영상"), "마지막 목표: 사비로 서버에서 영상 복원 (%s)" % _objective())
 
+	# 현실에서 무재해 기록판만 조사해 둔다 (전이 뒤 전후 비교 대사 확인용)
+	await _as("sabi")
+	_world.get_node("FlavorSpots/Flavor_fac_sign_safety").interact(_member())
+	await _finish_dialogue()
+
 	# --- 서버 -> 최하층 컷신 -> 끝 ---
 	await _as("sabi")
 	_interact("Interactables/MainServer")
 	await _hack()
-	await _wait_dialogue("prologue_p04_server")
-	_check(_dm.current_dialogue_id == "prologue_p04_server", "영상을 복원하면 최하층 컷신 대화가 나온다")
+	await _wait_dialogue("prologue_p04_server", 6.0)
+	_check(_dm.current_dialogue_id == "prologue_p04_server", "영상을 복원하면 복원 영상을 다시 보며 대화한다")
+	_check(_scene.replay_frame() >= 0, "서버 화면에 복원 영상이 크게 뜬다")
+	var server_lines: Array = _dm.get("_current_lines")
+	var save_at := -1
+	for i in server_lines.size():
+		if String(server_lines[i].get("cue", "")) == "replay_save":
+			save_at = i
+	_check(save_at > 0 and save_at < server_lines.size() - 3, "정전 전에 원본을 저장하는 줄이 있다 (퍼즐 성공 직후 바로 꺼지지 않는다)")
 	await _finish_dialogue()
+	_check(_scene.replay_frame() == -1, "대화가 끝나면 서버 화면을 닫는다")
 	await _seconds(1.6)
 	var lights_on := 0
 	for l in _world.find_children("*", "Light3D", true, false):
@@ -210,10 +223,19 @@ func _run() -> void:
 	_check(saw_blackout and _bars_shown(), "전이 전에 두 사람이 정신을 잃는다 (암전 컷씬)")
 	_check(_gm.is_otherworld(), "조명이 꺼진 뒤 괴이세계로 전이한다")
 	_check(not _world.get_node("Guards").visible, "전이하면 경비원(쓰러진 경비원 포함)이 사라진다")
-	_check(_dm.current_dialogue_id == "prologue_p05_transition", "전이 대화: 정전? 아니. 사람들이 없어.")
+	_check(_dm.current_dialogue_id == "prologue_p05_transition", "전이 대화: 서로 위치·부상을 확인하고, 서버가 안 잡힌다")
 	await _finish_dialogue()
 	await _seconds(0.3)
 	_check(_objective().contains("돌아가자"), "목표: 들어왔던 출입구로 돌아가기 (%s)" % _objective())
+	# 전후 비교: 현실에서 본 기록판은 "0일이었는데", 보지 않은 탁자는 비교 없이 지금 모습만
+	_world.get_node("FlavorSpots/Flavor_fac_sign_safety").interact(_member())
+	var seen_text := " ".join((_dm.get("_current_lines") as Array).map(func(l): return String(l.get("text", ""))))
+	await _finish_dialogue()
+	_world.get_node("FlavorSpots/Flavor_fac_lounge_table").interact(_member())
+	var unseen_text := " ".join((_dm.get("_current_lines") as Array).map(func(l): return String(l.get("text", ""))))
+	await _finish_dialogue()
+	_check(seen_text.contains("0일이었는데") and unseen_text.contains("유난히 깨끗") and not unseen_text.contains("컵이 없어"),
+			"전이 전에 조사한 사물만 전후 비교 대사가 나온다 (%s / %s)" % [seen_text, unseen_text])
 	await _as("sabi")
 	# 계단 중간(아직 다 올라가지 않음)에서는 벽 대사가 나오지 않는다
 	_party.teleport_party(Vector3(31.8, -2.0, 17.6))
@@ -222,7 +244,7 @@ func _run() -> void:
 	_party.teleport_party(Vector3(31.8, 0.05, 14.0))
 	await _seconds(0.6)
 	await _wait_dialogue("prologue_p05_changed", 3.0)
-	_check(_dm.current_dialogue_id == "prologue_p05_changed", "계단을 올라가면 봉쇄문 자리가 막혀 있다: 구조가 바뀌었어")
+	_check(_dm.current_dialogue_id == "prologue_p05_changed", "계단을 올라가면 봉쇄문 자리가 벽이다: 문틀도 없어")
 	await _finish_dialogue()
 	await _seconds(0.3)
 	_check(_objective().contains("통로"), "목표: 지하 서쪽에 생긴 통로 (%s)" % _objective())

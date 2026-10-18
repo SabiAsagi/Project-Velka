@@ -1,0 +1,57 @@
+{
+  "dialogue_id": "prologue_p01_after",
+  "lines": [
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "annoyed",
+      "text": "알고도 살려주자는 거야?"
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "이제 안 누르겠지.",
+      "cue": "broker_slump"
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "annoyed",
+      "text": "……진짜 손 많이 가.",
+      "cue": "shamu_disarm"
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "오늘 본 거, 잊어. 다음엔 사비가 말려도 안 들어."
+    },
+    {
+      "speaker": "broker",
+      "speaker_name": "사무실 주인",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "…………"
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "gentle_smile",
+      "shamu_emotion": "neutral",
+      "text": "이제 가도 돼.",
+      "cue": "to_door"
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "네가 또 누구 챙기지만 않으면."
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "dialogue_id": "prologue_p01_pistol",
+  "lines": [
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "책상 밑으로 미끄러진 권총. 사무실 주인의 손끝이 그쪽으로 기어간다.",
+      "cue": "broker_reach_gun",
+      "choices": [
+        {
+          "text": "권총부터 줍는다",
+          "outcome": {
+            "flags": {
+              "p01_pistol": "pick"
+            },
+            "next_dialogue": "prologue_p01_pistol_pick"
+          }
+        },
+        {
+          "text": "단말을 붙잡은 채 샤무에게 알린다",
+          "outcome": {
+            "flags": {
+              "p01_pistol": "call"
+            },
+            "next_dialogue": "prologue_p01_pistol_call"
+          }
+        }
+      ]
+    }
+  ]
+}

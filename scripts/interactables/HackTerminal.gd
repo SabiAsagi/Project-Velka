@@ -31,6 +31,8 @@ const HACK_COLOR := Color(0.27, 0.63, 0.71)
 @export var trace_seconds: float = 0.0
 ## 켜 두면 시도할 때마다 다른 패턴이 나온다 (끄면 단말마다 항상 같은 패턴)
 @export var random_pattern: bool = true
+## 프로젝트 벨카 시설의 단말 (해킹 화면 머리말에 실험 이름이 그대로 뜬다 — 연구소 등 진상 구역용)
+@export var project_terminal: bool = false
 @export_multiline var shamu_line: String = "이런 건 사비 담당이야. 사비로 바꾸자."
 ## 샤무가 조사했을 때 사비가 함께 있으면 샤무가 하는 말 (선택지가 붙는다)
 @export_multiline var shamu_question: String = "사비, 이거 부탁해."
@@ -45,7 +47,7 @@ const PUZZLES := {
 	"gate": ["circuit", Vector2i(5, 4), 55.0],
 	"security": ["code", Vector2i(8, 0), 100.0],
 	"alarm": ["circuit", Vector2i(6, 5), 75.0],
-	"server": ["frames", Vector2i(6, 0), 100.0],
+	"server": ["frames", Vector2i(7, 0), 120.0],
 }
 const PUZZLE_SCRIPTS := {
 	"circuit": preload("res://scripts/ui/HackMinigame.gd"),
@@ -98,6 +100,7 @@ func _on_interact(player: Node3D) -> void:
 	var game: HackBase = PUZZLE_SCRIPTS.get(kind, PUZZLE_SCRIPTS["circuit"]).new()
 	get_tree().root.add_child(game)
 	var seed_value: int = randi() if random_pattern else hash(terminal_id + str(size))
+	game.project_terminal = project_terminal
 	game.start(hack_prompt, size, seed_value, trace)
 	var traced_ref := [false]
 	game.finished.connect(func(_ok): traced_ref[0] = game.traced, CONNECT_ONE_SHOT)

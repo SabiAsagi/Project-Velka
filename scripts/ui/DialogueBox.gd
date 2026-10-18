@@ -53,6 +53,7 @@ const NPC_SILHOUETTES := {
 	"yu": [Color(0.14, 0.2, 0.34), Color(0.55, 0.65, 0.85)],
 	"baek": [Color(0.09, 0.08, 0.09), Color(0.62, 0.6, 0.62)],
 	"client": [Color(0.06, 0.06, 0.07), Color(0.4, 0.4, 0.44)],
+	"broker": [Color(0.12, 0.1, 0.09), Color(0.52, 0.46, 0.4)],
 	"gatekeeper": [Color(0.17, 0.18, 0.14), Color(0.48, 0.48, 0.42)],
 }
 const NAME_COLORS := {"sabi": VelkaStyle.SABI, "shamu": VelkaStyle.SHAMU}

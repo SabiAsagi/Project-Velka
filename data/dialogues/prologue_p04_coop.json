@@ -4,12 +4,37 @@
     {
       "speaker": "sabi",
       "speaker_name": "사비 아사기",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "neutral",
       "text": "경보 멈췄고, 파쇄기도 섰어. 서버실 열렸어."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "neutral",
+      "text": "……파쇄 명령은 여기서 내린 게 아니야. 제어판에 외부 보고 번호가 붙어 있어."
     },
     {
       "speaker": "shamu",
       "speaker_name": "카즈네 샤무",
-      "text": "빨리 찾고 나가자. 여기 공기가 이상해."
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "관리 업체?"
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "neutral",
+      "text": "업체 양식이 아니야. 어디로 보고하는 건지는 안 나와. 번호만 찍어 둘게."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "나중에 봐. 지금은 원본부터."
     }
   ]
 }

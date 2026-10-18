@@ -4,22 +4,30 @@
     {
       "speaker": "sabi",
       "speaker_name": "사비 아사기",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
       "text": "왔어."
     },
     {
       "speaker": "shamu",
       "speaker_name": "카즈네 샤무",
-      "text": "오는 길에 아무도 안 깼지?"
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "뒤는?"
     },
     {
       "speaker": "sabi",
       "speaker_name": "사비 아사기",
-      "text": "다들 바닥에서 자고 있던데. 샤무 덕분에."
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "확인했어."
     },
     {
       "speaker": "shamu",
       "speaker_name": "카즈네 샤무",
-      "text": "이제 안쪽은 네 차례야."
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "이제 단말은 네 차례야."
     }
   ]
 }

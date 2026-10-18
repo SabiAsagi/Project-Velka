@@ -2,20 +2,19 @@
   "dialogue_id": "prologue_p04_rejoin_radio",
   "lines": [
     {
-      "speaker": "sabi",
-      "speaker_name": "사비 아사기",
-      "text": "……경비 신호가 전부 끊겼어. 다 기절시킨 거야?",
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "이쪽 정리됐어. 들어와.",
       "radio": true
     },
     {
-      "speaker": "shamu",
-      "speaker_name": "카즈네 샤무",
-      "text": "조용히."
-    },
-    {
       "speaker": "sabi",
       "speaker_name": "사비 아사기",
-      "text": "들어갈게. 샤무가 지나온 길로.",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "엉. 네가 지나온 길로 갈게.",
       "radio": true
     }
   ]

@@ -1,0 +1,40 @@
+{
+  "dialogue_id": "prologue_p03_split",
+  "lines": [
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "난 장비 챙길게. 자료 정리 끝나면 내려와."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "엉. 배터리도 챙겨 줘."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "annoyed",
+      "text": "네 건 네가 챙겨."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "gentle_smile",
+      "shamu_emotion": "neutral",
+      "text": "이미 챙겨 놨으면서."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "annoyed",
+      "text": "……그럼 빨리 내려와."
+    }
+  ]
+}

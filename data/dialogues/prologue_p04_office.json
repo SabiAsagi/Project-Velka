@@ -4,17 +4,23 @@
     {
       "speaker": "sabi",
       "speaker_name": "사비 아사기",
-      "text": "사무동 복도야. 보안실에 한 명 더 있어. 모니터만 보고 있으니까 뒤로 돌아가면 돼."
+      "sabi_emotion": "serious",
+      "shamu_emotion": "neutral",
+      "text": "사무동 지나면 보안실이야. 기록 장비가 거기 있어. 한 명 더 있는데 모니터만 보고 있어. 뒤로 돌아가면 돼."
     },
     {
       "speaker": "shamu",
       "speaker_name": "카즈네 샤무",
-      "text": "그건 내 일이고."
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "불은 꺼 놨는데 모니터는 켜져 있네."
     },
     {
       "speaker": "sabi",
       "speaker_name": "사비 아사기",
-      "text": "다 기절시키면 바로 들어갈게. 보안실 단말은 내가 직접 열어야 해."
+      "sabi_emotion": "serious",
+      "shamu_emotion": "neutral",
+      "text": "꺼진 건 생산 쪽 전원이겠지. 무슨 기록이 남았는지 보자."
     }
   ]
 }

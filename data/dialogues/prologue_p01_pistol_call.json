@@ -1,0 +1,20 @@
+{
+  "dialogue_id": "prologue_p01_pistol_call",
+  "lines": [
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "neutral",
+      "text": "샤무, 책상 밑. 탄창부터 빼자."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "그건 내가 할게. 넌 자료 챙겨.",
+      "cue": "shamu_gun"
+    }
+  ]
+}

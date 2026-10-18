@@ -6,70 +6,63 @@
       "speaker_name": "",
       "sabi_emotion": "neutral",
       "shamu_emotion": "neutral",
-      "text": "임시 숙소. 샤무는 장비를 정리하고, 사비는 협회에서 받은 실종자 목록을 보고 있다."
+      "text": "임시 숙소. 샤무는 장비를 정리하고, 사비는 의뢰인이 맡긴 사진을 보고 있다."
     },
     {
       "speaker": "shamu",
       "speaker_name": "카즈네 샤무",
       "sabi_emotion": "neutral",
       "shamu_emotion": "serious",
-      "text": "너 또 움직일 생각이지."
+      "text": "그 사진 아직 보고 있어?"
     },
     {
       "speaker": "sabi",
       "speaker_name": "사비 아사기",
-      "sabi_emotion": "neutral",
-      "shamu_emotion": "serious",
-      "text": "아직 다 안 나았어."
-    },
-    {
-      "speaker": "shamu",
-      "speaker_name": "카즈네 샤무",
-      "sabi_emotion": "neutral",
-      "shamu_emotion": "serious",
-      "text": "다 나으면."
-    },
-    {
-      "speaker": "sabi",
-      "speaker_name": "사비 아사기",
-      "sabi_emotion": "determined",
-      "shamu_emotion": "serious",
-      "text": "찾아봐야지."
-    },
-    {
-      "speaker": "shamu",
-      "speaker_name": "카즈네 샤무",
-      "sabi_emotion": "determined",
+      "sabi_emotion": "serious",
       "shamu_emotion": "neutral",
-      "text": "의뢰인들?"
+      "text": "엉. 찾을 때 알아봐야 하니까."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "기록에 없다고 했잖아."
     },
     {
       "speaker": "sabi",
       "speaker_name": "사비 아사기",
       "sabi_emotion": "determined",
       "shamu_emotion": "neutral",
-      "text": "그 사람들도. 다른 실종자들도."
+      "text": "아직 못 찾았다고 했어."
     },
     {
       "speaker": "shamu",
       "speaker_name": "카즈네 샤무",
-      "sabi_emotion": "determined",
-      "shamu_emotion": "annoyed",
-      "text": "전부 구하겠다는 소리는 하지 마."
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "……그래. 아직은."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "neutral",
+      "text": "밖에서 기다리는 사람도 있고."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "우리도 나갈 방법부터 찾아야 해."
     },
     {
       "speaker": "sabi",
       "speaker_name": "사비 아사기",
       "sabi_emotion": "gentle_smile",
-      "shamu_emotion": "annoyed",
-      "text": "할 수 있는 만큼."
-    },
-    {
-      "speaker": "shamu",
-      "speaker_name": "카즈네 샤무",
-      "sabi_emotion": "gentle_smile",
-      "shamu_emotion": "annoyed",
-      "text": "그 말이 더 불안해."
+      "shamu_emotion": "neutral",
+      "text": "웅. 같이."
     },
     {
       "speaker": "system",

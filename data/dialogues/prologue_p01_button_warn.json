@@ -1,0 +1,13 @@
+{
+  "dialogue_id": "prologue_p01_button_warn",
+  "lines": [
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "neutral",
+      "text": "거기 누르면 샤무한테 혼나.",
+      "cue": "broker_freeze"
+    }
+  ]
+}

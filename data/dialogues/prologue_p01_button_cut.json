@@ -1,0 +1,21 @@
+{
+  "dialogue_id": "prologue_p01_button_cut",
+  "lines": [
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "사비가 단말을 두 번 두드린다. 비상 버튼의 불이 꺼진다.",
+      "cue": "button_cut"
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "neutral",
+      "text": "그 줄은 방금 끊어써. 그래도 누르면 샤무한테 혼나.",
+      "cue": "broker_freeze"
+    }
+  ]
+}

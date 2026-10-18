@@ -180,6 +180,21 @@ func _run() -> void:
 	var hand_font := load("res://assets/fonts/hand/Shamu-Hand.ttf") as Font
 	_check(hand_font != null and not hand_font.fallbacks.is_empty(), "손글씨 글꼴에 없는 기호는 기본 글꼴로 대신한다")
 
+	# --- 프로젝트 벨카라는 이름은 진상이 드러나기 전까지 세계 안 화면에 나오지 않는다 ---
+	var head_label: Label = _journal.get("_chapter_label")
+	_check(String(head_label.text).begins_with("괴이저항단체 / FIELD RECORD") and not String(head_label.text).contains("PROJECT VELKA"),
+			"수첩 머리말은 협회 기록이다 (%s)" % head_label.text)
+	var hack = (load("res://scripts/ui/HackMinigame.gd") as GDScript).new()
+	_check(hack.header_text().begins_with("SABI //"), "해킹 단말 머리말도 평소에는 실험 이름이 없다")
+	hack.project_terminal = true
+	_check(hack.header_text().begins_with("PROJECT VELKA"), "벨카 시설 단말에서는 실험 이름이 그대로 뜬다")
+	hack.free()
+	_gm.set_story_flag("project_velka_revealed", true)
+	_journal.refresh()
+	_check(String(head_label.text).begins_with("PROJECT VELKA / FIELD RECORD"), "진상이 드러나면 수첩 머리가 PROJECT VELKA 로 바뀐다")
+	_gm.set_story_flag("project_velka_revealed", false)
+	_journal.refresh()
+
 	# --- 수집 기록 ---
 	_journal.show_tab(3)
 	await _input_frames()
