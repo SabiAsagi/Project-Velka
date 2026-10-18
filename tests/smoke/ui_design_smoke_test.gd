@@ -91,7 +91,7 @@ func _run() -> void:
 	await create_timer(1.0).timeout
 	var title := current_scene
 	var archive_btn: Button = title.get("archive_btn")
-	var buttons := archive_btn.get_parent().get_children().map(func(b): return (b as Button).text if b is Button else "")
+	var buttons := archive_btn.get_parent().get_children().map(func(b): return String(b.get("label_text")) if b is Button else "")
 	_check(buttons.find("기록 보관소") == buttons.find("새 게임") + 1, "타이틀 메뉴: 새 게임 아래 '기록 보관소' (%s)" % [buttons])
 	var menu_box: Control = archive_btn.get_parent()
 	_check(menu_box.get_global_rect().end.y <= 960.0, "메뉴가 일곱 줄이어도 원래 자리 안에 들어간다 (%.0f)" % menu_box.get_global_rect().end.y)
