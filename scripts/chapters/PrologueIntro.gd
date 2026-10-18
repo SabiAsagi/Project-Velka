@@ -8,7 +8,7 @@ extends Node3D
 #          선택은 순서·방법만 바꾸고 같은 결말로 모인다 (거짓 선택지를 만들지 않는다).
 #          대사 줄의 "cue" 가 그 줄이 시작될 때 실행할 동작이다 (_run_cue).
 #   끝나면 "며칠 뒤" 자막과 함께 아지트(P-02)로 넘어간다.
-# 방은 그림 파일 없이 도형으로 지은 임시 공간이다.
+# P-00은 일러스트 몽타주, P-01은 실제 캐릭터가 움직이는 엔진 내 사무실 세트다.
 # 설계: 기획서/05.스토리/게임 시나리오/프롤로그_도입_개정.md §3·§4
 
 signal step_changed(step: int)
@@ -146,12 +146,20 @@ func _leave() -> void:
 	await sabi.walk_path([DOOR_IN + Vector3(-0.4, 0, 0.3), DOOR_IN, DOOR_OUT], 3.2)
 	# 마지막 컷: 혼자 남은 사람과 꺼질 듯한 스탠드
 	Cutscene.cut(tree, _broker, FOV_MID)
-	for i in 3:
-		_lamp.light_energy = 0.3
-		await Cutscene.wait(tree, 0.07)
-		_lamp.light_energy = 1.6
-		await Cutscene.wait(tree, 0.16)
+	if _reduce_effects():
+		await Cutscene.wait(tree, 0.69)
+	else:
+		for i in 3:
+			_lamp.light_energy = 0.3
+			await Cutscene.wait(tree, 0.07)
+			_lamp.light_energy = 1.6
+			await Cutscene.wait(tree, 0.16)
 	await Cutscene.wait(tree, 0.6)
+
+
+func _reduce_effects() -> bool:
+	var settings := get_node_or_null("/root/SettingsManager")
+	return settings != null and settings.reduce_effects()
 
 
 func _on_line_started(line: Dictionary) -> void:
@@ -299,7 +307,8 @@ func _show_stamp() -> void:
 		box.add_child(label)
 	var tween := box.create_tween()
 	tween.tween_property(box, "modulate:a", 1.0, 0.2)
-	tween.parallel().tween_property(box, "position:x", 84.0, 0.2).from(44.0)
+	if not _reduce_effects():
+		tween.parallel().tween_property(box, "position:x", 84.0, 0.2).from(44.0)
 	tween.tween_interval(2.6)
 	tween.tween_property(box, "modulate:a", 0.0, 0.5)
 
@@ -361,6 +370,16 @@ func _build_room() -> void:
 	_box("WallWest", Vector3(-0.1, 1.5, 4.0), Vector3(0.2, 3.0, 8.0), wall_mat, true)
 	_box("SkirtSouth", Vector3(5, 0.15, 8.05), Vector3(10, 0.3, 0.1), wall_mat, true)
 	_box("SkirtEast", Vector3(10.05, 0.15, 4), Vector3(0.1, 0.3, 8), wall_mat, true)
+	# 평범한 장부 회수 현장: 업무 공간의 물건들이며 괴이 문양이나 실종자 게시판은 아니다.
+	var trim := _mat(Color(0.12, 0.14, 0.16))
+	_box("NorthSkirting", Vector3(3.8, 0.12, 0.04), Vector3(7.6, 0.24, 0.06), trim, false)
+	_box("WestSkirting", Vector3(0.04, 0.12, 4.0), Vector3(0.06, 0.24, 8.0), trim, false)
+	var cork := _mat(Color(0.31, 0.25, 0.18))
+	var paper := _mat(Color(0.8, 0.79, 0.73))
+	_box("OfficeNoticeBoard", Vector3(5.3, 1.8, 0.05), Vector3(1.8, 1.0, 0.07), cork, false)
+	for i in 3:
+		var at := Vector3(4.75 + i * 0.5, 1.82 + (0.12 if i == 1 else -0.06), 0.1)
+		_box("NoticePaper%d" % i, at, Vector3(0.38, 0.55, 0.015), paper, false)
 	# 장부 보관함 (잠금 두 개: 전자식 / 기계식)
 	_box("Cabinet", Vector3(2.2, 0.95, 0.4), Vector3(1.4, 1.9, 0.6), metal, true)
 	var hinge := Node3D.new()
@@ -376,8 +395,18 @@ func _build_room() -> void:
 	# 서버 단자
 	_box("Server", Vector3(0.45, 1.0, 3.7), Vector3(0.7, 2.0, 1.1), _mat(Color(0.1, 0.11, 0.13)), true)
 	_server_led = _box("ServerLed", Vector3(0.82, 1.4, 3.7), Vector3(0.04, 0.06, 0.8), _glow(Color(0.25, 0.6, 1.0)), false)
+	for i in 6:
+		_box("ServerVent%d" % i, Vector3(0.811, 0.45 + i * 0.19, 3.7), Vector3(0.025, 0.04, 0.78), trim, false)
 	# 책상과 스탠드
 	_box("Desk", Vector3(5.0, 0.4, 3.0), Vector3(2.2, 0.8, 1.0), wood, true)
+	_box("DeskTop", Vector3(5.0, 0.825, 3.0), Vector3(2.3, 0.05, 1.1), _mat(Color(0.25, 0.18, 0.12)), false)
+	_box("DeskBlotter", Vector3(4.8, 0.858, 3.05), Vector3(1.05, 0.015, 0.64), _mat(Color(0.15, 0.2, 0.18)), false)
+	_box("OpenAccounts", Vector3(4.65, 0.882, 3.02), Vector3(0.56, 0.03, 0.4), paper, false)
+	_box("BinderSpine", Vector3(4.65, 0.9, 3.02), Vector3(0.018, 0.015, 0.4), _mat(Color(0.38, 0.16, 0.1)), false)
+	_box("DeskTelephone", Vector3(5.35, 0.91, 3.22), Vector3(0.32, 0.1, 0.24), trim, false)
+	_box("LampStem", Vector3(5.7, 1.12, 2.8), Vector3(0.045, 0.46, 0.045), metal, false)
+	_box("LampArm", Vector3(5.52, 1.35, 2.8), Vector3(0.4, 0.045, 0.045), metal, false)
+	_box("LampShade", Vector3(5.36, 1.31, 2.8), Vector3(0.32, 0.14, 0.25), _mat(Color(0.15, 0.22, 0.18)), false)
 	_box("LampBase", Vector3(5.7, 0.9, 2.8), Vector3(0.18, 0.2, 0.18), _glow(Color(1.0, 0.85, 0.55)), false)
 	_lamp = OmniLight3D.new()
 	_lamp.position = Vector3(5.7, 1.4, 2.9)

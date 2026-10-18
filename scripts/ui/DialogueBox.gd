@@ -18,6 +18,12 @@ extends CanvasLayer
 ## 원본(1254px 무손실)은 처음 읽는 데 장당 0.05~0.4초가 걸려 대화창이 뜨기 전에 화면이 멈췄다.
 const PORTRAIT_DIR := "res://assets/characters/portraits/dialogue/"
 const PORTRAIT_FILES := {
+	"client": {"neutral": "client_neutral.png"},
+	"baek": {"neutral": "baek_neutral.png"},
+	"kwon": {"neutral": "kwon_neutral.png"},
+	"seo": {"neutral": "seo_neutral.png"},
+	"yu": {"neutral": "yu_neutral.png"},
+	"han": {"neutral": "han_neutral.png"},
 	"sabi": {
 		"neutral": "sabi_neutral.png",
 		"gentle_smile": "sabi_gentle_smile.png",
@@ -47,12 +53,6 @@ const EMOTION_ALIASES := {
 }
 ## 초상화가 아직 없는 인물: 실루엣 색 [몸, 윤곽선]
 const NPC_SILHOUETTES := {
-	"seo": [Color(0.78, 0.8, 0.82), Color(0.95, 0.96, 0.97)],
-	"kwon": [Color(0.22, 0.27, 0.18), Color(0.62, 0.7, 0.5)],
-	"han": [Color(0.48, 0.3, 0.13), Color(0.9, 0.7, 0.45)],
-	"yu": [Color(0.14, 0.2, 0.34), Color(0.55, 0.65, 0.85)],
-	"baek": [Color(0.09, 0.08, 0.09), Color(0.62, 0.6, 0.62)],
-	"client": [Color(0.06, 0.06, 0.07), Color(0.4, 0.4, 0.44)],
 	"broker": [Color(0.12, 0.1, 0.09), Color(0.52, 0.46, 0.4)],
 	"gatekeeper": [Color(0.17, 0.18, 0.14), Color(0.48, 0.48, 0.42)],
 }
@@ -230,7 +230,8 @@ func _on_line_started(line: Dictionary) -> void:
 	(_name_tag.get_theme_stylebox("panel") as StyleBoxFlat).border_color = Color(name_color, 0.8) if NAME_COLORS.has(speaker_id) else VelkaStyle.LINE
 
 	# 초상화
-	var emotion := String(line.get("sabi_emotion" if speaker_id == "sabi" else "shamu_emotion", "neutral"))
+	var emotion_key := "sabi_emotion" if speaker_id == "sabi" else ("shamu_emotion" if speaker_id == "shamu" else "emotion")
+	var emotion := String(line.get(emotion_key, "neutral"))
 	_show_speaker(speaker_id if not narration else "", emotion)
 	_portrait.self_modulate = Color(0.72, 0.9, 1.0) if radio else Color.WHITE
 	if radio:
