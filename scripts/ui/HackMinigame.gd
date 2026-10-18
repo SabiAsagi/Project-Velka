@@ -17,6 +17,12 @@ const W := 8
 const DIRS := {N: Vector2i(0, -1), E: Vector2i(1, 0), S: Vector2i(0, 1), W: Vector2i(-1, 0)}
 const OPP := {N: S, E: W, S: N, W: E}
 
+## 녹색 기판 색 (기본 디자인 시안 .kind-circuit)
+const PCB_ON := Color("#4fd1a0")
+const PCB_OFF := Color("#2b4a3c")
+const PCB_PAD := Color("#9a7b3c")
+const PCB_PAD_LIT := Color("#f0c45c")
+
 var cols := 5
 var rows := 4
 var in_row := 0
@@ -234,6 +240,10 @@ func _tutorial_lines() -> Array:
 	]
 
 
+func _device_theme() -> Dictionary:
+	return {"name": "녹색 기판", "screen": Color("#0b1a14"), "line": Color("#1f3a2e"), "side": Color("#0a1611"), "acc": PCB_ON}
+
+
 func _help_text() -> String:
 	return "좌클릭 / Space: 회전  ·  우클릭 / Q: 반대로  ·  방향키: 선택  ·  Z: 되돌리기  ·  R: 처음 배치  ·  H: 힌트  ·  F1: 도움말"
 
@@ -313,26 +323,26 @@ class GridArt extends Control:
 
 	func _draw() -> void:
 		var o := origin()
-		# 기본 디자인 0.2: 청록 선 · 금빛 마디, 어두운 청록 칸
-		var on := Color("#8cc9d1")
-		var off := Color("#3c5761")
-		var gold := VelkaStyle.ACCENT
+		# 원격 대상 = 전자 잠금 패널의 녹색 기판: 꺼진 배선은 어두운 녹색, 이어진 배선은 형광 녹색, 금빛 납땜 마디
+		var on := HackMinigame.PCB_ON
+		var off := HackMinigame.PCB_OFF
+		var gold := HackMinigame.PCB_PAD
 		# IN / OUT 단자
 		var in_y := o.y + (game.in_row + 0.5) * HackMinigame.TILE
 		var out_y := o.y + (game.out_row + 0.5) * HackMinigame.TILE
 		draw_line(Vector2(30, in_y), Vector2(o.x, in_y), on, 6.0)
-		draw_string(VelkaStyle.sans_medium(), Vector2(0, in_y - 10), "IN", HORIZONTAL_ALIGNMENT_LEFT, -1, 17, gold)
+		draw_string(VelkaStyle.sans_medium(), Vector2(0, in_y - 10), "IN", HORIZONTAL_ALIGNMENT_LEFT, -1, 17, on)
 		var ox := o.x + game.cols * HackMinigame.TILE
 		var out_lit := game.is_solved
 		draw_line(Vector2(ox, out_y), Vector2(ox + 12, out_y), on if out_lit else off, 6.0)
-		draw_string(VelkaStyle.sans_medium(), Vector2(ox + 4, out_y - 10), "OUT", HORIZONTAL_ALIGNMENT_LEFT, -1, 17, gold if out_lit else VelkaStyle.INK_DIM)
+		draw_string(VelkaStyle.sans_medium(), Vector2(ox + 4, out_y - 10), "OUT", HORIZONTAL_ALIGNMENT_LEFT, -1, 17, VelkaStyle.ACCENT if out_lit else Color(VelkaStyle.ACCENT, 0.55))
 		for i in game.masks.size():
 			var cell := Vector2(i % game.cols, i / game.cols)
 			var r := Rect2(o + cell * HackMinigame.TILE, Vector2(HackMinigame.TILE, HackMinigame.TILE))
 			var lit := game.powered.has(i)
-			draw_rect(r.grow(-4), Color("#13232a") if not lit else Color("#183039"))
-			draw_rect(r.grow(-4), Color("#2d4650"), false, 1.0)
-			draw_string(VelkaStyle.sans(), r.position + Vector2(10, 20), "%02d" % (i + 1), HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color(VelkaStyle.INK_DIM, 0.8))
+			draw_rect(r.grow(-4), Color("#0b1912") if not lit else Color("#0f2a1e"))
+			draw_rect(r.grow(-4), Color("#1c3428"), false, 1.0)
+			draw_string(VelkaStyle.sans(), r.position + Vector2(10, 20), "%02d" % (i + 1), HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("#2f5243"))
 			if i == _hover or Vector2i(cell) == cursor:
 				draw_rect(r.grow(-4), Color(gold, 0.75), false, 2.0)
 			var c := r.get_center()
@@ -347,4 +357,4 @@ class GridArt extends Control:
 					if lit:
 						draw_line(c, c + d * HackMinigame.TILE * 0.5, Color(on.r, on.g, on.b, 0.2), 14.0)
 					draw_line(c, c + d * HackMinigame.TILE * 0.5, col, 6.0)
-			draw_circle(c, 9.0, gold if lit else Color(gold, 0.45))
+			draw_circle(c, 9.0, HackMinigame.PCB_PAD_LIT if lit else gold)

@@ -9,6 +9,9 @@ class_name HackCodeBreaker
 # 키보드: 숫자 키 입력, Backspace 한 자리 지우기, Delete 전체 지우기, Enter 대조.
 
 const DIGITS := 4
+## 호박색 터미널 색 (기본 디자인 시안 .kind-code)
+const AMBER := Color("#ffb547")
+const AMBER_DIM := Color("#8d6d3e")
 
 var code: Array[int] = []
 var max_tries := 8
@@ -155,6 +158,10 @@ func _tutorial_lines() -> Array:
 	]
 
 
+func _device_theme() -> Dictionary:
+	return {"name": "호박색 터미널", "screen": Color("#120d06"), "line": Color("#4a3a22"), "side": Color("#130e07"), "acc": AMBER}
+
+
 func _help_text() -> String:
 	return "숫자 / 클릭: 입력   ·   Backspace: 한 자리   ·   Delete: 전체 지우기   ·   Enter: 대조   ·   Esc: 종료"
 
@@ -194,7 +201,7 @@ func _context_hint() -> String:
 
 func _build_side(parent: VBoxContainer) -> void:
 	_history_scroll = ScrollContainer.new()
-	_history_scroll.custom_minimum_size = Vector2(0, 160)
+	_history_scroll.custom_minimum_size = Vector2(0, 120)
 	_history_scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	_history_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	parent.add_child(_history_scroll)
@@ -211,7 +218,7 @@ func _pegs(exact: int, near: int) -> String:
 func _refresh() -> void:
 	for i in _slots.size():
 		_slots[i].text = str(_entry[i]) if i < _entry.size() else "_"
-		_slots[i].add_theme_color_override("font_color", VelkaStyle.FOCUS if i < _entry.size() else VelkaStyle.INK_DIM)
+		_slots[i].add_theme_color_override("font_color", AMBER if i < _entry.size() else AMBER_DIM)
 	for digit in _digit_buttons:
 		(_digit_buttons[digit] as Button).set_pressed_no_signal(_entry.has(digit))
 	if _tries_label:
@@ -238,7 +245,7 @@ func _add_history_row(guess: Array, exact: int, near: int) -> void:
 
 func _build_body(parent: Container) -> void:
 	var col := VBoxContainer.new()
-	col.add_theme_constant_override("separation", 26)
+	col.add_theme_constant_override("separation", 16)
 	parent.add_child(col)
 	# 입력 칸
 	var slots := HBoxContainer.new()
@@ -248,9 +255,9 @@ func _build_body(parent: Container) -> void:
 	_slots.clear()
 	for i in DIGITS:
 		var p := PanelContainer.new()
-		p.add_theme_stylebox_override("panel", VelkaStyle.panel_style(VelkaStyle.LINE, Color("#13232a"), 0, 1))
-		p.custom_minimum_size = Vector2(100, 104)
-		var l := VelkaStyle.label("_", VelkaStyle.sans_medium(), 46, VelkaStyle.INK)
+		p.add_theme_stylebox_override("panel", VelkaStyle.panel_style(Color("#5a4426"), Color("#1a1208"), 0, 1))
+		p.custom_minimum_size = Vector2(92, 86)
+		var l := VelkaStyle.label("_", VelkaStyle.mono(), 46, AMBER)
 		l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		l.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		p.add_child(l)
@@ -297,13 +304,17 @@ func _digit_key(digit: int) -> Button:
 func _key(text: String, action: Callable) -> Button:
 	var b := Button.new()
 	b.text = text
-	b.custom_minimum_size = Vector2(102, 68)
+	b.custom_minimum_size = Vector2(96, 56)
 	b.add_theme_font_override("font", VelkaStyle.sans_medium())
 	b.add_theme_font_size_override("font_size", 30 if text.length() == 1 else 26)
+	# 호박색 터미널의 물리 키패드 (기본 디자인 시안 .kind-code .keypad)
 	for c in ["font_color", "font_hover_color", "font_pressed_color"]:
-		b.add_theme_color_override(c, VelkaStyle.INK)
-	var normal := VelkaStyle.panel_style(VelkaStyle.LINE, Color("#18303a"), 0, 1)
-	var hot := VelkaStyle.panel_style(VelkaStyle.FOCUS, Color("#22424c"), 0, 1)
+		b.add_theme_color_override(c, Color("#e8dcc6"))
+	var key_bg := Color("#6a4512") if text == "확인" else Color("#322e27")
+	var normal := VelkaStyle.panel_style(Color("#12100d"), key_bg, 4, 1)
+	normal.border_width_bottom = 3
+	var hot := VelkaStyle.panel_style(AMBER, key_bg.lightened(0.12), 4, 1)
+	hot.border_width_bottom = 3
 	b.add_theme_stylebox_override("normal", normal)
 	for state in ["hover", "pressed", "focus"]:
 		b.add_theme_stylebox_override(state, hot)
