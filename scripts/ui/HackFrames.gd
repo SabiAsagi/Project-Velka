@@ -33,6 +33,10 @@ var playing_slot := -1
 var _selected := -1
 var _views: Array = []
 var _grid: GridContainer
+var _cursor := 0
+var _undo_history: Array = []
+var _preview: FrameArt
+var _preview_note: Label
 
 
 ## 크기 인자는 쓰지 않는다 (이야기 영상은 늘 일곱 장). seed_value 로 섞는 순서만 바뀐다.
@@ -76,8 +80,9 @@ static func make_frame(order: int) -> Control:
 
 ## 두 자리의 프레임을 바꾼다
 func swap(a: int, b: int) -> void:
-	if is_solved or a == b or a < 0 or b < 0 or a >= frame_count or b >= frame_count:
+	if _done or is_solved or a == b or a < 0 or b < 0 or a >= frame_count or b >= frame_count:
 		return
+	_undo_history.append(slots.duplicate())
 	var t := slots[a]
 	slots[a] = slots[b]
 	slots[b] = t
@@ -88,8 +93,9 @@ func swap(a: int, b: int) -> void:
 
 
 func click_slot(index: int) -> void:
-	if is_solved:
+	if _done or is_solved or index < 0 or index >= frame_count:
 		return
+	_cursor = index
 	if _selected < 0:
 		_selected = index
 	elif _selected == index:
@@ -99,6 +105,36 @@ func click_slot(index: int) -> void:
 		_selected = -1
 		swap(first, index)
 	_refresh()
+
+
+## Undo is local evidence manipulation; it never resets trace or terminal state.
+func undo() -> void:
+	if _done or is_solved or _undo_history.is_empty():
+		return
+	slots.assign(_undo_history.pop_back())
+	_selected = -1
+	_refresh()
+
+
+func _handle_key(event: InputEvent) -> void:
+	if not (event is InputEventKey and event.pressed and not event.echo) or tutorial_open or _done or is_solved:
+		return
+	match event.keycode:
+		KEY_LEFT: _cursor = maxi(0, _cursor - 1)
+		KEY_RIGHT: _cursor = mini(frame_count - 1, _cursor + 1)
+		KEY_UP: _cursor = maxi(0, _cursor - 4)
+		KEY_DOWN: _cursor = mini(frame_count - 1, _cursor + 4)
+		KEY_SPACE, KEY_ENTER: click_slot(_cursor)
+		KEY_Z: undo()
+		_: return
+	get_viewport().set_input_as_handled()
+	_refresh()
+
+
+func _context_hint() -> String:
+	if _selected >= 0:
+		return "고른 장면과 다음 장면의 손을 봐. 가방을 든 손과 메모를 든 손이 달라."
+	return "시각이 깨진 장면은 문과 가방부터 비교하자. 가방은 손에서 바닥으로 옮겨졌어."
 
 
 func solve() -> void:
@@ -151,7 +187,7 @@ func _tutorial_lines() -> Array:
 
 
 func _help_text() -> String:
-	return "프레임 두 개를 차례로 클릭: 자리 바꾸기   ·   Esc: 연결 종료"
+	return "클릭 / Space: 두 장 교환  ·  방향키: 확대할 장면  ·  Z: 되돌리기  ·  H: 힌트  ·  F1: 도움말  ·  Esc: 연결 종료"
 
 
 func _kind_name() -> String:
@@ -185,28 +221,63 @@ func _refresh() -> void:
 		v.order = slots[i]
 		v.slot = i
 		v.selected = i == _selected
+		v.focused = i == _cursor
 		v.playing = i == playing_slot
 		v.dimmed = playing_slot >= 0 and i != playing_slot
 		v.corrupted_time = corrupted[slots[i]]
 		v.queue_redraw()
+	if _preview and not slots.is_empty():
+		var order := slots[_cursor]
+		_preview.order = order
+		_preview.corrupted_time = corrupted[order]
+		_preview.queue_redraw()
+		var door_text := "닫힘" if _preview.door_state() == 0 else ("조금 열림" if _preview.door_state() == 1 else "열림")
+		var bag_text := "보이지 않음" if _preview.bag_state() == 0 else ("손에 들고 있음" if _preview.bag_state() == 1 else "바닥에 놓여 있음")
+		_preview_note.text = "문: %s\n가방: %s\n조명: %s\n\n시간 숫자보다 화면에 남은 상태를 대조하자." % [door_text, bag_text, "어두워짐" if _preview.light_dim() else "켜짐"]
 
 
 func _build_body(parent: Container) -> void:
+	var layout := VBoxContainer.new()
+	layout.add_theme_constant_override("separation", 16)
+	parent.add_child(layout)
 	_grid = GridContainer.new()
 	_grid.columns = 4
-	_grid.add_theme_constant_override("h_separation", 12)
-	_grid.add_theme_constant_override("v_separation", 12)
-	parent.add_child(_grid)
+	_grid.add_theme_constant_override("h_separation", 10)
+	_grid.add_theme_constant_override("v_separation", 10)
+	layout.add_child(_grid)
 	_views.clear()
 	for i in frame_count:
-		var v := FrameArt.new()
-		v.total = frame_count
-		v.custom_minimum_size = Vector2(264, 186)
-		v.gui_input.connect(func(e):
-			if e is InputEventMouseButton and e.pressed and e.button_index == MOUSE_BUTTON_LEFT:
+		var view := FrameArt.new()
+		view.total = frame_count
+		view.custom_minimum_size = Vector2(230, 154)
+		view.gui_input.connect(func(event):
+			if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT and not tutorial_open and not _done:
 				click_slot(i))
-		_grid.add_child(v)
-		_views.append(v)
+		_grid.add_child(view)
+		_views.append(view)
+	var compare := HBoxContainer.new()
+	compare.add_theme_constant_override("separation", 20)
+	layout.add_child(compare)
+	_preview = FrameArt.new()
+	_preview.slot = -1
+	_preview.custom_minimum_size = Vector2(310, 218)
+	compare.add_child(_preview)
+	var note := VBoxContainer.new()
+	note.custom_minimum_size.x = 570
+	note.add_theme_constant_override("separation", 14)
+	compare.add_child(note)
+	note.add_child(VelkaStyle.label("확대 대조", VelkaStyle.sans_semibold(), 21, VelkaStyle.ACCENT))
+	_preview_note = VelkaStyle.label("", VelkaStyle.sans(), 20, VelkaStyle.INK)
+	_preview_note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	note.add_child(_preview_note)
+	var undo_button := Button.new()
+	undo_button.text = "마지막 교환 되돌리기  Z"
+	undo_button.focus_mode = Control.FOCUS_NONE
+	VelkaStyle.style_small_button(undo_button, VelkaStyle.FOCUS)
+	undo_button.pressed.connect(func():
+		if not tutorial_open:
+			undo())
+	note.add_child(undo_button)
 
 
 ## CCTV 프레임 한 장: 높은 곳에서 내려다본 지하 복도, 오른쪽 벽에 자료보존실 옆문
@@ -215,6 +286,7 @@ class FrameArt extends Control:
 	var order := 0
 	var slot := 0
 	var selected := false
+	var focused := false
 	var playing := false
 	var dimmed := false
 	var corrupted_time := false
@@ -248,26 +320,33 @@ class FrameArt extends Control:
 	func _draw() -> void:
 		var r := Rect2(Vector2.ZERO, size)
 		var s := size.y / 196.0
-		draw_rect(r, Color(0.05, 0.06, 0.06))
-		# 복도 (원근): 소실점은 위쪽 가운데, 오른쪽 벽에 옆문
-		var vp := Vector2(size.x * 0.46, size.y * 0.2)
-		draw_colored_polygon(PackedVector2Array([Vector2(0, size.y), Vector2(size.x, size.y), vp + Vector2(30, 30) * s, vp + Vector2(-30, 30) * s]), Color(0.17, 0.18, 0.17))
-		draw_colored_polygon(PackedVector2Array([Vector2(0, 0), Vector2(0, size.y), vp + Vector2(-30, 30) * s, vp + Vector2(-30, -16) * s]), Color(0.12, 0.13, 0.13))
-		draw_colored_polygon(PackedVector2Array([Vector2(size.x, 0), Vector2(size.x, size.y), vp + Vector2(30, 30) * s, vp + Vector2(30, -16) * s]), Color(0.13, 0.14, 0.14))
-		draw_rect(Rect2(vp + Vector2(-30, -16) * s, Vector2(60, 46) * s), Color(0.07, 0.08, 0.08))
-		# 옆문 (오른쪽 벽, 사다리꼴) + 문패
-		var d0 := Vector2(size.x * 0.66, size.y * 0.3)
-		var door := PackedVector2Array([d0, d0 + Vector2(30, -6) * s, d0 + Vector2(30, 92) * s, d0 + Vector2(0, 74) * s])
-		draw_colored_polygon(door, Color(0.2, 0.21, 0.2))
-		var ds := door_state()
-		if ds > 0:
-			var gap := 7.0 if ds == 1 else 22.0
-			var open := PackedVector2Array([d0, d0 + Vector2(gap, -2) * s, d0 + Vector2(gap, 78) * s, d0 + Vector2(0, 74) * s])
-			draw_colored_polygon(open, Color(0.02, 0.02, 0.02))
-		draw_rect(Rect2(d0 + Vector2(-26, 8) * s, Vector2(20, 9) * s), Color(0.7, 0.72, 0.66))   # 문패
-		# 천장 등
-		var lamp := Color(0.85, 0.88, 0.8, 0.85 if not light_dim() else 0.3)
-		draw_circle(Vector2(size.x * 0.4, 30 * s), 5 * s, lamp)
+		var illustrated := VelkaCinematicArt.draw_corridor(self, r)
+		if not illustrated:
+			draw_rect(r, Color(0.05, 0.06, 0.06))
+			# 복도 (원근): 소실점은 위쪽 가운데, 오른쪽 벽에 옆문
+			var vp := Vector2(size.x * 0.46, size.y * 0.2)
+			draw_colored_polygon(PackedVector2Array([Vector2(0, size.y), Vector2(size.x, size.y), vp + Vector2(30, 30) * s, vp + Vector2(-30, 30) * s]), Color(0.17, 0.18, 0.17))
+			draw_colored_polygon(PackedVector2Array([Vector2(0, 0), Vector2(0, size.y), vp + Vector2(-30, 30) * s, vp + Vector2(-30, -16) * s]), Color(0.12, 0.13, 0.13))
+			draw_colored_polygon(PackedVector2Array([Vector2(size.x, 0), Vector2(size.x, size.y), vp + Vector2(30, 30) * s, vp + Vector2(30, -16) * s]), Color(0.13, 0.14, 0.14))
+			draw_rect(Rect2(vp + Vector2(-30, -16) * s, Vector2(60, 46) * s), Color(0.07, 0.08, 0.08))
+			# 옆문 (오른쪽 벽, 사다리꼴) + 문패
+			var d0 := Vector2(size.x * 0.66, size.y * 0.3)
+			var door := PackedVector2Array([d0, d0 + Vector2(30, -6) * s, d0 + Vector2(30, 92) * s, d0 + Vector2(0, 74) * s])
+			draw_colored_polygon(door, Color(0.2, 0.21, 0.2))
+			var ds := door_state()
+			if ds > 0:
+				var gap := 7.0 if ds == 1 else 22.0
+				var open := PackedVector2Array([d0, d0 + Vector2(gap, -2) * s, d0 + Vector2(gap, 78) * s, d0 + Vector2(0, 74) * s])
+				draw_colored_polygon(open, Color(0.02, 0.02, 0.02))
+			draw_rect(Rect2(d0 + Vector2(-26, 8) * s, Vector2(20, 9) * s), Color(0.7, 0.72, 0.66))   # 문패
+			# 천장 등
+			var lamp := Color(0.85, 0.88, 0.8, 0.85 if not light_dim() else 0.3)
+			draw_circle(Vector2(size.x * 0.4, 30 * s), 5 * s, lamp)
+		elif door_state() > 0:
+			var top := Vector2(size.x * 0.72, size.y * 0.22)
+			var gap := size.x * (0.035 if door_state() == 1 else 0.13)
+			var opening := PackedVector2Array([top, top + Vector2(gap, gap * 0.18), top + Vector2(gap, size.y * 0.63), top + Vector2(0, size.y * 0.57)])
+			draw_colored_polygon(opening, Color("#10191b"))
 		# 사람과 가방
 		var foot := Vector2.ZERO
 		match order:
@@ -277,8 +356,9 @@ class FrameArt extends Control:
 			5: foot = Vector2(size.x * 0.61, size.y * 0.64)
 		var bag_floor := Vector2(size.x * 0.52, size.y * 0.74)
 		if bag_state() == 2:
-			draw_rect(Rect2(bag_floor + Vector2(-9, -11) * s, Vector2(18, 11) * s), DARK)
-			draw_line(bag_floor + Vector2(-4, -11) * s, bag_floor + Vector2(4, -11) * s, Color(0.3, 0.3, 0.3), 1.5)
+			if not VelkaCinematicArt.draw_person(self, bag_floor, 20 * s, 5, Color(0.7, 0.75, 0.71)):
+				draw_rect(Rect2(bag_floor + Vector2(-9, -11) * s, Vector2(18, 11) * s), DARK)
+				draw_line(bag_floor + Vector2(-4, -11) * s, bag_floor + Vector2(4, -11) * s, Color(0.3, 0.3, 0.3), 1.5)
 		if has_person():
 			_person(foot, s * (1.25 if order == 1 else 1.0))
 		# 조명이 약해지면 화면 전체가 어두워진다
@@ -307,13 +387,15 @@ class FrameArt extends Control:
 		draw_circle(Vector2(size.x - 14, 14 * s), 4 * s, Color(0.9, 0.15, 0.1, 0.5 + 0.5 * sin(_t * 4.0)))
 		if playing:
 			draw_rect(r.grow(-2), VelkaStyle.FOCUS, false, 3.0)
-		elif selected:
+		elif selected or focused:
 			draw_rect(r.grow(-2), VelkaStyle.ACCENT, false, 3.0)
 		else:
 			draw_rect(r, Color("#2d4650"), false, 2.0)
 
 	## 회색 코트의 사람 (발 위치 기준). 프레임마다 손에 든 것과 자세가 다르다.
 	func _person(foot: Vector2, k: float) -> void:
+		if VelkaCinematicArt.draw_person(self, foot, 62.0 * k, order - 1, Color(0.72, 0.78, 0.74)):
+			return
 		var h := 62.0 * k
 		var w := 15.0 * k
 		draw_rect(Rect2(foot + Vector2(-w * 0.5, -h * 0.82), Vector2(w, h * 0.62)), COAT)

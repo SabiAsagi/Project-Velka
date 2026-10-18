@@ -27,6 +27,8 @@ var powered: Dictionary = {}         # index -> true
 
 var _cursor := Vector2i.ZERO
 var _grid: GridArt
+var _initial_masks: Array[int] = []
+var _undo_history: Array = []
 
 
 ## 퍼즐을 만들고 화면을 연다 (trace: 역추적 게이지가 다 차는 시간, 0이면 없음)
@@ -34,6 +36,7 @@ func start(title: String, size: Vector2i, seed_value: int, trace: float = 0.0) -
 	cols = maxi(3, size.x)
 	rows = maxi(2, size.y)
 	_generate(seed_value)
+	_initial_masks = masks.duplicate()
 	_push_log("> 해킹 패드 연결 … ok")
 	_push_log("> 보안 회로 우회 경로 탐색")
 	_push_log("> 회로를 돌려 IN → OUT 을 이어")
@@ -42,12 +45,38 @@ func start(title: String, size: Vector2i, seed_value: int, trace: float = 0.0) -
 
 
 ## 칸 하나를 시계 방향으로 90도 돌린다
-func rotate_tile(index: int) -> void:
-	if is_solved or index < 0 or index >= masks.size():
+func rotate_tile(index: int, direction: int = 1) -> void:
+	if _done or is_solved or index < 0 or index >= masks.size():
 		return
-	masks[index] = _rot(masks[index])
-	_grid.spin(index)
+	_undo_history.append(masks.duplicate())
+	for turn in (1 if direction >= 0 else 3):
+		masks[index] = _rot(masks[index])
+	_grid.spin(index, direction)
 	_update_power()
+
+
+## Undo affects only the current layout, never time or the terminal outcome.
+func undo() -> void:
+	if _done or is_solved or _undo_history.is_empty():
+		return
+	masks.assign(_undo_history.pop_back())
+	_update_power()
+
+
+## Restore this attempt's initial orientation without rerolling the puzzle.
+func reset_layout() -> void:
+	if _done or is_solved or _initial_masks.is_empty():
+		return
+	_undo_history.append(masks.duplicate())
+	masks.assign(_initial_masks)
+	_update_power()
+	_feedback("처음 배치로 되돌렸어. 역추적은 계속돼.")
+
+
+func _context_hint() -> String:
+	if powered.is_empty():
+		return "왼쪽 IN에 맞닿은 회로부터 확인하자."
+	return "빛나는 회로의 끝을 봐. 서로 마주 보는 단자가 이어져야 해."
 
 
 ## 테스트·디버그용: 정답으로 맞춘다
@@ -66,6 +95,15 @@ func _handle_key(event: InputEvent) -> void:
 			_cursor = Vector2i(clampi(_cursor.x + moves[k].x, 0, cols - 1), clampi(_cursor.y + moves[k].y, 0, rows - 1))
 			_grid.cursor = _cursor
 			_grid.queue_redraw()
+			get_viewport().set_input_as_handled()
+		elif k == KEY_Z:
+			undo()
+			get_viewport().set_input_as_handled()
+		elif k == KEY_R:
+			reset_layout()
+			get_viewport().set_input_as_handled()
+		elif k == KEY_Q:
+			rotate_tile(_cursor.y * cols + _cursor.x, -1)
 			get_viewport().set_input_as_handled()
 		elif k == KEY_SPACE or k == KEY_E or k == KEY_ENTER:
 			rotate_tile(_cursor.y * cols + _cursor.x)
@@ -197,7 +235,7 @@ func _tutorial_lines() -> Array:
 
 
 func _help_text() -> String:
-	return "클릭: 회로 돌리기   ·   방향키 + Space: 키보드   ·   Esc: 연결 종료"
+	return "좌클릭 / Space: 회전  ·  우클릭 / Q: 반대로  ·  방향키: 선택  ·  Z: 되돌리기  ·  R: 처음 배치  ·  H: 힌트  ·  F1: 도움말"
 
 
 func _kind_name() -> String:
@@ -241,8 +279,8 @@ class GridArt extends Control:
 	func origin() -> Vector2:
 		return Vector2(40, 10)
 
-	func spin(index: int) -> void:
-		_spin[index] = -PI * 0.5
+	func spin(index: int, direction: int = 1) -> void:
+		_spin[index] = -PI * 0.5 * (1 if direction >= 0 else -1)
 
 	func _process(delta: float) -> void:
 		_t += delta
@@ -263,10 +301,14 @@ class GridArt extends Control:
 	func _gui_input(event: InputEvent) -> void:
 		if event is InputEventMouseMotion:
 			_hover = _index_at(event.position)
-		elif event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		elif event is InputEventMouseButton and event.pressed and event.button_index in [MOUSE_BUTTON_LEFT, MOUSE_BUTTON_RIGHT]:
+			if game.tutorial_open or game._done or game.is_solved:
+				return
 			var i := _index_at(event.position)
 			if i >= 0:
-				game.rotate_tile(i)
+				game._cursor = Vector2i(i % game.cols, i / game.cols)
+				cursor = game._cursor
+				game.rotate_tile(i, -1 if event.button_index == MOUSE_BUTTON_RIGHT else 1)
 				accept_event()
 
 	func _draw() -> void:

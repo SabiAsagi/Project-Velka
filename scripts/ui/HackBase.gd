@@ -38,6 +38,11 @@ var _done := false
 ## 하는 법 팝업이 떠 있는 동안 (역추적이 멈춘다)
 var tutorial_open := false
 var _tutorial_layer: Control
+var _root_control: Control
+var _hint_label: Label
+var _trace_label: Label
+var _hint_requests := 0
+var _trace_warned := false
 
 
 func _ready() -> void:
@@ -51,7 +56,7 @@ func solve() -> void:
 
 
 func cancel() -> void:
-	if _done:
+	if _done or is_solved:
 		return
 	_push_log("> 연결 끊김")
 	_finish(false)
@@ -69,6 +74,11 @@ func _process(delta: float) -> void:
 	if _done or is_solved or trace_seconds <= 0.0 or tutorial_open:
 		return
 	_trace_left -= delta
+	if _trace_label:
+		_trace_label.text = "%02d초 남음" % maxi(0, int(ceil(_trace_left)))
+	if not _trace_warned and _trace_left <= trace_seconds * 0.25:
+		_trace_warned = true
+		_push_log("> 역추적 위험 — 남은 시간을 확인해")
 	if _trace_bar:
 		_trace_bar.value = 1.0 - _trace_left / trace_seconds
 		var danger := _trace_bar.value > 0.75
@@ -80,18 +90,59 @@ func _process(delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if _done:
+	if _done or is_solved:
+		return
+	if tutorial_open:
+		if event.is_action_pressed("ui_accept") or event.is_action_pressed("interact") or event.is_action_pressed("ui_cancel") or (event is InputEventKey and event.pressed and event.keycode == KEY_F1):
+			get_viewport().set_input_as_handled()
+			close_tutorial()
 		return
 	if event.is_action_pressed("pause") or event.is_action_pressed("ui_cancel"):
 		get_viewport().set_input_as_handled()
 		cancel()
 		return
-	if tutorial_open:
-		if event.is_action_pressed("ui_accept") or event.is_action_pressed("interact"):
+	if event is InputEventKey and event.pressed and not event.echo:
+		if event.keycode == KEY_F1:
 			get_viewport().set_input_as_handled()
-			close_tutorial()
-		return
+			show_help()
+			return
+		if event.keycode == KEY_H:
+			get_viewport().set_input_as_handled()
+			request_hint()
+			return
 	_handle_key(event)
+
+
+## Current feedback is visible and retained in the work log.
+func _feedback(message: String, negative: bool = false) -> void:
+	_set_status(message)
+	if _status and not is_solved:
+		_status.add_theme_color_override("font_color", VelkaStyle.DANGER if negative else VelkaStyle.INK)
+	_push_log("> " + message)
+	if is_inside_tree():
+		SfxBank.play(self, "ui_tick", -26.0)
+
+
+## A contextual observation never changes a piece or reveals the secret code.
+func request_hint() -> void:
+	if _done or is_solved or tutorial_open:
+		return
+	_hint_requests += 1
+	var message := _context_hint()
+	if _hint_label:
+		_hint_label.text = message
+	_feedback("사비: " + message.replace("\n", " "))
+
+
+func _context_hint() -> String:
+	return _sabi_hint()
+
+
+## Help remains available after the first tutorial; trace pauses only while reading.
+func show_help() -> void:
+	if _done or is_solved or tutorial_open or _root_control == null:
+		return
+	_show_tutorial(_root_control)
 
 
 ## 퍼즐별 키 입력 (선택)
@@ -100,7 +151,7 @@ func _handle_key(_event: InputEvent) -> void:
 
 
 func _on_solved(message: String = "접속 완료") -> void:
-	if is_solved and _done:
+	if is_solved or _done:
 		return
 	is_solved = true
 	_push_log("> " + message)
@@ -131,6 +182,7 @@ func _push_log(line: String) -> void:
 func _set_status(text: String) -> void:
 	if _status and not is_solved:
 		_status.text = text
+		_status.add_theme_color_override("font_color", VelkaStyle.INK)
 
 
 ## 퍼즐 본문을 parent 에 만든다
@@ -157,6 +209,10 @@ func _maybe_show_tutorial(root: Control) -> void:
 	var id := _tutorial_id()
 	if id.is_empty() or bool(GameManager.get_story_flag("tutorial_hack_" + id, false)):
 		return
+	_show_tutorial(root)
+
+
+func _show_tutorial(root: Control) -> void:
 	var lines := _tutorial_lines()
 	if lines.is_empty():
 		return
@@ -215,6 +271,7 @@ func close_tutorial() -> void:
 
 func _build_ui() -> void:
 	var root := Control.new()
+	_root_control = root
 	root.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	add_child(root)
 	var dim := ColorRect.new()
@@ -301,6 +358,9 @@ func _build_ui() -> void:
 		_trace_bar.add_theme_stylebox_override("background", bg)
 		_trace_bar.add_theme_stylebox_override("fill", fill)
 		trace_row.add_child(_trace_bar)
+		_trace_label = VelkaStyle.label("%02d초 남음" % int(ceil(trace_seconds)), VelkaStyle.mono(), 18, VelkaStyle.INK)
+		_trace_label.name = "TraceRemaining"
+		trace_row.add_child(_trace_label)
 
 	# 본문: 퍼즐 | 오른쪽 칸
 	var body := MarginContainer.new()
@@ -343,11 +403,22 @@ func _build_ui() -> void:
 		var print_hand := bool(SettingsManager.current_settings["accessibility"].get("print_handwriting", false))
 		var hand := VelkaStyle.label(hint, VelkaStyle.sans() if print_hand else VelkaStyle.font(SABI_HAND_FONT), 28, Color("#8fc7d1"))
 		hand.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		_hint_label = hand
 		var gap := Control.new()
 		gap.custom_minimum_size = Vector2(0, 8)
 		side.add_child(gap)
 		side.add_child(hand)
 	_build_side(side)
+	var actions := HBoxContainer.new()
+	actions.add_theme_constant_override("separation", 12)
+	side.add_child(actions)
+	for action in [["힌트  H", request_hint], ["하는 법  F1", show_help]]:
+		var button := Button.new()
+		button.text = action[0]
+		button.focus_mode = Control.FOCUS_NONE
+		VelkaStyle.style_small_button(button, VelkaStyle.FOCUS)
+		button.pressed.connect(action[1])
+		actions.add_child(button)
 	var status_box := PanelContainer.new()
 	var sb := VelkaStyle.panel_style(VelkaStyle.LINE, Color(0, 0, 0, 0.2), 0, 1)
 	sb.content_margin_left = 18
