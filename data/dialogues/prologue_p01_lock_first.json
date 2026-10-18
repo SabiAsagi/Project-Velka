@@ -1,0 +1,45 @@
+{
+  "dialogue_id": "prologue_p01_lock_first",
+  "lines": [
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "neutral",
+      "text": "잠금 두 개. 전자식부터 풀게.",
+      "cue": "lock_hack"
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "smug",
+      "text": "그럼 남은 건 내가.",
+      "cue": "lock_break"
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "기계식 자물쇠가 바닥에 떨어진다. 보관함 안에 두꺼운 장부가 있다.",
+      "cue": "cabinet_open"
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "neutral",
+      "text": "장부 확보. 서버 사본도 가져갈게. 복사 끝날 때까지만 잡아 줘.",
+      "cue": "server_plug"
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "이미 잡고 있어. 천천히 해.",
+      "cue": "shamu_hold"
+    }
+  ]
+}

@@ -5,6 +5,8 @@ extends RefCounted
 # 대화창만 띄우는 대신, 캐릭터가 실제로 걸어가고 카메라가 따라가는 짧은 연출을 만든다.
 #   begin(tree) / end(tree) : 화면 위아래 검은 띠(레터박스) + 탐색 조작 잠금, HUD 를 잠시 흐리게
 #   focus(tree, node)       : 카메라가 따라갈 대상을 바꾼다 (null 이면 조작 캐릭터로 돌아간다)
+#   cut(tree, node, fov)    : 컷 전환 — 대상으로 카메라를 곧바로 옮기고 화각을 바꾼다 (빠른 컷 연출)
+#   zoom(tree, fov, ...)    : 화각을 서서히 바꿔 밀고 들어가기 / 빠지기
 #   slow_motion(tree, ...)  : 잠깐 느리게 (실제 시간 기준으로 돌아온다)
 #   shake(tree, ...)        : 카메라 흔들기
 #   bark(node, text, color) : 머리 위 짧은 말 (게임은 멈추지 않는다)
@@ -37,6 +39,10 @@ static func end(tree: SceneTree) -> void:
 	_active = false
 	GameManager.set_exploration_lock(LOCK, false)
 	focus(tree, null)
+	# 연출 중 바꾼 화각을 원래대로
+	var camera := tree.root.get_viewport().get_camera_3d()
+	if camera and "camera_fov" in camera:
+		camera.fov = float(camera.get("camera_fov"))
 	_set_bars(tree, false)
 	_fade_hud(tree, 1.0)
 
@@ -51,6 +57,30 @@ static func focus(tree: SceneTree, node: Node3D) -> void:
 		node = party.get_active_member() if party and party.has_method("get_active_member") else null
 	if node:
 		camera.set("target", node)
+
+
+## 컷 전환: 따라가던 대상을 바꾸고 그 자리로 바로 옮긴다. fov > 0 이면 화각도 함께 바꾼다.
+static func cut(tree: SceneTree, node: Node3D, fov: float = 0.0) -> void:
+	var camera := tree.root.get_viewport().get_camera_3d()
+	if camera == null or node == null or not ("target" in camera):
+		return
+	camera.set("target", node)
+	if fov > 0.0:
+		camera.fov = fov
+	if camera.has_method("snap_to_target"):
+		camera.snap_to_target()
+
+
+## 화각을 seconds 동안 fov 로 바꾼다 (작을수록 가까이). 기본 화각은 카메라의 camera_fov.
+static func zoom(tree: SceneTree, fov: float, seconds: float = 0.35) -> void:
+	var camera := tree.root.get_viewport().get_camera_3d()
+	if camera == null:
+		return
+	if fov <= 0.0:
+		fov = float(camera.get("camera_fov")) if "camera_fov" in camera else 30.0
+	var tween := camera.create_tween().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tween.tween_property(camera, "fov", fov, seconds)
+	await tween.finished
 
 
 static func slow_motion(tree: SceneTree, time_scale: float = 0.3, seconds: float = 0.8) -> void:

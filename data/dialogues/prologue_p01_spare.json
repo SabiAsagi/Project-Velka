@@ -1,0 +1,85 @@
+{
+  "dialogue_id": "prologue_p01_spare",
+  "lines": [
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "단말의 복사 표시가 끝까지 찬다.",
+      "cue": "copy_done"
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "정보 찾았어?"
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "엉."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "그럼 끝내고 가자.",
+      "cue": "shamu_turn"
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "neutral",
+      "text": "이 사람, 살려주면 안 돼?",
+      "cue": "sabi_step"
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "annoyed",
+      "text": "또?"
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "determined",
+      "shamu_emotion": "neutral",
+      "text": "장부는 확보해써. 연락할 데도 막아 뒀고."
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "사무실 주인의 손이 벽의 비상 버튼으로 뻗는다.",
+      "cue": "broker_button",
+      "choices": [
+        {
+          "text": "말로 멈춘다",
+          "outcome": {
+            "flags": {
+              "p01_button": "warn"
+            },
+            "next_dialogue": "prologue_p01_button_warn"
+          }
+        },
+        {
+          "text": "단말로 버튼 회선을 끊는다",
+          "outcome": {
+            "flags": {
+              "p01_button": "cut"
+            },
+            "next_dialogue": "prologue_p01_button_cut"
+          }
+        }
+      ]
+    }
+  ]
+}

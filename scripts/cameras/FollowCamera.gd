@@ -59,6 +59,14 @@ func _physics_process(delta: float) -> void:
 		_update_occluders(delta)
 
 
+## 연출의 컷 전환: 따라가던 대상 위치로 곧바로 옮긴다 (부드럽게 따라가지 않는다)
+func snap_to_target() -> void:
+	if not is_instance_valid(target):
+		return
+	global_position = target.global_position + target_offset
+	_look_at_target()
+
+
 func _update_cutaway() -> void:
 	RenderingServer.global_shader_parameter_set("cutaway_center", target.global_position)
 	RenderingServer.global_shader_parameter_set("cutaway_radius", cutaway_radius)

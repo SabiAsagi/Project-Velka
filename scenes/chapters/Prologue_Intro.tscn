@@ -1,0 +1,26 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://scripts/chapters/PrologueIntro.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://scenes/characters/PlayerParty.tscn" id="2_party"]
+[ext_resource type="PackedScene" path="res://scenes/cameras/FollowCamera.tscn" id="3_camera"]
+[ext_resource type="PackedScene" path="res://scenes/ui/DialogueBox.tscn" id="4_dialogue"]
+[ext_resource type="Script" path="res://scripts/ui/IntroMontage.gd" id="5_montage"]
+[ext_resource type="Script" path="res://scripts/ui/CaptionSequence.gd" id="6_caption"]
+
+[node name="PrologueIntro" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="PlayerParty" parent="." node_paths=PackedStringArray("camera") instance=ExtResource("2_party")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.5, 0.05, -1.6)
+camera = NodePath("../FollowCamera")
+
+[node name="FollowCamera" parent="." node_paths=PackedStringArray("target") instance=ExtResource("3_camera")]
+target = NodePath("../PlayerParty/Sabi")
+
+[node name="DialogueBox" parent="." instance=ExtResource("4_dialogue")]
+
+[node name="IntroMontage" type="CanvasLayer" parent="."]
+script = ExtResource("5_montage")
+
+[node name="CaptionSequence" type="CanvasLayer" parent="."]
+script = ExtResource("6_caption")

@@ -1,7 +1,7 @@
 extends CanvasLayer
 
 # 프로젝트 벨카 - 씬 흐름 관리자 (Autoload 싱글톤)
-# 타이틀 -> 프롤로그(아지트 -> 폐쇄 공장 -> 협회 세이프 하우스) -> 챕터1(학교) 씬 전환과 페이드 연출을 총괄합니다.
+# 타이틀 -> 프롤로그(도입 -> 아지트 -> 폐쇄 공장 -> 협회 세이프 하우스) -> 챕터1(학교) 씬 전환과 페이드 연출을 총괄합니다.
 # 이야기 씬(STORY_SCENES)에 들어가면 그 챕터를 현재 챕터로 정하고 자동 저장한다 (이어하기는 그 씬의 처음부터).
 # 씬 파일은 ResourceLoader 의 백그라운드 스레드로 읽는다: 페이드 아웃 동안 이미 읽기 시작하고,
 # 이야기 씬에 들어가면 다음 이야기 씬을 미리 읽어 둔다 (큰 씬을 동기 load() 하면 한 프레임이 수백 ms~1초 이상 멈춘다).
@@ -9,15 +9,17 @@ extends CanvasLayer
 # 이야기 장면으로 갈 때는 페이드 뒤 로딩 화면(LoadingScreen, 실제 읽기 진행률)을 띄운다.
 
 const SCENE_TITLE := "res://scenes/ui/TitleScreen.tscn"
+const SCENE_INTRO := "res://scenes/chapters/Prologue_Intro.tscn"
 const SCENE_HIDEOUT := "res://scenes/chapters/Prologue_Hideout.tscn"
 const SCENE_FACTORY := "res://scenes/chapters/Prologue_Factory.tscn"
 const SCENE_SAFEHOUSE := "res://scenes/chapters/Prologue_Safehouse.tscn"
 const SCENE_SCHOOL := "res://scenes/chapters/Chapter1_School.tscn"
-## 새 게임은 프롤로그 첫 장면(사비·샤무 아지트)부터 시작한다
-const SCENE_NEW_GAME := SCENE_HIDEOUT
+## 새 게임은 프롤로그 도입(P-00 실종 몽타주 → P-01 장부 회수)부터 시작한다
+const SCENE_NEW_GAME := SCENE_INTRO
 
 ## 챕터 이름 -> 씬 (게임 진행 순서). 이어하기는 저장된 챕터 이름으로 씬을 찾는다.
 const STORY_SCENES := {
+	"Prologue_Intro": SCENE_INTRO,
 	"Prologue_Hideout": SCENE_HIDEOUT,
 	"Prologue_Factory": SCENE_FACTORY,
 	"Prologue_Safehouse": SCENE_SAFEHOUSE,
@@ -25,6 +27,7 @@ const STORY_SCENES := {
 }
 ## 이어하기 버튼 등에 보여 줄 챕터 이름
 const CHAPTER_TITLES := {
+	"Prologue_Intro": "프롤로그 · 평소의 일",
 	"Prologue_Hideout": "프롤로그 · 아지트",
 	"Prologue_Factory": "프롤로그 · 폐쇄 공장",
 	"Prologue_Safehouse": "프롤로그 · 협회 세이프 하우스",
@@ -256,7 +259,7 @@ func chapter_title(chapter: String) -> String:
 	return CHAPTER_TITLES.get(chapter, chapter)
 
 
-## 새 게임 시작 (상태 초기화 후 프롤로그 첫 장면인 아지트에서 시작)
+## 새 게임 시작 (상태 초기화 후 프롤로그 도입부터 시작)
 func start_new_game() -> void:
 	print("[SceneManager] 새 게임 시작")
 	GameManager.reset_game_state()

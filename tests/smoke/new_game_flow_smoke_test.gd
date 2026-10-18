@@ -2,8 +2,8 @@ extends SceneTree
 
 # 프로젝트 벨카 - 새 게임 흐름 스모크 테스트
 # 실행: godot --headless --path . -s res://tests/smoke/new_game_flow_smoke_test.gd
-# 타이틀 "새 게임" -> 아지트, 이야기 씬마다 자동 저장, 이어하기 -> 저장된 챕터,
-# 아지트 -> 공장 -> 세이프 하우스 -> 학교 연결(next_scene)을 본다.
+# 타이틀 "새 게임" -> 프롤로그 도입, 이야기 씬마다 자동 저장, 이어하기 -> 저장된 챕터,
+# 도입 -> 아지트 -> 공장 -> 세이프 하우스 -> 학교 연결(next_scene)을 본다.
 # 원래 있던 세이브 파일은 시작할 때 보관했다가 끝나면 되돌린다.
 
 const SAVE_PATH := "user://savegame.json"
@@ -31,6 +31,7 @@ func _run() -> void:
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(SAVE_PATH))
 
 	# --- 이야기 씬 연결 ---
+	_check(_next_scene_of(_sm.SCENE_INTRO) == _sm.SCENE_HIDEOUT, "도입(P-00·P-01)이 끝나면 아지트로 간다")
 	_check(_next_scene_of(_sm.SCENE_HIDEOUT) == _sm.SCENE_FACTORY, "아지트가 끝나면 폐쇄 공장으로 간다")
 	_check(_next_scene_of(_sm.SCENE_FACTORY) == _sm.SCENE_SAFEHOUSE, "공장이 끝나면 협회 세이프 하우스로 간다")
 	_check(_next_scene_of(_sm.SCENE_SAFEHOUSE) == _sm.SCENE_SCHOOL, "세이프 하우스가 끝나면 학교 챕터로 간다")
@@ -41,14 +42,19 @@ func _run() -> void:
 	var title := current_scene
 	_check(title.get_node("MenuContainer/VBoxContainer/ContinueButton").disabled, "세이브가 없으면 이어하기를 누를 수 없다")
 
-	# --- 새 게임 -> 아지트 ---
+	# --- 새 게임 -> 프롤로그 도입 ---
 	_gm.set_story_flag("leftover_flag", true)
 	title.get_node("MenuContainer/VBoxContainer/NewGameButton").pressed.emit()
 	await _seconds(2.0)
-	_check(current_scene.name == "PrologueHideout", "새 게임은 프롤로그 아지트에서 시작한다 (%s)" % current_scene.name)
+	_check(current_scene.name == "PrologueIntro", "새 게임은 프롤로그 도입에서 시작한다 (%s)" % current_scene.name)
 	_check(not _gm.get_story_flag("leftover_flag", false), "새 게임은 이전 진행 상태를 지운다")
-	_check(_gm.current_chapter == "Prologue_Hideout", "현재 챕터: 아지트 (%s)" % _gm.current_chapter)
-	_check(_saved_chapter() == "Prologue_Hideout", "아지트에 들어가면 자동 저장된다 (%s)" % _saved_chapter())
+	_check(_gm.current_chapter == "Prologue_Intro", "현재 챕터: 도입 (%s)" % _gm.current_chapter)
+	_check(_saved_chapter() == "Prologue_Intro", "도입에 들어가면 자동 저장된다 (%s)" % _saved_chapter())
+
+	# --- 도입 끝 -> 아지트 ---
+	_sm.change_scene(_sm.SCENE_HIDEOUT)
+	await _seconds(2.0)
+	_check(current_scene.name == "PrologueHideout" and _saved_chapter() == "Prologue_Hideout", "아지트에 들어가면 자동 저장된다 (%s)" % _saved_chapter())
 
 	# --- 아지트 끝 -> 공장 (next_scene 과 같은 경로로 넘어간다) ---
 	await _finish_dialogue()

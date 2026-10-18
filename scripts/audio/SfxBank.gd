@@ -21,7 +21,7 @@ const RATE := 22050
 ## 시작할 때 백그라운드에서 미리 합성해 두는 소리 (처음 쓸 때 메인 스레드가 멈추지 않게 한다)
 ## 합성이 오래 걸리는 것(bell 약 125ms, sting 45ms, drone 44ms)을 앞에 둔다.
 const PREWARM_NAMES := ["bell", "sting", "drone", "siren", "whisper", "breath", "crash", "heartbeat", "hit",
-	"suspicious", "static", "footstep", "ui_tick", "ui_crack"]
+	"suspicious", "static", "footstep", "ui_tick", "ui_crack", "punch", "beep", "gun_click", "call_drop"]
 
 static var _cache: Dictionary = {}
 ## _cache 는 메인 스레드와 미리 합성하는 작업 스레드가 함께 쓰므로 뮤텍스로 감싼다
@@ -144,6 +144,39 @@ static func _make(sfx_name: String) -> AudioStreamWAV:
 				var radio := lp * (0.35 if t < 0.1 else 0.0) * (1.0 - t / 0.1 if t < 0.1 else 0.0)
 				var low := sin(TAU * 62.0 * t) * exp(-t * 14.0) * minf(1.0, t * 200.0)
 				s[i] = clampf(glass * 0.28 + radio + low * 0.45, -1.0, 1.0) * 0.8
+		"punch":
+			# 사람을 제압하는 둔탁한 타격 (괴이 타격 hit 와 달리 꾸르륵이 없다)
+			s = _buffer(0.28)
+			var lp := 0.0
+			for i in s.size():
+				var t := float(i) / RATE
+				lp = lerpf(lp, rng.randf_range(-1, 1), 0.25)
+				var cloth := lp * exp(-t * 55.0) * 1.1
+				s[i] = clampf(_thump(t, 0.0, 78.0) * 1.4 + cloth, -1.0, 1.0) * 0.85
+		"beep":
+			# 전자 잠금이 풀리는 짧은 두 음
+			s = _buffer(0.2)
+			for i in s.size():
+				var t := float(i) / RATE
+				var f := 1320.0 if t < 0.08 else 1760.0
+				var u := fmod(t, 0.1)
+				s[i] = sin(TAU * f * t) * minf(1.0, u * 600.0) * (1.0 if u < 0.07 else 0.0) * 0.32
+		"gun_click":
+			# 탄창이 빠지는 금속음
+			s = _buffer(0.18)
+			for i in s.size():
+				var t := float(i) / RATE
+				var a := sin(TAU * 2900.0 * t) * exp(-t * 260.0)
+				var u := t - 0.07
+				var b := sin(TAU * 2100.0 * u) * exp(-u * 200.0) if u > 0.0 else 0.0
+				s[i] = (a + b * 0.8 + _thump(t, 0.07, 160.0) * 0.4) * 0.5
+		"call_drop":
+			# 통화가 끊기는 '뚜- 뚜- 뚜-'
+			s = _buffer(1.5)
+			for i in s.size():
+				var t := float(i) / RATE
+				var u := fmod(t, 0.5)
+				s[i] = sin(TAU * 425.0 * t) * (1.0 if u < 0.25 else 0.0) * minf(1.0, u * 300.0) * 0.22
 		"footstep":
 			s = _buffer(0.16)
 			var lp := 0.0
