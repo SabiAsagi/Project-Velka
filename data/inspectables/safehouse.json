@@ -179,35 +179,42 @@
         "speaker_name": "유가온",
         "sabi_emotion": "neutral",
         "shamu_emotion": "neutral",
-        "text": "정보조사부 유가온입니다. 두 분이 가져온 실종 사건 자료, 대조해 봤습니다."
-      },
-      {
-        "speaker": "yu",
-        "speaker_name": "유가온",
-        "sabi_emotion": "neutral",
-        "shamu_emotion": "neutral",
-        "text": "현실의 실종자 명단 일부가 협회의 구조·목격 기록과 겹칩니다."
-      },
-      {
-        "speaker": "yu",
-        "speaker_name": "유가온",
-        "sabi_emotion": "neutral",
-        "shamu_emotion": "neutral",
-        "text": "이 사람은 세 달 전에 아파트 구역에서 목격됐습니다."
+        "text": "정보조사부 유가온입니다. 두 분이 찾던 분의 사진과 인적 사항을 받아도 되겠습니까?"
       },
       {
         "speaker": "sabi",
         "speaker_name": "사비 아사기",
-        "sabi_emotion": "surprised",
+        "sabi_emotion": "serious",
         "shamu_emotion": "neutral",
-        "text": "현실에서는 지난주에 사라졌어."
+        "text": "여기여. 그날 입었던 옷도 적어 놨어여."
       },
       {
         "speaker": "yu",
         "speaker_name": "유가온",
-        "sabi_emotion": "surprised",
+        "sabi_emotion": "neutral",
         "shamu_emotion": "neutral",
-        "text": "여기와 현실의 시간이 같은 방식으로 흐르지 않을 가능성도 있습니다."
+        "text": "구조 기록과 대조하겠습니다."
+      },
+      {
+        "speaker": "shamu",
+        "speaker_name": "카즈네 샤무",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "serious",
+        "text": "여기에서 본 사람은 있어?"
+      },
+      {
+        "speaker": "yu",
+        "speaker_name": "유가온",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "지금 확인한 공개 기록에는 없습니다. 다른 구역 기록도 살펴봐야 합니다."
+      },
+      {
+        "speaker": "yu",
+        "speaker_name": "유가온",
+        "sabi_emotion": "neutral",
+        "shamu_emotion": "neutral",
+        "text": "다만 현실의 실종 날짜와 이곳의 구조 날짜가 서로 맞지 않는 기록이 몇 건 있습니다. 여기와 현실의 시간이 같은 방식으로 흐르지 않을 가능성도 있습니다."
       },
       {
         "speaker": "system",

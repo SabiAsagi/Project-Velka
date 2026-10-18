@@ -4,65 +4,79 @@
     {
       "speaker": "system",
       "speaker_name": "",
-      "sabi_emotion": "worried",
-      "shamu_emotion": "serious",
-      "text": "눈을 뜨니 경보음도, 환풍기 소리도 멎어 있다. 손전등 불빛만 남았다."
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "손전등이 켜진다. 조금 전까지 들리던 서버 팬 소리와 환풍기 소리가 사라졌다."
     },
     {
       "speaker": "shamu",
       "speaker_name": "카즈네 샤무",
-      "sabi_emotion": "worried",
+      "sabi_emotion": "neutral",
       "shamu_emotion": "serious",
-      "text": "사비, 괜찮아? 둘 다 잠깐 정신을 잃었어."
+      "text": "다친 데 없어?"
     },
     {
       "speaker": "sabi",
       "speaker_name": "사비 아사기",
       "sabi_emotion": "worried",
-      "shamu_emotion": "serious",
-      "text": "……응. 머리가 울려."
+      "shamu_emotion": "neutral",
+      "text": "엉. 샤무는?"
     },
     {
       "speaker": "shamu",
       "speaker_name": "카즈네 샤무",
-      "sabi_emotion": "worried",
+      "sabi_emotion": "neutral",
       "shamu_emotion": "serious",
-      "text": "정전인가?"
+      "text": "괜찮아. 손전등 비춰 봐."
+    },
+    {
+      "speaker": "system",
+      "speaker_name": "",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "neutral",
+      "text": "사비가 자신의 단말을 확인한다."
     },
     {
       "speaker": "sabi",
       "speaker_name": "사비 아사기",
       "sabi_emotion": "serious",
-      "shamu_emotion": "serious",
-      "text": "아니."
+      "shamu_emotion": "neutral",
+      "text": "우리 전원은 살아 있어."
     },
     {
       "speaker": "shamu",
       "speaker_name": "카즈네 샤무",
-      "sabi_emotion": "serious",
-      "shamu_emotion": "surprised",
-      "text": "뭐가 달라졌는데?"
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "건물만 나간 거네?"
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "worried",
+      "shamu_emotion": "neutral",
+      "text": "……서버가 안 잡혀. 바로 앞에 있는데."
     },
     {
       "speaker": "system",
       "speaker_name": "",
       "sabi_emotion": "neutral",
       "shamu_emotion": "neutral",
-      "text": "사비가 위층으로 이어지는 계단을 올려다본다. 조금 전까지 들리던 경비원 무전 소리도, 서버실 팬 소리도 없다. 귀가 먹먹할 만큼 조용하다."
-    },
-    {
-      "speaker": "sabi",
-      "speaker_name": "사비 아사기",
-      "sabi_emotion": "worried",
-      "shamu_emotion": "surprised",
-      "text": "사람들이 없어."
+      "text": "샤무가 출입문을 살핀다."
     },
     {
       "speaker": "shamu",
       "speaker_name": "카즈네 샤무",
-      "sabi_emotion": "worried",
-      "shamu_emotion": "determined",
-      "text": "……일단 나가자. 왔던 길로."
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "일단 올라가자. 기록은 저장했지?"
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "neutral",
+      "text": "엉. 같이 가."
     }
   ]
 }

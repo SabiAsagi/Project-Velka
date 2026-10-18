@@ -4,23 +4,45 @@
     {
       "speaker": "system",
       "speaker_name": "",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
       "text": "[shake rate=20.0 level=6][color=#ff6050]─── 경보음 ───[/color][/shake]",
       "shake": true
     },
     {
       "speaker": "sabi",
       "speaker_name": "사비 아사기",
-      "text": "경보가 울렸어. 아래층 파쇄기가 자료를 갈기 시작했어! 다 갈리면 끝이야."
+      "sabi_emotion": "surprised",
+      "shamu_emotion": "neutral",
+      "text": "경보가 울렸어. 자료 폐기 장치도 켜졌고."
     },
     {
       "speaker": "shamu",
       "speaker_name": "카즈네 샤무",
-      "text": "둘 다 막아야 해?"
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "어느 쪽부터?"
     },
     {
       "speaker": "sabi",
       "speaker_name": "사비 아사기",
-      "text": "응. 나는 경보 장치, 샤무는 파쇄기. 그래야 서버실 문이 풀려."
+      "sabi_emotion": "serious",
+      "shamu_emotion": "neutral",
+      "text": "나는 경보를 끌게. 샤무는 파쇄기 멈춰 줘."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "얼마나 남았어?"
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "determined",
+      "shamu_emotion": "neutral",
+      "text": "화면에 표시할게. 원본부터 지켜야 해. 둘 다 멈춰야 서버실이 열려."
     }
   ]
 }

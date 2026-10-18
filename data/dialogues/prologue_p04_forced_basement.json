@@ -4,31 +4,38 @@
     {
       "speaker": "system",
       "speaker_name": "",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
       "text": "[shake rate=20.0 level=6][color=#ff6050]─── 사이렌 ───[/color][/shake]",
       "shake": true
     },
     {
       "speaker": "system",
       "speaker_name": "",
-      "text": "봉쇄문이 뜯겨 나가자 경보 센서가 비명을 지른다. 사무동과 지하에서 동시에 발소리가 몰려온다."
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "봉쇄문이 뜯겨 나가자 경보 센서가 울린다. 사무동과 지하에서 발소리가 몰려온다."
     },
     {
       "speaker": "sabi",
       "speaker_name": "사비 아사기",
-      "text": "보안망이 살아 있었는데……! 다 몰려와.",
-      "sabi_emotion": "serious"
+      "sabi_emotion": "surprised",
+      "shamu_emotion": "neutral",
+      "text": "아직 경보를 못 끊었어."
     },
     {
       "speaker": "shamu",
       "speaker_name": "카즈네 샤무",
-      "text": "내려간다. 따라붙기 전에."
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "내려가면서 꺼. 내가 앞 볼게."
     },
     {
       "speaker": "sabi",
       "speaker_name": "사비 아사기",
       "sabi_emotion": "serious",
-      "shamu_emotion": "serious",
-      "text": "보안 업체로 신호가 넘어가고 있어. 지하 경보 장치를 끌 때까지 시간이 없어."
+      "shamu_emotion": "neutral",
+      "text": "단말까지 붙어 있어. 신호가 넘어가기 전에 끊어야 해."
     }
   ]
 }

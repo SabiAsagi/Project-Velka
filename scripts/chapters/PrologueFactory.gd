@@ -16,7 +16,7 @@ extends Node3D
 #      (보안망 접속 전에 뜯으면 p04_basement_forced: 사이렌, 경비 증원. 3·4 단계는 건너뛴다)
 # 들키면 곧바로 '발각' 실패 (Guard.fail_on_spot). 경보가 울리면 같은 층 경비가 그 자리를 확인하러 온다.
 #   6. p04_alarm_off + broken_data_shredder -> p04_server_open : 지하 협업 (경보=사비, 파쇄기=샤무)
-#   7. p04_footage_restored   : 사비로 서버 영상 복원 -> 최하층 컷신 -> 조명이 꺼진다
+#   7. p04_footage_restored   : 사비로 서버 영상 복원(7장 이야기 영상) -> 복원 영상을 다시 보며 대화·원본 저장 -> 조명이 꺼진다
 # 이어서 P-05 전이, P-06 최초 개체 조우:
 #   8. p05_started            : 괴이세계로 전이 (경비원·조명 사라짐, 붉은 비상등, 통신 두절). 목표: 왔던 길로 돌아가기
 #   9. p05_structure_seen     : 계단을 올라가 보면 봉쇄문 자리가 벽 -> "구조가 바뀌었어". 지하 서쪽에 없던 통로가 생겨 있다
@@ -74,6 +74,11 @@ var _hall_hint_done: bool = false
 var _alarm_tween: Tween
 ## 진행 중인 제한 시간: id -> {caption, left, cause, stop_flag}
 var _timers: Dictionary = {}
+## 서버 화면 (복원 영상 다시 보기)
+var _replay: CanvasLayer
+var _replay_view: Control
+var _replay_note: Label
+var _replay_run := 0
 
 
 func _ready() -> void:
@@ -493,9 +498,14 @@ func _spawn_reinforcements(flag_name: String) -> void:
 		_watch_guard(g)
 
 
+## 복원 성공 → 맞춘 영상을 다시 보며 대화 → 원본 저장 → 그다음에 정전 (퍼즐 성공이 전이를 부르는 주문처럼 보이지 않게)
 func _server_cutscene() -> void:
 	_busy = true
+	_show_replay()
+	DialogueManager.line_started.connect(_on_replay_cue)
 	await _play_once("prologue_p04_server")
+	DialogueManager.line_started.disconnect(_on_replay_cue)
+	_hide_replay()
 	# 모든 조명이 꺼진다 (손전등만 남는다)
 	# 전이 연출의 깜빡임이 다시 켜지 않도록 현실 조명 그룹에서도 뺀다
 	for light in get_tree().get_nodes_in_group("real_light"):
@@ -518,6 +528,80 @@ func _server_cutscene() -> void:
 	_refresh_objective()
 
 
+## 서버 화면: 복원한 영상을 크게 띄운다 (대사 줄의 cue 로 재생·대조·저장·잔광)
+func _show_replay() -> void:
+	_replay = CanvasLayer.new()
+	_replay.name = "FootageReplay"
+	_replay.layer = 45
+	add_child(_replay)
+	var panel := PanelContainer.new()
+	panel.position = Vector2(600, 70)
+	var style := VelkaStyle.panel_style(VelkaStyle.LINE, Color("#0f171c", 0.96), 0, 1)
+	style.set_content_margin_all(12)
+	panel.add_theme_stylebox_override("panel", style)
+	_replay.add_child(panel)
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 8)
+	panel.add_child(box)
+	_replay_view = HackFrames.make_frame(HackFrames.FRAME_COUNT - 1)
+	_replay_view.custom_minimum_size = Vector2(696, 490)
+	box.add_child(_replay_view)
+	_replay_note = VelkaStyle.label("복원 영상 · %s · B1 복도 CAM 01" % HackFrames.DATE, VelkaStyle.sans(), 18, VelkaStyle.INK_DIM)
+	box.add_child(_replay_note)
+
+
+func _hide_replay() -> void:
+	_replay_run += 1
+	if is_instance_valid(_replay):
+		_replay.queue_free()
+	_replay = null
+
+
+## 지금 서버 화면에 보이는 프레임 (테스트용, 없으면 -1)
+func replay_frame() -> int:
+	return int(_replay_view.get("order")) if is_instance_valid(_replay) and is_instance_valid(_replay_view) else -1
+
+
+func _set_replay_frame(order: int) -> void:
+	if is_instance_valid(_replay_view):
+		_replay_view.set("order", order)
+
+
+func _on_replay_cue(line: Dictionary) -> void:
+	var cue := String(line.get("cue", ""))
+	if cue.is_empty() or not is_instance_valid(_replay):
+		return
+	_replay_run += 1
+	var run := _replay_run
+	match cue:
+		"replay_play":
+			for i in HackFrames.FRAME_COUNT:
+				if run != _replay_run:
+					return
+				_set_replay_frame(i)
+				await get_tree().create_timer(0.45).timeout
+		"replay_alt":
+			# 메모를 확인하던 장면과 빈 복도를 번갈아
+			for i in 6:
+				if run != _replay_run:
+					return
+				_set_replay_frame(3 if i % 2 == 0 else HackFrames.FRAME_COUNT - 1)
+				await get_tree().create_timer(0.6).timeout
+		"replay_reach":
+			_set_replay_frame(5)
+		"replay_empty":
+			_set_replay_frame(HackFrames.FRAME_COUNT - 1)
+		"replay_save":
+			_replay_note.text = "원본 저장 완료 · 촬영 정보 %s %s ~ %s · CAM 01" % [HackFrames.DATE, HackFrames.timestamp(0), HackFrames.timestamp(HackFrames.FRAME_COUNT - 1)]
+			_replay_note.add_theme_color_override("font_color", VelkaStyle.FOCUS)
+		"replay_cut":
+			# 화면이 꺼지고 잔광만 남는다
+			SfxBank.play(self, "static", -12.0, 0.6)
+			var tween := _replay_view.create_tween()
+			tween.tween_property(_replay_view, "modulate", Color(0.35, 0.45, 0.42, 0.35), 0.25)
+			_replay_note.text = ""
+
+
 ## 정신을 잃는다: 귀가 먹먹해지고(속삭임·심장 소리) 화면이 흔들리다 암전.
 ## 암전한 동안 세계가 바뀌고, 천천히 눈을 뜨면 괴이세계다.
 func _black_out_into_otherworld() -> void:
@@ -529,7 +613,7 @@ func _black_out_into_otherworld() -> void:
 	Cutscene.bark(sabi, "……머리가……", VelkaStyle.SABI, 1.6)
 	Cutscene.shake(get_tree(), 0.12, 1.4)
 	await Cutscene.wait(get_tree(), 0.6)
-	Cutscene.bark(shamu, "사비……?", VelkaStyle.SHAMU, 1.4)
+	Cutscene.bark(shamu, "……사비, 손.", VelkaStyle.SHAMU, 1.4)
 	# 눈앞이 어두워진다 (천천히 암전 → 한동안 검은 화면 → 천천히 밝아진다)
 	Cutscene.flash(get_tree(), Color(0, 0, 0, 1), 1.4, 3.2, 1.8)
 	await Cutscene.wait(get_tree(), 1.5)

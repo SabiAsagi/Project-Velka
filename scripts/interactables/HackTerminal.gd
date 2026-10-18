@@ -47,7 +47,7 @@ const PUZZLES := {
 	"gate": ["circuit", Vector2i(5, 4), 55.0],
 	"security": ["code", Vector2i(8, 0), 100.0],
 	"alarm": ["circuit", Vector2i(6, 5), 75.0],
-	"server": ["frames", Vector2i(6, 0), 100.0],
+	"server": ["frames", Vector2i(7, 0), 120.0],
 }
 const PUZZLE_SCRIPTS := {
 	"circuit": preload("res://scripts/ui/HackMinigame.gd"),

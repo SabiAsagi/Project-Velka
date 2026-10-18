@@ -4,47 +4,65 @@
     {
       "speaker": "system",
       "speaker_name": "",
-      "text": "도시 외곽 산업단지 북측 3구역. 간판도, 회사 이름도 지워진 공장이 어둠 속에 서 있다."
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "외곽 산업단지 북측 3구역. 가동이 멈춘 생산동 옆으로, 보안 설비와 관리용 전원만 살아 있다."
     },
     {
       "speaker": "shamu",
       "speaker_name": "카즈네 샤무",
-      "text": "폐쇄됐다더니 경비가 있네. 불은 다 꺼 놓고."
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "생산은 멈췄는데 경비는 남아 있네."
     },
     {
       "speaker": "sabi",
       "speaker_name": "사비 아사기",
-      "text": "폐쇄된 곳을 지키는 사람이 있다는 게 더 이상해."
-    },
-    {
-      "speaker": "sabi",
-      "speaker_name": "사비 아사기",
-      "text": "계획대로 가자. 나는 밖에서 망을 열고, 샤무가 먼저 들어가."
+      "sabi_emotion": "serious",
+      "shamu_emotion": "neutral",
+      "text": "자료하고 설비는 아직 안 옮겼대."
     },
     {
       "speaker": "shamu",
       "speaker_name": "카즈네 샤무",
-      "text": "경비는?"
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "우리가 찾는 사람도 그 일 때문에 온 거고."
     },
     {
       "speaker": "sabi",
       "speaker_name": "사비 아사기",
-      "text": "샤무가 경비를 다 기절시키면 그때 내가 들어갈게. 안쪽 단말은 직접 만져야 해."
-    },
-    {
-      "speaker": "sabi",
-      "speaker_name": "사비 아사기",
-      "text": "옆문은 전자식 잠금이야. 마당 보안 단말부터 열게."
+      "sabi_emotion": "serious",
+      "shamu_emotion": "neutral",
+      "text": "엉. 옆문으로 접근한 기록까지는 맞아."
     },
     {
       "speaker": "shamu",
       "speaker_name": "카즈네 샤무",
-      "text": "들키면 두고 간다."
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "안쪽 영상부터?"
     },
     {
       "speaker": "sabi",
       "speaker_name": "사비 아사기",
-      "text": "거짓말."
+      "sabi_emotion": "serious",
+      "shamu_emotion": "neutral",
+      "text": "먼저 보안실. 지하 서버 위치도 확인할게."
+    },
+    {
+      "speaker": "sabi",
+      "speaker_name": "사비 아사기",
+      "sabi_emotion": "serious",
+      "shamu_emotion": "neutral",
+      "text": "옆문은 전자식 잠금이야. 마당 보안 단말부터 열게. 안쪽 단말은 직접 연결해야 하니까, 경비가 정리되면 들어갈게."
+    },
+    {
+      "speaker": "shamu",
+      "speaker_name": "카즈네 샤무",
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "난 진입로 볼게. 무전 끊지 마."
     }
   ]
 }

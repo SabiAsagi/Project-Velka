@@ -138,7 +138,7 @@
         "sabi_emotion": "serious",
         "shamu_emotion": "neutral",
         "text": "1학년 1반 출석부. 결석 표시가 하나도 없다. 몇 주째 전원 출석이다.",
-        "text_sabi": "출석부… 최근 몇 주 결석이 너무 많아. 사라진 의뢰인들 자녀 이름도 있어.",
+        "text_sabi": "출석부… 최근 몇 주 결석이 너무 많아. 결석 사유 칸은 전부 비어 있고.",
         "text_shamu": "결석이 왜 이렇게 많아? 요즘 애들 학교 안 다니나."
       },
       {
@@ -155,7 +155,7 @@
         "speaker": "sabi",
         "sabi_emotion": "serious",
         "shamu_emotion": "neutral",
-        "text": "출석부… 최근 몇 주 결석이 너무 많아. 사라진 의뢰인들 자녀 이름도 있어."
+        "text": "출석부… 최근 몇 주 결석이 너무 많아. 결석 사유 칸은 전부 비어 있고."
       },
       {
         "speaker": "shamu",

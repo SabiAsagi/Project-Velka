@@ -4,32 +4,37 @@
     {
       "speaker": "sabi",
       "speaker_name": "사비 아사기",
-      "text": "열어써."
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "neutral",
+      "text": "옆문 열어써."
     },
     {
       "speaker": "shamu",
       "speaker_name": "카즈네 샤무",
-      "text": "이번엔 빨랐네."
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "들어간다."
     },
     {
       "speaker": "sabi",
       "speaker_name": "사비 아사기",
-      "text": "안에 경비가 둘. 손전등 비추는 쪽이 보는 방향이야. 안은 깜깜해서 빛 밖은 못 봐."
-    },
-    {
-      "speaker": "sabi",
-      "speaker_name": "사비 아사기",
-      "text": "들키면 그걸로 끝이야. 경비를 다 기절시키면 나도 들어갈게."
+      "sabi_emotion": "serious",
+      "shamu_emotion": "neutral",
+      "text": "안에 경비 둘. 손전등 비추는 쪽 조심해. 빛 밖은 잘 못 봐."
     },
     {
       "speaker": "shamu",
       "speaker_name": "카즈네 샤무",
-      "text": "그러니까 빨리 기절시키라는 거네."
+      "sabi_emotion": "neutral",
+      "shamu_emotion": "serious",
+      "text": "확인."
     },
     {
       "speaker": "sabi",
       "speaker_name": "사비 아사기",
-      "text": "엉. 무전 켜 둘게. 다녀와."
+      "sabi_emotion": "serious",
+      "shamu_emotion": "neutral",
+      "text": "들키면 안 돼. 경비를 다 기절시키면 나도 들어갈게. 안쪽 단말은 직접 연결해야 해."
     }
   ]
 }

@@ -110,6 +110,18 @@ func _run() -> void:
 	root.add_child(fr)
 	fr.start("서버", Vector2i(6, 0), 11)
 	_check(not fr._is_ordered(), "프레임은 처음에 섞여 있다")
+	_check(fr.frame_count == 7 and fr.corrupted.count(true) == 5 and not fr.corrupted[0] and not fr.corrupted[3],
+			"실종 당일 영상은 일곱 장, 시각은 처음과 가운데만 읽힌다")
+	var views: Array = fr._views
+	var by_order := {}
+	for v in views:
+		by_order[int(v.order)] = v
+	_check(by_order[0].door_state() == 0 and by_order[6].door_state() == 2 and by_order[0].bag_state() == 0 and by_order[6].bag_state() == 2
+			and not by_order[0].has_person() and not by_order[6].has_person(), "빈 프레임 두 장은 문과 가방 상태로 구별된다")
+	_check(by_order[2].bag_state() == 1 and by_order[3].bag_state() == 2 and by_order[2].door_state() == 1 and by_order[3].door_state() == 2,
+			"같은 자리의 인물 프레임은 가방(손/바닥)과 문으로 구별된다")
+	_check(not by_order[3].light_dim() and by_order[4].light_dim(), "다섯 번째 장부터 조명이 약해진다")
+	_check(fr.timestamp(1) == "17:41:07" and fr.timestamp(6) == "17:41:42", "기록 간격은 7초로 일정하다")
 	result[0] = null
 	fr.finished.connect(func(ok): result[0] = ok)
 	# 자리 바꾸기만으로 정렬한다 (선택 정렬)
@@ -118,8 +130,10 @@ func _run() -> void:
 		if j != i:
 			fr.click_slot(i)
 			fr.click_slot(j)
-	await create_timer(1.0).timeout
-	_check(result[0] == true, "프레임 순서를 맞추면 영상이 복원된다")
+	await create_timer(0.5).timeout
+	_check(result[0] == null and fr.playing_slot >= 0, "맞추면 먼저 맞춘 순서로 한 장씩 재생한다")
+	await create_timer(3.5).timeout
+	_check(result[0] == true, "재생이 끝나면 영상이 복원된다")
 
 	# --- 처음 보는 퍼즐: 하는 법 팝업 (읽는 동안 역추적이 멈춘다) ---
 	gm.set_story_flag("tutorial_hack_circuit", false)
