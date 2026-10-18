@@ -183,6 +183,14 @@ func peek_chapter() -> String:
 	return ""
 
 
+## 자동 저장 칸 전체를 읽기만 한다 (게임 상태는 바꾸지 않는다. 없거나 깨졌으면 빈 Dictionary) — 기록소 등
+func peek_save() -> Dictionary:
+	if not has_save_file():
+		return {}
+	var data = JSON.parse_string(FileAccess.get_file_as_string(SAVE_PATH))
+	return data if data is Dictionary else {}
+
+
 ## 현재 게임 상태 저장 (자동 저장 칸)
 func save_game() -> bool:
 	var ok := _write(SAVE_PATH)

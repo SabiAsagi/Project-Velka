@@ -21,6 +21,8 @@ const STEP_SECONDS := 7
 ## 시각 표시가 깨진 프레임 (실제 순서). 처음과 가운데만 읽힌다.
 const CORRUPTED := [1, 2, 4, 5, 6]
 const PLAYBACK_SECONDS := 0.42
+## 원격 대상 = 흑백 CCTV (기본 디자인 시안 .kind-frames)
+const GRAYSCALE := preload("res://assets/shaders/cctv_grayscale.gdshader")
 
 var frame_count := FRAME_COUNT
 ## slots[i] = i 번째 자리에 놓인 프레임의 실제 순서
@@ -186,6 +188,10 @@ func _tutorial_lines() -> Array:
 	]
 
 
+func _device_theme() -> Dictionary:
+	return {"name": "흑백 CCTV", "screen": Color("#0a0c0b"), "line": Color("#1f2523"), "side": Color("#0c0f0e"), "acc": Color("#b8c9bd")}
+
+
 func _help_text() -> String:
 	return "클릭 / Space: 두 장 교환  ·  방향키: 확대할 장면  ·  Z: 되돌리기  ·  H: 힌트  ·  F1: 도움말  ·  Esc: 연결 종료"
 
@@ -297,6 +303,9 @@ class FrameArt extends Control:
 
 	func _ready() -> void:
 		clip_contents = true   # 영상 손상 줄이 프레임 밖으로 새지 않게
+		var gray := ShaderMaterial.new()
+		gray.shader = HackFrames.GRAYSCALE
+		material = gray
 		mouse_filter = Control.MOUSE_FILTER_STOP if slot >= 0 else Control.MOUSE_FILTER_IGNORE
 		mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
 
@@ -385,12 +394,13 @@ class FrameArt extends Control:
 		var label := "CAM 01 · B1" if slot < 0 else "CAM 01 · FRAME %02d" % (slot + 1)
 		draw_string(VelkaStyle.sans(), Vector2(10, 20 * s), label, HORIZONTAL_ALIGNMENT_LEFT, -1, int(14 * s), Color(VelkaStyle.INK, 0.85))
 		draw_circle(Vector2(size.x - 14, 14 * s), 4 * s, Color(0.9, 0.15, 0.1, 0.5 + 0.5 * sin(_t * 4.0)))
-		if playing:
-			draw_rect(r.grow(-2), VelkaStyle.FOCUS, false, 3.0)
-		elif selected or focused:
-			draw_rect(r.grow(-2), VelkaStyle.ACCENT, false, 3.0)
+		# 흑백 화면이라 테두리는 밝기로 구별한다: 고름·재생 = 흰 굵은 선, 커서 = 회색 선
+		if playing or selected:
+			draw_rect(r.grow(-2), Color("#e8e2d2"), false, 4.0)
+		elif focused:
+			draw_rect(r.grow(-2), Color("#8fa396"), false, 2.0)
 		else:
-			draw_rect(r, Color("#2d4650"), false, 2.0)
+			draw_rect(r, Color("#262c29"), false, 1.0)
 
 	## 회색 코트의 사람 (발 위치 기준). 프레임마다 손에 든 것과 자세가 다르다.
 	func _person(foot: Vector2, k: float) -> void:

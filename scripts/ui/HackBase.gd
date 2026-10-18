@@ -18,6 +18,12 @@ signal finished(success: bool)
 const LOCK_REASON := "hack_minigame"
 ## 사비 손글씨 (Journal.HANDS 와 같은 글꼴)
 const SABI_HAND_FONT := "res://assets/fonts/hand/Sabi-Hand.ttf"
+## 사비 단말 껍데기 (기본 디자인 시안 Hack.tsx · .sabi-device)
+const DEVICE_LABEL := "S.ASAGI · FIELD RIG MK-II"
+const DEVICE_BG := Color("#0a0d0f")
+const DEVICE_BEZEL := Color("#171b1e")
+const DEVICE_BEZEL_WIDTH := 12
+const TRACE_FILL := Color("#c96666")
 
 ## 다 풀었다
 var is_solved := false
@@ -82,7 +88,7 @@ func _process(delta: float) -> void:
 	if _trace_bar:
 		_trace_bar.value = 1.0 - _trace_left / trace_seconds
 		var danger := _trace_bar.value > 0.75
-		(_trace_bar.get_theme_stylebox("fill") as StyleBoxFlat).bg_color = VelkaStyle.RED if danger else Color(0.85, 0.6, 0.2)
+		(_trace_bar.get_theme_stylebox("fill") as StyleBoxFlat).bg_color = VelkaStyle.RED if danger else TRACE_FILL
 	if _trace_left <= 0.0:
 		traced = true
 		_push_log("> !! 역추적 감지 — 강제 종료")
@@ -279,16 +285,36 @@ func _build_ui() -> void:
 	dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	root.add_child(dim)
 
+	# 사비의 휴대 해킹 단말 (S.ASAGI · FIELD RIG MK-II): 퍼즐 종류와 상관없이 바깥 기기는 하나다.
+	# 안쪽 퍼즐 화면만 원격 대상에 따라 바뀐다 (_device_theme).
+	var device_theme := _device_theme()
 	var panel := PanelContainer.new()
+	panel.name = "SabiDevice"
 	panel.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	panel.offset_left = 100
 	panel.offset_right = -100
-	panel.offset_top = 65
-	panel.offset_bottom = -65
-	var ps := VelkaStyle.panel_style(VelkaStyle.LINE, Color("#0f171c", 0.98), 0, 1)
-	ps.set_content_margin_all(0)
+	panel.offset_top = 55
+	panel.offset_bottom = -55
+	var ps := StyleBoxFlat.new()
+	ps.bg_color = DEVICE_BG
+	ps.border_color = DEVICE_BEZEL
+	ps.set_border_width_all(DEVICE_BEZEL_WIDTH)
+	ps.set_corner_radius_all(10)
+	ps.shadow_color = Color(0, 0, 0, 0.65)
+	ps.shadow_size = 30
+	ps.set_content_margin_all(DEVICE_BEZEL_WIDTH)
 	panel.add_theme_stylebox_override("panel", ps)
 	root.add_child(panel)
+	var chrome := DeviceChrome.new()
+	chrome.name = "DeviceChrome"
+	root.add_child(chrome)
+	# 내용이 길어 단말이 커져도 나사·각인이 실제 테두리를 따라가게 한다
+	var follow := func():
+		chrome.position = panel.position
+		chrome.size = panel.size
+		chrome.queue_redraw()
+	panel.resized.connect(follow)
+	panel.item_rect_changed.connect(follow)
 	var page := VBoxContainer.new()
 	page.add_theme_constant_override("separation", 0)
 	panel.add_child(page)
@@ -297,7 +323,7 @@ func _build_ui() -> void:
 	var head_margin := MarginContainer.new()
 	for side in ["left", "right"]:
 		head_margin.add_theme_constant_override("margin_" + side, 40)
-	head_margin.add_theme_constant_override("margin_top", 34)
+	head_margin.add_theme_constant_override("margin_top", 24)
 	head_margin.add_theme_constant_override("margin_bottom", 10)
 	page.add_child(head_margin)
 	var head := HBoxContainer.new()
@@ -308,6 +334,16 @@ func _build_ui() -> void:
 	head.add_child(titles)
 	titles.add_child(VelkaStyle.label(header_text(), VelkaStyle.spaced(VelkaStyle.sans_medium(), 5), 17,
 			VelkaStyle.DANGER if project_terminal else VelkaStyle.INK_DIM))
+	# 링크 표시: 사비 단말 → 대상 단말 · 대상 화면 종류
+	var kicker := HBoxContainer.new()
+	kicker.add_theme_constant_override("separation", 10)
+	titles.add_child(kicker)
+	var dot := LinkDot.new()
+	dot.custom_minimum_size = Vector2(8, 20)
+	kicker.add_child(dot)
+	var link := VelkaStyle.label("사비 단말 → %s 링크 · %s" % [_title, String(device_theme["name"])], VelkaStyle.mono(), 16, device_theme["acc"])
+	link.name = "LinkKicker"
+	kicker.add_child(link)
 	var name_row := HBoxContainer.new()
 	name_row.add_theme_constant_override("separation", 18)
 	titles.add_child(name_row)
@@ -354,7 +390,7 @@ func _build_ui() -> void:
 		var bg := StyleBoxFlat.new()
 		bg.bg_color = Color(VelkaStyle.LINE, 0.5)
 		var fill := StyleBoxFlat.new()
-		fill.bg_color = Color(0.85, 0.6, 0.2)
+		fill.bg_color = TRACE_FILL
 		_trace_bar.add_theme_stylebox_override("background", bg)
 		_trace_bar.add_theme_stylebox_override("fill", fill)
 		trace_row.add_child(_trace_bar)
@@ -367,15 +403,29 @@ func _build_ui() -> void:
 	body.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	body.add_theme_constant_override("margin_left", 40)
 	body.add_theme_constant_override("margin_right", 44)
-	body.add_theme_constant_override("margin_top", 30)
-	body.add_theme_constant_override("margin_bottom", 30)
+	body.add_theme_constant_override("margin_top", 18)
+	body.add_theme_constant_override("margin_bottom", 18)
 	page.add_child(body)
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 0)
 	body.add_child(row)
+	# 원격 대상의 화면 (퍼즐마다 다른 기판 · 터미널 · CCTV)
+	var screen := PanelContainer.new()
+	screen.name = "RemoteScreen"
+	screen.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var screen_style := StyleBoxFlat.new()
+	screen_style.bg_color = device_theme["screen"]
+	screen_style.border_color = device_theme["line"]
+	screen_style.set_border_width_all(1)
+	screen_style.set_corner_radius_all(4)
+	screen_style.set_content_margin_all(18)
+	screen.add_theme_stylebox_override("panel", screen_style)
+	row.add_child(screen)
+	var gutter := Control.new()
+	gutter.custom_minimum_size = Vector2(24, 0)
+	row.add_child(gutter)
 	var center := CenterContainer.new()
-	center.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	row.add_child(center)
+	screen.add_child(center)
 	var puzzle := HBoxContainer.new()
 	puzzle.add_theme_constant_override("separation", 28)
 	center.add_child(puzzle)
@@ -384,14 +434,17 @@ func _build_ui() -> void:
 	var side_frame := PanelContainer.new()
 	side_frame.custom_minimum_size = Vector2(440, 0)
 	var ss := StyleBoxFlat.new()
-	ss.bg_color = Color(0, 0, 0, 0)
-	ss.border_color = Color(VelkaStyle.LINE, 0.7)
+	ss.bg_color = device_theme["side"]
+	ss.border_color = device_theme["line"]
 	ss.border_width_left = 1
-	ss.content_margin_left = 36
+	ss.content_margin_left = 30
+	ss.content_margin_right = 18
+	ss.content_margin_top = 14
+	ss.content_margin_bottom = 14
 	side_frame.add_theme_stylebox_override("panel", ss)
 	row.add_child(side_frame)
 	var side := VBoxContainer.new()
-	side.add_theme_constant_override("separation", 14)
+	side.add_theme_constant_override("separation", 10)
 	side_frame.add_child(side)
 	side.add_child(VelkaStyle.label(_side_title(), VelkaStyle.spaced(VelkaStyle.sans_semibold(), 3), 20, VelkaStyle.ACCENT))
 	for line in _side_lines():
@@ -423,8 +476,8 @@ func _build_ui() -> void:
 	var sb := VelkaStyle.panel_style(VelkaStyle.LINE, Color(0, 0, 0, 0.2), 0, 1)
 	sb.content_margin_left = 18
 	sb.content_margin_right = 18
-	sb.content_margin_top = 18
-	sb.content_margin_bottom = 18
+	sb.content_margin_top = 12
+	sb.content_margin_bottom = 12
 	status_box.add_theme_stylebox_override("panel", sb)
 	side.add_child(status_box)
 	_status = VelkaStyle.label("입력 대기 중", VelkaStyle.sans_medium(), 20, VelkaStyle.INK)
@@ -445,12 +498,17 @@ func _build_ui() -> void:
 	var foot := MarginContainer.new()
 	for side_name in ["left", "right"]:
 		foot.add_theme_constant_override("margin_" + side_name, 44)
-	foot.add_theme_constant_override("margin_top", 20)
-	foot.add_theme_constant_override("margin_bottom", 22)
+	foot.add_theme_constant_override("margin_top", 14)
+	foot.add_theme_constant_override("margin_bottom", 18)
 	page.add_child(foot)
 	var help := VelkaStyle.label(_help_text(), VelkaStyle.sans(), 18, VelkaStyle.INK_DIM)
 	foot.add_child(help)
 	_maybe_show_tutorial(root)
+
+
+## 안쪽 원격 화면의 색: 퍼즐마다 덮어쓴다. name 은 링크 표시에 쓰는 대상 화면 이름.
+func _device_theme() -> Dictionary:
+	return {"name": "원격 단말", "screen": Color("#0d1217"), "line": Color("#232a2e"), "side": Color("#0d1114"), "acc": VelkaStyle.SABI}
 
 
 ## 머리말: 평소 SABI // ACCESS INTERFACE, 벨카 시설 단말이거나 진상 공개 뒤에는 PROJECT VELKA
@@ -484,3 +542,40 @@ func _sabi_hint() -> String:
 ## 오른쪽 칸에 퍼즐별로 더 넣을 것 (상태 상자 위)
 func _build_side(_parent: VBoxContainer) -> void:
 	pass
+
+
+## 단말 껍데기 장식: 네 모서리 나사, 아래 각인, 아주 옅은 주사선 (입력은 받지 않는다)
+class DeviceChrome extends Control:
+	func _ready() -> void:
+		mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	func _draw() -> void:
+		var w := float(HackBase.DEVICE_BEZEL_WIDTH)
+		for p in [Vector2(w * 0.55, w * 0.55), Vector2(size.x - w * 0.55, w * 0.55), Vector2(w * 0.55, size.y - w * 0.55), Vector2(size.x - w * 0.55, size.y - w * 0.55)]:
+			draw_circle(p, 4.5, Color("#2b3135"))
+			draw_circle(p - Vector2(1, 1), 3.0, Color("#8a9399"))
+			draw_line(p + Vector2(-2.5, -1.5), p + Vector2(2.5, 1.5), Color("#1a1e21"), 1.0)
+		var font := VelkaStyle.mono()
+		var text := HackBase.DEVICE_LABEL
+		var tw := font.get_string_size(text, HORIZONTAL_ALIGNMENT_LEFT, -1, 12).x
+		draw_string(font, Vector2((size.x - tw) * 0.5, size.y - 2), text, HORIZONTAL_ALIGNMENT_LEFT, -1, 12, Color(0.925, 0.906, 0.859, 0.32))
+		var y := w
+		while y < size.y - w:
+			draw_line(Vector2(w, y), Vector2(size.x - w, y), Color(1, 1, 1, 0.018), 1.0)
+			y += 3.0
+
+
+## 링크 표시등 (깜빡이는 청록 점, 화면 효과 줄이기면 켜진 채로)
+class LinkDot extends Control:
+	var _t := 0.0
+
+	func _process(delta: float) -> void:
+		_t += delta
+		queue_redraw()
+
+	func _draw() -> void:
+		var settings := get_node_or_null("/root/SettingsManager")
+		var on: bool = (settings != null and settings.reduce_effects()) or fmod(_t, 1.6) < 0.8
+		var c := Vector2(size.x * 0.5, size.y * 0.5)
+		draw_circle(c, 6.0, Color(VelkaStyle.SABI, 0.25 if on else 0.0))
+		draw_circle(c, 3.0, VelkaStyle.SABI if on else Color(VelkaStyle.SABI, 0.35))

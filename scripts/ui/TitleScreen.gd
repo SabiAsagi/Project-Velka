@@ -22,6 +22,11 @@ const MARKER_TEXT := "V"
 var _markers: Dictionary = {}   # Button -> Label("V")
 ## 불러오기 (저장 칸 고르기 — 이어하기 바로 아래)
 var load_btn: Button
+## 괴이 규칙 기록소 (기본 디자인 시안: 새 게임 아래 "기록 보관소")
+var archive_btn: Button
+var archive: RuleArchive
+## 메뉴가 일곱 줄이 되어 한 줄 높이를 조금 줄인다 (자리 530~950 안에 들어가게)
+const MENU_ROW_HEIGHT := 54
 
 
 func _ready() -> void:
@@ -32,6 +37,19 @@ func _ready() -> void:
 	load_btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
 	continue_btn.get_parent().add_child(load_btn)
 	continue_btn.get_parent().move_child(load_btn, continue_btn.get_index() + 1)
+	archive_btn = Button.new()
+	archive_btn.name = "ArchiveButton"
+	archive_btn.text = "기록 보관소"
+	archive_btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
+	new_game_btn.get_parent().add_child(archive_btn)
+	new_game_btn.get_parent().move_child(archive_btn, new_game_btn.get_index() + 1)
+	for b in [continue_btn, load_btn, new_game_btn, archive_btn, settings_btn, credits_btn, exit_btn]:
+		(b as Button).custom_minimum_size = Vector2(0, MENU_ROW_HEIGHT)
+	archive = RuleArchive.new()
+	archive.name = "RuleArchive"
+	add_child(archive)
+	archive.closed.connect(func(): archive_btn.grab_focus())
+	archive_btn.pressed.connect(archive.open)
 	_apply_style()
 	# 세이브 파일 존재 여부에 따른 이어하기 버튼 활성화
 	var has_save = SaveManager.has_save_file()
@@ -85,7 +103,7 @@ func _apply_style() -> void:
 	$Motto.add_theme_font_override("font", VelkaStyle.spaced(VelkaStyle.sans(), 3))
 	version_label.add_theme_font_override("font", VelkaStyle.sans())
 	$HeaderContainer/SubtitleLabel.add_theme_font_override("font", VelkaStyle.spaced(VelkaStyle.sans_medium(), 9))
-	for b in [continue_btn, load_btn, new_game_btn, settings_btn, credits_btn, exit_btn]:
+	for b in [continue_btn, load_btn, new_game_btn, archive_btn, settings_btn, credits_btn, exit_btn]:
 		_style_menu_button(b as Button)
 	_build_key_hints()
 

@@ -40,6 +40,9 @@ const CHIP_BG := "#d8d0bc"
 const CHIP_INK := "#3c4650"
 const VERACITY_INK := {"정상": "#2f6b4c", "조건부": "#8a6512", "오염": "#9b2c22"}
 const VIOLATION_INK := "#8e2b1f"
+## 위반 조항 잉크 번짐: 글자 둘레의 번진 잉크 · 글자색
+const VIOLATION_BLEED := "#8e2b1f44"
+const VIOLATION_TEXT := "#4a1a12"
 const ASSOCIATION_INK := "#26597a"
 ## 인물별 손글씨 (기본 디자인 0.2): 글꼴 · 잉크 · 이름 · 소속. 필기 서명의 이름으로 고른다.
 const HAND_DIR := "res://assets/fonts/hand/"
@@ -747,7 +750,12 @@ func _rules_bbcode(page: Dictionary, notes: Array) -> String:
 		for r in rules:
 			var number := int(r["number"])
 			var prefix := "" if unnumbered.has(cat) else "[b]%d.[/b]  " % number
-			out += "%s%s\n" % [prefix, _esc(String(r["text"]))]
+			var text := _esc(String(r["text"]))
+			if int(r.get("strikes", 0)) > 0:
+				# 위반한 조항: 잉크가 번진다 (기본 디자인 시안 .paper-rule.is-violated)
+				text = "[outline_size=%d][outline_color=%s][color=%s]%s[/color][/outline_color][/outline_size]" % [
+						mini(3 + int(r["strikes"]) * 2, 9), VIOLATION_BLEED, VIOLATION_TEXT, text]
+			out += "%s%s\n" % [prefix, text]
 			if bool(r.get("discovered", false)):
 				out += _rule_chips(r)
 				_collect_memos(r, number if not unnumbered.has(cat) else 0, notes)
