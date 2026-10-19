@@ -215,10 +215,6 @@ func _build_side(parent: VBoxContainer) -> void:
 	_history_scroll.add_child(_history_box)
 
 
-func _pegs(exact: int, near: int) -> String:
-	return "●".repeat(exact) + "○".repeat(near) + "·".repeat(DIGITS - exact - near)
-
-
 func _refresh() -> void:
 	for i in _slots.size():
 		_slots[i].text = str(_entry[i]) if i < _entry.size() else "_"

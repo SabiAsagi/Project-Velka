@@ -17,7 +17,6 @@ mono_crash.*.json
 *.tmp
 *.bak
 test_out.log
-debug/test_results.txt
 debug/screenshots/
 debug/*_validation.json
 .DS_Store

@@ -33,8 +33,6 @@ const C_BOND_LINE := Color(83 / 255.0, 97 / 255.0, 107 / 255.0, 0.45)
 const C_KBD_LINE := Color(220 / 255.0, 213 / 255.0, 198 / 255.0, 0.35)
 const C_ICON_LINE := Color(168 / 255.0, 179 / 255.0, 186 / 255.0, 0.4)
 const C_METER_BG := Color(168 / 255.0, 179 / 255.0, 186 / 255.0, 0.18)
-## 예전 이름 (다른 스크립트 호환)
-const CARD_BG := C_CARD_BG
 const CARD_WIDTH := 320.0
 
 const TOAST_KIND_COLOR := {"log": C_RIG_LINE, "violation": C_BLOOD, "notice": C_DIM}
@@ -149,11 +147,6 @@ func apply_contrast() -> void:
 			st.bg_color = VelkaStyle.backdrop(pair[1])
 
 
-## 예전 한 줄 동료 표시 (호환용 — 지금은 동행 카드가 대신한다)
-func set_partner(_text: String, _danger: bool) -> void:
-	pass
-
-
 ## 조작 캐릭터의 상태 (안전 / 은신 중 / 추격 위험) — 카드 역할 줄 오른쪽
 func set_status(text: String, color: Color) -> void:
 	_active.set_status(text, color)
@@ -176,10 +169,6 @@ func set_zone(zone_name: String) -> void:
 		return
 	_zone_name = zone_name
 	_refresh_place(true)
-
-
-func get_zone() -> String:
-	return _zone_name
 
 
 func _refresh_place(flash: bool) -> void:
@@ -234,10 +223,6 @@ func set_rule_peek(title: String, rows: Array) -> void:
 		c.queue_free()
 	for row in rows:
 		_rule_rows.add_child(_compact_rule(String(row.get("tag", "")), String(row.get("text", "")), String(row.get("tone", "unknown"))))
-
-
-func is_rule_peek_visible() -> bool:
-	return _rule_peek.visible
 
 
 func set_prompt(text: String, shown: bool) -> void:
@@ -365,11 +350,6 @@ func set_keys(pairs: Array) -> void:
 		item.add_child(kbd(String(pair[0])))
 		item.add_child(VelkaStyle.label(String(pair[1]), VelkaStyle.sans(), 12, C_DIM))
 		_keys.add_child(item)
-
-
-## 예전 키캡 (다른 화면 호환) — 지금은 시안 kbd 를 돌려준다
-static func keycap(text: String, _size: int = 17) -> PanelContainer:
-	return kbd(text)
 
 
 ## 시안 kbd: 고정폭 9.92px, 테두리 1px (아래 2px) rgba(220,213,198,0.35), 좌우 4.8px, 최소 폭 1.3em
@@ -924,14 +904,6 @@ class CharacterCard extends PanelContainer:
 	func set_status(text: String, color: Color) -> void:
 		_state.text = text
 		_state.add_theme_color_override("font_color", color)
-
-	## 예전 아랫줄 (호환용 — 지금은 역할 줄 오른쪽 상태 글자 하나)
-	func set_footer_key(_key: String, _text: String) -> void:
-		pass
-
-	func set_footer_text(_text: String, state: String) -> void:
-		set_status(state, C_DIM)
-
 
 ## 초상화: cover + object-position 50% 18%, 바탕 rgba(255,255,255,0.04)
 class Portrait extends Control:

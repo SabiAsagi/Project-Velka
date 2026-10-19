@@ -93,6 +93,3 @@ func set_progress(value: float) -> void:
 	_percent.text = "%d%%" % roundi(_progress * 100.0)
 	_bar_fill.size = Vector2(_bar_back.size.x * _progress, 3)
 
-
-func get_progress() -> float:
-	return _progress

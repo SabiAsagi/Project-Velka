@@ -8,7 +8,8 @@ extends CanvasLayer
 #   - 아랫줄: [Enter] 다음 대화 · 대화 기록(L, 휠 위로) · 자동 진행 켜기/끄기 · 설정
 #   - 선택지는 대화창 위 오른쪽에 넓은 칸으로 쌓인다
 #   - 타자기 효과, 클릭/E/Enter 로 넘기기, 화면 흔들림(shake), BBCode ([shake] [wave] [color] [b])
-# 초상화를 새로 그리면 assets/characters/portraits/<id>_<표정>.png 로 넣고 PORTRAIT_FILES 에 추가한 뒤
+# 초상화를 새로 그리면 원본을 넣고(사비·샤무는 캐릭터/표정/ + 도구의 EXPRESSIONS, 그 밖의 인물은
+# assets/characters/portraits/<id>_<표정>.png) PORTRAIT_FILES 에 추가한 뒤
 # tools/portraits/make_dialogue_portraits.py 로 대화창용 사본(portraits/dialogue/)을 만든다.
 # 위치·크기는 시안(1920x1080) 기준 숫자다. 피그마에서 다듬어지면 아래 상수만 고친다.
 

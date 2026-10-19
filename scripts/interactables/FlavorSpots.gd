@@ -10,7 +10,6 @@ extends RefCounted
 # 학교 게시판 포스터(Sprite3D "Poster", poster_<key>.png)는 posters() 로 그림마다 조사 지점을 붙인다.
 # 조사 지점은 주변에서는 반짝이지 않고, 가까이 가서 대상이 됐을 때만 강조한다 (화면이 반짝임으로 어지럽지 않게).
 
-const SIGN_COLOR := Color(0.08, 0.09, 0.1)
 
 
 ## parent 아래에 data_path 의 조사 지점들을 세운다. 세운 개수를 돌려준다.
