@@ -1,26 +1,20 @@
 extends CanvasLayer
 
-# 프로젝트 벨카 - 대화창 · 선택지 (피그마 기본 디자인 시안을 그대로 옮김: App.tsx FieldView 아래쪽 · index.css)
-# 1920x1080 기준 좌표는 시안을 크롬으로 그려서 잰 값이다.
-#   대화창 (.dialogue)   : x 144 ~ 1776, y 920 ~ 1048 (128 높이). 위아래 먹색 그라데이션(0.86 → 0.96),
-#                          테두리 rgba(83,97,107,0.8) · 위 테두리만 #263036, 아래로 깊은 그림자
-#   초상화 칸            : 왼쪽 128x126 정사각 칸에 대화창용 초상화(portraits/dialogue, 448x428)를 cover · 위 18% 기준으로
-#                          무전(.radio-portrait)은 초상화 대신 80x80 테두리 칸 + 신호 막대 아이콘
-#   이름 (.speaker)      : Pretendard SemiBold 13 · 자간 1 — 사비 청록, 샤무 금빛(.gold-text), 무전 #A8B3BA(.radio-text)
-#                          옆 역할(small): 나눔고딕코딩 9 · ink-dim. 서술(.narration)은 이름·초상화 없이 ink-dim 대사
-#   대사 (.dialogue-line): 나눔명조 18, 줄 높이 27.8
-#   계속 (.continue-hint): 오른쪽 아래 "클릭하여 계속" 9 + 청록 꺾쇠
-#   선택지 (.broadcast-*): 화면 전체를 붉은 원형 그늘로 덮고 가운데 560 폭 패널 — 머리말(나눔고딕코딩 11) · 대사(나눔명조 19) ·
-#                          점선 상자(수칙) · 선택지 단추(b 16 + 오른쪽 small 12, 마우스를 올리면 핏빛 테두리 · 왼쪽 여백 22)
-#                          등장(0.5초 4단) · 패널 글리치(5초마다)는 '화면 효과 줄이기'면 끈다.
-# 시안에 없는 게임 기능은 시안의 글꼴·색으로 맞췄다: 대화 기록(L, 휠 위로) · 자동 진행 · 설정 · Enter 안내는
-#   "클릭하여 계속" 왼쪽에 같은 글꼴(9)로, 타자기 효과 · 화면 흔들림 · 이름 없는 인물 실루엣은 그대로 둔다.
+# 프로젝트 벨카 - 대화창 (기본 디자인 0.2 시안 03 · 29 · 30)
+#   - 화면 아래 넓은 먹색 대화창. 왼쪽에 큰 초상화 액자가 창 위로 조금 솟아 있고(왼쪽 위에 청록 꺾쇠),
+#     그 오른쪽 위에 이름표(이름 + 역할 "관찰 · 분석")가 창에 붙어 있다.
+#   - 사비·샤무는 표정 초상화, 다른 인물은 디자인이 나오기 전까지 색이 다른 실루엣 (NPC_SILHOUETTES)
+#   - 서술(system)은 초상화·이름표 없이 흐린 글씨. "radio": true 인 대사는 무전: 이름표에 "· 무전", 잡음, 초상화가 푸르스름하다
+#   - 아랫줄: [Enter] 다음 대화 · 대화 기록(L, 휠 위로) · 자동 진행 켜기/끄기 · 설정
+#   - 선택지는 대화창 위 오른쪽에 넓은 칸으로 쌓인다
+#   - 타자기 효과, 클릭/E/Enter 로 넘기기, 화면 흔들림(shake), BBCode ([shake] [wave] [color] [b])
 # 초상화를 새로 그리면 assets/characters/portraits/<id>_<표정>.png 로 넣고 PORTRAIT_FILES 에 추가한 뒤
 # tools/portraits/make_dialogue_portraits.py 로 대화창용 사본(portraits/dialogue/)을 만든다.
+# 위치·크기는 시안(1920x1080) 기준 숫자다. 피그마에서 다듬어지면 아래 상수만 고친다.
 
 @export var typing_speed: float = 0.028 # 글자당 출력 속도(초)
 
-## 대화창 전용 초상화 (원본을 448x428 로 줄이고 구도를 맞춘 사본: tools/portraits/make_dialogue_portraits.py)
+## 대화창 전용 초상화 (원본을 액자 비율·2배 크기로 줄이고 구도를 맞춘 사본: tools/portraits/make_dialogue_portraits.py)
 ## 원본(1254px 무손실)은 처음 읽는 데 장당 0.05~0.4초가 걸려 대화창이 뜨기 전에 화면이 멈췄다.
 const PORTRAIT_DIR := "res://assets/characters/portraits/dialogue/"
 const PORTRAIT_FILES := {
@@ -62,59 +56,30 @@ const NPC_SILHOUETTES := {
 	"broker": [Color(0.12, 0.1, 0.09), Color(0.52, 0.46, 0.4)],
 	"gatekeeper": [Color(0.17, 0.18, 0.14), Color(0.48, 0.48, 0.42)],
 }
-## 이름 색: 시안 .speaker(청록) · .gold-text(샤무). 그 밖의 인물은 사비의 청록과 헷갈리지 않게 대사 글자색
 const NAME_COLORS := {"sabi": VelkaStyle.SABI, "shamu": VelkaStyle.SHAMU}
-## 이름 옆 역할 (시안 speaker 표 · 기획서 01/게임_시스템.md 필기자 소속 · 프롤로그 개정의 의뢰인)
-const ROLES := {
-	"sabi": "관찰 · 분석", "shamu": "돌파 · 보호",
-	"kwon": "전투대응부", "baek": "협회장", "seo": "보호관리부", "yu": "정보조사부", "han": "기술지원부",
-	"client": "수색 의뢰",
-}
-## 시안 색 토큰 (index.css :root)
-const INK := Color("#ECE7DB")            # 대화창 글자 (:root color)
-const INK_TOKEN := Color("#DCD5C6")      # --ink (선택지 글자)
-const INK_DIM := Color("#8F877C")        # --ink-dim
-const BONE := Color("#C9C3B5")           # --bone
-const LINE := Color("#3B3434")           # --line
-const BLOOD := Color("#8C2630")          # --blood
-const BLOOD_DEEP := Color("#4A1018")     # --blood-deep
-const RADIO_INK := Color("#A8B3BA")      # .radio-text
-const HINT_INK := Color(168 / 255.0, 179 / 255.0, 186 / 255.0, 0.6) # .continue-hint
-## 대사 글자 크기 (접근성 '대화 글자 크기'로 배율이 곱해진다) · 줄 높이 1.55
-const BODY_FONT_SIZE := 18
-const BODY_LINE_HEIGHT := 1.55
-## 대화창 (시안 .dialogue: x 144 ~ 1776, y 920 ~ 1048)
-const SIDE := 144.0
-const BOTTOM := 32.0
-const BOX_HEIGHT := 128.0
-const BOX_TOP := Color(8 / 255.0, 8 / 255.0, 10 / 255.0, 0.86)
-const BOX_BOTTOM := Color(4 / 255.0, 4 / 255.0, 6 / 255.0, 0.96)
-const BOX_BORDER := Color(83 / 255.0, 97 / 255.0, 107 / 255.0, 0.8)
-const BOX_BORDER_TOP := Color("#263036")
-## 초상화 칸 (8rem 열, 테두리 안쪽 128x126) · 무전 칸 (5rem)
-const PORTRAIT_W := 128.0
-const PORTRAIT_POS_Y := 0.18
-const RADIO_SIZE := 80.0
-## 글 칸 (.dialogue-copy padding 1rem 1.5rem) · 이름과 대사 사이 0.68rem
-const COPY_PAD_X := 24.0
-const COPY_PAD_Y := 16.0
-const LINE_GAP := 10.88
-## 크롬과 Godot 의 글꼴 높이 차이 보정 (같은 대사를 두 쪽에서 찍어 글자 윗선을 맞춘 값)
-const NAME_NUDGE := -1.0
-const LINE_NUDGE := -3.0
-## 계속 안내 (right 1.3rem, bottom 0.8rem)
-const HINT_RIGHT := 20.8
-const HINT_BOTTOM := 12.8
-const HINT_FONT_SIZE := 9
-## 선택지 패널 (.broadcast-panel: 560 폭, 안쪽 여백 28)
-const CHOICE_PANEL_W := 560.0
-const CHOICE_PAD := 28.0
-const CHOICE_HEIGHT := 47.0
-const CHOICE_GAP := 8.0
-const CHOICE_PAD_X := 16.0
-const CHOICE_PAD_X_HOT := 22.0
-const OVERLAY_IN := 0.5
-const GLITCH_CYCLE := 5.0
+## 이름표 옆 역할
+const ROLES := {"sabi": "관찰 · 분석", "shamu": "돌파 · 보호"}
+## 대사 글자 크기 (접근성 '대화 글자 크기'로 배율이 곱해진다)
+const BODY_FONT_SIZE := 30
+## 대화창 (시안 03: x 90 ~ 1830, y 712 ~ 1012)
+const SIDE := 90.0
+const BOTTOM := 68.0
+const BOX_HEIGHT := 300.0
+const BOX_BG := Color(0.063, 0.09, 0.114, 0.94)
+## 초상화 액자: 창 왼쪽에서 창 위로 PORTRAIT_RISE 만큼 솟는다
+const PORTRAIT_X := 26.0
+const PORTRAIT_RISE := 84.0
+const PORTRAIT_W := 310.0
+const PORTRAIT_H := 344.0
+const TEXT_LEFT_WITH_PORTRAIT := 386.0
+const TEXT_LEFT_PLAIN := 64.0
+## 이름표 최소 폭
+const NAME_TAG_MIN_WIDTH := 280.0
+const NAME_TAG_HEIGHT := 47.0
+## 선택지 칸
+const CHOICE_SIZE := Vector2(680, 76)
+const CHOICE_GAP := 16.0
+const CHOICE_BOTTOM_GAP := 262.0
 ## 대화 기록에 남기는 최대 줄 수 (씬이 바뀌어도 이어진다)
 const HISTORY_LIMIT := 200
 ## 자동 진행: 글자를 다 보여 준 뒤 기다리는 시간 = 기본 + 글자 수 × 글자당 (최소~최대)
@@ -130,32 +95,18 @@ var dialogue_label: RichTextLabel
 var next_indicator: Control
 var choices_container: VBoxContainer
 var _box: Control
-var _box_fill: TextureRect
-var _box_fill_gradient: Gradient
-var _name_tag: Control
+var _name_tag: PanelContainer
 var _role_label: Label
-var _portrait_frame: Control
+var _portrait_frame: Panel
 var _portrait: TextureRect
 var _silhouette: Silhouette
-var _radio_icon: Control
+var _text_margin: MarginContainer
 var _log_button: Button
 var _auto_button: Button
 var _settings_button: Button
-var _tools: HBoxContainer
 var _log_layer: Control
 var _log_list: VBoxContainer
 var _log_scroll: ScrollContainer
-var _choice_overlay: Control
-var _choice_shade: TextureRect
-var _choice_center: CenterContainer
-var _choice_panel: PanelContainer
-var _choice_head: Label
-var _choice_head_gap: Control
-var _choice_transcript: RichTextLabel
-var _choice_transcript_box: MarginContainer
-var _choice_rule: Control
-var _choice_rule_label: Label
-var _choice_rule_gap: Control
 
 ## 불러 둔 초상화 (경로 -> 텍스처). 씬이 바뀌어도 유지된다 (대화창이 씬마다 새로 만들어지므로 static).
 static var _portrait_cache: Dictionary = {}
@@ -167,15 +118,8 @@ var _is_typing: bool = false
 var _type_timer: float = 0.0
 var _pending_choices: Array = []
 var _current_speaker := ""
-var _current_line: Dictionary = {}
-var _current_text := ""
-var _current_head := ""
-var _narration := false
-var _box_height := BOX_HEIGHT
 var _box_base_y := 0.0
 var _auto_left := -1.0
-var _choice_t := 0.0
-var _choice_panel_base := Vector2.ZERO
 
 
 func _ready() -> void:
@@ -183,7 +127,7 @@ func _ready() -> void:
 	prefetch_portraits() # 보통 SceneManager 가 시작할 때 이미 해 뒀다 (두 번째부터는 아무것도 하지 않는다)
 	_build()
 	root_container.visible = false
-	_set_choices_visible(false)
+	choices_container.visible = false
 	next_indicator.modulate.a = 0.0
 	if not DialogueManager.dialogue_started.is_connected(_on_dialogue_started):
 		DialogueManager.dialogue_started.connect(_on_dialogue_started)
@@ -197,8 +141,6 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	if _choice_overlay.visible:
-		_animate_choices(delta)
 	if not root_container.visible or is_log_open():
 		return
 	if _is_typing:
@@ -241,7 +183,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _on_dialogue_started(_dialogue_id: String) -> void:
 	root_container.visible = true
-	_set_choices_visible(false)
+	choices_container.visible = false
 	_current_speaker = ""
 	_apply_text_settings()
 	_refresh_auto_button()
@@ -253,25 +195,21 @@ func _apply_text_settings() -> void:
 	var size := roundi(BODY_FONT_SIZE * SettingsManager.text_scale())
 	dialogue_label.add_theme_font_size_override("bold_font_size", size)
 	dialogue_label.add_theme_font_size_override("normal_font_size", size)
-	# 줄 높이 1.55: 글꼴 높이를 뺀 나머지를 줄 사이로 (첫 줄 위 반쪽 여백은 _layout 이 더한다)
-	var font_h := VelkaStyle.serif().get_height(size)
-	dialogue_label.add_theme_constant_override("line_separation", maxi(0, roundi(size * BODY_LINE_HEIGHT - font_h)))
 	# 높은 대비: 대화창 바탕 불투명
-	_box_fill_gradient.set_color(0, VelkaStyle.backdrop(BOX_TOP))
-	_box_fill_gradient.set_color(1, VelkaStyle.backdrop(BOX_BOTTOM))
+	(text_panel.get_theme_stylebox("panel") as StyleBoxFlat).bg_color = VelkaStyle.backdrop(BOX_BG)
+	(_name_tag.get_theme_stylebox("panel") as StyleBoxFlat).bg_color = VelkaStyle.backdrop(BOX_BG)
 
 
 func _on_dialogue_completed(_dialogue_id: String) -> void:
 	root_container.visible = false
-	_set_choices_visible(false)
+	choices_container.visible = false
 	_auto_left = -1.0
 	close_log()
 
 
 func _on_line_started(line: Dictionary) -> void:
-	_current_line = line
 	_pending_choices = DialogueManager.filter_choices_for_active_character(line.get("choices", []))
-	_set_choices_visible(false)
+	choices_container.visible = false
 	next_indicator.modulate.a = 0.0
 	_auto_left = -1.0
 	_apply_text_settings()
@@ -279,41 +217,34 @@ func _on_line_started(line: Dictionary) -> void:
 	var display_name := String(line.get("speaker_name", ""))
 	var narration := speaker_id == "system" or display_name.is_empty()
 	var raw_text := DialogueManager.resolve_line_text(line)
-	_narration = narration
-	_current_text = raw_text
 
-	# 무전: "radio": true 이거나 이름에 "(무전)" 이 붙은 대사. 이름 색 .radio-text, 역할 뒤에 "· 무전", 초상화 대신 신호 칸
-	var radio := not narration and (bool(line.get("radio", false)) or display_name.contains("(무전)"))
-	if radio:
-		display_name = display_name.replace("(무전)", "").strip_edges()
+	# 이름표 (무전이면 "· 무전" 과 잡음, 초상화는 푸르스름하게)
+	var radio := bool(line.get("radio", false)) and not narration
 	_name_tag.visible = not narration
-	speaker_label.text = display_name
-	var role := String(ROLES.get(speaker_id, ""))
-	if radio:
-		role = (role + " · 무전") if not role.is_empty() else "무전"
-	_role_label.text = role
-	_role_label.visible = not role.is_empty()
-	var name_color: Color = RADIO_INK if radio else NAME_COLORS.get(speaker_id, INK)
-	speaker_label.add_theme_color_override("font_color", name_color)
-	_current_head = display_name + (" · " + role if not role.is_empty() else "") if not narration else ""
+	speaker_label.text = display_name + ("  · 무전" if radio else "")
+	_role_label.text = String(ROLES.get(speaker_id, ""))
+	_role_label.visible = not _role_label.text.is_empty()
+	_refit_name_tag()
+	var name_color: Color = NAME_COLORS.get(speaker_id, VelkaStyle.INK)
+	speaker_label.add_theme_color_override("font_color", VelkaStyle.INK)
+	(_name_tag.get_theme_stylebox("panel") as StyleBoxFlat).border_color = Color(name_color, 0.8) if NAME_COLORS.has(speaker_id) else VelkaStyle.LINE
 
-	# 초상화 (무전은 신호 칸)
+	# 초상화
 	var emotion_key := "sabi_emotion" if speaker_id == "sabi" else ("shamu_emotion" if speaker_id == "shamu" else "emotion")
 	var emotion := String(line.get(emotion_key, "neutral"))
-	_show_speaker("" if narration else speaker_id, emotion, radio)
+	_show_speaker(speaker_id if not narration else "", emotion)
+	_portrait.self_modulate = Color(0.72, 0.9, 1.0) if radio else Color.WHITE
 	if radio:
 		SfxBank.play(self, "static", -22.0, 1.4)
 
-	# 본문: 서술은 ink-dim (.dialogue.narration .dialogue-line)
+	# 본문: 서술은 흐리게
 	dialogue_label.text = raw_text
-	dialogue_label.add_theme_color_override("default_color", INK_DIM if narration and not VelkaStyle.high_contrast() else INK)
+	dialogue_label.add_theme_color_override("default_color", VelkaStyle.INK_DIM if narration and not VelkaStyle.high_contrast() else VelkaStyle.INK)
 	dialogue_label.visible_characters = 0
 	_is_typing = true
 	_type_timer = 0.0
 	_remember(display_name if not narration else "", raw_text, name_color, narration)
-	_layout()
-	_fit_box_height.call_deferred()
-	if bool(line.get("shake", false)) and not _reduce_effects():
+	if bool(line.get("shake", false)):
 		_trigger_shake_effect()
 
 
@@ -324,14 +255,14 @@ func _remember(speaker_name: String, text: String, color: Color, narration: bool
 		history.pop_front()
 
 
-## 말하는 사람의 초상화를 띄운다 (speaker_id 가 비면 숨긴다, 무전이면 신호 칸)
-func _show_speaker(speaker_id: String, emotion: String, radio: bool = false) -> void:
-	var has_portrait := not radio and PORTRAIT_FILES.has(speaker_id)
-	var has_silhouette := not radio and not has_portrait and NPC_SILHOUETTES.has(speaker_id)
-	_portrait_frame.visible = radio or has_portrait or has_silhouette
+## 말하는 사람의 초상화를 띄운다 (speaker_id 가 비면 숨긴다)
+func _show_speaker(speaker_id: String, emotion: String) -> void:
+	var has_portrait := PORTRAIT_FILES.has(speaker_id)
+	var has_silhouette := NPC_SILHOUETTES.has(speaker_id)
+	var any := has_portrait or has_silhouette
+	_portrait_frame.visible = any
 	_portrait.visible = has_portrait
 	_silhouette.visible = has_silhouette
-	_radio_icon.visible = radio
 	if has_portrait:
 		var tex := get_portrait(speaker_id, emotion)
 		_portrait.texture = tex
@@ -339,6 +270,16 @@ func _show_speaker(speaker_id: String, emotion: String, radio: bool = false) -> 
 	elif has_silhouette:
 		_silhouette.colors = NPC_SILHOUETTES[speaker_id]
 		_silhouette.queue_redraw()
+	var left := TEXT_LEFT_WITH_PORTRAIT if any else TEXT_LEFT_PLAIN
+	_text_margin.add_theme_constant_override("margin_left", int(left))
+	next_indicator.position.x = left
+	_name_tag.position.x = SIDE + left - 20.0
+	# 화자가 바뀌면 살짝 떠오르며 나타난다
+	if any and speaker_id != _current_speaker:
+		for n in [_portrait, _silhouette]:
+			var c := n as Control
+			c.modulate.a = 0.0
+			c.create_tween().tween_property(c, "modulate:a", 1.0, 0.2)
 	_current_speaker = speaker_id
 
 
@@ -381,30 +322,24 @@ static func _fetch_portrait(path: String) -> Texture2D:
 	return tex
 
 
-## 초상화를 칸에 맞춘다: 시안 object-fit: cover + object-position: 50% 18%
+## 초상화를 액자에 꽉 차게 맞춘다: 짧은 쪽을 액자에 맞추고 가운데 정렬 + 위쪽 기준.
+## 그림 비율이 달라도 항상 액자 전체가 채워지고, 잘리는 쪽은 아래(어깨)라 얼굴은 남는다.
 func _fit_portrait(tex: Texture2D) -> void:
 	if tex == null:
 		return
 	var tex_size := tex.get_size()
 	if tex_size.x <= 0.0 or tex_size.y <= 0.0:
 		return
-	var cell := _portrait_frame.size
-	var fit := maxf(cell.x / tex_size.x, cell.y / tex_size.y)
+	var fit := maxf(PORTRAIT_W / tex_size.x, PORTRAIT_H / tex_size.y)
 	_portrait.size = tex_size * fit
-	_portrait.position = Vector2((cell.x - _portrait.size.x) * 0.5, (cell.y - _portrait.size.y) * PORTRAIT_POS_Y)
+	_portrait.position = Vector2((PORTRAIT_W - _portrait.size.x) * 0.5, 0.0)
 
 
-## 이름 옆 역할(small)을 이름 바로 뒤(0.75rem)에, 글자 밑선을 맞춰 놓는다
+## 이름표를 글자에 맞게 다시 줄인다. PanelContainer 는 부모가 컨테이너가 아니면 한 번 늘어난 크기를
+## 줄이지 않아, 긴 이름("카즈네 샤무") 뒤에 짧은 이름("수위")이 오면 글자가 왼쪽으로 쏠려 보였다.
 func _refit_name_tag() -> void:
-	var name_font := speaker_label.get_theme_font("font")
-	var name_size := speaker_label.get_theme_font_size("font_size")
-	var role_font := _role_label.get_theme_font("font")
-	var role_size := _role_label.get_theme_font_size("font_size")
-	var w := name_font.get_string_size(speaker_label.text, HORIZONTAL_ALIGNMENT_LEFT, -1, name_size).x
-	speaker_label.position = Vector2.ZERO
-	speaker_label.size = Vector2(w + 2.0, name_font.get_height(name_size))
-	_role_label.position = Vector2(w + 12.0, name_font.get_ascent(name_size) - role_font.get_ascent(role_size))
-	_role_label.size = _role_label.get_combined_minimum_size()
+	_name_tag.reset_size()
+	_name_tag.reset_size.call_deferred() # 글자 최소 크기 갱신이 한 프레임 늦는 경우 대비
 
 
 func _finish_typing() -> void:
@@ -427,132 +362,44 @@ func _trigger_shake_effect() -> void:
 	tween.tween_property(_box, "position:y", 0.0, 0.04)
 
 
-func _reduce_effects() -> bool:
-	return SettingsManager.reduce_effects()
-
-
-# --- 선택지 (.broadcast-overlay) ---
-
-func _set_choices_visible(on: bool) -> void:
-	choices_container.visible = on
-	_choice_overlay.visible = on
-
-
 func _on_choices_presented(choices: Array) -> void:
 	for child in choices_container.get_children():
 		choices_container.remove_child(child)
 		child.queue_free()
-	# 머리말: 말하는 사람 · 역할 (시안 "정문의 수위 · 등을 돌린 채"), 서술이면 머리말 없이 대사부터
-	_choice_head.text = _current_head
-	_choice_head.visible = not _current_head.is_empty()
-	_choice_head_gap.visible = _choice_head.visible
-	_choice_transcript.text = _current_text
-	_choice_transcript.add_theme_color_override("default_color", INK_DIM if _narration and not VelkaStyle.high_contrast() else INK_TOKEN)
-	var ts := SettingsManager.text_scale()
-	_choice_transcript.add_theme_font_size_override("normal_font_size", roundi(19 * ts))
-	_choice_transcript.add_theme_font_size_override("bold_font_size", roundi(19 * ts))
-	# 줄 높이 1.8: 글꼴 높이를 뺀 나머지를 줄 사이로, 위아래에 반씩 (RichTextLabel 은 마지막 줄 뒤에도 줄 사이를 더해 아래에서 뺀다)
-	var tf := VelkaStyle.serif().get_height(roundi(19 * ts))
-	var lead := maxi(0, roundi(19 * ts * 1.8 - tf))
-	_choice_transcript.add_theme_constant_override("line_separation", lead)
-	_choice_transcript_box.add_theme_constant_override("margin_top", roundi(lead * 0.5) - 3)
-	_choice_transcript_box.add_theme_constant_override("margin_bottom", roundi(lead * 0.5) - lead)
-	# 점선 상자: 대사에 "rule"(관련 수칙 문구)이 있을 때만
-	var rule := String(_current_line.get("rule", ""))
-	_choice_rule_label.text = rule
-	_choice_rule.visible = not rule.is_empty()
-	_choice_rule_gap.visible = _choice_rule.visible
 	for i in range(choices.size()):
 		var choice_data: Dictionary = choices[i]
-		choices_container.add_child(_choice_button(i, choice_data, ts))
-	_set_choices_visible(true)
-	_choice_t = 0.0
-	_choice_overlay.modulate.a = 1.0 if _reduce_effects() else 0.0
-	(func(): _choice_panel_base = _choice_panel.position).call_deferred()
+		var btn := Button.new()
+		btn.text = String(choice_data.get("text", "선택지"))
+		btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
+		btn.custom_minimum_size = CHOICE_SIZE
+		btn.add_theme_font_override("font", VelkaStyle.sans_medium())
+		btn.add_theme_font_size_override("font_size", 25)
+		btn.add_theme_color_override("font_color", VelkaStyle.INK)
+		btn.add_theme_color_override("font_hover_color", VelkaStyle.INK)
+		btn.add_theme_color_override("font_focus_color", VelkaStyle.INK)
+		btn.add_theme_color_override("font_pressed_color", VelkaStyle.INK)
+		var normal := VelkaStyle.panel_style(VelkaStyle.LINE, BOX_BG, 0, 1)
+		normal.content_margin_left = 30
+		var hot := VelkaStyle.panel_style(VelkaStyle.FOCUS, Color(0.1, 0.17, 0.2, 0.96), 0, 1)
+		hot.border_width_left = 4
+		hot.content_margin_left = 30
+		btn.add_theme_stylebox_override("normal", normal)
+		for state in ["hover", "focus", "pressed"]:
+			btn.add_theme_stylebox_override(state, hot)
+		btn.pressed.connect(func(): _on_choice_button_pressed(i))
+		choices_container.add_child(btn)
+	_place_choices()
+	choices_container.visible = true
 	if choices_container.get_child_count() > 0:
 		(choices_container.get_child(0) as Control).grab_focus()
 
 
-## 선택지 단추: 왼쪽 b(16, 500) + 오른쪽 small(12, ink-dim). 보조 문구("note")가 없으면 b 만
-func _choice_button(index: int, data: Dictionary, ts: float) -> Button:
-	var btn := Button.new()
-	btn.name = "Choice%d" % index
-	btn.set_meta("choice_text", String(data.get("text", "선택지")))
-	btn.custom_minimum_size = Vector2(0, CHOICE_HEIGHT)
-	btn.focus_mode = Control.FOCUS_ALL
-	var normal := StyleBoxFlat.new()
-	normal.bg_color = Color(0, 0, 0, 0)
-	normal.border_color = LINE
-	normal.set_border_width_all(1)
-	var hot := normal.duplicate() as StyleBoxFlat
-	hot.border_color = BLOOD
-	hot.bg_color = Color(BLOOD, 0.12)
-	btn.add_theme_stylebox_override("normal", normal)
-	for state in ["hover", "focus", "pressed", "hover_pressed"]:
-		btn.add_theme_stylebox_override(state, hot)
-	var row := HBoxContainer.new()
-	row.name = "Row"
-	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	row.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	row.offset_left = CHOICE_PAD_X
-	row.offset_right = -CHOICE_PAD_X
-	row.offset_top = 14
-	row.offset_bottom = -14
-	row.add_theme_constant_override("separation", 12)
-	btn.add_child(row)
-	var b := VelkaStyle.label(String(data.get("text", "선택지")), VelkaStyle.sans_medium(), roundi(16 * ts), INK_TOKEN)
-	b.name = "Text"
-	b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	b.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	row.add_child(b)
-	var note := String(data.get("note", ""))
-	if not note.is_empty():
-		var small := VelkaStyle.label(note, VelkaStyle.sans(), roundi(12 * ts), INK_DIM)
-		small.name = "Note"
-		small.size_flags_vertical = Control.SIZE_SHRINK_END
-		small.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		row.add_child(small)
-	# 마우스를 올리거나 키보드로 고르면 왼쪽 여백 16 → 22
-	var set_hot := func(on: bool): row.offset_left = CHOICE_PAD_X_HOT if on else CHOICE_PAD_X
-	btn.mouse_entered.connect(func(): set_hot.call(true))
-	btn.mouse_exited.connect(func(): set_hot.call(btn.has_focus()))
-	btn.focus_entered.connect(func(): set_hot.call(true))
-	btn.focus_exited.connect(func(): set_hot.call(btn.is_hovered()))
-	# 긴 선택지는 줄이 바뀌면 단추가 그만큼 높아진다
-	b.resized.connect(func(): btn.custom_minimum_size.y = maxf(CHOICE_HEIGHT, b.get_combined_minimum_size().y + 27.0))
-	btn.pressed.connect(func(): _on_choice_button_pressed(index))
-	return btn
-
-
 func _on_choice_button_pressed(index: int) -> void:
+	choices_container.visible = false
 	var chosen := choices_container.get_child(index) as Button
-	_set_choices_visible(false)
 	if chosen:
-		_remember("선택", String(chosen.get_meta("choice_text", "")), VelkaStyle.FOCUS, false)
+		_remember("선택", chosen.text, VelkaStyle.FOCUS, false)
 	DialogueManager.choose_option(index)
-
-
-## 등장 (broadcast-in 0.5초 steps(4)) · 패널 글리치 (velka-glitch 5초 steps(1)). 화면 효과 줄이기면 끈다
-func _animate_choices(delta: float) -> void:
-	_choice_t += delta
-	if _reduce_effects():
-		_choice_overlay.modulate.a = 1.0
-		_choice_panel.modulate.a = 1.0
-		return
-	_choice_overlay.modulate.a = minf(1.0, floorf(_choice_t / OVERLAY_IN * 4.0) / 4.0)
-	var p := fmod(_choice_t, GLITCH_CYCLE) / GLITCH_CYCLE
-	var off := Vector2.ZERO
-	var alpha := 1.0
-	if p >= 0.92 and p < 0.93:
-		off = Vector2(-4, 1)
-		alpha = 0.7
-	elif p >= 0.93 and p < 0.94:
-		off = Vector2(5, 0)
-	elif p >= 0.94 and p < 0.95:
-		alpha = 0.35
-	_choice_panel.position = _choice_panel_base + off
-	_choice_panel.modulate.a = alpha
 
 
 # --- 대화 기록 · 자동 진행 · 설정 ---
@@ -566,7 +413,7 @@ func open_log() -> void:
 		_log_list.remove_child(c)
 		c.queue_free()
 	if history.is_empty():
-		_log_list.add_child(VelkaStyle.label("아직 기록된 대화가 없습니다.", VelkaStyle.serif(), 18, INK_DIM))
+		_log_list.add_child(VelkaStyle.label("아직 기록된 대화가 없습니다.", VelkaStyle.sans(), 20, VelkaStyle.INK_DIM))
 	for entry in history:
 		_log_list.add_child(_log_row(entry))
 	_log_layer.visible = true
@@ -580,24 +427,22 @@ func close_log() -> void:
 		_log_layer.visible = false
 
 
-## 기록 한 줄: 이름(.speaker 와 같은 SemiBold · 인물 색) + 대사(나눔명조). 서술은 ink-dim
 func _log_row(entry: Dictionary) -> Control:
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 24)
-	var who := VelkaStyle.label(String(entry.get("name", "")), VelkaStyle.spaced(VelkaStyle.sans_semibold(), 1), 16, entry.get("color", INK))
-	who.custom_minimum_size = Vector2(140, 0)
+	var who := VelkaStyle.label(String(entry.get("name", "")), VelkaStyle.sans_semibold(), 20, entry.get("color", VelkaStyle.INK))
+	who.custom_minimum_size = Vector2(150, 0)
 	row.add_child(who)
 	var text := RichTextLabel.new()
 	text.bbcode_enabled = true
 	text.fit_content = true
 	text.scroll_active = false
 	text.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	text.add_theme_font_override("normal_font", VelkaStyle.serif())
-	text.add_theme_font_override("bold_font", VelkaStyle.serif_bold())
-	text.add_theme_font_size_override("normal_font_size", 19)
-	text.add_theme_font_size_override("bold_font_size", 19)
-	text.add_theme_constant_override("line_separation", 8)
-	text.add_theme_color_override("default_color", INK_DIM if bool(entry.get("narration", false)) else INK)
+	text.add_theme_font_override("normal_font", VelkaStyle.sans())
+	text.add_theme_font_override("bold_font", VelkaStyle.sans_bold())
+	text.add_theme_font_size_override("normal_font_size", 21)
+	text.add_theme_font_size_override("bold_font_size", 21)
+	text.add_theme_color_override("default_color", VelkaStyle.INK_DIM if bool(entry.get("narration", false)) else VelkaStyle.INK)
 	text.text = String(entry.get("text", ""))
 	row.add_child(text)
 	return row
@@ -617,7 +462,7 @@ func _refresh_auto_button() -> void:
 		return
 	var on := SettingsManager.auto_advance()
 	_auto_button.text = "자동 켜짐" if on else "자동 꺼짐"
-	_auto_button.add_theme_color_override("font_color", VelkaStyle.FOCUS if on else HINT_INK)
+	_auto_button.add_theme_color_override("font_color", VelkaStyle.FOCUS if on else VelkaStyle.INK)
 
 
 func _open_settings() -> void:
@@ -635,6 +480,22 @@ func _build() -> void:
 	root_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(root_container)
 
+	# 아래쪽을 살짝 어둡게 (대화에 집중)
+	var shade := TextureRect.new()
+	var grad := Gradient.new()
+	grad.set_color(0, Color(0, 0, 0, 0))
+	grad.set_color(1, Color(0, 0, 0, 0.6))
+	var gt := GradientTexture2D.new()
+	gt.gradient = grad
+	gt.fill_from = Vector2(0, 0)
+	gt.fill_to = Vector2(0, 1)
+	shade.texture = gt
+	shade.stretch_mode = TextureRect.STRETCH_SCALE
+	shade.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_WIDE)
+	shade.offset_top = -560
+	shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root_container.add_child(shade)
+
 	# 대화창 묶음 (흔들림은 이 묶음째로)
 	_box = Control.new()
 	_box.name = "Box"
@@ -642,129 +503,115 @@ func _build() -> void:
 	_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	root_container.add_child(_box)
 
-	# 대화창: 테두리 + 그림자(0 25.6px 64px rgba(0,0,0,.45)) 는 패널 상자가, 바탕 그라데이션은 안쪽 그림이 맡는다
 	text_panel = Panel.new()
 	text_panel.name = "TextPanel"
-	var ps := StyleBoxFlat.new()
-	ps.draw_center = false
-	ps.border_color = BOX_BORDER
-	ps.set_border_width_all(1)
-	ps.shadow_color = Color(0, 0, 0, 0.45)
-	ps.shadow_size = 32
-	ps.shadow_offset = Vector2(0, 25.6)
-	text_panel.add_theme_stylebox_override("panel", ps)
+	text_panel.add_theme_stylebox_override("panel", VelkaStyle.panel_style(VelkaStyle.LINE, BOX_BG, 0, 1))
 	text_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	_box.add_child(text_panel)
-	_box_fill_gradient = Gradient.new()
-	_box_fill_gradient.set_color(0, BOX_TOP)
-	_box_fill_gradient.set_color(1, BOX_BOTTOM)
-	var fill_tex := GradientTexture2D.new()
-	fill_tex.gradient = _box_fill_gradient
-	fill_tex.fill_from = Vector2(0, 0)
-	fill_tex.fill_to = Vector2(0, 1)
-	fill_tex.width = 4
-	fill_tex.height = 64
-	_box_fill = TextureRect.new()
-	_box_fill.name = "Fill"
-	_box_fill.texture = fill_tex
-	_box_fill.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	_box_fill.stretch_mode = TextureRect.STRETCH_SCALE
-	_box_fill.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	_box_fill.offset_left = 1
-	_box_fill.offset_top = 1
-	_box_fill.offset_right = -1
-	_box_fill.offset_bottom = -1
-	_box_fill.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	text_panel.add_child(_box_fill)
-	var top_line := ColorRect.new()
-	top_line.name = "TopLine"
-	top_line.color = BOX_BORDER_TOP
-	top_line.set_anchors_and_offsets_preset(Control.PRESET_TOP_WIDE)
-	top_line.offset_bottom = 1
-	top_line.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	text_panel.add_child(top_line)
 
-	# 초상화 칸 (왼쪽 8rem 열)
-	_portrait_frame = Control.new()
-	_portrait_frame.name = "PortraitFrame"
-	_portrait_frame.clip_contents = true
-	_portrait_frame.position = Vector2(1, 1)
-	_portrait_frame.size = Vector2(PORTRAIT_W, BOX_HEIGHT - 2.0)
-	_portrait_frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	text_panel.add_child(_portrait_frame)
-	_portrait = TextureRect.new()
-	_portrait.name = "Portrait"
-	_portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	_portrait.stretch_mode = TextureRect.STRETCH_SCALE # 크기·위치는 _fit_portrait 가 정한다
-	_portrait.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_portrait_frame.add_child(_portrait)
-	_silhouette = Silhouette.new()
-	_silhouette.name = "Silhouette"
-	_silhouette.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	_silhouette.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_portrait_frame.add_child(_silhouette)
-	_radio_icon = RadioPortrait.new()
-	_radio_icon.name = "RadioPortrait"
-	_radio_icon.size = Vector2(RADIO_SIZE, RADIO_SIZE)
-	_radio_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_portrait_frame.add_child(_radio_icon)
-
-	# 이름 + 역할 (.speaker)
-	_name_tag = Control.new()
-	_name_tag.name = "NameTag"
-	_name_tag.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	text_panel.add_child(_name_tag)
-	speaker_label = VelkaStyle.label("", VelkaStyle.spaced(VelkaStyle.sans_semibold(), 1), 13, VelkaStyle.SABI)
-	speaker_label.name = "SpeakerLabel"
-	speaker_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_name_tag.add_child(speaker_label)
-	_role_label = VelkaStyle.label("", VelkaStyle.spaced(VelkaStyle.mono(), 1), 9, INK_DIM)
-	_role_label.name = "RoleLabel"
-	_role_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_name_tag.add_child(_role_label)
-
-	# 대사 (.dialogue-line, 나눔명조)
+	_text_margin = MarginContainer.new()
+	_text_margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_text_margin.add_theme_constant_override("margin_left", int(TEXT_LEFT_PLAIN))
+	_text_margin.add_theme_constant_override("margin_right", 64)
+	_text_margin.add_theme_constant_override("margin_top", 52)
+	_text_margin.add_theme_constant_override("margin_bottom", 76)
+	_text_margin.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	text_panel.add_child(_text_margin)
 	dialogue_label = RichTextLabel.new()
 	dialogue_label.name = "DialogueLabel"
 	dialogue_label.bbcode_enabled = true
 	dialogue_label.scroll_active = false
-	dialogue_label.fit_content = true
-	dialogue_label.visible_characters_behavior = TextServer.VC_CHARS_AFTER_SHAPING # 타자 중에도 줄바꿈이 흔들리지 않게
-	dialogue_label.clip_contents = false
 	dialogue_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	dialogue_label.add_theme_font_override("normal_font", VelkaStyle.serif())
-	dialogue_label.add_theme_font_override("bold_font", VelkaStyle.serif_bold())
+	dialogue_label.add_theme_font_override("normal_font", VelkaStyle.sans_medium())
+	dialogue_label.add_theme_font_override("bold_font", VelkaStyle.sans_bold())
 	dialogue_label.add_theme_font_size_override("bold_font_size", BODY_FONT_SIZE)
 	dialogue_label.add_theme_font_size_override("normal_font_size", BODY_FONT_SIZE)
-	dialogue_label.add_theme_color_override("default_color", INK)
-	text_panel.add_child(dialogue_label)
+	dialogue_label.add_theme_constant_override("line_separation", 12)
+	_text_margin.add_child(dialogue_label)
 
-	# 오른쪽 아래: [대화 기록 · 자동 · 설정] (게임 기능) + "Enter · 클릭하여 계속 ⌄" — 모두 .continue-hint 글꼴
-	_tools = HBoxContainer.new()
-	_tools.name = "Tools"
-	_tools.add_theme_constant_override("separation", 14)
-	_tools.alignment = BoxContainer.ALIGNMENT_END
-	text_panel.add_child(_tools)
-	_log_button = _tool_button(_tools, "LogButton", "대화 기록", open_log)
-	_auto_button = _tool_button(_tools, "AutoButton", "자동 꺼짐", toggle_auto)
-	_settings_button = _tool_button(_tools, "SettingsButton", "설정", _open_settings)
+	# 아랫줄 왼쪽: [Enter] 다음 대화 (다 보이면 나타난다)
 	var hint := HBoxContainer.new()
 	hint.name = "NextIndicator"
-	hint.add_theme_constant_override("separation", 8)
+	hint.add_theme_constant_override("separation", 10)
 	hint.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_tools.add_child(hint)
-	var hint_label := VelkaStyle.label("Enter · 클릭하여 계속", VelkaStyle.sans(), HINT_FONT_SIZE, HINT_INK)
-	hint_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	hint_label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	hint.add_child(hint_label)
-	var chevron := Chevron.new()
-	chevron.custom_minimum_size = Vector2(8, 8)
-	chevron.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	chevron.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	hint.add_child(chevron)
+	hint.add_child(VelkaStyle.keycap("Enter"))
+	hint.add_child(VelkaStyle.label("다음 대화", VelkaStyle.sans(), 18, VelkaStyle.INK))
+	text_panel.add_child(hint)
 	next_indicator = hint
 
-	_build_choices()
+	# 아랫줄 오른쪽: 대화 기록 · 자동 · 설정
+	var tools := HBoxContainer.new()
+	tools.name = "Tools"
+	tools.add_theme_constant_override("separation", 6)
+	tools.set_anchors_and_offsets_preset(Control.PRESET_BOTTOM_RIGHT)
+	tools.offset_left = -420
+	tools.offset_right = -34
+	tools.offset_top = -64
+	tools.offset_bottom = -26
+	tools.alignment = BoxContainer.ALIGNMENT_END
+	text_panel.add_child(tools)
+	_log_button = _tool_button(tools, "LogButton", "대화 기록", open_log)
+	_auto_button = _tool_button(tools, "AutoButton", "자동 꺼짐", toggle_auto)
+	_settings_button = _tool_button(tools, "SettingsButton", "설정  ▼", _open_settings)
+	_settings_button.add_theme_color_override("font_color", VelkaStyle.INK)
+
+	# 초상화 액자 (창 왼쪽, 창 위로 솟는다): 안쪽을 잘라 내는 창 + 얇은 테두리 + 왼쪽 위 청록 꺾쇠
+	_portrait_frame = Panel.new()
+	_portrait_frame.name = "PortraitFrame"
+	_portrait_frame.add_theme_stylebox_override("panel", VelkaStyle.panel_style(Color(0, 0, 0, 0), Color(0.08, 0.11, 0.13, 1.0), 0, 0))
+	_portrait_frame.clip_contents = true
+	_portrait_frame.size = Vector2(PORTRAIT_W, PORTRAIT_H)
+	_portrait_frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_box.add_child(_portrait_frame)
+	_portrait = TextureRect.new()
+	_portrait.name = "Portrait"
+	_portrait.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_portrait.stretch_mode = TextureRect.STRETCH_SCALE # 크기·위치는 _fit_portrait 가 정한다
+	_portrait.size = Vector2(PORTRAIT_W, PORTRAIT_H)
+	_portrait.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_portrait_frame.add_child(_portrait)
+	_silhouette = Silhouette.new()
+	_silhouette.name = "Silhouette"
+	_silhouette.size = Vector2(PORTRAIT_W, PORTRAIT_H)
+	_silhouette.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_portrait_frame.add_child(_silhouette)
+	var frame_line := FrameLine.new()
+	frame_line.name = "PortraitFrameLine"
+	frame_line.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	frame_line.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_portrait_frame.add_child(frame_line)
+
+	# 이름표 (창 위에 붙은 상자: 이름 + 역할)
+	_name_tag = PanelContainer.new()
+	_name_tag.name = "NameTag"
+	var ns := VelkaStyle.panel_style(VelkaStyle.LINE, BOX_BG, 0, 1)
+	ns.border_width_bottom = 0
+	ns.content_margin_left = 30
+	ns.content_margin_right = 30
+	ns.content_margin_top = 6
+	ns.content_margin_bottom = 6
+	_name_tag.add_theme_stylebox_override("panel", ns)
+	_name_tag.custom_minimum_size = Vector2(NAME_TAG_MIN_WIDTH, NAME_TAG_HEIGHT)
+	_name_tag.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_box.add_child(_name_tag)
+	var name_row := HBoxContainer.new()
+	name_row.add_theme_constant_override("separation", 26)
+	name_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	_name_tag.add_child(name_row)
+	speaker_label = VelkaStyle.label("", VelkaStyle.spaced(VelkaStyle.sans_medium(), 4), 25, VelkaStyle.INK)
+	speaker_label.name = "SpeakerLabel"
+	speaker_label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	name_row.add_child(speaker_label)
+	_role_label = VelkaStyle.label("", VelkaStyle.spaced(VelkaStyle.sans(), 2), 13, VelkaStyle.INK_DIM)
+	_role_label.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	name_row.add_child(_role_label)
+
+	# 선택지 (대화창 위 오른쪽)
+	choices_container = VBoxContainer.new()
+	choices_container.name = "ChoicesContainer"
+	choices_container.add_theme_constant_override("separation", int(CHOICE_GAP))
+	root_container.add_child(choices_container)
+
 	_build_log()
 	root_container.resized.connect(_layout)
 	_layout()
@@ -775,13 +622,13 @@ func _tool_button(parent: Container, node_name: String, text: String, on_pressed
 	b.name = node_name
 	b.text = text
 	b.focus_mode = Control.FOCUS_NONE
-	b.mouse_filter = Control.MOUSE_FILTER_STOP
 	b.add_theme_font_override("font", VelkaStyle.sans())
-	b.add_theme_font_size_override("font_size", HINT_FONT_SIZE)
-	b.add_theme_color_override("font_color", HINT_INK)
-	b.add_theme_color_override("font_hover_color", RADIO_INK)
-	b.add_theme_color_override("font_pressed_color", VelkaStyle.FOCUS)
+	b.add_theme_font_size_override("font_size", 18)
+	b.add_theme_color_override("font_color", VelkaStyle.INK)
+	b.add_theme_color_override("font_hover_color", VelkaStyle.FOCUS)
 	var clear := StyleBoxEmpty.new()
+	clear.content_margin_left = 12
+	clear.content_margin_right = 12
 	for state in ["normal", "hover", "pressed", "focus"]:
 		b.add_theme_stylebox_override(state, clear)
 	b.pressed.connect(on_pressed)
@@ -789,109 +636,7 @@ func _tool_button(parent: Container, node_name: String, text: String, on_pressed
 	return b
 
 
-## 선택지 화면: 붉은 원형 그늘(.broadcast-overlay) + 가운데 패널(.broadcast-panel)
-func _build_choices() -> void:
-	_choice_overlay = Control.new()
-	_choice_overlay.name = "ChoiceOverlay"
-	_choice_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	_choice_overlay.mouse_filter = Control.MOUSE_FILTER_STOP
-	_choice_overlay.clip_contents = true
-	root_container.add_child(_choice_overlay)
-	# radial-gradient(circle at center, rgba(74,16,24,.35), rgba(4,4,5,.92) 70%) — 반지름 = 화면 모서리까지
-	var g := Gradient.new()
-	g.offsets = PackedFloat32Array([0.0, 0.7, 1.0])
-	g.colors = PackedColorArray([Color(74 / 255.0, 16 / 255.0, 24 / 255.0, 0.35), Color(4 / 255.0, 4 / 255.0, 5 / 255.0, 0.92), Color(4 / 255.0, 4 / 255.0, 5 / 255.0, 0.92)])
-	var gt := GradientTexture2D.new()
-	gt.gradient = g
-	gt.fill = GradientTexture2D.FILL_RADIAL
-	gt.fill_from = Vector2(0.5, 0.5)
-	gt.fill_to = Vector2(1.0, 0.5)
-	gt.width = 256
-	gt.height = 256
-	var shade := TextureRect.new()
-	shade.name = "Shade"
-	shade.texture = gt
-	shade.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	shade.stretch_mode = TextureRect.STRETCH_SCALE
-	shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_choice_overlay.add_child(shade)
-	_choice_shade = shade
-
-	_choice_center = CenterContainer.new()
-	_choice_center.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	_choice_center.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_choice_overlay.add_child(_choice_center)
-	_choice_panel = PanelContainer.new()
-	_choice_panel.name = "ChoicePanel"
-	var ps := StyleBoxFlat.new()
-	ps.bg_color = Color(10 / 255.0, 9 / 255.0, 9 / 255.0, 0.95)
-	ps.border_color = BLOOD_DEEP
-	ps.set_border_width_all(1)
-	ps.shadow_color = Color(BLOOD, 0.25)
-	ps.shadow_size = 30
-	ps.set_content_margin_all(CHOICE_PAD + 1.0)
-	ps.content_margin_top = CHOICE_PAD + 2.0 # 머리말 글자 윗선 보정 (크롬 대비 측정, 높이는 아래에서 1 줄여 300 을 맞춘다)
-	ps.content_margin_bottom = CHOICE_PAD
-	_choice_panel.add_theme_stylebox_override("panel", ps)
-	_choice_panel.custom_minimum_size = Vector2(CHOICE_PANEL_W, 0)
-	_choice_center.add_child(_choice_panel)
-	_choice_center.sort_children.connect(func(): _choice_panel_base = _choice_panel.position)
-	var col := VBoxContainer.new()
-	col.add_theme_constant_override("separation", 0)
-	_choice_panel.add_child(col)
-	# 머리말 (.broadcast-head: 나눔고딕코딩 11 · 자간 0.18em)
-	_choice_head = VelkaStyle.label("", VelkaStyle.spaced(VelkaStyle.mono(), 2), 11, INK_DIM)
-	_choice_head.name = "Head"
-	col.add_child(_choice_head)
-	_choice_head_gap = _gap(col, 22.0)
-	# 대사 (.broadcast-transcript: 나눔명조 19, 줄 높이 1.8)
-	_choice_transcript = RichTextLabel.new()
-	_choice_transcript.name = "Transcript"
-	_choice_transcript.bbcode_enabled = true
-	_choice_transcript.fit_content = true
-	_choice_transcript.scroll_active = false
-	_choice_transcript.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	_choice_transcript.add_theme_font_override("normal_font", VelkaStyle.serif())
-	_choice_transcript.add_theme_font_override("bold_font", VelkaStyle.serif_bold())
-	_choice_transcript.add_theme_font_size_override("normal_font_size", 19)
-	_choice_transcript.add_theme_font_size_override("bold_font_size", 19)
-	_choice_transcript.add_theme_color_override("default_color", INK_TOKEN)
-	_choice_transcript_box = MarginContainer.new() # 위아래 여백은 _on_choices_presented 가 글자 크기에 맞춰 정한다
-	_choice_transcript_box.add_child(_choice_transcript)
-	col.add_child(_choice_transcript_box)
-	_gap(col, 18.0)
-	# 점선 상자 (.broadcast-rule: 13, bone, 1px dashed --line, 여백 10/12)
-	_choice_rule = DashedBox.new()
-	_choice_rule.name = "Rule"
-	col.add_child(_choice_rule)
-	var rm := MarginContainer.new()
-	rm.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	for side in ["left", "right"]:
-		rm.add_theme_constant_override("margin_" + side, 13)
-	rm.add_theme_constant_override("margin_top", 11)
-	rm.add_theme_constant_override("margin_bottom", 10)
-	_choice_rule.add_child(rm)
-	_choice_rule_label = VelkaStyle.label("", VelkaStyle.sans(), 13, BONE)
-	_choice_rule_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	rm.add_child(_choice_rule_label)
-	rm.minimum_size_changed.connect(func(): _choice_rule.custom_minimum_size.y = rm.get_combined_minimum_size().y)
-	_choice_rule_gap = _gap(col, 18.0)
-	# 선택지 (.broadcast-choices: 8 간격)
-	choices_container = VBoxContainer.new()
-	choices_container.name = "ChoicesContainer"
-	choices_container.add_theme_constant_override("separation", int(CHOICE_GAP))
-	col.add_child(choices_container)
-
-
-func _gap(parent: Control, h: float) -> Control:
-	var c := Control.new()
-	c.custom_minimum_size = Vector2(0, h)
-	c.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	parent.add_child(c)
-	return c
-
-
-## 대화 기록 창 (시안에 없는 게임 기능: 대화창과 같은 먹색 · 테두리 · 글꼴로)
+## 대화 기록 창 (가운데 큰 패널, 아래로 스크롤)
 func _build_log() -> void:
 	_log_layer = Control.new()
 	_log_layer.name = "DialogueLog"
@@ -899,14 +644,11 @@ func _build_log() -> void:
 	_log_layer.visible = false
 	add_child(_log_layer)
 	var dim := ColorRect.new()
-	dim.color = Color(4 / 255.0, 4 / 255.0, 5 / 255.0, 0.82)
+	dim.color = Color(0.03, 0.04, 0.05, 0.82)
 	dim.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_log_layer.add_child(dim)
 	var panel := PanelContainer.new()
-	var ps := StyleBoxFlat.new()
-	ps.bg_color = Color(BOX_BOTTOM, 0.97)
-	ps.border_color = BOX_BORDER
-	ps.set_border_width_all(1)
+	var ps := VelkaStyle.panel_style(VelkaStyle.LINE, Color("#10171d", 0.98), 0, 1)
 	ps.set_content_margin_all(0)
 	panel.add_theme_stylebox_override("panel", ps)
 	panel.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
@@ -918,24 +660,20 @@ func _build_log() -> void:
 	var col := VBoxContainer.new()
 	col.add_theme_constant_override("separation", 0)
 	panel.add_child(col)
-	var top_line := ColorRect.new()
-	top_line.color = BOX_BORDER_TOP
-	top_line.custom_minimum_size = Vector2(0, 1)
-	col.add_child(top_line)
+	col.add_child(VelkaStyle.top_accent())
 	var head := MarginContainer.new()
 	for side in ["left", "right"]:
 		head.add_theme_constant_override("margin_" + side, 48)
-	head.add_theme_constant_override("margin_top", 30)
-	head.add_theme_constant_override("margin_bottom", 20)
+	head.add_theme_constant_override("margin_top", 34)
+	head.add_theme_constant_override("margin_bottom", 22)
 	col.add_child(head)
 	var head_row := HBoxContainer.new()
 	head.add_child(head_row)
 	var titles := VBoxContainer.new()
 	titles.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	titles.add_theme_constant_override("separation", 8)
 	head_row.add_child(titles)
-	titles.add_child(VelkaStyle.label("DIALOGUE LOG", VelkaStyle.spaced(VelkaStyle.mono(), 2), 11, INK_DIM))
-	titles.add_child(VelkaStyle.label("대화 기록", VelkaStyle.serif(), 30, INK))
+	titles.add_child(VelkaStyle.label("DIALOGUE LOG", VelkaStyle.spaced(VelkaStyle.sans_medium(), 5), 15, VelkaStyle.INK_DIM))
+	titles.add_child(VelkaStyle.label("대화 기록", VelkaStyle.sans_bold(), 36, VelkaStyle.INK))
 	var close := Button.new()
 	close.text = "닫기"
 	close.focus_mode = Control.FOCUS_NONE
@@ -944,7 +682,7 @@ func _build_log() -> void:
 	close.pressed.connect(close_log)
 	head_row.add_child(close)
 	var line := ColorRect.new()
-	line.color = BOX_BORDER_TOP
+	line.color = Color(VelkaStyle.LINE, 0.7)
 	line.custom_minimum_size = Vector2(0, 1)
 	col.add_child(line)
 	_log_scroll = ScrollContainer.new()
@@ -954,7 +692,7 @@ func _build_log() -> void:
 	var pad := MarginContainer.new()
 	pad.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	for side in ["left", "right", "top", "bottom"]:
-		pad.add_theme_constant_override("margin_" + side, 48 if side in ["left", "right"] else 24)
+		pad.add_theme_constant_override("margin_" + side, 40 if side in ["left", "right"] else 24)
 	_log_scroll.add_child(pad)
 	_log_list = VBoxContainer.new()
 	_log_list.add_theme_constant_override("separation", 18)
@@ -962,95 +700,48 @@ func _build_log() -> void:
 	pad.add_child(_log_list)
 	var foot := MarginContainer.new()
 	foot.add_theme_constant_override("margin_left", 48)
-	foot.add_theme_constant_override("margin_top", 14)
-	foot.add_theme_constant_override("margin_bottom", 16)
+	foot.add_theme_constant_override("margin_top", 16)
+	foot.add_theme_constant_override("margin_bottom", 18)
 	col.add_child(foot)
-	foot.add_child(VelkaStyle.label("L · Esc  닫기", VelkaStyle.spaced(VelkaStyle.mono(), 1), 11, Color(HINT_INK, 0.9)))
-
-
-## 대사가 대화창 높이(128)를 넘치면 (긴 대사 · 큰 글자) 창을 위로 늘린다
-func _fit_box_height() -> void:
-	# 마지막 줄 뒤의 줄 사이는 빼고, 아래 안내 줄(약 20) 자리를 남긴다
-	var need := _text_top() + dialogue_label.get_content_height() - dialogue_label.get_theme_constant("line_separation") + 20.0
-	var h := maxf(BOX_HEIGHT, ceilf(need))
-	if not is_equal_approx(h, _box_height):
-		_box_height = h
-		_layout()
-
-
-## 대사 첫 줄 위치: 테두리 1 + 여백 16 (+ 이름 줄 + 0.68rem) + 줄 높이의 반쪽 여백
-func _text_top() -> float:
-	var size := dialogue_label.get_theme_font_size("normal_font_size")
-	var half_lead := maxf(0.0, size * BODY_LINE_HEIGHT - VelkaStyle.serif().get_height(size)) * 0.5
-	var top := 1.0 + COPY_PAD_Y
-	if not _narration:
-		top += speaker_label.get_theme_font("font").get_height(speaker_label.get_theme_font_size("font_size")) + LINE_GAP
-	else:
-		top += LINE_GAP
-	return top + half_lead + LINE_NUDGE
+	var foot_row := HBoxContainer.new()
+	foot_row.add_theme_constant_override("separation", 10)
+	foot.add_child(foot_row)
+	foot_row.add_child(VelkaStyle.keycap("L"))
+	foot_row.add_child(VelkaStyle.keycap("Esc"))
+	foot_row.add_child(VelkaStyle.label("닫기", VelkaStyle.sans(), 18, VelkaStyle.INK))
 
 
 func _layout() -> void:
 	var s := root_container.size
 	if s == Vector2.ZERO:
 		s = get_viewport().get_visible_rect().size
-	_box_base_y = s.y - BOTTOM - _box_height
+	_box_base_y = s.y - BOTTOM - BOX_HEIGHT
 	text_panel.position = Vector2(SIDE, _box_base_y)
-	text_panel.size = Vector2(s.x - SIDE * 2.0, _box_height)
-	_portrait_frame.size = Vector2(PORTRAIT_W, _box_height - 2.0)
-	_radio_icon.position = Vector2(0, (_portrait_frame.size.y - RADIO_SIZE) * 0.5)
-	if _portrait.texture:
-		_fit_portrait(_portrait.texture)
-	var copy_left := 1.0 + PORTRAIT_W + COPY_PAD_X
-	var copy_w := text_panel.size.x - copy_left - COPY_PAD_X - 1.0
-	_name_tag.position = Vector2(copy_left, 1.0 + COPY_PAD_Y + NAME_NUDGE)
-	_refit_name_tag()
-	dialogue_label.position = Vector2(copy_left, _text_top())
-	dialogue_label.size = Vector2(copy_w, 0)
-	# 선택지 그늘: 화면 가운데를 중심으로 모서리까지 닿는 정사각 (원형 그라데이션이 찌그러지지 않게)
-	var r := s.length() * 0.5
-	_choice_shade.position = s * 0.5 - Vector2(r, r)
-	_choice_shade.size = Vector2(r, r) * 2.0
-	var tools_size := _tools.get_combined_minimum_size()
-	_tools.size = tools_size
-	_tools.position = Vector2(text_panel.size.x - 1.0 - HINT_RIGHT - tools_size.x, _box_height - 1.0 - HINT_BOTTOM - tools_size.y + 1.0)
+	text_panel.size = Vector2(s.x - SIDE * 2.0, BOX_HEIGHT)
+	_portrait_frame.position = Vector2(SIDE + PORTRAIT_X, _box_base_y - PORTRAIT_RISE)
+	_name_tag.position = Vector2(_name_tag.position.x if _name_tag.position.x > 0.0 else SIDE + TEXT_LEFT_PLAIN - 20.0, _box_base_y - NAME_TAG_HEIGHT + 1.0)
+	next_indicator.position = Vector2(next_indicator.position.x if next_indicator.position.x > 0.0 else TEXT_LEFT_PLAIN, BOX_HEIGHT - 62.0)
+	_place_choices()
 
 
-## 무전 칸 (.radio-portrait): 80x80, 1px --line 테두리, 가운데 신호 막대 아이콘(19px, stroke 1.6/24, ink-dim)
-class RadioPortrait extends Control:
+func _place_choices() -> void:
+	var s := root_container.size
+	if s == Vector2.ZERO:
+		s = get_viewport().get_visible_rect().size
+	var n := choices_container.get_child_count()
+	var height := n * CHOICE_SIZE.y + maxf(n - 1, 0) * CHOICE_GAP
+	choices_container.position = Vector2(s.x - SIDE - 60.0 - CHOICE_SIZE.x, _box_base_y - CHOICE_BOTTOM_GAP - height)
+	choices_container.size = Vector2(CHOICE_SIZE.x, height)
+
+
+## 초상화 액자 테두리 + 왼쪽 위 청록 꺾쇠
+class FrameLine extends Control:
 	func _draw() -> void:
-		draw_rect(Rect2(Vector2.ZERO, size).grow(-0.5), Color("#3B3434"), false, 1.0)
-		var k := 19.2 / 24.0
-		var o := size * 0.5 - Vector2(12, 12) * k
-		var c := Color("#8F877C")
-		for bar in [[4, 18, 20], [8, 14, 20], [12, 10, 20], [16, 6, 20], [20, 3, 20]]:
-			var a := o + Vector2(bar[0], bar[1]) * k
-			var b := o + Vector2(bar[0], bar[2]) * k
-			draw_line(a, b, c, 1.6 * k, true)
-			draw_circle(a, 0.8 * k, c) # stroke-linecap: round
-			draw_circle(b, 0.8 * k, c)
-
-
-## "클릭하여 계속" 옆 꺾쇠: 5.6px 상자를 45° 돌린 오른쪽·아래 테두리(청록 1px)
-class Chevron extends Control:
-	func _draw() -> void:
-		var c := size * 0.5
-		var r := 3.96
-		draw_polyline(PackedVector2Array([c + Vector2(-r, 0), c + Vector2(0, r), c + Vector2(r, 0)]), Color("#45A1B5"), 1.0, true)
-
-
-## 점선 상자 (.broadcast-rule: 1px dashed --line)
-class DashedBox extends Control:
-	func _ready() -> void:
-		resized.connect(queue_redraw)
-
-	func _draw() -> void:
-		var c := Color("#3B3434")
-		var r := Rect2(Vector2.ZERO, size).grow(-0.5)
-		draw_dashed_line(r.position, Vector2(r.end.x, r.position.y), c, 1.0, 3.0)
-		draw_dashed_line(Vector2(r.position.x, r.end.y), r.end, c, 1.0, 3.0)
-		draw_dashed_line(r.position, Vector2(r.position.x, r.end.y), c, 1.0, 3.0)
-		draw_dashed_line(Vector2(r.end.x, r.position.y), r.end, c, 1.0, 3.0)
+		draw_rect(Rect2(Vector2.ZERO, size).grow(-0.5), Color(VelkaStyle.LINE, 0.9), false, 1.0)
+		var k := 30.0
+		var o := Vector2(10, 10)
+		draw_line(o, o + Vector2(k, 0), VelkaStyle.FOCUS, 2.0)
+		draw_line(o, o + Vector2(0, k), VelkaStyle.FOCUS, 2.0)
 
 
 ## 초상화가 없는 인물: 색이 다른 상반신 실루엣 + 밝은 스케치 윤곽 (임시)
@@ -1079,14 +770,14 @@ class Silhouette extends Control:
 			pts.append(head_c + Vector2(cos(a) * w * 0.17, sin(a) * h * 0.15))
 		draw_colored_polygon(pts, body)
 		# 스케치 윤곽 (조금씩 어긋난 선 두 겹)
-		for off in [Vector2(0, 0), Vector2(1, -1)]:
+		for off in [Vector2(0, 0), Vector2(2, -1)]:
 			var o: Vector2 = off
 			var outline := pts.duplicate()
 			outline.append(pts[0])
 			for i in outline.size():
 				outline[i] += o
-			draw_polyline(outline, Color(line, 0.85), 1.0, true)
+			draw_polyline(outline, Color(line, 0.85), 2.0, true)
 			var t2 := torso.duplicate()
 			for i in t2.size():
 				t2[i] += o
-			draw_polyline(t2, Color(line, 0.85), 1.0, true)
+			draw_polyline(t2, Color(line, 0.85), 2.0, true)
