@@ -13,7 +13,12 @@ extends Control
 # 시안에 없는 것: 불러오기 · 종료 줄(실제 게임 기능)과 오른쪽 아래 작은 버전 표기. 시안의 '해킹 단말'은 미리보기용이라 뺐다.
 
 const CREDITS_PATH := "res://data/ui/credits.json"
-const CREDITS_LOGO := preload("res://assets/branding/project_velka_logo.png")
+## 제작진 화면 (시안 CreditsView) — 시스템 화면 공용 부품
+const CREDITS_SYS := preload("res://scripts/ui/SystemScreen.gd")
+## 시안 .credits-inner: 폭 576, 큰 BrandMark svg 상자 폭 560 (높이 454), 역할 표 줄 간격 28.4
+const CREDITS_COLUMN_W := 576.0
+const CREDITS_LOGO_W := 560.0
+const CREDITS_ROW := 28.4
 const WORDMARK_BASE := preload("res://assets/branding/title/wordmark_base.png")
 const WORDMARK_TITLE := preload("res://assets/branding/title/wordmark_title.png")
 const BACKGROUND_SHADER := preload("res://assets/shaders/title_background.gdshader")
@@ -338,108 +343,67 @@ func _unhandled_input(event: InputEvent) -> void:
 		_close_credits()
 
 
-static func _keycap(text: String) -> PanelContainer:
-	var cap := PanelContainer.new()
-	var box := VelkaStyle.panel_style(Color(VelkaStyle.INK_DIM, 0.7), Color(0, 0, 0, 0.35), 3)
-	box.content_margin_top = 3
-	box.content_margin_bottom = 3
-	box.content_margin_left = 9
-	box.content_margin_right = 9
-	cap.add_theme_stylebox_override("panel", box)
-	cap.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	cap.add_child(VelkaStyle.label(text, VelkaStyle.sans(), 16, VelkaStyle.INK))
-	return cap
-
-
-## 제작진 (data/ui/credits.json, 시안 19): 전체 화면. 로고 · 역할별 이름 표 · 엔진·서체·에셋 고지.
+## 제작진 (시안 CreditsView 그대로, 기준 1920x1080): 장비 화면 바탕 위 가운데 한 줄.
+##   큰 BrandMark(타이틀과 같은 두 층, 글리치) · A MYSTERY HORROR PROJECT · 청록 짧은 선 · 역할 표(오른쪽 정렬 역할 | 이름)
+##   · "괴이를 이해하고, 기록하며, 살아남아라." · ← 타이틀로. 내용은 data/ui/credits.json.
+## 시안의 확인용 줄(PROTOTYPE INTERFACE · GODOT · REACT PROTOTYPE)은 credits.json 의 실제 역할로 바꿨다.
+## 시안에 없는 엔진 · 서체 · 에셋 고지는 화면 아래에 시안의 작은 바닥 글(9.92px, 잿빛 50%) 모양으로 둔다.
 func _build_credits() -> void:
 	var data = JSON.parse_string(FileAccess.get_file_as_string(CREDITS_PATH)) if FileAccess.file_exists(CREDITS_PATH) else null
-	var shade := ColorRect.new()
-	shade.color = Color(0.04, 0.05, 0.065, 0.93)
-	shade.set_anchors_preset(Control.PRESET_FULL_RECT)
-	credits_panel.add_child(shade)
-	var head := VelkaStyle.label("PROJECT VELKA / CREDITS", VelkaStyle.spaced(VelkaStyle.sans_medium(), 5), 15, VelkaStyle.INK_DIM)
-	head.position = Vector2(84, 74)
-	credits_panel.add_child(head)
-	var back := Button.new()
-	back.text = "타이틀로"
-	back.flat = true
-	back.focus_mode = Control.FOCUS_NONE
-	back.add_theme_font_override("font", VelkaStyle.sans())
-	back.add_theme_font_size_override("font_size", 20)
-	back.add_theme_color_override("font_color", VelkaStyle.INK)
-	back.anchor_left = 1.0
-	back.anchor_right = 1.0
-	back.offset_left = -220
-	back.offset_right = -84
-	back.offset_top = 58
-	back.offset_bottom = 102
+	var roles: Array = data.get("roles", []) if data is Dictionary else []
+	credits_panel.add_child(CREDITS_SYS.backdrop())
+	var screen := Control.new()
+	screen.name = "Screen"
+	screen.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	screen.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	credits_panel.add_child(screen)
+	# 시안 높이 752.6 (역할 3줄) — 줄이 늘면 그만큼 키우고 화면 가운데에 둔다
+	var total := 752.6 + (roles.size() - 3) * CREDITS_ROW
+	var top := roundf((1080.0 - total) * 0.5 * 10.0) / 10.0
+	var left := (1920.0 - CREDITS_COLUMN_W) * 0.5
+	screen.add_child(CREDITS_SYS.Wordmark.new(Vector2(left + (CREDITS_COLUMN_W - CREDITS_LOGO_W) * 0.5, top), CREDITS_LOGO_W))
+	var y := top + 454.0 + 16.0
+	var micro := CREDITS_SYS.label("A MYSTERY HORROR PROJECT", VelkaStyle.spaced(VelkaStyle.mono(), 2), 11, CREDITS_SYS.RIG_DIM)
+	micro.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	micro.position = Vector2(0, y)
+	micro.size = Vector2(1920, 11)
+	screen.add_child(micro)
+	y += 11.0 + 35.2
+	screen.add_child(CREDITS_SYS.rect(CREDITS_SYS.TEAL, Vector2(936, y), Vector2(48, 1)))
+	y += 1.0 + 35.2
+	for pair in roles:
+		var role := CREDITS_SYS.label(String(pair[0]), VelkaStyle.mono(), 10, CREDITS_SYS.INK_DIM, Vector2(left, y + 1.0))
+		role.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		role.size = Vector2(272, 14)
+		screen.add_child(role)
+		screen.add_child(CREDITS_SYS.label(String(pair[1]), VelkaStyle.sans(), 11, CREDITS_SYS.INK, Vector2(left + 304, y)))
+		y += CREDITS_ROW
+	y += 48.0 - 14.4
+	var motto := CREDITS_SYS.label("괴이를 이해하고, 기록하며, 살아남아라.", VelkaStyle.spaced(VelkaStyle.serif(), 3), 16, CREDITS_SYS.INK)
+	motto.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	motto.position = Vector2(0, y)
+	motto.size = Vector2(1920, 20)
+	screen.add_child(motto)
+	y += 20.0 + 24.0
+	var back := CREDITS_SYS.BackButton.new("타이틀로")
+	back.name = "BackButton"
+	back.position = Vector2(960.0 - back.size.x * 0.5, y)
 	back.pressed.connect(_close_credits)
-	credits_panel.add_child(back)
-
-	var center := CenterContainer.new()
-	center.set_anchors_preset(Control.PRESET_FULL_RECT)
-	credits_panel.add_child(center)
-	var column := VBoxContainer.new()
-	column.custom_minimum_size = Vector2(1160, 0)
-	column.add_theme_constant_override("separation", 0)
-	center.add_child(column)
-	var credits_logo := TextureRect.new()
-	credits_logo.texture = CREDITS_LOGO
-	credits_logo.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	credits_logo.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	credits_logo.custom_minimum_size = Vector2(0, 170)
-	column.add_child(credits_logo)
-	var title := VelkaStyle.label("제작진", VelkaStyle.spaced(VelkaStyle.serif(), 6), 44, VelkaStyle.INK)
-	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	column.add_child(title)
-	column.add_child(_gap(30))
+	screen.add_child(back)
+	# 엔진 · 서체 · 에셋 고지 (시안에 없음 — 바닥 글 모양)
 	if data is Dictionary:
-		for pair in data.get("roles", []):
-			var row := HBoxContainer.new()
-			row.custom_minimum_size = Vector2(0, 58)
-			var role := VelkaStyle.label(String(pair[0]), VelkaStyle.sans(), 21, VelkaStyle.INK)
-			role.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-			role.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-			role.custom_minimum_size.y = 58
-			row.add_child(role)
-			var name_label := VelkaStyle.label(String(pair[1]), VelkaStyle.sans(), 21, VelkaStyle.INK)
-			name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-			name_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-			name_label.custom_minimum_size.y = 58
-			row.add_child(name_label)
-			column.add_child(row)
-			var line := ColorRect.new()
-			line.color = Color(VelkaStyle.LINE, 0.6)
-			line.custom_minimum_size = Vector2(0, 1)
-			column.add_child(line)
-		column.add_child(_gap(30))
-		for notice in data.get("notices", []):
-			var l := VelkaStyle.label(String(notice), VelkaStyle.sans(), 16, VelkaStyle.INK_DIM)
-			l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-			column.add_child(l)
-			column.add_child(_gap(6))
+		var lines: Array = data.get("notices", []).duplicate()
 		if data.has("note"):
-			var n := VelkaStyle.label(String(data["note"]), VelkaStyle.sans(), 15, Color(VelkaStyle.INK_DIM, 0.75))
-			n.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-			column.add_child(n)
-	var foot := HBoxContainer.new()
-	foot.add_theme_constant_override("separation", 10)
-	foot.anchor_top = 1.0
-	foot.anchor_bottom = 1.0
-	foot.offset_left = 84
-	foot.offset_right = 400
-	foot.offset_top = -92
-	foot.offset_bottom = -60
-	foot.add_child(_keycap("Esc"))
-	foot.add_child(VelkaStyle.label("타이틀로", VelkaStyle.sans(), 17, VelkaStyle.INK_DIM))
-	credits_panel.add_child(foot)
-
-
-func _gap(height: float) -> Control:
-	var c := Control.new()
-	c.custom_minimum_size = Vector2(0, height)
-	return c
+			lines.append(String(data["note"]))
+		var ny := 1080.0 - 30.0 - lines.size() * 15.0
+		for i in lines.size():
+			var is_note: bool = data.has("note") and i == lines.size() - 1
+			var l := CREDITS_SYS.label(String(lines[i]), VelkaStyle.sans(), 10, Color(168 / 255.0, 179 / 255.0, 186 / 255.0, 0.38 if is_note else 0.5))
+			l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			l.position = Vector2(0, ny + i * 15.0)
+			l.size = Vector2(1920, 13)
+			screen.add_child(l)
+	credits_panel.add_child(CREDITS_SYS.grain())
 
 
 func _on_new_game_pressed() -> void:
@@ -464,6 +428,7 @@ func _on_settings_closed() -> void:
 func _on_credits_pressed() -> void:
 	credits_panel.visible = true
 	credits_btn.release_focus()
+	CREDITS_SYS.screen_in(credits_panel.get_node("Screen"))
 
 
 func _close_credits() -> void:
