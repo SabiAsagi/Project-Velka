@@ -8,8 +8,6 @@ class_name VelkaStyle
 const INK := Color("#ECE7DB")                  # 기본 글자 (바랜 흰색)
 const INK_DIM := Color("#A8B3BA")              # 보조 글자
 const BG := Color(0.063, 0.09, 0.114, 0.95)    # 패널 바탕 (#10171D)
-const BG_DEEP := Color("#101318")              # 화면 바탕 (먹색)
-const BG_SOFT := Color(0.09, 0.12, 0.15, 0.9)
 const LINE := Color("#53616B")                 # 테두리
 const PAPER := Color("#E6DFCD")                # 문서 종이
 const PAPER_INK := Color("#26313A")            # 문서 글자
@@ -21,7 +19,6 @@ const ACCENT := Color("#D9A336")               # 강조·섹션 제목 (금빛 =
 const SABI := Color("#45A1B5")
 const SHAMU := Color("#D9A336")
 const GOOD := Color(0.62, 0.86, 0.7)
-const TERMINAL := Color(0.42, 0.95, 0.62)
 
 const FONT_SANS := "res://assets/fonts/Pretendard-Regular.ttf"
 const FONT_SANS_MEDIUM := "res://assets/fonts/Pretendard-Medium.ttf"
@@ -179,45 +176,6 @@ static func high_contrast() -> bool:
 	var tree := Engine.get_main_loop() as SceneTree
 	var sm := tree.root.get_node_or_null("SettingsManager") if tree else null
 	return sm != null and sm.has_method("high_contrast") and sm.high_contrast()
-
-
-## 체크박스 상자 (시안 21 · 25): 꺼짐 = 밝은 네모, 켜짐 = 청록 네모 + 흰 체크. 한 번 만들어 둔다.
-static var _check_icons: Array[Texture2D] = []
-
-
-static func style_checkbox(cb: CheckBox, size: int = 22) -> void:
-	if _check_icons.is_empty():
-		_check_icons = [_check_icon(size, false), _check_icon(size, true)]
-	for state in ["unchecked", "unchecked_disabled"]:
-		cb.add_theme_icon_override(state, _check_icons[0])
-	for state in ["checked", "checked_disabled"]:
-		cb.add_theme_icon_override(state, _check_icons[1])
-	cb.add_theme_constant_override("h_separation", 14)
-	cb.add_theme_font_override("font", sans())
-	cb.add_theme_font_size_override("font_size", 22)
-	for c in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color", "font_hover_pressed_color"]:
-		cb.add_theme_color_override(c, INK)
-
-
-static func _check_icon(size: int, on: bool) -> Texture2D:
-	var img := Image.create(size, size, false, Image.FORMAT_RGBA8)
-	img.fill(FOCUS if on else INK)
-	if on:
-		# 흰 체크 (두 선분, 굵기 2px)
-		var pts := [Vector2(size * 0.22, size * 0.52), Vector2(size * 0.42, size * 0.72), Vector2(size * 0.78, size * 0.3)]
-		for seg in 2:
-			var a: Vector2 = pts[seg]
-			var b: Vector2 = pts[seg + 1]
-			var steps := int(a.distance_to(b) * 3.0)
-			for i in steps + 1:
-				var p := a.lerp(b, float(i) / maxf(steps, 1))
-				for dx: int in [-1, 0, 1]:
-					for dy: int in [-1, 0, 1]:
-						var x: int = int(p.x) + dx
-						var y: int = int(p.y) + dy
-						if x >= 0 and y >= 0 and x < size and y < size and absi(dx) + absi(dy) <= 1:
-							img.set_pixel(x, y, Color.WHITE)
-	return ImageTexture.create_from_image(img)
 
 
 ## 키 안내용 키캡 ("Tab", "E", "Esc" …)

@@ -32,7 +32,6 @@ const SCREEN_IN := 0.7
 
 ## 1920x1080 기준 시안 좌표 (system-screen padding 72 / 112, 머리 높이 92.6)
 const PAD_X := 112.0
-const HEADER_Y := 72.0
 const HEADER_BOTTOM := 164.6
 
 

@@ -28,12 +28,12 @@ signal finished
 @export var rampage_timeout: float = 10.0
 @export var sabi_hp_after_strike: float = 22.0
 @export var done_flag: String = "tutorial_defeat_done"
-## 장면별 대사·패배 문구 (기본값은 챕터 1 학교 도입. 프롤로그 공장은 prologue_p06_* 를 쓴다)
-@export var encounter_dialogue: String = "ch1_tutorial_encounter"
-@export var sabi_hurt_dialogue: String = "ch1_tutorial_sabi_hurt"
-@export var overwhelm_dialogue: String = "ch1_tutorial_overwhelm"
+## 장면별 대사·패배 문구 (쓰는 장면이 지정한다 — 프롤로그 공장은 prologue_p06_*. 비우면 그 대화는 건너뛴다)
+@export var encounter_dialogue: String = ""
+@export var sabi_hurt_dialogue: String = ""
+@export var overwhelm_dialogue: String = ""
 ## 비우면 패배 뒤 대화를 재생하지 않는다 (호출한 쪽이 finished 를 받아 이어서 연출한다)
-@export var aftermath_dialogue: String = "ch1_tutorial_aftermath"
+@export var aftermath_dialogue: String = ""
 @export var defeat_title: String = "패배"
 @export var defeat_body: String = "지금의 방식으로는 이길 수 없다."
 @export_multiline var defeat_hint: String = "괴이는 공격으로 쓰러지지 않는다. 공격할수록 더 빨라졌다.\n살아남으려면 이곳의 규칙을 찾아야 한다."
@@ -262,6 +262,8 @@ func _until(condition: Callable, timeout: float) -> void:
 
 
 func _dialogue(id: String) -> void:
+	if id.is_empty():
+		return
 	DialogueManager.start_dialogue(id)
 	if DialogueManager.is_dialogue_active:
 		await DialogueManager.dialogue_completed

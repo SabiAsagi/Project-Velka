@@ -40,11 +40,11 @@
 
 | 시스템 | 코드 위치 |
 |---|---|
-| 캐릭터/파티 | `scripts/characters/` (Player, PartyMember, PlayerPartyManager, CompanionAI) |
-| 학교 맵 | `scenes/school/`, `scripts/school/` (Phase1Validate.gd, Phase2Validate.gd), `data/school/` |
+| 캐릭터/파티 | `scripts/characters/` (PartyMember, PlayerPartyManager, CompanionAI) |
+| 학교 맵 | `scenes/school/SchoolWorld.tscn` (생성기 `tools/level_gen/school/`, 입력 `scenes/school/floors/`·`exterior/`) |
 | 대화 시스템 | `scripts/ui/DialogueBox.gd`, `data/dialogues/` |
 | 규칙서 데이터 | `data/rules/school_rules.json` |
-| 테스트 러너 | `debug/TestRunner.gd` |
+| 테스트 | `tests/smoke/*_smoke_test.gd` (헤드리스 스모크 테스트) |
 
 ## 알려진 한계
 

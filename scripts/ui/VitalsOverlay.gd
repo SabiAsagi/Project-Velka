@@ -51,6 +51,3 @@ func _process(delta: float) -> void:
 	_material.set_shader_parameter("pulse", _pulse)
 	_material.set_shader_parameter("corruption", _corruption)
 
-
-func get_levels() -> Vector3:
-	return Vector3(_hurt, _pulse, _corruption)
