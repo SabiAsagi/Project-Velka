@@ -71,10 +71,10 @@ func _run() -> void:
 	_check(game.submit() == [0, 0], "valid guesses keep original exact/near scoring")
 	_check(game.history.size() == 1 and game._entry.is_empty(), "valid guesses consume one try and reset the entry")
 	var first_record: Node = game._history_box.get_child(0)
-	_check(first_record.get_child(1).text.contains("자리 일치 0") and first_record.get_child(1).text.contains("숫자만 0"), "history includes readable exact and near counts")
+	_check(first_record.get_child(0).text.contains("자리 일치 0") and first_record.get_child(0).text.contains("위치 다름 0"), "history includes readable exact and near counts")
 	var before_hint: Array = game.history.duplicate(true)
 	var hint: String = game._context_hint()
-	_check(hint.contains("하나도") and game.history == before_hint, "an observational hint explains zero matches without consuming a try")
+	_check(hint.contains("제외") and game.history == before_hint, "an observational hint explains excluding digits without consuming a try")
 	for digit in wrong:
 		game.press_digit(digit)
 	game.submit()
@@ -83,7 +83,7 @@ func _run() -> void:
 	for index in game.DIGITS:
 		game.press_digit(game.code[(index + 1) % game.DIGITS])
 	_check(game.submit() == [0, 4], "reordered correct digits retain original scoring")
-	_check(game._context_hint().contains("배치"), "all matching digits point toward reordering")
+	_check(game._context_hint().contains("옮겨"), "matching digits point toward reordering")
 
 	game.press_digit(5)
 	var frozen: Array = game._entry.duplicate()

@@ -18,8 +18,8 @@ const FRAME_COUNT := 7
 const DATE := "10/09"
 const START_SECOND := 41 * 60   # 17:41:00
 const STEP_SECONDS := 7
-## 시각 표시가 깨진 프레임 (실제 순서). 처음과 가운데만 읽힌다.
-const CORRUPTED := [1, 2, 4, 5, 6]
+## 모든 난이도에서 7장의 이야기 순서는 보존한다. 0 입문 / 1 일반 / 2 심화.
+var difficulty_level := 1
 const PLAYBACK_SECONDS := 0.42
 ## 원격 대상 = 흑백 CCTV (기본 디자인 시안 .kind-frames)
 const GRAYSCALE := preload("res://assets/shaders/cctv_grayscale.gdshader")
@@ -39,6 +39,8 @@ var _cursor := 0
 var _undo_history: Array = []
 var _preview: FrameArt
 var _preview_note: Label
+var _compare_preview: FrameArt
+var _compare_note: Label
 
 
 ## 크기 인자는 쓰지 않는다 (이야기 영상은 늘 일곱 장). seed_value 로 섞는 순서만 바뀐다.
@@ -47,9 +49,13 @@ func start(title: String, _size: Vector2i, seed_value: int, trace: float = 0.0) 
 	rng.seed = seed_value
 	slots.clear()
 	corrupted.clear()
+	# JSON의 수는 float로 읽히므로 순서 인덱스를 int로 정규화한다.
+	var damaged_orders: Array[int] = []
+	for value in HackDifficulty.profile(difficulty_level)["corrupted_frames"]:
+		damaged_orders.append(int(value))
 	for i in frame_count:
 		slots.append(i)
-		corrupted.append(i in CORRUPTED)
+		corrupted.append(damaged_orders.has(i))
 	# 섞는다 (처음부터 맞아 있지 않게)
 	while _is_ordered():
 		for i in range(frame_count - 1, 0, -1):
@@ -59,7 +65,7 @@ func start(title: String, _size: Vector2i, seed_value: int, trace: float = 0.0) 
 			slots[j] = t
 	_push_log("> 서버 저장소 접근 … ok")
 	_push_log("> %s · B1 복도 CAM 01 — 프레임 7장, 순서 손상" % DATE)
-	_push_log("> 기록 간격 7초 · 시각 표시 일부 손상")
+	_push_log("> 기록 간격 7초 · 분 단위는 모든 영상에 남아 있음")
 	_push_log("> 두 프레임을 골라 자리를 바꿔 순서를 맞춰")
 	_open(title, trace)
 	_refresh()
@@ -124,8 +130,8 @@ func _handle_key(event: InputEvent) -> void:
 	match event.keycode:
 		KEY_LEFT: _cursor = maxi(0, _cursor - 1)
 		KEY_RIGHT: _cursor = mini(frame_count - 1, _cursor + 1)
-		KEY_UP: _cursor = maxi(0, _cursor - 4)
-		KEY_DOWN: _cursor = mini(frame_count - 1, _cursor + 4)
+		KEY_UP: _cursor = maxi(0, _cursor - 7)
+		KEY_DOWN: _cursor = mini(frame_count - 1, _cursor + 7)
 		KEY_SPACE, KEY_ENTER: click_slot(_cursor)
 		KEY_Z: undo()
 		_: return
@@ -136,7 +142,7 @@ func _handle_key(event: InputEvent) -> void:
 func _context_hint() -> String:
 	if _selected >= 0:
 		return "고른 장면과 다음 장면의 손을 봐. 가방을 든 손과 메모를 든 손이 달라."
-	return "시각이 깨진 장면은 문과 가방부터 비교하자. 가방은 손에서 바닥으로 옮겨졌어."
+	return "시간이 남은 장면을 기준으로 놓자. 초가 가려진 장면은 가방·메모·문 상태를 비교하면 돼."
 
 
 func solve() -> void:
@@ -184,7 +190,7 @@ func _tutorial_lines() -> Array:
 		"손상된 CCTV 영상의 프레임 일곱 장이 뒤섞여 있다. 원래 순서대로 맞추면 영상이 이어진다.",
 		"프레임 두 개를 차례로 클릭하면 자리가 바뀐다.",
 		"기록 간격은 일정하지만 시각 표시가 깨진 프레임이 있다. 문, 조명, 가방, 손의 상태를 앞뒤 프레임과 비교하자.",
-		"역추적 게이지가 다 차기 전에 맞춰야 한다. ESC 로 연결을 끊을 수 있다.",
+		"초반에는 시간제한이 없다. 이후 역추적 게이지가 나타나면 남은 시간 안에 맞추자. ESC 로 연결을 끊을 수 있다.",
 	]
 
 
@@ -233,49 +239,67 @@ func _refresh() -> void:
 		v.corrupted_time = corrupted[slots[i]]
 		v.queue_redraw()
 	if _preview and not slots.is_empty():
-		var order := slots[_cursor]
-		_preview.order = order
-		_preview.corrupted_time = corrupted[order]
-		_preview.queue_redraw()
-		var door_text := "닫힘" if _preview.door_state() == 0 else ("조금 열림" if _preview.door_state() == 1 else "열림")
-		var bag_text := "보이지 않음" if _preview.bag_state() == 0 else ("손에 들고 있음" if _preview.bag_state() == 1 else "바닥에 놓여 있음")
-		_preview_note.text = "문: %s\n가방: %s\n조명: %s\n\n시간 숫자보다 화면에 남은 상태를 대조하자." % [door_text, bag_text, "어두워짐" if _preview.light_dim() else "켜짐"]
+		var left_slot := playing_slot if playing_slot >= 0 else (_selected if _selected >= 0 else _cursor)
+		var right_slot := (left_slot + 1) % frame_count if playing_slot >= 0 else (_cursor if _cursor != left_slot else (left_slot + 1) % frame_count)
+		for pair in [[_preview, _preview_note, left_slot], [_compare_preview, _compare_note, right_slot]]:
+			var view: FrameArt = pair[0]
+			var note: Label = pair[1]
+			var index: int = pair[2]
+			view.order = slots[index]
+			view.corrupted_time = corrupted[view.order]
+			view.queue_redraw()
+			note.text = "현재 배치 %d · %s\n%s" % [index + 1, view.display_timestamp(), action_description(view.order)]
+
+
+static func action_description(order: int) -> String:
+	return ["빈 복도 · 문 닫힘 · 가방 없음", "가방을 든 채 복도로 들어온다", "가방은 손에 · 문 앞에서 주머니 확인", "가방은 바닥에 · 두 손으로 메모를 펼친다", "메모와 문패를 대조한다 · 조명이 약해진다", "메모를 든 채 문 쪽으로 손을 뻗는다", "사람은 보이지 않고 가방만 남았다"][clampi(order, 0, 6)]
 
 
 func _build_body(parent: Container) -> void:
 	var layout := VBoxContainer.new()
-	layout.add_theme_constant_override("separation", 16)
+	layout.add_theme_constant_override("separation", 12)
 	parent.add_child(layout)
+	var compare := HBoxContainer.new()
+	compare.add_theme_constant_override("separation", 14)
+	layout.add_child(compare)
+	for i in 2:
+		var column := VBoxContainer.new()
+		column.add_theme_constant_override("separation", 8)
+		compare.add_child(column)
+		column.add_child(VelkaStyle.label("선택 장면" if i == 0 else "비교 장면", VelkaStyle.sans_semibold(), 18, VelkaStyle.INK))
+		var view := FrameArt.new()
+		view.slot = -1
+		view.custom_minimum_size = Vector2(486, 326)
+		column.add_child(view)
+		var note := VelkaStyle.label("", VelkaStyle.sans(), 18, VelkaStyle.INK)
+		note.custom_minimum_size.x = 486
+		note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		column.add_child(note)
+		if i == 0:
+			_preview = view
+			_preview_note = note
+		else:
+			_compare_preview = view
+			_compare_note = note
+	layout.add_child(VelkaStyle.label("아래는 현재 배치 순서 · 한 장 선택 후 다른 장을 누르면 교환", VelkaStyle.sans(), 18, VelkaStyle.INK_DIM))
 	_grid = GridContainer.new()
-	_grid.columns = 4
-	_grid.add_theme_constant_override("h_separation", 10)
-	_grid.add_theme_constant_override("v_separation", 10)
+	_grid.columns = 7
+	_grid.add_theme_constant_override("h_separation", 8)
 	layout.add_child(_grid)
 	_views.clear()
 	for i in frame_count:
 		var view := FrameArt.new()
 		view.total = frame_count
-		view.custom_minimum_size = Vector2(230, 154)
+		view.custom_minimum_size = Vector2(136, 94)
+		view.mouse_entered.connect(func():
+			if not tutorial_open and not _done and not is_solved:
+				_cursor = i
+				_refresh())
 		view.gui_input.connect(func(event):
 			if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT and not tutorial_open and not _done:
 				click_slot(i))
 		_grid.add_child(view)
 		_views.append(view)
-	var compare := HBoxContainer.new()
-	compare.add_theme_constant_override("separation", 20)
-	layout.add_child(compare)
-	_preview = FrameArt.new()
-	_preview.slot = -1
-	_preview.custom_minimum_size = Vector2(310, 218)
-	compare.add_child(_preview)
-	var note := VBoxContainer.new()
-	note.custom_minimum_size.x = 570
-	note.add_theme_constant_override("separation", 14)
-	compare.add_child(note)
-	note.add_child(VelkaStyle.label("확대 대조", VelkaStyle.sans_semibold(), 21, VelkaStyle.ACCENT))
-	_preview_note = VelkaStyle.label("", VelkaStyle.sans(), 20, VelkaStyle.INK)
-	_preview_note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	note.add_child(_preview_note)
 	var undo_button := Button.new()
 	undo_button.text = "마지막 교환 되돌리기  Z"
 	undo_button.focus_mode = Control.FOCUS_NONE
@@ -283,7 +307,7 @@ func _build_body(parent: Container) -> void:
 	undo_button.pressed.connect(func():
 		if not tutorial_open:
 			undo())
-	note.add_child(undo_button)
+	layout.add_child(undo_button)
 
 
 ## CCTV 프레임 한 장: 높은 곳에서 내려다본 지하 복도, 오른쪽 벽에 자료보존실 옆문
@@ -328,6 +352,8 @@ class FrameArt extends Control:
 
 	func _draw() -> void:
 		var r := Rect2(Vector2.ZERO, size)
+		if size.x <= 1.0 or size.y <= 1.0:
+			return
 		var s := size.y / 196.0
 		var illustrated := VelkaCinematicArt.draw_corridor(self, r)
 		if not illustrated:
@@ -372,27 +398,27 @@ class FrameArt extends Control:
 			_person(foot, s * (1.25 if order == 1 else 1.0))
 		# 조명이 약해지면 화면 전체가 어두워진다
 		if light_dim():
-			draw_rect(r, Color(0, 0, 0, 0.32))
+			draw_rect(r, Color(0, 0, 0, 0.18))
 		# 6번: 평범한 동작 도중 짧은 영상 손상 (영상 전체에)
 		if order == 5:
 			var rng := RandomNumberGenerator.new()
 			rng.seed = int(_t * 12.0)
-			for i in 6:
+			for i in 3:
 				var y := rng.randf_range(0, size.y)
 				var h := rng.randf_range(2, 9) * s
-				draw_rect(Rect2(rng.randf_range(-20, 10), y, size.x, h), Color(0.8, 0.85, 0.8, rng.randf_range(0.08, 0.22)))
+				draw_rect(Rect2(rng.randf_range(-20, 10), y, size.x, h), Color(0.8, 0.85, 0.8, rng.randf_range(0.04, 0.09)))
 		# 주사선
 		for y in range(0, int(size.y), 3):
 			draw_line(Vector2(0, y), Vector2(size.x, y), Color(0, 0, 0, 0.2))
 		if dimmed:
 			draw_rect(r, Color(0, 0, 0, 0.55))
 		# 시각 표시
-		var ts := HackFrames.DATE + "  " + HackFrames.timestamp(order)
-		if corrupted_time:
-			ts = HackFrames.DATE + "  17:4█:" + ("█" + str((order * 7) % 10) if order % 2 == 0 else "██")
-		draw_string(VelkaStyle.sans_medium(), Vector2(10, size.y - 10), ts, HORIZONTAL_ALIGNMENT_LEFT, -1, int(16 * s), VelkaStyle.ACCENT)
+		var ts := HackFrames.DATE + "  " + display_timestamp()
+		# 가독성을 위해 글자 뒤에 고정된 검은 띠. 초의 일의 자리만 손상시킨다.
+		draw_rect(Rect2(0, size.y - maxf(27.0, 23.0 * s), size.x, maxf(27.0, 23.0 * s)), Color(0, 0, 0, 0.82))
+		draw_string(VelkaStyle.mono(), Vector2(8, size.y - 7), ts, HORIZONTAL_ALIGNMENT_LEFT, -1, maxi(11, int(16 * s)), Color("#f1f2ea"))
 		var label := "CAM 01 · B1" if slot < 0 else "CAM 01 · FRAME %02d" % (slot + 1)
-		draw_string(VelkaStyle.sans(), Vector2(10, 20 * s), label, HORIZONTAL_ALIGNMENT_LEFT, -1, int(14 * s), Color(VelkaStyle.INK, 0.85))
+		draw_string(VelkaStyle.sans(), Vector2(10, 20 * s), label, HORIZONTAL_ALIGNMENT_LEFT, -1, maxi(10, int(14 * s)), Color(VelkaStyle.INK, 0.85))
 		draw_circle(Vector2(size.x - 14, 14 * s), 4 * s, Color(0.9, 0.15, 0.1, 0.5 + 0.5 * sin(_t * 4.0)))
 		# 흑백 화면이라 테두리는 밝기로 구별한다: 고름·재생 = 흰 굵은 선, 커서 = 회색 선
 		if playing or selected:
@@ -401,6 +427,10 @@ class FrameArt extends Control:
 			draw_rect(r.grow(-2), Color("#8fa396"), false, 2.0)
 		else:
 			draw_rect(r, Color("#262c29"), false, 1.0)
+
+	func display_timestamp() -> String:
+		var full := HackFrames.timestamp(order)
+		return full.substr(0, 7) + "█" if corrupted_time else full
 
 	## 회색 코트의 사람 (발 위치 기준). 프레임마다 손에 든 것과 자세가 다르다.
 	func _person(foot: Vector2, k: float) -> void:

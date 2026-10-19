@@ -1,0 +1,8 @@
+{
+  "tiers": [
+    {"name":"입문","digits":3,"tries":10,"circuit_size":[4,3],"circuit_trace":90.0,"code_trace":0.0,"frames_trace":0.0,"corrupted_frames":[],"path_candidates":4},
+    {"name":"일반","digits":4,"tries":8,"circuit_size":[5,4],"circuit_trace":100.0,"code_trace":180.0,"frames_trace":180.0,"corrupted_frames":[2,5],"path_candidates":8},
+    {"name":"심화","digits":4,"tries":7,"circuit_size":[6,5],"circuit_trace":110.0,"code_trace":150.0,"frames_trace":150.0,"corrupted_frames":[2,4,5],"path_candidates":8}
+  ],
+  "minimum_misoriented_path_fraction":0.65
+}
