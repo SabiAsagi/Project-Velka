@@ -125,6 +125,10 @@ func _run() -> void:
 	(_journal.get("_tab_buttons")[1] as Button).pressed.emit()
 	await _input_frames()
 	_check(_journal.get_tab() == 1, "탭 버튼을 눌러도 전환된다")
+	_journal.open(3)
+	await _input_frames()
+	_check(_journal.is_open() and _journal.get_tab() == 3, "이미 열려 있을 때 open(탭)은 그 탭으로 넘긴다")
+	_journal.show_tab(1)
 
 	# --- 수칙서 렌더링 ---
 	_check(_journal.select_document("school_rulebook") and _journal.get_page_text().contains("1."), "무진고 안전수칙서 첫 쪽이 번호 붙은 규칙으로 그려진다")
@@ -145,7 +149,7 @@ func _run() -> void:
 	var page1: String = _journal.get_page_text()
 	_check(page1.contains("급식 메뉴가 전날과 완전히 같다면") and page1.contains("식판을 받지 마십시오"), "급식실 쪽에는 규칙 원문이 모두 실린다 (아직 모르는 규칙 포함)")
 	_check(_count(page1, "위반 결과") == 1, "상태 표시는 알게 된 규칙에만 붙는다 (%d개)" % _count(page1, "위반 결과"))
-	_check(page1.contains("— 사비") and (_journal.get("_notes_column") as Control).visible, "알게 된 규칙의 사비 메모는 여백에 사비 필체로 남는다")
+	_check(page1.contains("사비 아사기 / 외부 협력") and _journal.find_child("UnderNotes", true, false) != null, "알게 된 규칙의 사비 메모는 조항 아래에 사비 필체로 남는다 (서명 '이름 / 소속')")
 	_check(page1.contains("Sabi-Hand.ttf"), "사비 메모는 사비의 손글씨 글꼴이다 (assets/fonts/hand/)")
 	_check(not page1.contains(" 확정 "), "직접 확인하지 않은 규칙은 확정이 아니다")
 	_journal.set_print_handwriting(true)
