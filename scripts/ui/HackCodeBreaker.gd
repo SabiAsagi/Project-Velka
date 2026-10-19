@@ -8,7 +8,9 @@ class_name HackCodeBreaker
 # 시도 횟수(max_tries)를 다 쓰면 잠겨서 역추적 당한다(traced). 역추적 게이지도 함께 돈다.
 # 키보드: 숫자 키 입력, Backspace 한 자리 지우기, Delete 전체 지우기, Enter 대조.
 
-const DIGITS := 4
+var DIGITS := 4
+## 0=입문(3자리), 1=일반(4자리), 2=심화(4자리·시도 축소). 자리별 판정은 항상 유지.
+var difficulty_level := 1
 ## 호박색 터미널 색 (기본 디자인 시안 .kind-code)
 const AMBER := Color("#ffb547")
 const AMBER_DIM := Color("#8d6d3e")
@@ -27,16 +29,17 @@ var _digit_buttons: Dictionary = {}
 
 ## size.x: 시도 횟수 (0이면 8)
 func start(title: String, size: Vector2i, seed_value: int, trace: float = 0.0) -> void:
+	DIGITS = int(HackDifficulty.profile(difficulty_level)["digits"])
 	var rng := RandomNumberGenerator.new()
 	rng.seed = seed_value
 	var pool: Array[int] = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 	code.clear()
 	for i in DIGITS:
 		code.append(pool.pop_at(rng.randi_range(0, pool.size() - 1)))
-	max_tries = size.x if size.x > 0 else 8
+	max_tries = size.x if size.x > 0 else int(HackDifficulty.profile(difficulty_level)["tries"])
 	_push_log("> 보안 계정 접속 시도")
-	_push_log("> 접속 암호: 서로 다른 숫자 4자리")
-	_push_log("> ● 자리까지 맞음  ○ 숫자만 맞음")
+	_push_log("> 접속 암호: 서로 다른 숫자 %d자리" % DIGITS)
+	_push_log("> 숫자 아래: ✓ 자리 일치 / ↔ 위치 다름 / × 제외")
 	_open(title, trace)
 	_refresh()
 
@@ -54,7 +57,7 @@ func press_digit(d: int) -> void:
 		return
 	if _entry.size() >= DIGITS:
 		_refresh()
-		_feedback("네 자리가 모두 찼어. 확인하거나 숫자를 지워 줘.", true)
+		_feedback("%d자리가 모두 찼어. 확인하거나 숫자를 지워 줘." % DIGITS, true)
 		return
 	_entry.append(d)
 	_refresh()
@@ -151,8 +154,8 @@ func _tutorial_id() -> String:
 func _tutorial_lines() -> Array:
 	return [
 		"암호 해독",
-		"서로 다른 숫자 네 자리 접속 암호를 맞힌다.",
-		"넣어 볼 때마다 결과가 나온다:  ● 숫자와 자리가 모두 맞음   ○ 숫자는 있는데 자리가 다름   · 없음",
+		"서로 다른 숫자 %d자리 접속 암호를 맞힌다." % DIGITS,
+		"시도 기록의 숫자 바로 아래: ✓ 자리 일치 / ↔ 위치 다름 / × 제외. 각 숫자의 판정을 확인하자.",
 		"시도 횟수를 다 쓰거나 역추적 게이지가 다 차면 들킨다.",
 		"숫자 키 또는 클릭으로 입력. Backspace 한 자리 지우기, Delete 전체 지우기, Enter 대조. ESC 로 연결을 끊는다.",
 	]
@@ -171,7 +174,7 @@ func _kind_name() -> String:
 
 
 func _guide() -> String:
-	return "서로 다른 숫자 네 자리 접속 암호를 맞혀 주세요."
+	return "서로 다른 숫자 %d자리 접속 암호를 맞혀 주세요. 숫자 아래 판정으로 후보를 좁히세요." % DIGITS
 
 
 func _side_title() -> String:
@@ -179,24 +182,25 @@ func _side_title() -> String:
 
 
 func _side_lines() -> Array:
-	return ["●  숫자와 자리가 모두 맞음", "○  숫자는 있는데 자리가 다름", "·  없는 숫자"]
+	return ["✓ 자리 일치: 숫자·위치 모두 맞음", "↔ 위치 다름: 다른 자리에 있는 숫자", "× 제외: 암호에 없는 숫자"]
 
 
 func _sabi_hint() -> String:
-	return "기록은 숫자별 표시가 아니라\n시도 전체의 결과야. 비교해 보자."
+	return "✓는 그 자리에 두고,\n↔는 옮기고, ×는 빼 보자."
 
 
 func _context_hint() -> String:
 	if history.is_empty():
-		return "먼저 서로 다른 숫자 네 개를 넣어 봐. 결과를 보고 다음 후보를 줄이자."
-	var last: Array = history.back()
-	var exact: int = last[1]
-	var near: int = last[2]
-	if exact + near == 0:
-		return "마지막 네 숫자는 암호에 하나도 없어. 다음 시도에서는 모두 제외해 봐."
-	if exact + near == DIGITS:
-		return "마지막 네 숫자는 모두 암호에 있어. 숫자는 유지하고 배치를 바꿔 보자. 자리 일치는 %d개야." % exact
-	return "마지막 시도는 자리 일치 %d개, 숫자만 맞은 건 %d개야. 표시는 어느 숫자가 맞았는지 알려 주지는 않아. 이전 기록과 비교해 보자." % [exact, near]
+		return "서로 다른 숫자 %d개를 넣어 봐. 각 숫자 아래에 판정이 남아." % DIGITS
+	return "✓ 자리 일치는 유지하고, ↔ 위치 다름은 다른 칸으로 옮겨 봐. × 제외 숫자는 다시 쓰지 않아도 돼."
+
+
+## 입력 순서와 일대일로 대응하는 판정. 정답 숫자 자체는 공개하지 않는다.
+func digit_feedback(guess: Array) -> Array[String]:
+	var result: Array[String] = []
+	for i in guess.size():
+		result.append("exact" if i < code.size() and int(guess[i]) == code[i] else ("near" if code.has(int(guess[i])) else "absent"))
+	return result
 
 
 func _build_side(parent: VBoxContainer) -> void:
@@ -230,15 +234,26 @@ func _add_history_row(guess: Array, exact: int, near: int) -> void:
 	if _history_box == null:
 		return
 	var row := VBoxContainer.new()
-	row.add_theme_constant_override("separation", 2)
-	var entry_row := HBoxContainer.new()
-	entry_row.add_theme_constant_override("separation", 16)
-	entry_row.add_child(VelkaStyle.label("%02d" % history.size(), VelkaStyle.sans(), 17, VelkaStyle.INK_DIM))
-	entry_row.add_child(VelkaStyle.label(" ".join(guess.map(func(x): return str(x))), VelkaStyle.sans_semibold(), 24, VelkaStyle.INK))
-	var pegs := VelkaStyle.label(_pegs(exact, near), VelkaStyle.sans_semibold(), 21, VelkaStyle.FOCUS if exact == DIGITS else VelkaStyle.ACCENT)
-	entry_row.add_child(pegs)
-	row.add_child(entry_row)
-	row.add_child(VelkaStyle.label("자리 일치 %d  ·  숫자만 %d" % [exact, near], VelkaStyle.sans(), 18, VelkaStyle.INK_DIM))
+	row.add_theme_constant_override("separation", 6)
+	row.add_child(VelkaStyle.label("시도 %02d · 자리 일치 %d / 위치 다름 %d" % [history.size(), exact, near], VelkaStyle.sans(), 16, VelkaStyle.INK_DIM))
+	var cells := HBoxContainer.new()
+	cells.add_theme_constant_override("separation", 8)
+	row.add_child(cells)
+	var feedback := digit_feedback(guess)
+	for i in guess.size():
+		var cell := VBoxContainer.new()
+		cell.custom_minimum_size.x = 82
+		cells.add_child(cell)
+		var value := VelkaStyle.label(str(guess[i]), VelkaStyle.mono(), 30, VelkaStyle.INK)
+		value.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		cell.add_child(value)
+		var state: String = feedback[i]
+		var label_text := "✓ 일치" if state == "exact" else ("↔ 이동" if state == "near" else "× 제외")
+		var ink := Color("#8dd5ba") if state == "exact" else (AMBER if state == "near" else VelkaStyle.INK_DIM)
+		var mark := VelkaStyle.label(label_text, VelkaStyle.sans_semibold(), 17, ink)
+		mark.name = "Verdict%d" % i
+		mark.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		cell.add_child(mark)
 	_history_box.add_child(row)
 	_history_scroll.set_deferred("scroll_vertical", 100000)
 

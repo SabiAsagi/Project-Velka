@@ -9,6 +9,7 @@ class_name HackMinigame
 # 키보드: 방향키 이동, Space/E 회전. 퍼즐은 seed 로 만든다 (HackTerminal 이 시도할 때마다 다른 seed 를 준다).
 
 const TILE := 104.0
+var difficulty_level := 1
 # 연결 비트: 위 1, 오른쪽 2, 아래 4, 왼쪽 8
 const N := 1
 const E := 2
@@ -19,7 +20,7 @@ const OPP := {N: S, E: W, S: N, W: E}
 
 ## 녹색 기판 색 (기본 디자인 시안 .kind-circuit)
 const PCB_ON := Color("#4fd1a0")
-const PCB_OFF := Color("#2b4a3c")
+const PCB_OFF := Color("#607e73")
 const PCB_PAD := Color("#9a7b3c")
 const PCB_PAD_LIT := Color("#f0c45c")
 
@@ -128,6 +129,11 @@ func _generate(seed_value: int) -> void:
 	in_row = rng.randi_range(0, rows - 1)
 	out_row = rng.randi_range(0, rows - 1)
 	var path := _random_path(rng)
+	# 짧은 직선으로 끝나는 배치를 줄인다. 후보 중 가장 긴 연결 경로를 사용한다.
+	for attempt in int(HackDifficulty.profile(difficulty_level)["path_candidates"]) - 1:
+		var candidate := _random_path(rng)
+		if candidate.size() > path.size():
+			path = candidate
 	masks.clear()
 	masks.resize(cols * rows)
 	solution.clear()
@@ -143,11 +149,24 @@ func _generate(seed_value: int) -> void:
 		for r in rng.randi_range(0, 3):
 			m = _rot(m)
 		masks[index] = m
+	# 정답 경로의 과반은 직접 돌려야 한다. 회전만으로 풀 수 있는 형태는 보존한다.
+	var changed := 0
+	for index in solution:
+		if masks[index] != solution[index]:
+			changed += 1
+	for index in solution:
+		if changed >= ceili(solution.size() * float(HackDifficulty.config()["minimum_misoriented_path_fraction"])):
+			break
+		if masks[index] == solution[index]:
+			masks[index] = _rot(masks[index])
+			changed += 1
 	# 처음부터 풀려 있으면 길 위 한 칸을 돌려 둔다
 	_update_power()
 	if is_solved:
 		var first: int = solution.keys()[0]
-		masks[first] = _rot(masks[first])
+		masks[first] = solution[first]
+		while masks[first] & W:
+			masks[first] = _rot(masks[first])
 		is_solved = false
 
 
@@ -340,7 +359,12 @@ class GridArt extends Control:
 			var cell := Vector2(i % game.cols, i / game.cols)
 			var r := Rect2(o + cell * HackMinigame.TILE, Vector2(HackMinigame.TILE, HackMinigame.TILE))
 			var lit := game.powered.has(i)
-			draw_rect(r.grow(-4), Color("#0b1912") if not lit else Color("#0f2a1e"))
+			draw_style_box(VelkaStyle.panel_style(Color("#567167") if lit else Color("#344b43"), Color("#17251f") if not lit else Color("#1c382b"), 8, 2), r.grow(-5))
+			# 나사는 접점에서 떨어진 모서리에 둔다.
+			for corner in [Vector2(91, 13), Vector2(13, 91)]:
+				var screw: Vector2 = r.position + corner
+				draw_circle(screw, 3.0, Color("#53685e"))
+				draw_line(screw - Vector2(2, 0), screw + Vector2(2, 0), Color("#111c17"), 1.0)
 			draw_rect(r.grow(-4), Color("#1c3428"), false, 1.0)
 			draw_string(VelkaStyle.sans(), r.position + Vector2(10, 20), "%02d" % (i + 1), HORIZONTAL_ALIGNMENT_LEFT, -1, 13, Color("#2f5243"))
 			if i == _hover or Vector2i(cell) == cursor:
@@ -356,5 +380,13 @@ class GridArt extends Control:
 					var d := Vector2(HackMinigame.DIRS[bit]).rotated(ang)
 					if lit:
 						draw_line(c, c + d * HackMinigame.TILE * 0.5, Color(on.r, on.g, on.b, 0.2), 14.0)
-					draw_line(c, c + d * HackMinigame.TILE * 0.5, col, 6.0)
-			draw_circle(c, 9.0, HackMinigame.PCB_PAD_LIT if lit else gold)
+					draw_line(c, c + d * HackMinigame.TILE * 0.5, Color("#08140f"), 13.0)
+					draw_line(c, c + d * HackMinigame.TILE * 0.5, col, 7.0)
+					var contact := c + d * (HackMinigame.TILE * 0.5 - 10.0)
+					draw_circle(contact, 4.0, HackMinigame.PCB_PAD_LIT if lit else gold)
+					if lit:
+						var travel := fposmod(_t * 0.6 + float(i) * 0.11, 1.0)
+						draw_circle(c + d * travel * 46.0, 3.0, Color("#d5ffeb"))
+			draw_circle(c, 13.0, Color("#0b1510"))
+			draw_circle(c, 10.0, HackMinigame.PCB_PAD_LIT if lit else gold)
+			draw_circle(c, 5.0, Color("#233b2e"))

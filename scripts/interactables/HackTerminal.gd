@@ -33,6 +33,18 @@ const HACK_COLOR := Color(0.27, 0.63, 0.71)
 @export var random_pattern: bool = true
 ## 프로젝트 벨카 시설의 단말 (해킹 화면 머리말에 실험 이름이 그대로 뜬다 — 연구소 등 진상 구역용)
 @export var project_terminal: bool = false
+## -1: 챕터 기준. 0 입문, 1 일반, 2 심화. 실패·재시도 횟수로 난이도를 올리지 않는다.
+@export_enum("챕터 기준:-1", "입문:0", "일반:1", "심화:2") var difficulty_level: int = -1
+
+
+func puzzle_tier() -> int:
+	if difficulty_level >= 0:
+		return clampi(difficulty_level, 0, 2)
+	var chapter := String(GameManager.current_chapter).to_lower()
+	if chapter.contains("prologue") or chapter.is_empty():
+		return 1 if terminal_id == "alarm" else 0
+	return 1 if chapter.contains("chapter1") or chapter.contains("chapter_1") else 2
+
 @export_multiline var shamu_line: String = "이런 건 사비 담당이야. 사비로 바꾸자."
 ## 샤무가 조사했을 때 사비가 함께 있으면 샤무가 하는 말 (선택지가 붙는다)
 @export_multiline var shamu_question: String = "사비, 이거 부탁해."
@@ -95,12 +107,15 @@ func _on_interact(player: Node3D) -> void:
 	is_hacking = true
 	var preset: Array = PUZZLES.get(terminal_id, ["circuit", Vector2i(5, 4), 60.0])
 	var kind: String = puzzle_type if puzzle_type != "auto" and not puzzle_type.is_empty() else String(preset[0])
-	var size: Vector2i = circuit_size if circuit_size != Vector2i.ZERO else preset[1]
-	var trace: float = trace_seconds if trace_seconds > 0.0 else float(preset[2])
+	var tier := puzzle_tier()
+	var settings := HackDifficulty.terminal_settings(kind, tier)
+	var size: Vector2i = circuit_size if circuit_size != Vector2i.ZERO else settings["size"]
+	var trace: float = trace_seconds if trace_seconds > 0.0 else float(settings["trace"])
 	var game: HackBase = PUZZLE_SCRIPTS.get(kind, PUZZLE_SCRIPTS["circuit"]).new()
 	get_tree().root.add_child(game)
 	var seed_value: int = randi() if random_pattern else hash(terminal_id + str(size))
 	game.project_terminal = project_terminal
+	game.set("difficulty_level", tier)
 	game.start(hack_prompt, size, seed_value, trace)
 	var traced_ref := [false]
 	game.finished.connect(func(_ok): traced_ref[0] = game.traced, CONNECT_ONE_SHOT)

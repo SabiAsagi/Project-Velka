@@ -110,8 +110,8 @@ func _run() -> void:
 	root.add_child(fr)
 	fr.start("서버", Vector2i(6, 0), 11)
 	_check(not fr._is_ordered(), "프레임은 처음에 섞여 있다")
-	_check(fr.frame_count == 7 and fr.corrupted.count(true) == 5 and not fr.corrupted[0] and not fr.corrupted[3],
-			"실종 당일 영상은 일곱 장, 시각은 처음과 가운데만 읽힌다")
+	_check(fr.frame_count == 7 and fr.corrupted.count(true) == 2 and not fr.corrupted[0] and not fr.corrupted[3] and not fr.corrupted[6],
+			"실종 당일 영상은 일곱 장, 일반 난이도는 두 장의 초 일의 자리만 손상된다")
 	var views: Array = fr._views
 	var by_order := {}
 	for v in views:
