@@ -34,7 +34,7 @@ func _run() -> void:
 
 	dm.start_dialogue_data("qa_field", [
 		{"speaker": "kwon", "speaker_name": "권지혁", "text": "둘이 따로 역명판을 읽었지. 같은 이름이었으면 제대로 내린 거다."},
-		{"speaker": "sabi", "text": "정문이 저절로 닫혔어. 무전도 약해. 수칙서부터 펼칠게."},
+		{"speaker": "sabi", "speaker_name": "사비", "text": "정문이 저절로 닫혔어. 무전도 약해. 수칙서부터 펼칠게."},
 	])
 	await create_timer(2.0).timeout
 	await _capture("field_dialogue")
