@@ -43,13 +43,14 @@ func _run() -> void:
 	_check(overlay.get_objective() == "조회에 필요한 단서를 조사하세요." and hud.objective_log.has("조회에 필요한 단서를 조사하세요."),
 			"목표는 오른쪽 위 목표 칸에 고정되고 수첩 목표 기록에 남는다")
 	var place_label: Label = overlay.get("_place")
-	_check(place_label.visible and not place_label.text.is_empty(), "목표 칸 아래에 장소가 보인다 (%s)" % place_label.text)
+	_check(place_label.visible and not place_label.text.is_empty(), "위 띠에 장소(구역)가 보인다 (%s)" % place_label.text)
 	var before: int = overlay.notice_count()
 	hud.show_notice("수첩에 기록됨 — 학교 안전 수칙", Color.WHITE, 5.0)
 	await _frames(2)
 	_check(overlay.notice_count() == before + 1, "규칙을 기록하면 오른쪽에 알림 카드가 뜬다")
 	var texts := _texts(overlay.get("_notices"))
-	_check(texts.has("기록 갱신") and texts.has("학교 안전 수칙을 기록했습니다.") and texts.has("조사 기록에서 확인"),
+	# 시안 .hud-toast: 내용 한 줄에 "[Tab] 조사 기록에서 확인" 까지 이어 쓴다
+	_check(texts.has("기록 갱신") and texts.has("학교 안전 수칙을 기록했습니다. [Tab] 조사 기록에서 확인"),
 			"알림 카드: 기록 갱신 / 받침에 맞는 조사 / Tab 안내 (%s)" % ", ".join(texts))
 	hud.show_notice("규칙 위반 [경고] 복도에서 뛰지 마세요", Color(1.0, 0.4, 0.35), 5.0)
 	await _frames(2)
