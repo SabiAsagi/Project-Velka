@@ -92,6 +92,30 @@ func _run() -> void:
 	_fm.restart_from_checkpoint()
 	await _frames(3)
 	_check(hall_guard.is_down, "체크포인트에서 다시 시작해도 제압한 경비원은 쓰러진 채로 남는다")
+	# 잠입 도중(경비 일부만 쓰러짐)에는 지나가는 구역 체크포인트가 저장하지 않는다 — 들키면 잠입 시작으로 돌아간다
+	var guard_count: int = _world.get_node("Guards").get_child_count()
+	var zone: Node = _world.get_node("Checkpoints/Checkpoint_corridor")
+	zone.call("_on_body_entered", _member())
+	_check(guard_count > 1 and String(_fm.checkpoint.get("id", "")) == "test",
+			"경비를 일부만 쓰러뜨린 채 복도 구역에 들어가도 체크포인트가 덮어써지지 않는다 (%s)" % _fm.checkpoint.get("id", ""))
+	var door: Node = null
+	for d in get_nodes_in_group_safe("checkpoint_state"):
+		if d.has_method("checkpoint_save") and d.get("is_open") == false:
+			door = d
+			break
+	hall_guard.call("_stand_up")
+	_fm.save_checkpoint("before_knockout", "테스트", Vector3(-6.0, 0.05, 14.0))
+	hall_guard.call("_knock_down", false)
+	if door:
+		door.call("checkpoint_load", {"open": true, "locked": false})
+	zone.call("_on_body_entered", _member())
+	_fm.fail("spotted")
+	await _frames(2)
+	_fm.continue_after_failure()
+	await _frames(3)
+	_check(door != null and not hall_guard.is_down and door.get("is_open") == false,
+			"들켜서 다시 시작하면 잠입 도중 쓰러뜨린 경비원은 일어서고 연 문은 닫힌다 (문 %s 열림 %s, 경비 쓰러짐 %s)" % [door.name if door else "없음", door.get("is_open") if door else "-", hall_guard.is_down])
+	hall_guard.call("_knock_down", false)
 	_party.request_switch()
 	await _seconds(0.4)
 
@@ -216,6 +240,10 @@ func _set_input(x: float, y: float) -> void:
 			Input.action_press(pair[0], pair[1])
 		else:
 			Input.action_release(pair[0])
+
+
+func get_nodes_in_group_safe(group: String) -> Array:
+	return get_nodes_in_group(group)
 
 
 func _check(condition: bool, label: String) -> void:

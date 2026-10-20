@@ -82,6 +82,7 @@ var _replay_run := 0
 
 
 func _ready() -> void:
+	add_to_group("checkpoint_gate")
 	# 자잘한 사물·표지판도 조사할 수 있다
 	FlavorSpots.spawn(world, "res://data/inspectables/factory_flavor.json")
 	GameManager.set_world_phase(GameManager.WORLD_REAL)
@@ -272,6 +273,14 @@ func guards_left() -> int:
 
 func _all_guards_down() -> bool:
 	return guards_left() == 0
+
+
+## 지나가며 저장하는 구역 체크포인트(Checkpoint)를 지금 저장해도 되는가.
+## 경비를 일부만 쓰러뜨린 잠입 도중에는 막는다 — 들키면 잠입을 시작한 체크포인트(옆문 안쪽 · 사비 합류)로
+## 돌아가 경비가 다시 일어서고 문도 그때 상태로 돌아가야 한다. 아무도 안 건드렸거나 모두 쓰러뜨린 뒤에는 저장한다.
+func allow_zone_checkpoint() -> bool:
+	var left := guards_left()
+	return left == 0 or left == world.get_node("Guards").get_child_count()
 
 
 func _watch_guard(guard: Node) -> void:
