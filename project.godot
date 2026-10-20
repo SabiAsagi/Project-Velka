@@ -15,8 +15,11 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 [application]
 
 config/name="Project Velka"
-config/version="0.31.2"
+config/version="0.31.3"
 config/description="2.5D Mystery Horror Game with 2-character switching system."
+config/use_custom_user_dir=true
+config/custom_user_dir_name="ProjectVelka"
+config/use_custom_user_dir.editor=false
 run/main_scene="res://scenes/ui/TitleScreen.tscn"
 config/features=PackedStringArray("4.7", "Forward Plus")
 config/icon="res://assets/branding/v_mark.png"

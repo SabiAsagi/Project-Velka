@@ -41,4 +41,8 @@ func _on_body_entered(body: Node3D) -> void:
 	for anomaly in get_tree().get_nodes_in_group("anomaly"):
 		if anomaly.has_method("alert_level") and int(anomaly.alert_level()) > 0:
 			return
+	# 장면이 막으면 저장하지 않는다 (공장 잠입 도중: 들키면 잠입을 시작한 체크포인트로 돌아가야 한다)
+	for gate in get_tree().get_nodes_in_group("checkpoint_gate"):
+		if gate.has_method("allow_zone_checkpoint") and not gate.allow_zone_checkpoint():
+			return
 	activate()
